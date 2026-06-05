@@ -8,60 +8,162 @@
 
 <style>
 :root{
-  --bg:#07111f;
-  --card:#111c2e;
-  --card2:#16243a;
-  --border:#2a3b57;
-  --red:#f05260;
-  --red2:#dc3545;
-  --green:#4ade80;
-  --gold:#fbbf24;
-  --muted:#94a3b8;
-  --white:#ffffff;
+  --bg:#030504;
+  --panel:#0b120f;
+  --panel2:#101a15;
+  --border:#1f3a2d;
+  --green:#00ff88;
+  --green2:#00b86b;
+  --amber:#fbbf24;
+  --muted:#8aa99a;
+  --white:#f5fff9;
+  --danger:#ff4d4d;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
-  background:radial-gradient(circle at top,#1b2944 0%,#07111f 45%),#07111f;
+  background:
+    radial-gradient(circle at top,#0b2418 0%,#030504 42%),
+    linear-gradient(180deg,#030504,#000);
   color:var(--white);
   font-family:Arial,sans-serif;
   padding:22px;
 }
 
-.app{max-width:480px;margin:0 auto}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    linear-gradient(rgba(0,255,136,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;
+}
 
-.logo{text-align:center;margin-top:24px;margin-bottom:28px}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0,255,136,.035),
+    transparent
+  );
+  animation:scanline 5s linear infinite;
+  pointer-events:none;
+}
+
+@keyframes scanline{
+  0%{transform:translateY(-100%)}
+  100%{transform:translateY(100%)}
+}
+
+.app{
+  max-width:480px;
+  margin:0 auto;
+  position:relative;
+  z-index:2;
+}
+
+.logo{
+  text-align:center;
+  margin-top:24px;
+  margin-bottom:28px;
+}
+
+.logo-wrap{
+  position:relative;
+  width:104px;
+  height:104px;
+  margin:0 auto 16px auto;
+}
+
+.logo-pulse{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:1px solid rgba(0,255,136,.35);
+  animation:pulse 3s infinite;
+}
+
+.logo-pulse.two{
+  animation-delay:1.2s;
+}
 
 .logo-mark{
-  width:64px;
-  height:64px;
-  border-radius:20px;
-  margin:0 auto 12px auto;
+  position:relative;
+  width:86px;
+  height:86px;
+  border-radius:50%;
+  margin:9px auto;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:linear-gradient(135deg,#f05260,#1f2f4d);
-  border:1px solid rgba(251,191,36,.35);
-  font-size:25px;
+  background:
+    radial-gradient(circle,#10291d 0%,#07110d 65%);
+  border:1px solid rgba(0,255,136,.55);
+  box-shadow:
+    0 0 28px rgba(0,255,136,.25),
+    inset 0 0 25px rgba(0,255,136,.08);
+  font-size:30px;
   font-weight:900;
-  box-shadow:0 0 35px rgba(240,82,96,.25);
+  color:var(--green);
+  letter-spacing:1px;
 }
 
-.logo h1{font-size:38px;margin:0;letter-spacing:-1px}
-.logo p{color:var(--muted);margin-top:10px;font-size:16px}
+.logo-mark::before{
+  content:"";
+  position:absolute;
+  width:70%;
+  height:1px;
+  background:rgba(0,255,136,.45);
+}
+
+.logo-mark::after{
+  content:"";
+  position:absolute;
+  height:70%;
+  width:1px;
+  background:rgba(0,255,136,.35);
+}
+
+@keyframes pulse{
+  0%{transform:scale(.78);opacity:.75}
+  70%{transform:scale(1.25);opacity:0}
+  100%{transform:scale(.78);opacity:0}
+}
+
+.logo h1{
+  font-size:34px;
+  margin:0;
+  letter-spacing:2px;
+  color:var(--white);
+}
+
+.logo p{
+  color:var(--muted);
+  margin-top:10px;
+  font-size:14px;
+  letter-spacing:1px;
+}
 
 .badge{
   display:inline-block;
   margin-top:16px;
   padding:9px 16px;
   border-radius:999px;
-  background:rgba(245,158,11,.12);
-  border:1px solid rgba(245,158,11,.45);
-  color:var(--gold);
-  font-size:14px;
+  background:rgba(0,255,136,.1);
+  border:1px solid rgba(0,255,136,.45);
+  color:var(--green);
+  font-size:13px;
   font-weight:bold;
+  letter-spacing:.5px;
 }
 
 .stats{
@@ -72,27 +174,47 @@ body{
 }
 
 .stat{
-  background:rgba(17,28,46,.75);
+  background:rgba(11,18,15,.82);
   border:1px solid var(--border);
   border-radius:16px;
   padding:12px;
   text-align:center;
+  box-shadow:0 0 20px rgba(0,255,136,.04);
 }
 
-.stat strong{display:block;font-size:18px;color:var(--gold)}
-.stat span{font-size:11px;color:var(--muted)}
+.stat strong{
+  display:block;
+  font-size:18px;
+  color:var(--green);
+}
+
+.stat span{
+  font-size:10.5px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
 
 .card{
-  background:rgba(17,28,46,.86);
-  backdrop-filter:blur(18px);
+  background:rgba(11,18,15,.92);
   border:1px solid var(--border);
-  border-radius:24px;
+  border-radius:22px;
   padding:24px;
   margin-bottom:18px;
-  box-shadow:0 18px 45px rgba(0,0,0,.28);
+  box-shadow:
+    0 18px 45px rgba(0,0,0,.38),
+    0 0 25px rgba(0,255,136,.035);
+  backdrop-filter:blur(16px);
 }
 
-h2{color:var(--red);font-size:30px;margin-top:0;margin-bottom:8px}
+h2{
+  color:var(--green);
+  font-size:26px;
+  margin-top:0;
+  margin-bottom:8px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
 
 .intro{
   color:var(--muted);
@@ -104,40 +226,64 @@ h2{color:var(--red);font-size:30px;margin-top:0;margin-bottom:8px}
 label{
   display:block;
   color:var(--muted);
-  font-size:13px;
+  font-size:12px;
   margin-bottom:7px;
   font-weight:bold;
+  text-transform:uppercase;
+  letter-spacing:.7px;
 }
 
 input{
   width:100%;
   padding:16px;
   margin-bottom:16px;
-  border-radius:16px;
+  border-radius:14px;
   border:1px solid var(--border);
   font-size:16px;
-  background:#0b1626;
+  background:#07100c;
   color:white;
   outline:none;
 }
 
-input:focus{border-color:var(--gold)}
+input:focus{
+  border-color:var(--green);
+  box-shadow:0 0 12px rgba(0,255,136,.18);
+}
 
 button{
   width:100%;
   padding:16px;
   border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg,var(--red),var(--red2));
-  color:white;
+  border-radius:14px;
+  background:linear-gradient(
+    135deg,
+    var(--green),
+    var(--green2)
+  );
+  color:#031109;
   font-size:16px;
-  font-weight:bold;
+  font-weight:900;
   margin-top:10px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
 }
 
-.ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.hidden{display:none}
-.small{color:var(--muted);font-size:14px;text-align:center;line-height:1.5}
+.ghost{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+}
+
+.hidden{
+  display:none;
+}
+
+.small{
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  line-height:1.5;
+}
 
 .topbar{
   display:flex;
@@ -146,14 +292,19 @@ button{
   margin-bottom:16px;
 }
 
-.status{color:var(--green);font-size:13px;font-weight:bold}
+.status{
+  color:var(--green);
+  font-size:13px;
+  font-weight:bold;
+}
 
 .logout{
   width:auto;
   padding:10px 14px;
-  font-size:13px;
+  font-size:12px;
   margin:0;
-  background:#223149;
+  background:#13231b;
+  color:var(--green);
 }
 
 .metric-grid{
@@ -164,18 +315,31 @@ button{
 }
 
 .metric{
-  background:var(--card2);
+  background:var(--panel2);
   border:1px solid var(--border);
   border-radius:16px;
   padding:14px;
 }
 
-.metric span{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}
-.metric strong{font-size:22px}
-.score{color:var(--green)}
+.metric span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  margin-bottom:5px;
+  text-transform:uppercase;
+}
 
-.question-box,.caption-box{
-  background:#0b1626;
+.metric strong{
+  font-size:22px;
+}
+
+.score{
+  color:var(--green);
+}
+
+.question-box,
+.caption-box{
+  background:#07100c;
   border:1px solid var(--border);
   border-radius:18px;
   padding:16px;
@@ -183,25 +347,28 @@ button{
   line-height:1.45;
 }
 
-.question-box{font-size:19px}
+.question-box{
+  font-size:18px;
+}
 
 .tag{
   display:inline-block;
   padding:7px 10px;
   border-radius:999px;
-  background:rgba(240,82,96,.12);
-  border:1px solid rgba(240,82,96,.35);
-  color:#ff9aa5;
-  font-size:12px;
+  background:rgba(0,255,136,.08);
+  border:1px solid rgba(0,255,136,.25);
+  color:var(--green);
+  font-size:11px;
   font-weight:bold;
   margin-right:6px;
   margin-bottom:8px;
+  text-transform:uppercase;
 }
 
-.gold-tag{
-  background:rgba(245,158,11,.12);
-  border:1px solid rgba(245,158,11,.45);
-  color:var(--gold);
+.tag-warning{
+  color:var(--amber);
+  border-color:rgba(251,191,36,.4);
+  background:rgba(251,191,36,.08);
 }
 
 .trend{
@@ -212,207 +379,369 @@ button{
   gap:12px;
 }
 
-.trend:last-child{border-bottom:none}
-.trend span{color:var(--muted);font-size:13px}
+.trend:last-child{
+  border-bottom:none;
+}
+
+.trend span{
+  color:var(--muted);
+  font-size:12px;
+}
 
 .footer{
   text-align:center;
   color:var(--muted);
-  font-size:12px;
+  font-size:11px;
   margin-top:24px;
   padding-bottom:30px;
 }
+
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
   <div class="logo">
-    <div class="logo-mark">PR</div>
-    <h1>Patriot Radar</h1>
-    <p>UK Trend Intelligence Platform</p>
-    <div class="badge">Private Intelligence Access</div>
+
+    <div class="logo-wrap">
+      <div class="logo-pulse"></div>
+      <div class="logo-pulse two"></div>
+
+      <div class="logo-mark">
+        PR
+      </div>
+    </div>
+
+    <h1>PATRIOT RADAR</h1>
+
+    <p>
+      INTELLIGENCE COMMAND
+    </p>
+
+    <div class="badge">
+      SCANNER STATUS: ACTIVE
+    </div>
+
   </div>
 
   <div class="stats">
-    <div class="stat"><strong>247</strong><span>Trends scanned</span></div>
-    <div class="stat"><strong>18</strong><span>Opportunities</span></div>
-    <div class="stat"><strong>Live</strong><span>Scanner status</span></div>
+
+    <div class="stat">
+      <strong>4,327</strong>
+      <span>Keywords Analysed</span>
+    </div>
+
+    <div class="stat">
+      <strong>127</strong>
+      <span>Opportunities Found</span>
+    </div>
+
+    <div class="stat">
+      <strong>99.8%</strong>
+      <span>Scanner Uptime</span>
+    </div>
+
   </div>
 
   <div id="authBox" class="card">
-    <h2>Member Portal</h2>
-    <p class="intro">Sign in to access real-time UK trend intelligence and opportunity scoring.</p>
+
+    <h2>COMMAND ACCESS</h2>
+
+    <p class="intro">
+      Authorised personnel only.
+      Authenticate to access live intelligence feeds.
+    </p>
 
     <label>Email</label>
-    <input id="email" type="email" placeholder="you@example.com">
+    <input
+      id="email"
+      type="email"
+      placeholder="operator@domain.com"
+    >
 
     <label>Password</label>
-    <input id="password" type="password" placeholder="Enter password">
+    <input
+      id="password"
+      type="password"
+      placeholder="Enter password"
+    >
 
-    <button onclick="login()">Login</button>
-    <button class="ghost" onclick="resetPassword()">Forgot Password</button>
+    <button onclick="login()">
+      Authenticate
+    </button>
+
+    <button
+      class="ghost"
+      onclick="resetPassword()">
+      Reset Password
+    </button>
 
     <p id="authMessage" class="small"></p>
+
   </div>
+    <div id="resetBox" class="card hidden">
 
-  <div id="resetBox" class="card hidden">
-    <h2>New Password</h2>
-    <p class="intro">Create a new password for your Patriot Radar account.</p>
+    <h2>PASSWORD RESET</h2>
 
-    <label>New password</label>
-    <input id="newPassword" type="password" placeholder="Create new password">
+    <p class="intro">
+      Create a new password to regain command access.
+    </p>
 
-    <button onclick="updatePassword()">Save Password</button>
+    <label>New Password</label>
+
+    <input
+      id="newPassword"
+      type="password"
+      placeholder="Create new password"
+    >
+
+    <button onclick="updatePassword()">
+      Save Password
+    </button>
+
     <p id="resetMessage" class="small"></p>
+
   </div>
 
   <div id="dashboard" class="hidden">
 
     <div class="topbar">
+
       <div>
-        <div class="status">● Scanner online</div>
-        <div class="small" style="text-align:left;">Updated recently</div>
+        <div class="status">
+          ● LIVE SCANNER ONLINE
+        </div>
+
+        <div class="small" style="text-align:left;">
+          Intelligence feed active
+        </div>
       </div>
-      <button class="logout" onclick="logout()">Logout</button>
+
+      <button
+        class="logout"
+        onclick="logout()">
+        Logout
+      </button>
+
     </div>
 
     <div class="metric-grid">
+
       <div class="metric">
-        <span>Top Score</span>
+        <span>Threat Score</span>
         <strong class="score">66/100</strong>
       </div>
+
       <div class="metric">
-        <span>Best Angle</span>
+        <span>Primary Vector</span>
         <strong>Question</strong>
       </div>
+
     </div>
 
     <div class="card">
-      <h2>Top Opportunity</h2>
 
-      <span class="tag gold-tag">Priority</span>
-      <span class="tag">Trending</span>
-      <span class="tag">Affiliate Match</span>
+      <h2>PRIMARY TARGET</h2>
 
-      <p><strong>Keyword:</strong> British Army</p>
+      <span class="tag tag-warning">
+        HIGH PRIORITY
+      </span>
 
-      <p><strong>Question:</strong></p>
-      <div id="question" class="question-box">
+      <span class="tag">
+        TRENDING
+      </span>
+
+      <span class="tag">
+        ENGAGEMENT
+      </span>
+
+      <p>
+        <strong>Keyword:</strong>
+        British Army
+      </p>
+
+      <p>
+        <strong>Question:</strong>
+      </p>
+
+      <div
+        id="question"
+        class="question-box">
+
         Should Britain invest more in the British Army?
-      </div>
-      <button onclick="copyText('question')">Copy Question</button>
 
-      <p><strong>Caption:</strong></p>
-      <div id="caption" class="caption-box">
-        British Army is being searched today. What do you think?
       </div>
-      <button onclick="copyText('caption')">Copy Caption</button>
 
-      <p><strong>Affiliate Product:</strong></p>
+      <button onclick="copyText('question')">
+        Copy Question
+      </button>
+
+      <p>
+        <strong>Caption:</strong>
+      </p>
+
+      <div
+        id="caption"
+        class="caption-box">
+
+        British Army is trending today.
+        What do you think?
+
+      </div>
+
+      <button onclick="copyText('caption')">
+        Copy Caption
+      </button>
+
+      <p>
+        <strong>Affiliate Product:</strong>
+      </p>
+
       <div class="caption-box">
+
         British Army history books
+
       </div>
+
     </div>
 
     <div class="card">
-      <h2>Intelligence Feed</h2>
+
+      <h2>INTELLIGENCE FEED</h2>
 
       <div class="trend">
-        <div><strong>UK Politics</strong><br><span>High comment potential</span></div>
-        <strong class="score">63</strong>
+
+        <div>
+          <strong>UK Politics</strong><br>
+          <span>High comment potential</span>
+        </div>
+
+        <strong class="score">
+          63
+        </strong>
+
       </div>
 
       <div class="trend">
-        <div><strong>Veterans</strong><br><span>Strong follower potential</span></div>
-        <strong class="score">58</strong>
+
+        <div>
+          <strong>Veterans</strong><br>
+          <span>Strong follower potential</span>
+        </div>
+
+        <strong class="score">
+          58
+        </strong>
+
       </div>
 
       <div class="trend">
-        <div><strong>Union Jack</strong><br><span>Identity topic</span></div>
-        <strong class="score">52</strong>
+
+        <div>
+          <strong>Union Jack</strong><br>
+          <span>Identity topic</span>
+        </div>
+
+        <strong class="score">
+          52
+        </strong>
+
       </div>
 
       <div class="trend">
-        <div><strong>Armed Forces</strong><br><span>Patriotic audience fit</span></div>
-        <strong class="score">49</strong>
+
+        <div>
+          <strong>Armed Forces</strong><br>
+          <span>Patriotic audience fit</span>
+        </div>
+
+        <strong class="score">
+          49
+        </strong>
+
       </div>
+
     </div>
 
     <div class="footer">
-      Patriot Radar v1.4 — live Supabase results coming next.
+      PATRIOT RADAR v2.0
+      • COMMAND NETWORK ACTIVE
     </div>
 
   </div>
-</div>
 
+</div>
 <script>
 const SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
-async function checkSession(){
+async function checkSession() {
   const { data } = await supabaseClient.auth.getSession();
 
-  if(window.location.hash.includes("type=recovery")){
+  if (window.location.hash.includes("type=recovery")) {
     document.getElementById("authBox").classList.add("hidden");
     document.getElementById("resetBox").classList.remove("hidden");
     return;
   }
 
-  if(data.session){
+  if (data.session) {
     showDashboard();
   }
 }
 
-function showDashboard(){
+function showDashboard() {
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
 }
 
-async function login(){
+async function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
+    email: email,
+    password: password
   });
 
-  if(error){
+  if (error) {
     document.getElementById("authMessage").innerText = error.message;
   } else {
     showDashboard();
   }
 }
 
-async function resetPassword(){
+async function resetPassword() {
   const email = document.getElementById("email").value;
 
-  if(!email){
+  if (!email) {
     document.getElementById("authMessage").innerText = "Enter your email first.";
     return;
   }
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email,{
-    redirectTo:"https://patriotradar.github.io/patriot-radar-dashboard/"
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/"
   });
 
   document.getElementById("authMessage").innerText =
     error ? error.message : "Check your email to create a new password.";
 }
 
-async function updatePassword(){
+async function updatePassword() {
   const newPassword = document.getElementById("newPassword").value;
 
   const { error } = await supabaseClient.auth.updateUser({
-    password:newPassword
+    password: newPassword
   });
 
-  if(error){
+  if (error) {
     document.getElementById("resetMessage").innerText = error.message;
   } else {
     document.getElementById("resetMessage").innerText = "Password updated.";
@@ -420,12 +749,12 @@ async function updatePassword(){
   }
 }
 
-async function logout(){
+async function logout() {
   await supabaseClient.auth.signOut();
   location.reload();
 }
 
-function copyText(id){
+function copyText(id) {
   const text = document.getElementById(id).innerText;
   navigator.clipboard.writeText(text);
   alert("Copied.");
