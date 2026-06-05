@@ -17,31 +17,27 @@
   --amber:#fbbf24;
   --muted:#8aa99a;
   --white:#f5fff9;
-  --danger:#ff4d4d;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
   margin:0;
-  background:
-    radial-gradient(circle at top,#0b2418 0%,#030504 42%),
-    linear-gradient(180deg,#030504,#000);
+  background:#030504;
   color:var(--white);
   font-family:Arial,sans-serif;
   padding:22px;
+  overflow-x:hidden;
 }
 
-body::before{
-  content:"";
+#matrix{
   position:fixed;
-  inset:0;
-  background:
-    linear-gradient(rgba(0,255,136,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);
-  background-size:28px 28px;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  opacity:.12;
   pointer-events:none;
 }
 
@@ -49,19 +45,10 @@ body::after{
   content:"";
   position:fixed;
   inset:0;
-  background:linear-gradient(
-    to bottom,
-    transparent,
-    rgba(0,255,136,.035),
-    transparent
-  );
-  animation:scanline 5s linear infinite;
+  background:radial-gradient(circle at top,#0b2418 0%,#030504 48%);
+  opacity:.88;
+  z-index:1;
   pointer-events:none;
-}
-
-@keyframes scanline{
-  0%{transform:translateY(-100%)}
-  100%{transform:translateY(100%)}
 }
 
 .app{
@@ -92,9 +79,7 @@ body::after{
   animation:pulse 3s infinite;
 }
 
-.logo-pulse.two{
-  animation-delay:1.2s;
-}
+.logo-pulse.two{animation-delay:1.2s}
 
 .logo-mark{
   position:relative;
@@ -105,12 +90,9 @@ body::after{
   display:flex;
   align-items:center;
   justify-content:center;
-  background:
-    radial-gradient(circle,#10291d 0%,#07110d 65%);
+  background:radial-gradient(circle,#10291d 0%,#07110d 65%);
   border:1px solid rgba(0,255,136,.55);
-  box-shadow:
-    0 0 28px rgba(0,255,136,.25),
-    inset 0 0 25px rgba(0,255,136,.08);
+  box-shadow:0 0 28px rgba(0,255,136,.25), inset 0 0 25px rgba(0,255,136,.08);
   font-size:30px;
   font-weight:900;
   color:var(--green);
@@ -143,7 +125,6 @@ body::after{
   font-size:34px;
   margin:0;
   letter-spacing:2px;
-  color:var(--white);
 }
 
 .logo p{
@@ -179,7 +160,6 @@ body::after{
   border-radius:16px;
   padding:12px;
   text-align:center;
-  box-shadow:0 0 20px rgba(0,255,136,.04);
 }
 
 .stat strong{
@@ -201,9 +181,7 @@ body::after{
   border-radius:22px;
   padding:24px;
   margin-bottom:18px;
-  box-shadow:
-    0 18px 45px rgba(0,0,0,.38),
-    0 0 25px rgba(0,255,136,.035);
+  box-shadow:0 18px 45px rgba(0,0,0,.38),0 0 25px rgba(0,255,136,.035);
   backdrop-filter:blur(16px);
 }
 
@@ -255,11 +233,7 @@ button{
   padding:16px;
   border:none;
   border-radius:14px;
-  background:linear-gradient(
-    135deg,
-    var(--green),
-    var(--green2)
-  );
+  background:linear-gradient(135deg,var(--green),var(--green2));
   color:#031109;
   font-size:16px;
   font-weight:900;
@@ -274,9 +248,7 @@ button{
   color:var(--muted);
 }
 
-.hidden{
-  display:none;
-}
+.hidden{display:none}
 
 .small{
   color:var(--muted);
@@ -328,7 +300,6 @@ button{
   margin-bottom:5px;
   text-transform:uppercase;
 }
-
 .metric strong{
   font-size:22px;
 }
@@ -401,6 +372,8 @@ button{
 
 <body>
 
+<canvas id="matrix"></canvas>
+
 <div class="app">
 
   <div class="logo">
@@ -455,33 +428,24 @@ button{
     </p>
 
     <label>Email</label>
-    <input
-      id="email"
-      type="email"
-      placeholder="operator@domain.com"
-    >
+    <input id="email" type="email" placeholder="operator@domain.com">
 
     <label>Password</label>
-    <input
-      id="password"
-      type="password"
-      placeholder="Enter password"
-    >
+    <input id="password" type="password" placeholder="Enter password">
 
     <button onclick="login()">
       Authenticate
     </button>
 
-    <button
-      class="ghost"
-      onclick="resetPassword()">
+    <button class="ghost" onclick="resetPassword()">
       Reset Password
     </button>
 
     <p id="authMessage" class="small"></p>
 
   </div>
-    <div id="resetBox" class="card hidden">
+
+  <div id="resetBox" class="card hidden">
 
     <h2>PASSWORD RESET</h2>
 
@@ -504,8 +468,7 @@ button{
     <p id="resetMessage" class="small"></p>
 
   </div>
-
-  <div id="dashboard" class="hidden">
+    <div id="dashboard" class="hidden">
 
     <div class="topbar">
 
@@ -519,9 +482,7 @@ button{
         </div>
       </div>
 
-      <button
-        class="logout"
-        onclick="logout()">
+      <button class="logout" onclick="logout()">
         Logout
       </button>
 
@@ -545,64 +506,36 @@ button{
 
       <h2>PRIMARY TARGET</h2>
 
-      <span class="tag tag-warning">
-        HIGH PRIORITY
-      </span>
+      <span class="tag tag-warning">HIGH PRIORITY</span>
+      <span class="tag">TRENDING</span>
+      <span class="tag">ENGAGEMENT</span>
 
-      <span class="tag">
-        TRENDING
-      </span>
+      <p><strong>Keyword:</strong> British Army</p>
 
-      <span class="tag">
-        ENGAGEMENT
-      </span>
+      <p><strong>Question:</strong></p>
 
-      <p>
-        <strong>Keyword:</strong>
-        British Army
-      </p>
-
-      <p>
-        <strong>Question:</strong>
-      </p>
-
-      <div
-        id="question"
-        class="question-box">
-
+      <div id="question" class="question-box">
         Should Britain invest more in the British Army?
-
       </div>
 
       <button onclick="copyText('question')">
         Copy Question
       </button>
 
-      <p>
-        <strong>Caption:</strong>
-      </p>
+      <p><strong>Caption:</strong></p>
 
-      <div
-        id="caption"
-        class="caption-box">
-
-        British Army is trending today.
-        What do you think?
-
+      <div id="caption" class="caption-box">
+        British Army is trending today. What do you think?
       </div>
 
       <button onclick="copyText('caption')">
         Copy Caption
       </button>
 
-      <p>
-        <strong>Affiliate Product:</strong>
-      </p>
+      <p><strong>Affiliate Product:</strong></p>
 
       <div class="caption-box">
-
         British Army history books
-
       </div>
 
     </div>
@@ -612,67 +545,47 @@ button{
       <h2>INTELLIGENCE FEED</h2>
 
       <div class="trend">
-
         <div>
           <strong>UK Politics</strong><br>
           <span>High comment potential</span>
         </div>
-
-        <strong class="score">
-          63
-        </strong>
-
+        <strong class="score">63</strong>
       </div>
 
       <div class="trend">
-
         <div>
           <strong>Veterans</strong><br>
           <span>Strong follower potential</span>
         </div>
-
-        <strong class="score">
-          58
-        </strong>
-
+        <strong class="score">58</strong>
       </div>
 
       <div class="trend">
-
         <div>
           <strong>Union Jack</strong><br>
           <span>Identity topic</span>
         </div>
-
-        <strong class="score">
-          52
-        </strong>
-
+        <strong class="score">52</strong>
       </div>
 
       <div class="trend">
-
         <div>
           <strong>Armed Forces</strong><br>
           <span>Patriotic audience fit</span>
         </div>
-
-        <strong class="score">
-          49
-        </strong>
-
+        <strong class="score">49</strong>
       </div>
 
     </div>
 
     <div class="footer">
-      PATRIOT RADAR v2.0
-      • COMMAND NETWORK ACTIVE
+      PATRIOT RADAR v2.1 • COMMAND NETWORK ACTIVE
     </div>
 
   </div>
 
 </div>
+
 <script>
 const SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
@@ -722,16 +635,23 @@ async function resetPassword() {
   const email = document.getElementById("email").value;
 
   if (!email) {
-    document.getElementById("authMessage").innerText = "Enter your email first.";
+    document.getElementById("authMessage").innerText =
+      "Enter your email first.";
     return;
   }
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-    redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/"
-  });
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(
+    email,
+    {
+      redirectTo:
+        "https://patriotradar.github.io/patriot-radar-dashboard/"
+    }
+  );
 
   document.getElementById("authMessage").innerText =
-    error ? error.message : "Check your email to create a new password.";
+    error
+      ? error.message
+      : "Check your email to create a new password.";
 }
 
 async function updatePassword() {
@@ -744,7 +664,8 @@ async function updatePassword() {
   if (error) {
     document.getElementById("resetMessage").innerText = error.message;
   } else {
-    document.getElementById("resetMessage").innerText = "Password updated.";
+    document.getElementById("resetMessage").innerText =
+      "Password updated.";
     showDashboard();
   }
 }
@@ -760,6 +681,60 @@ function copyText(id) {
   alert("Copied.");
 }
 
+function startMatrix() {
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  const symbols =
+    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const fontSize = 16;
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = [];
+
+  for (let i = 0; i < columns; i++) {
+    drops[i] = Math.random() * -100;
+  }
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff88";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const text =
+        symbols[Math.floor(Math.random() * symbols.length)];
+
+      ctx.fillText(
+        text,
+        i * fontSize,
+        drops[i] * fontSize
+      );
+
+      if (
+        drops[i] * fontSize > canvas.height &&
+        Math.random() > 0.975
+      ) {
+        drops[i] = 0;
+      }
+
+      drops[i]++;
+    }
+  }
+
+  setInterval(draw, 45);
+}
+
+startMatrix();
 checkSession();
 </script>
 
