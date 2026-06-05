@@ -60,6 +60,15 @@ body {
   font-size: 36px;
   margin: 0;
   letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.flag {
+  height: 28px;
+  border-radius: 3px;
 }
 
 .logo p {
@@ -266,8 +275,17 @@ button {
 
   <div class="logo">
     <div class="logo-mark">PR</div>
-    <h1>Patriot Radar</h1>
-    <p>Real-Time UK Trend Intelligence</p>
+
+    <h1>
+      <img
+        class="flag"
+        src="https://flagcdn.com/w40/gb.png"
+        alt="UK flag"
+      >
+      Patriot Radar
+    </h1>
+
+    <p>UK Trend Intelligence Platform</p>
     <div class="badge">Member Access</div>
   </div>
 
@@ -383,7 +401,7 @@ button {
     </div>
 
     <div class="footer">
-      Patriot Radar v1.2 — live Supabase results coming next.
+      Patriot Radar v1.3 — live Supabase results coming next.
     </div>
 
   </div>
