@@ -740,6 +740,17 @@ async function loadLiveStats() {
     document.getElementById("opportunitiesFound").textContent =
       results.filter(r => Number(r.viral_score || 0) >= 40).length;
     document.getElementById("scannerUptime").textContent = "LIVE";
+    const top = results.sort((a,b) =>
+  Number(b.viral_score || 0) - Number(a.viral_score || 0)
+)[0];
+
+if (top) {
+  document.getElementById("question").innerText =
+    top.question || "No question available";
+
+  document.getElementById("caption").innerText =
+    top.caption || "No caption available";
+}
   } catch (err) {
     console.error(err);
   }
