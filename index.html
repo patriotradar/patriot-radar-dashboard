@@ -1,8 +1,9 @@
-#<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<h1>PATRIOT RADAR TEST</h1>
+<title>Patriot Radar - Intelligence Command</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -15,29 +16,29 @@
   --green:#00ff88;
   --green2:#00b86b;
   --amber:#fbbf24;
+  --red:#ff4444;
+  --blue:#4dc9f6;
   --muted:#8aa99a;
   --white:#f5fff9;
 }
 
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-  margin:0;
-  background:#030504;
+  background:var(--bg);
   color:var(--white);
-  font-family:Arial,sans-serif;
-  padding:22px;
+  font-family:'Segoe UI',Arial,sans-serif;
+  padding:16px;
   overflow-x:hidden;
+  min-height:100vh;
 }
 
 #matrix{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   z-index:0;
-  opacity:.12;
+  opacity:.1;
   pointer-events:none;
 }
 
@@ -52,7 +53,7 @@ body::after{
 }
 
 .app{
-  max-width:480px;
+  max-width:520px;
   margin:0 auto;
   position:relative;
   z-index:2;
@@ -60,15 +61,14 @@ body::after{
 
 .logo{
   text-align:center;
-  margin-top:24px;
-  margin-bottom:28px;
+  margin-top:20px;
+  margin-bottom:24px;
 }
 
 .logo-wrap{
   position:relative;
-  width:104px;
-  height:104px;
-  margin:0 auto 16px auto;
+  width:96px;height:96px;
+  margin:0 auto 14px auto;
 }
 
 .logo-pulse{
@@ -78,40 +78,33 @@ body::after{
   border:1px solid rgba(0,255,136,.35);
   animation:pulse 3s infinite;
 }
-
 .logo-pulse.two{animation-delay:1.2s}
 
 .logo-mark{
   position:relative;
-  width:86px;
-  height:86px;
+  width:80px;height:80px;
   border-radius:50%;
-  margin:9px auto;
+  margin:8px auto;
   display:flex;
   align-items:center;
   justify-content:center;
   background:radial-gradient(circle,#10291d 0%,#07110d 65%);
   border:1px solid rgba(0,255,136,.55);
-  box-shadow:0 0 28px rgba(0,255,136,.25), inset 0 0 25px rgba(0,255,136,.08);
-  font-size:30px;
+  box-shadow:0 0 28px rgba(0,255,136,.25),inset 0 0 25px rgba(0,255,136,.08);
+  font-size:26px;
   font-weight:900;
   color:var(--green);
   letter-spacing:1px;
 }
 
 .logo-mark::before{
-  content:"";
-  position:absolute;
-  width:70%;
-  height:1px;
+  content:"";position:absolute;
+  width:70%;height:1px;
   background:rgba(0,255,136,.45);
 }
-
 .logo-mark::after{
-  content:"";
-  position:absolute;
-  height:70%;
-  width:1px;
+  content:"";position:absolute;
+  height:70%;width:1px;
   background:rgba(0,255,136,.35);
 }
 
@@ -122,54 +115,60 @@ body::after{
 }
 
 .logo h1{
-  font-size:34px;
+  font-size:30px;
   margin:0;
   letter-spacing:2px;
 }
 
 .logo p{
   color:var(--muted);
-  margin-top:10px;
-  font-size:14px;
+  margin-top:8px;
+  font-size:13px;
   letter-spacing:1px;
 }
 
 .badge{
   display:inline-block;
-  margin-top:16px;
-  padding:9px 16px;
+  margin-top:14px;
+  padding:8px 14px;
   border-radius:999px;
   background:rgba(0,255,136,.1);
   border:1px solid rgba(0,255,136,.45);
   color:var(--green);
-  font-size:13px;
+  font-size:12px;
   font-weight:bold;
   letter-spacing:.5px;
+}
+
+.last-updated{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:10px;
+  letter-spacing:.3px;
 }
 
 .stats{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
-  margin-bottom:18px;
+  gap:8px;
+  margin-bottom:16px;
 }
 
 .stat{
   background:rgba(11,18,15,.82);
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:12px;
+  border-radius:14px;
+  padding:12px 8px;
   text-align:center;
 }
-
 .stat strong{
   display:block;
   font-size:18px;
   color:var(--green);
 }
-
 .stat span{
-  font-size:10.5px;
+  font-size:10px;
   color:var(--muted);
   text-transform:uppercase;
   letter-spacing:.5px;
@@ -178,17 +177,16 @@ body::after{
 .card{
   background:rgba(11,18,15,.92);
   border:1px solid var(--border);
-  border-radius:22px;
-  padding:24px;
-  margin-bottom:18px;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:16px;
   box-shadow:0 18px 45px rgba(0,0,0,.38),0 0 25px rgba(0,255,136,.035);
   backdrop-filter:blur(16px);
 }
 
 h2{
   color:var(--green);
-  font-size:26px;
-  margin-top:0;
+  font-size:20px;
   margin-bottom:8px;
   letter-spacing:1px;
   text-transform:uppercase;
@@ -196,16 +194,16 @@ h2{
 
 .intro{
   color:var(--muted);
-  font-size:14px;
+  font-size:13px;
   line-height:1.5;
-  margin-bottom:22px;
+  margin-bottom:18px;
 }
 
 label{
   display:block;
   color:var(--muted);
-  font-size:12px;
-  margin-bottom:7px;
+  font-size:11px;
+  margin-bottom:6px;
   font-weight:bold;
   text-transform:uppercase;
   letter-spacing:.7px;
@@ -213,16 +211,15 @@ label{
 
 input{
   width:100%;
-  padding:16px;
-  margin-bottom:16px;
-  border-radius:14px;
+  padding:14px;
+  margin-bottom:14px;
+  border-radius:12px;
   border:1px solid var(--border);
-  font-size:16px;
+  font-size:15px;
   background:#07100c;
   color:white;
   outline:none;
 }
-
 input:focus{
   border-color:var(--green);
   box-shadow:0 0 12px rgba(0,255,136,.18);
@@ -230,16 +227,17 @@ input:focus{
 
 button{
   width:100%;
-  padding:16px;
+  padding:14px;
   border:none;
-  border-radius:14px;
+  border-radius:12px;
   background:linear-gradient(135deg,var(--green),var(--green2));
   color:#031109;
-  font-size:16px;
+  font-size:15px;
   font-weight:900;
-  margin-top:10px;
+  margin-top:8px;
   text-transform:uppercase;
   letter-spacing:.8px;
+  cursor:pointer;
 }
 
 .ghost{
@@ -252,7 +250,7 @@ button{
 
 .small{
   color:var(--muted);
-  font-size:13px;
+  font-size:12px;
   text-align:center;
   line-height:1.5;
 }
@@ -261,7 +259,7 @@ button{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:16px;
+  margin-bottom:14px;
 }
 
 .status{
@@ -272,8 +270,8 @@ button{
 
 .logout{
   width:auto;
-  padding:10px 14px;
-  font-size:12px;
+  padding:9px 14px;
+  font-size:11px;
   margin:0;
   background:#13231b;
   color:var(--green);
@@ -282,88 +280,203 @@ button{
 .metric-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px;
-  margin-bottom:18px;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.metric-grid.three{
+  grid-template-columns:1fr 1fr 1fr;
 }
 
 .metric{
   background:var(--panel2);
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px;
+  border-radius:14px;
+  padding:12px;
 }
-
 .metric span{
   display:block;
   color:var(--muted);
-  font-size:11px;
-  margin-bottom:5px;
+  font-size:10px;
+  margin-bottom:4px;
   text-transform:uppercase;
+  letter-spacing:.3px;
 }
 .metric strong{
-  font-size:22px;
+  font-size:20px;
 }
 
-.score{
+.score{color:var(--green)}
+
+.tag{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:bold;
+  margin-right:5px;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+
+.tag-viral{
+  color:#ff6b6b;
+  border:1px solid rgba(255,107,107,.4);
+  background:rgba(255,107,107,.1);
+}
+.tag-strong{
+  color:var(--amber);
+  border:1px solid rgba(251,191,36,.4);
+  background:rgba(251,191,36,.08);
+}
+.tag-uptick{
   color:var(--green);
+  border:1px solid rgba(0,255,136,.25);
+  background:rgba(0,255,136,.08);
+}
+.tag-stable{
+  color:var(--blue);
+  border:1px solid rgba(77,201,246,.3);
+  background:rgba(77,201,246,.08);
+}
+.tag-falling{
+  color:var(--muted);
+  border:1px solid rgba(138,169,154,.3);
+  background:rgba(138,169,154,.08);
 }
 
 .question-box,
 .caption-box{
   background:#07100c;
   border:1px solid var(--border);
-  border-radius:18px;
-  padding:16px;
-  margin:14px 0;
+  border-radius:14px;
+  padding:14px;
+  margin:10px 0;
   line-height:1.45;
 }
 
-.question-box{
-  font-size:18px;
-}
+.question-box{font-size:16px}
 
-.tag{
-  display:inline-block;
-  padding:7px 10px;
-  border-radius:999px;
-  background:rgba(0,255,136,.08);
-  border:1px solid rgba(0,255,136,.25);
-  color:var(--green);
-  font-size:11px;
-  font-weight:bold;
-  margin-right:6px;
-  margin-bottom:8px;
-  text-transform:uppercase;
-}
-
-.tag-warning{
-  color:var(--amber);
-  border-color:rgba(251,191,36,.4);
-  background:rgba(251,191,36,.08);
-}
-
-.trend{
-  padding:14px 0;
-  border-bottom:1px solid var(--border);
+.primary-detail{
   display:flex;
   justify-content:space-between;
-  gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(31,58,45,.5);
 }
-
-.trend:last-child{
-  border-bottom:none;
-}
-
-.trend span{
+.primary-detail:last-child{border-bottom:none}
+.primary-detail .label{
   color:var(--muted);
   font-size:12px;
+  text-transform:uppercase;
 }
+.primary-detail .value{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.opp-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px;
+}
+.opp-table th{
+  color:var(--muted);
+  font-size:9px;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  padding:8px 4px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.opp-table td{
+  padding:10px 4px;
+  border-bottom:1px solid rgba(31,58,45,.35);
+  vertical-align:middle;
+}
+.opp-table tr:last-child td{border-bottom:none}
+
+.opp-rank{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:rgba(0,255,136,.12);
+  color:var(--green);
+  font-weight:bold;
+  font-size:10px;
+}
+
+.opp-keyword{
+  font-weight:bold;
+  font-size:12px;
+}
+
+.trend-item{
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+}
+.trend-item:last-child{border-bottom:none}
+
+.trend-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.trend-keyword{
+  font-weight:bold;
+  font-size:14px;
+}
+
+.trend-metrics{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:6px;
+}
+
+.trend-metric{
+  font-size:11px;
+  color:var(--muted);
+}
+.trend-metric b{
+  color:var(--white);
+}
+
+.trend-product{
+  font-size:11px;
+  color:var(--green2);
+  margin-top:4px;
+}
+
+.trend-question{
+  font-size:11px;
+  color:var(--muted);
+  font-style:italic;
+  margin-top:3px;
+}
+
+.copy-btn{
+  width:auto;
+  padding:6px 12px;
+  font-size:10px;
+  margin:4px 4px 0 0;
+  background:#13231b;
+  color:var(--green);
+  display:inline-block;
+}
+
+.rise-positive{color:#00ff88}
+.rise-negative{color:#ff4444}
 
 .footer{
   text-align:center;
   color:var(--muted);
   font-size:11px;
-  margin-top:24px;
+  margin-top:20px;
   padding-bottom:30px;
 }
 
@@ -377,210 +490,70 @@ button{
 <div class="app">
 
   <div class="logo">
-
     <div class="logo-wrap">
       <div class="logo-pulse"></div>
       <div class="logo-pulse two"></div>
-
-      <div class="logo-mark">
-        PR
-      </div>
+      <div class="logo-mark">PR</div>
     </div>
-
     <h1>PATRIOT RADAR</h1>
-
-    <p>
-      INTELLIGENCE COMMAND
-    </p>
-
-    <div class="badge">
-      SCANNER STATUS: ACTIVE
-    </div>
-
+    <p>INTELLIGENCE COMMAND</p>
+    <div class="badge">SCANNER STATUS: ACTIVE</div>
+    <div class="last-updated" id="lastUpdated"></div>
   </div>
 
   <div class="stats">
-
-  <div class="stat">
-    <strong id="keywordsAnalysed">0</strong>
-    <span>Keywords Analysed</span>
+    <div class="stat">
+      <strong id="keywordsAnalysed">0</strong>
+      <span>Keywords Analysed</span>
+    </div>
+    <div class="stat">
+      <strong id="opportunitiesFound">0</strong>
+      <span>Opportunities</span>
+    </div>
+    <div class="stat">
+      <strong id="scannerUptime">LIVE</strong>
+      <span>Scanner Uptime</span>
+    </div>
   </div>
-
-  <div class="stat">
-    <strong id="opportunitiesFound">0</strong>
-    <span>Opportunities Found</span>
-  </div>
-
-  <div class="stat">
-    <strong id="scannerUptime">LIVE</strong>
-    <span>Scanner Uptime</span>
-  </div>
-
-</div>
 
   <div id="authBox" class="card">
-
     <h2>COMMAND ACCESS</h2>
-
-    <p class="intro">
-      Authorised personnel only.
-      Authenticate to access live intelligence feeds.
-    </p>
-
+    <p class="intro">Authorised personnel only. Authenticate to access live intelligence feeds.</p>
     <label>Email</label>
     <input id="email" type="email" placeholder="operator@domain.com">
-
     <label>Password</label>
     <input id="password" type="password" placeholder="Enter password">
-
-    <button onclick="login()">
-      Authenticate
-    </button>
-
-    <button class="ghost" onclick="resetPassword()">
-      Reset Password
-    </button>
-
+    <button onclick="login()">Authenticate</button>
+    <button class="ghost" onclick="resetPassword()">Reset Password</button>
     <p id="authMessage" class="small"></p>
-
   </div>
 
   <div id="resetBox" class="card hidden">
-
     <h2>PASSWORD RESET</h2>
-
-    <p class="intro">
-      Create a new password to regain command access.
-    </p>
-
+    <p class="intro">Create a new password to regain command access.</p>
     <label>New Password</label>
-
-    <input
-      id="newPassword"
-      type="password"
-      placeholder="Create new password"
-    >
-
-    <button onclick="updatePassword()">
-      Save Password
-    </button>
-
+    <input id="newPassword" type="password" placeholder="Create new password">
+    <button onclick="updatePassword()">Save Password</button>
     <p id="resetMessage" class="small"></p>
-
   </div>
-    <div id="dashboard" class="hidden">
+
+  <div id="dashboard" class="hidden">
 
     <div class="topbar">
-
       <div>
-        <div class="status">
-          ● LIVE SCANNER ONLINE
-        </div>
-
-        <div class="small" style="text-align:left;">
-          Intelligence feed active
-        </div>
+        <div class="status">&#9679; LIVE SCANNER ONLINE</div>
+        <div class="small" style="text-align:left">Intelligence feed active</div>
       </div>
-
-      <button class="logout" onclick="logout()">
-        Logout
-      </button>
-
+      <button class="logout" onclick="logout()">Logout</button>
     </div>
 
-    <div class="metric-grid">
+    <div id="primaryTarget"></div>
 
-      <div class="metric">
-        <span>Threat Score</span>
-        <strong class="score">66/100</strong>
-      </div>
+    <div id="topOpportunities"></div>
 
-      <div class="metric">
-        <span>Primary Vector</span>
-        <strong>Question</strong>
-      </div>
+    <div id="intelligenceFeed"></div>
 
-    </div>
-
-    <div class="card">
-
-      <h2>PRIMARY TARGET</h2>
-
-      <span class="tag tag-warning">HIGH PRIORITY</span>
-      <span class="tag">TRENDING</span>
-      <span class="tag">ENGAGEMENT</span>
-
-      <p><strong>Keyword:</strong> British Army</p>
-
-      <p><strong>Question:</strong></p>
-
-      <div id="question" class="question-box">
-        Should Britain invest more in the British Army?
-      </div>
-
-      <button onclick="copyText('question')">
-        Copy Question
-      </button>
-
-      <p><strong>Caption:</strong></p>
-
-      <div id="caption" class="caption-box">
-        British Army is trending today. What do you think?
-      </div>
-
-      <button onclick="copyText('caption')">
-        Copy Caption
-      </button>
-
-      <p><strong>Affiliate Product:</strong></p>
-
-      <div class="caption-box">
-        British Army history books
-      </div>
-
-    </div>
-
-    <div class="card">
-
-      <h2>INTELLIGENCE FEED</h2>
-
-      <div class="trend">
-        <div>
-          <strong>UK Politics</strong><br>
-          <span>High comment potential</span>
-        </div>
-        <strong class="score">63</strong>
-      </div>
-
-      <div class="trend">
-        <div>
-          <strong>Veterans</strong><br>
-          <span>Strong follower potential</span>
-        </div>
-        <strong class="score">58</strong>
-      </div>
-
-      <div class="trend">
-        <div>
-          <strong>Union Jack</strong><br>
-          <span>Identity topic</span>
-        </div>
-        <strong class="score">52</strong>
-      </div>
-
-      <div class="trend">
-        <div>
-          <strong>Armed Forces</strong><br>
-          <span>Patriotic audience fit</span>
-        </div>
-        <strong class="score">49</strong>
-      </div>
-
-    </div>
-
-    <div class="footer">
-      PATRIOT RADAR v2.1 • COMMAND NETWORK ACTIVE
-    </div>
+    <div class="footer">PATRIOT RADAR v3.0 &bull; COMMAND NETWORK ACTIVE</div>
 
   </div>
 
@@ -589,14 +562,185 @@ button{
 <script>
 const SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+function classifyTrend(viralScore, risePercent) {
+  if (risePercent > 50 && viralScore >= 40) return "Viral Breakout";
+  if (risePercent > 20 && viralScore >= 30) return "Strong Upward Trend";
+  if (risePercent > 0) return "Slight Uptick";
+  if (risePercent >= -10) return "Stable";
+  return "Falling";
+}
+
+function trendTagClass(classification) {
+  switch (classification) {
+    case "Viral Breakout": return "tag-viral";
+    case "Strong Upward Trend": return "tag-strong";
+    case "Slight Uptick": return "tag-uptick";
+    case "Stable": return "tag-stable";
+    case "Falling": return "tag-falling";
+    default: return "tag-stable";
+  }
+}
+
+function calcVitality(item) {
+  var vs = Number(item.viral_score || 0);
+  var ls = Number(item.latest_score || 0);
+  var rp = Math.max(0, Number(item.rise_percent || 0));
+  var v = (vs * 0.5 + ls * 0.3 + rp * 0.2) / 10;
+  return Math.min(10, v).toFixed(1);
+}
+
+function formatRise(rp) {
+  var val = Number(rp || 0);
+  var cls = val >= 0 ? "rise-positive" : "rise-negative";
+  var sign = val >= 0 ? "+" : "";
+  return '<span class="' + cls + '">' + sign + val.toFixed(1) + '%</span>';
+}
+
+function titleCase(str) {
+  return str.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+}
+
+function formatTimestamp(dateStr) {
+  var d = new Date(dateStr);
+  if (isNaN(d.getTime())) return "";
+  var day = String(d.getDate()).padStart(2, "0");
+  var month = String(d.getMonth() + 1).padStart(2, "0");
+  var year = d.getFullYear();
+  var hours = String(d.getHours()).padStart(2, "0");
+  var mins = String(d.getMinutes()).padStart(2, "0");
+  return day + "/" + month + "/" + year + " " + hours + ":" + mins;
+}
+
+function renderPrimaryTarget(item) {
+  var classification = classifyTrend(Number(item.viral_score || 0), Number(item.rise_percent || 0));
+  var vitality = calcVitality(item);
+  var tagCls = trendTagClass(classification);
+  var keyword = titleCase(item.keyword || "");
+
+  var html = '<div class="card">';
+  html += '<h2>PRIMARY TARGET</h2>';
+  html += '<span class="tag ' + tagCls + '">' + classification + '</span>';
+  html += '<span class="tag tag-uptick">TOP RANKED</span>';
+
+  html += '<div style="margin-top:14px">';
+  html += '<div class="primary-detail"><span class="label">Keyword</span><span class="value">' + keyword + '</span></div>';
+  html += '<div class="primary-detail"><span class="label">Viral Score</span><span class="value score">' + Number(item.viral_score || 0).toFixed(1) + '</span></div>';
+  html += '<div class="primary-detail"><span class="label">Rise</span><span class="value">' + formatRise(item.rise_percent) + '</span></div>';
+  html += '<div class="primary-detail"><span class="label">24-Hour Score</span><span class="value">' + Number(item.latest_score || 0) + '</span></div>';
+  html += '<div class="primary-detail"><span class="label">Vitality</span><span class="value score">' + vitality + '/10</span></div>';
+  html += '<div class="primary-detail"><span class="label">Trend</span><span class="value"><span class="tag ' + tagCls + '" style="margin:0">' + classification + '</span></span></div>';
+  html += '</div>';
+
+  html += '<p style="margin-top:14px;color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:bold;letter-spacing:.5px">Top Related Product</p>';
+  html += '<div class="caption-box">' + (item.product || "N/A") + '</div>';
+
+  html += '<p style="margin-top:8px;color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:bold;letter-spacing:.5px">Engagement Question</p>';
+  html += '<div id="primaryQuestion" class="question-box">' + (item.question || "N/A") + '</div>';
+  html += '<button class="copy-btn" onclick="copyText(\'primaryQuestion\')">Copy Question</button>';
+
+  html += '<p style="margin-top:12px;color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:bold;letter-spacing:.5px">Caption</p>';
+  html += '<div id="primaryCaption" class="caption-box">' + (item.caption || "N/A") + '</div>';
+  html += '<button class="copy-btn" onclick="copyText(\'primaryCaption\')">Copy Caption</button>';
+
+  html += '</div>';
+  return html;
+}
+
+function renderTopOpportunities(items) {
+  var top5 = items.slice(0, 5);
+  var html = '<div class="card">';
+  html += '<h2>TOP 5 OPPORTUNITIES</h2>';
+  html += '<div style="overflow-x:auto">';
+  html += '<table class="opp-table">';
+  html += '<tr><th>#</th><th>Keyword</th><th>Viral</th><th>Rise</th><th>24hr</th><th>Vitality</th><th>Product</th></tr>';
+
+  for (var i = 0; i < top5.length; i++) {
+    var item = top5[i];
+    var vitality = calcVitality(item);
+    html += '<tr>';
+    html += '<td><span class="opp-rank">' + (i + 1) + '</span></td>';
+    html += '<td class="opp-keyword">' + titleCase(item.keyword || "") + '</td>';
+    html += '<td class="score">' + Number(item.viral_score || 0).toFixed(1) + '</td>';
+    html += '<td>' + formatRise(item.rise_percent) + '</td>';
+    html += '<td>' + Number(item.latest_score || 0) + '</td>';
+    html += '<td class="score">' + vitality + '</td>';
+    html += '<td style="font-size:10px;color:var(--green2)">' + (item.product || "N/A") + '</td>';
+    html += '</tr>';
+  }
+
+  html += '</table>';
+  html += '</div></div>';
+  return html;
+}
+
+function renderIntelligenceFeed(items) {
+  var html = '<div class="card">';
+  html += '<h2>INTELLIGENCE FEED</h2>';
+
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var classification = classifyTrend(Number(item.viral_score || 0), Number(item.rise_percent || 0));
+    var vitality = calcVitality(item);
+    var tagCls = trendTagClass(classification);
+
+    html += '<div class="trend-item">';
+    html += '<div class="trend-header">';
+    html += '<span class="trend-keyword">' + titleCase(item.keyword || "") + '</span>';
+    html += '<span class="tag ' + tagCls + '" style="margin:0;font-size:9px">' + classification + '</span>';
+    html += '</div>';
+
+    html += '<div class="trend-metrics">';
+    html += '<span class="trend-metric">Viral: <b class="score">' + Number(item.viral_score || 0).toFixed(1) + '</b></span>';
+    html += '<span class="trend-metric">Rise: <b>' + formatRise(item.rise_percent) + '</b></span>';
+    html += '<span class="trend-metric">24hr: <b>' + Number(item.latest_score || 0) + '</b></span>';
+    html += '<span class="trend-metric">Vitality: <b class="score">' + vitality + '/10</b></span>';
+    html += '</div>';
+
+    html += '<div class="trend-product">Product: ' + (item.product || "N/A") + '</div>';
+    html += '<div class="trend-question">"' + (item.question || "N/A") + '"</div>';
+    html += '</div>';
+  }
+
+  html += '</div>';
+  return html;
+}
+
+async function loadLiveStats() {
+  try {
+    var res = await fetch("results.json?cache=" + Date.now());
+    var lastModified = res.headers.get("Last-Modified");
+    var data = await res.json();
+    var results = Array.isArray(data) ? data : data.results || [];
+
+    results.sort(function(a, b) {
+      return Number(b.viral_score || 0) - Number(a.viral_score || 0);
+    });
+
+    document.getElementById("keywordsAnalysed").textContent = results.length;
+    document.getElementById("opportunitiesFound").textContent =
+      results.filter(function(r) { return Number(r.viral_score || 0) >= 40; }).length;
+
+    if (lastModified) {
+      document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(lastModified);
+    } else {
+      document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(new Date().toISOString());
+    }
+
+    if (results.length > 0) {
+      document.getElementById("primaryTarget").innerHTML = renderPrimaryTarget(results[0]);
+      document.getElementById("topOpportunities").innerHTML = renderTopOpportunities(results);
+      document.getElementById("intelligenceFeed").innerHTML = renderIntelligenceFeed(results);
+    }
+
+  } catch (err) {
+    console.error("Failed to load results:", err);
+  }
+}
 
 async function checkSession() {
-  const { data } = await supabaseClient.auth.getSession();
+  var sessionData = await supabaseClient.auth.getSession();
 
   if (window.location.hash.includes("type=recovery")) {
     document.getElementById("authBox").classList.add("hidden");
@@ -605,7 +749,7 @@ async function checkSession() {
     return;
   }
 
-  if (data.session) {
+  if (sessionData.data.session) {
     showDashboard();
   } else {
     document.getElementById("authBox").classList.remove("hidden");
@@ -621,18 +765,13 @@ function showDashboard() {
 }
 
 async function login() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
+  var email = document.getElementById("email").value.trim();
+  var password = document.getElementById("password").value;
   document.getElementById("authMessage").innerText = "Authenticating...";
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    document.getElementById("authMessage").innerText = error.message;
+  var result = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+  if (result.error) {
+    document.getElementById("authMessage").innerText = result.error.message;
   } else {
     document.getElementById("authMessage").innerText = "";
     showDashboard();
@@ -640,31 +779,24 @@ async function login() {
 }
 
 async function resetPassword() {
-  const email = document.getElementById("email").value.trim();
-
+  var email = document.getElementById("email").value.trim();
   if (!email) {
     document.getElementById("authMessage").innerText = "Enter your email first.";
     return;
   }
-
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+  var result = await supabaseClient.auth.resetPasswordForEmail(email, {
     redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/"
   });
-
-  document.getElementById("authMessage").innerText = error
-    ? error.message
+  document.getElementById("authMessage").innerText = result.error
+    ? result.error.message
     : "Check your email to create a new password.";
 }
 
 async function updatePassword() {
-  const newPassword = document.getElementById("newPassword").value;
-
-  const { error } = await supabaseClient.auth.updateUser({
-    password: newPassword
-  });
-
-  if (error) {
-    document.getElementById("resetMessage").innerText = error.message;
+  var newPassword = document.getElementById("newPassword").value;
+  var result = await supabaseClient.auth.updateUser({ password: newPassword });
+  if (result.error) {
+    document.getElementById("resetMessage").innerText = result.error.message;
   } else {
     document.getElementById("resetMessage").innerText = "Password updated.";
     showDashboard();
@@ -677,83 +809,48 @@ async function logout() {
 }
 
 function copyText(id) {
-  const text = document.getElementById(id).innerText;
-  navigator.clipboard.writeText(text);
-  alert("Copied.");
+  var el = document.getElementById(id);
+  if (el) {
+    navigator.clipboard.writeText(el.innerText);
+    alert("Copied!");
+  }
 }
 
 function startMatrix() {
-  const canvas = document.getElementById("matrix");
-  const ctx = canvas.getContext("2d");
+  var canvas = document.getElementById("matrix");
+  var ctx = canvas.getContext("2d");
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
-
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
-  const symbols = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const fontSize = 16;
-  let columns = Math.floor(canvas.width / fontSize);
-  let drops = [];
-
-  for (let i = 0; i < columns; i++) {
+  var symbols = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  var fontSize = 16;
+  var columns = Math.floor(canvas.width / fontSize);
+  var drops = [];
+  for (var i = 0; i < columns; i++) {
     drops[i] = Math.random() * -100;
   }
 
   function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.fillStyle = "rgba(0,0,0,0.08)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     ctx.fillStyle = "#00ff88";
     ctx.font = fontSize + "px monospace";
 
-    for (let i = 0; i < drops.length; i++) {
-      const text = symbols[Math.floor(Math.random() * symbols.length)];
-
+    for (var i = 0; i < drops.length; i++) {
+      var text = symbols[Math.floor(Math.random() * symbols.length)];
       ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-      if (
-        drops[i] * fontSize > canvas.height &&
-        Math.random() > 0.975
-      ) {
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
         drops[i] = 0;
       }
-
       drops[i]++;
     }
   }
-
   setInterval(draw, 45);
-}
-
-async function loadLiveStats() {
-  try {
-    const res = await fetch("results.json?cache=" + Date.now());
-    const data = await res.json();
-
-    const results = Array.isArray(data) ? data : data.results || [];
-
-    document.getElementById("keywordsAnalysed").textContent = results.length;
-    document.getElementById("opportunitiesFound").textContent =
-      results.filter(r => Number(r.viral_score || 0) >= 40).length;
-    document.getElementById("scannerUptime").textContent = "LIVE";
-    const top = results.sort((a,b) =>
-  Number(b.viral_score || 0) - Number(a.viral_score || 0)
-)[0];
-
-if (top) {
-  document.getElementById("question").innerText =
-    top.question || "No question available";
-
-  document.getElementById("caption").innerText =
-    top.caption || "No caption available";
-}
-  } catch (err) {
-    console.error(err);
-  }
 }
 
 loadLiveStats();
