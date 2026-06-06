@@ -9,11 +9,11 @@
 
 <style>
 :root{
-  --bg:#060d09;
-  --panel:#142e22;
-  --panel2:#1a3a2c;
-  --border:#306850;
-  --border-glow:#40886a;
+  --bg:#050a07;
+  --panel:#182e22;
+  --panel2:#1e3a2c;
+  --border:#3a7058;
+  --border-glow:#48906e;
   --green:#00ff88;
   --green2:#00e87a;
   --green-dim:#0a4a2a;
@@ -21,7 +21,7 @@
   --red:#ff4757;
   --blue:#4dc9f6;
   --purple:#a78bfa;
-  --muted:#b0d8c8;
+  --muted:#c8e8d8;
   --white:#ffffff;
 }
 
@@ -105,7 +105,7 @@ body::after{
   100%{transform:scale(.8);opacity:0}
 }
 
-.logo h1{font-size:28px;margin:0;letter-spacing:3px;font-weight:900;text-shadow:0 0 15px rgba(0,255,136,.2)}
+.logo h1{font-size:30px;margin:0;letter-spacing:3px;font-weight:900;text-shadow:0 0 20px rgba(0,255,136,.3)}
 .logo p{color:var(--muted);margin-top:6px;font-size:12px;letter-spacing:2px;text-transform:uppercase}
 
 .scanner-badge{
@@ -135,8 +135,8 @@ body::after{
 }
 
 .stat{
-  background:linear-gradient(180deg,#1a3828 0%,#142e20 100%);
-  border:1px solid #407058;border-radius:14px;
+  background:linear-gradient(180deg,#1c3e2c 0%,#163424 100%);
+  border:1px solid #48806a;border-radius:14px;
   padding:14px 8px;text-align:center;
   position:relative;overflow:hidden;
 }
@@ -144,15 +144,15 @@ body::after{
   content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(0,255,136,.3),transparent);
 }
-.stat strong{display:block;font-size:22px;color:var(--green);margin-bottom:2px;text-shadow:0 0 10px rgba(0,255,136,.3)}
-.stat span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.stat strong{display:block;font-size:24px;color:var(--green);margin-bottom:2px;text-shadow:0 0 12px rgba(0,255,136,.4)}
+.stat span{font-size:10px;color:#e0f5ea;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
 
 .card{
-  background:linear-gradient(180deg,#1a3828 0%,#142e20 100%);
-  border:1px solid #407058;border-radius:18px;
+  background:linear-gradient(180deg,#1c3e2c 0%,#163424 100%);
+  border:1px solid #48806a;border-radius:18px;
   padding:22px;margin-bottom:16px;
   position:relative;overflow:hidden;
-  box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 4px rgba(0,255,136,.15);
+  box-shadow:0 12px 30px rgba(0,0,0,.3),0 0 6px rgba(0,255,136,.12);
 }
 .card::before{
   content:"";position:absolute;top:0;left:0;right:0;height:1px;
@@ -170,9 +170,9 @@ body::after{
 }
 
 h2{
-  color:var(--green);font-size:16px;
+  color:var(--green);font-size:18px;
   letter-spacing:2px;text-transform:uppercase;font-weight:900;
-  text-shadow:0 0 12px rgba(0,255,136,.3);
+  text-shadow:0 0 15px rgba(0,255,136,.4);
 }
 
 .section-icon{
@@ -213,7 +213,7 @@ button:active{transform:scale(.98)}
   display:flex;justify-content:space-between;align-items:center;
   margin-bottom:14px;
 }
-.status{color:var(--green);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.status{color:var(--green);font-size:13px;font-weight:900;display:flex;align-items:center;gap:6px;text-shadow:0 0 8px rgba(0,255,136,.3)}
 .logout{
   width:auto;padding:8px 14px;font-size:10px;margin:0;
   background:rgba(0,255,136,.06);color:var(--green);
@@ -276,9 +276,10 @@ button:active{transform:scale(.98)}
 }
 
 .primary-keyword{
-  font-size:26px;font-weight:900;
+  font-size:28px;font-weight:900;
   letter-spacing:1px;margin:14px 0 6px 0;
   text-transform:uppercase;
+  text-shadow:0 0 8px rgba(255,255,255,.1);
 }
 
 .primary-grid{
@@ -287,15 +288,15 @@ button:active{transform:scale(.98)}
 }
 
 .primary-metric{
-  background:#163020;
-  border:1px solid rgba(0,255,136,.35);
+  background:#1a3a28;
+  border:1px solid rgba(0,255,136,.4);
   border-radius:12px;padding:12px;position:relative;
 }
 .primary-metric .pm-label{
-  font-size:9px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;
+  font-size:10px;color:#d0eee0;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-weight:600;
 }
-.primary-metric .pm-value{font-size:22px;font-weight:900;color:var(--green);text-shadow:0 0 8px rgba(0,255,136,.25)}
+.primary-metric .pm-value{font-size:24px;font-weight:900;color:var(--green);text-shadow:0 0 10px rgba(0,255,136,.35)}
 .primary-metric .pm-value.white{color:var(--white)}
 
 .primary-metric-wide{
@@ -320,7 +321,7 @@ button:active{transform:scale(.98)}
 }
 
 .primary-content-box{
-  background:#122a1c;border:1px solid var(--border);
+  background:#1a3828;border:1px solid var(--border);
   border-radius:12px;padding:14px;line-height:1.5;font-size:14px;
 }
 
@@ -363,8 +364,8 @@ button:active{transform:scale(.98)}
 .opp-item{
   display:flex;align-items:center;gap:10px;
   padding:12px;margin-bottom:8px;
-  background:#183424;
-  border:1px solid #407058;
+  background:#1e4030;
+  border:1px solid #48806a;
   border-radius:14px;
   position:relative;overflow:hidden;
 }
@@ -403,7 +404,7 @@ button:active{transform:scale(.98)}
   margin-bottom:4px;flex-wrap:wrap;gap:4px;
 }
 
-.feed-keyword{font-weight:800;font-size:15px}
+.feed-keyword{font-weight:900;font-size:16px}
 
 .feed-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
 
@@ -413,8 +414,8 @@ button:active{transform:scale(.98)}
 }
 
 .feed-metric{
-  background:#163020;
-  border:1px solid #407058;
+  background:#1a3a28;
+  border:1px solid #48806a;
   border-radius:8px;padding:8px 6px;text-align:center;
 }
 .feed-metric .fm-label{
@@ -439,8 +440,8 @@ button:active{transform:scale(.98)}
 
 /* ── THEME ANALYSIS ── */
 .theme-item{
-  background:#183424;
-  border:1px solid #407058;
+  background:#1e4030;
+  border:1px solid #48806a;
   border-radius:14px;padding:14px;
   margin-bottom:8px;position:relative;overflow:hidden;
 }
@@ -575,7 +576,7 @@ button:active{transform:scale(.98)}
 .product-item{
   display:flex;align-items:center;gap:8px;
   padding:8px 10px;margin-bottom:4px;
-  background:#122a1c;border:1px solid var(--border);
+  background:#1a3828;border:1px solid var(--border);
   border-radius:10px;font-size:12px;
 }
 .product-icon{
