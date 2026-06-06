@@ -464,6 +464,128 @@ button:active{transform:scale(.98)}
 }
 .theme-kw.active{color:var(--green);border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.08)}
 
+/* ── MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.75);
+  z-index:100;
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+}
+.modal{
+  background:linear-gradient(180deg,#0d1a14 0%,#080e0b 100%);
+  border:1px solid var(--border-glow);
+  border-radius:18px;padding:24px;
+  width:100%;max-width:420px;
+  box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(0,255,136,.08);
+  position:relative;
+}
+.modal h3{
+  color:var(--green);font-size:15px;
+  text-transform:uppercase;letter-spacing:1.5px;
+  margin-bottom:4px;
+}
+.modal .modal-kw{
+  font-size:22px;font-weight:900;margin-bottom:16px;
+  text-transform:uppercase;
+}
+.modal-close{
+  position:absolute;top:14px;right:16px;
+  width:auto;padding:6px 12px;font-size:10px;margin:0;
+  background:rgba(255,71,87,.1);color:var(--red);
+  border:1px solid rgba(255,71,87,.3);
+}
+.modal-input-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:16px;
+}
+.modal-field label{margin-bottom:3px;font-size:9px}
+.modal-field input{
+  margin-bottom:0;padding:11px;font-size:15px;
+  text-align:center;
+}
+.modal-submit{
+  margin-top:4px;
+}
+.modal-history{
+  margin-top:14px;border-top:1px solid var(--border);padding-top:12px;
+}
+.modal-history-title{
+  font-size:10px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.8px;margin-bottom:8px;
+}
+.history-entry{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid rgba(26,48,40,.4);
+  font-size:11px;
+}
+.history-entry:last-child{border-bottom:none}
+.history-entry .he-date{color:var(--muted)}
+.history-entry .he-score{color:var(--green);font-weight:800}
+
+/* ── AUDIENCE INSIGHTS ── */
+.audience-card{border-color:var(--border-glow)}
+
+.audience-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;margin-bottom:6px;
+  background:rgba(10,18,14,.5);
+  border:1px solid var(--border);
+  border-radius:12px;
+}
+.audience-rank{
+  font-size:18px;font-weight:900;color:var(--green);
+  min-width:24px;text-align:center;
+}
+.audience-info{flex:1}
+.audience-kw{font-weight:800;font-size:13px}
+.audience-detail{font-size:10px;color:var(--muted);margin-top:2px}
+.audience-score{
+  font-size:20px;font-weight:900;color:var(--green);
+}
+.audience-bar{
+  width:100%;height:4px;background:rgba(0,255,136,.06);
+  border-radius:99px;margin-top:4px;overflow:hidden;
+}
+.audience-bar-fill{
+  height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--green2),var(--green));
+}
+
+.audience-insight{
+  background:rgba(0,255,136,.04);
+  border:1px solid rgba(0,255,136,.15);
+  border-radius:12px;padding:12px 14px;
+  margin-top:10px;font-size:12px;line-height:1.5;
+  color:var(--white);
+}
+.audience-insight b{color:var(--green)}
+
+.log-perf-btn{
+  width:auto;padding:5px 12px;font-size:8px;
+  margin:6px 0 0 0;
+  background:rgba(167,139,250,.08);color:var(--purple);
+  border:1px solid rgba(167,139,250,.25);
+  letter-spacing:.5px;
+}
+
+/* ── PRODUCT CARDS ── */
+.product-list{margin-top:6px}
+.product-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;margin-bottom:4px;
+  background:#060d09;border:1px solid var(--border);
+  border-radius:10px;font-size:12px;
+}
+.product-icon{
+  width:24px;height:24px;border-radius:6px;
+  background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;flex-shrink:0;
+}
+.product-name{flex:1;font-weight:600}
+.product-type{font-size:9px;color:var(--muted);text-transform:uppercase}
+
 .rise-positive{color:#00ff88}
 .rise-negative{color:#ff4757}
 
@@ -539,14 +661,17 @@ button:active{transform:scale(.98)}
       <button class="logout" onclick="logout()">Logout</button>
     </div>
 
+    <div id="audienceInsights"></div>
     <div id="primaryTarget"></div>
     <div id="topOpportunities"></div>
     <div id="themeAnalysis"></div>
     <div id="intelligenceFeed"></div>
 
-    <div class="footer">PATRIOT RADAR v4.0 &bull; COMMAND NETWORK ACTIVE</div>
+    <div class="footer">PATRIOT RADAR v5.0 &bull; COMMAND NETWORK ACTIVE</div>
   </div>
 </div>
+
+<div id="perfModal" class="modal-overlay hidden"></div>
 
 <script>
 var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
@@ -658,6 +783,331 @@ var HOOK_TEMPLATES = {
     "What does {kw} mean to you?"
   ]
 };
+
+var PRODUCT_MAP = {
+  "churchill": [
+    {name: "Churchill: Walking with Destiny (Biography)", type: "Book"},
+    {name: "Churchill Bust Statue - Bronze Effect", type: "Decor"},
+    {name: "Churchill Famous Quotes Poster Set", type: "Print"},
+    {name: "We Shall Fight on the Beaches Framed Art", type: "Wall Art"}
+  ],
+  "winston churchill": [
+    {name: "The Splendid and the Vile (Erik Larson)", type: "Book"},
+    {name: "Churchill Toby Jug - Collectible", type: "Memorabilia"},
+    {name: "Churchill War Rooms Guide Book", type: "Book"},
+    {name: "Winston Churchill Cufflinks", type: "Accessories"}
+  ],
+  "union jack": [
+    {name: "Premium Union Jack Flag 5x3ft", type: "Flag"},
+    {name: "Union Jack Cushion Cover Set", type: "Home Decor"},
+    {name: "Vintage Union Jack Metal Sign", type: "Wall Art"},
+    {name: "Union Jack Cufflinks - Gift Box", type: "Accessories"}
+  ],
+  "british army": [
+    {name: "British Army: A History (Book)", type: "Book"},
+    {name: "British Army Veteran T-Shirt", type: "Clothing"},
+    {name: "Army Surplus Field Jacket", type: "Clothing"},
+    {name: "Military History Map Print Set", type: "Print"}
+  ],
+  "raf": [
+    {name: "Spitfire Model Kit 1:48 Scale", type: "Model Kit"},
+    {name: "RAF Roundel T-Shirt", type: "Clothing"},
+    {name: "The Few: Battle of Britain (Book)", type: "Book"},
+    {name: "RAF Wings Enamel Pin Badge", type: "Accessories"}
+  ],
+  "royal navy": [
+    {name: "Royal Navy Heritage Mug", type: "Drinkware"},
+    {name: "Trafalgar: Nelson's Victory (Book)", type: "Book"},
+    {name: "HMS Victory Model Ship Kit", type: "Model Kit"},
+    {name: "Royal Navy Ensign Flag", type: "Flag"}
+  ],
+  "veterans": [
+    {name: "Veterans Charity Wristband", type: "Charity"},
+    {name: "Thank a Veteran T-Shirt", type: "Clothing"},
+    {name: "Military Service Photo Frame", type: "Gift"},
+    {name: "Veterans Stories: Oral Histories (Book)", type: "Book"}
+  ],
+  "remembrance": [
+    {name: "Enamel Poppy Brooch - Gift Boxed", type: "Accessories"},
+    {name: "Remembrance Wreath - Door Hanging", type: "Home Decor"},
+    {name: "Lest We Forget Wall Plaque", type: "Wall Art"},
+    {name: "Poppy Seeds Collection Pack", type: "Garden"}
+  ],
+  "england": [
+    {name: "St George Cross Flag 5x3ft", type: "Flag"},
+    {name: "England Rugby/Football Scarf", type: "Sports"},
+    {name: "Proud to be English T-Shirt", type: "Clothing"},
+    {name: "England Heritage Pin Badge Set", type: "Accessories"}
+  ],
+  "britain": [
+    {name: "Great Britain Heritage Map Print", type: "Print"},
+    {name: "Best of British Gift Hamper", type: "Gift"},
+    {name: "Proudly British T-Shirt", type: "Clothing"},
+    {name: "Britain: A History (Book)", type: "Book"}
+  ],
+  "london": [
+    {name: "London Skyline Canvas Print", type: "Wall Art"},
+    {name: "London Icons Mug Collection", type: "Drinkware"},
+    {name: "London A-Z Vintage Map Poster", type: "Print"},
+    {name: "London History Walking Guide", type: "Book"}
+  ],
+  "armed forces": [
+    {name: "Armed Forces Day T-Shirt", type: "Clothing"},
+    {name: "Support Our Troops Car Sticker", type: "Accessories"},
+    {name: "Armed Forces Covenant Badge", type: "Accessories"},
+    {name: "Military Fitness Training Book", type: "Book"}
+  ],
+  "poppy": [
+    {name: "Crystal Poppy Brooch - Premium", type: "Accessories"},
+    {name: "Poppy Car Badge - Chrome", type: "Accessories"},
+    {name: "Ceramic Poppy - Tower of London Style", type: "Collectible"},
+    {name: "Poppy Seed Growing Kit", type: "Garden"}
+  ],
+  "monarchy": [
+    {name: "The Crown & Country (Book)", type: "Book"},
+    {name: "Royal Coat of Arms Wall Plaque", type: "Decor"},
+    {name: "Kings & Queens of England Poster", type: "Print"},
+    {name: "Royal Collection Tea Caddy", type: "Gift"}
+  ],
+  "king": [
+    {name: "King Charles III Coronation Mug", type: "Memorabilia"},
+    {name: "Royal Cypher Pin Badge", type: "Accessories"},
+    {name: "God Save the King Flag", type: "Flag"},
+    {name: "Royal Biography Collection", type: "Book"}
+  ],
+  "royal family": [
+    {name: "Royal Family Photo Book", type: "Book"},
+    {name: "Buckingham Palace Jigsaw Puzzle", type: "Gift"},
+    {name: "Royal Collection Commemorative Plate", type: "Collectible"},
+    {name: "Royal Family Timeline Poster", type: "Print"}
+  ],
+  "battle of britain": [
+    {name: "Battle of Britain Memorial Print", type: "Wall Art"},
+    {name: "Spitfire & Hurricane Model Set", type: "Model Kit"},
+    {name: "The Most Dangerous Enemy (Book)", type: "Book"},
+    {name: "Battle of Britain 75th Pin Badge", type: "Collectible"}
+  ],
+  "spitfire": [
+    {name: "Spitfire MK IX Model Kit 1:48", type: "Model Kit"},
+    {name: "Spitfire Blueprint Poster - Large", type: "Print"},
+    {name: "Spitfire Pilot Memoirs (Book)", type: "Book"},
+    {name: "Spitfire Metal Wall Art Sign", type: "Wall Art"}
+  ],
+  "dunkirk spirit": [
+    {name: "Dunkirk: The History (Book)", type: "Book"},
+    {name: "Dunkirk Little Ships Print", type: "Wall Art"},
+    {name: "Spirit of Dunkirk T-Shirt", type: "Clothing"},
+    {name: "Dunkirk 1940 Documentary DVD", type: "Media"}
+  ],
+  "immigration": [
+    {name: "British Values Discussion Book", type: "Book"},
+    {name: "Protect Our Borders Merchandise", type: "Clothing"},
+    {name: "UK Border Control History", type: "Book"},
+    {name: "British Identity Debate Collection", type: "Book"}
+  ],
+  "patriotism": [
+    {name: "Proudly Patriotic T-Shirt Range", type: "Clothing"},
+    {name: "British Patriot Pin Badge Set", type: "Accessories"},
+    {name: "This Is My Country Poster", type: "Print"},
+    {name: "Patriotic Gift Box - British Made", type: "Gift"}
+  ]
+};
+
+function getProducts(keyword) {
+  var kw = (keyword || "").toLowerCase();
+  if (PRODUCT_MAP[kw]) return PRODUCT_MAP[kw];
+  for (var key in PRODUCT_MAP) {
+    if (kw.indexOf(key) !== -1 || key.indexOf(kw) !== -1) return PRODUCT_MAP[key];
+  }
+  var gk = getGroupKey(keyword);
+  var defaults = {
+    military: [{name:"Military Heritage Collection",type:"Book"},{name:"Armed Forces T-Shirt",type:"Clothing"},{name:"Military Pin Badge Set",type:"Accessories"}],
+    royal: [{name:"Royal Collection Gift",type:"Gift"},{name:"Royal Heritage Book",type:"Book"},{name:"Royal Commemorative Mug",type:"Drinkware"}],
+    national_identity: [{name:"Proud to be British T-Shirt",type:"Clothing"},{name:"British Heritage Gift Set",type:"Gift"},{name:"Union Jack Accessories",type:"Accessories"}],
+    history: [{name:"British History Collection",type:"Book"},{name:"Historical Timeline Poster",type:"Print"},{name:"Heritage Documentary Set",type:"Media"}],
+    remembrance: [{name:"Poppy Brooch - Premium",type:"Accessories"},{name:"Lest We Forget Plaque",type:"Wall Art"},{name:"Remembrance Gift Set",type:"Gift"}],
+    culture: [{name:"British Culture Heritage Book",type:"Book"},{name:"Iconic Britain Poster Set",type:"Print"},{name:"British Symbols Pin Set",type:"Accessories"}],
+    heritage: [{name:"British Heritage Map Print",type:"Print"},{name:"Heritage Gift Hamper",type:"Gift"},{name:"Traditional British Crafts Book",type:"Book"}]
+  };
+  return defaults[gk] || [{name:"British Patriotic Gift",type:"Gift"},{name:"Heritage Collection Book",type:"Book"}];
+}
+
+var PERF_KEY = "patriot_radar_performance";
+
+function loadPerfData() {
+  try { return JSON.parse(localStorage.getItem(PERF_KEY) || "{}"); }
+  catch(e) { return {}; }
+}
+
+function savePerfData(data) {
+  localStorage.setItem(PERF_KEY, JSON.stringify(data));
+}
+
+function calcAudienceScore(entry) {
+  var views = Number(entry.views || 0);
+  var likes = Number(entry.likes || 0);
+  var comments = Number(entry.comments || 0);
+  var shares = Number(entry.shares || 0);
+  if (views === 0) return 0;
+  var engagement = (likes * 1 + comments * 3 + shares * 5);
+  var rate = (engagement / views) * 100;
+  return Math.min(10, rate).toFixed(1);
+}
+
+function getKeywordAudienceScore(keyword) {
+  var data = loadPerfData();
+  var kw = (keyword || "").toLowerCase();
+  if (!data[kw] || data[kw].length === 0) return null;
+  var total = 0;
+  for (var i = 0; i < data[kw].length; i++) {
+    total += Number(data[kw][i].score || 0);
+  }
+  return (total / data[kw].length).toFixed(1);
+}
+
+function getThemeAudienceScore(groupLabel) {
+  var data = loadPerfData();
+  var scores = [];
+  for (var kw in data) {
+    if (getGroup(kw) === groupLabel && data[kw].length > 0) {
+      var total = 0;
+      for (var i = 0; i < data[kw].length; i++) total += Number(data[kw][i].score || 0);
+      scores.push(total / data[kw].length);
+    }
+  }
+  if (scores.length === 0) return null;
+  var sum = 0;
+  for (var j = 0; j < scores.length; j++) sum += scores[j];
+  return (sum / scores.length).toFixed(1);
+}
+
+function getAllAudienceScores() {
+  var data = loadPerfData();
+  var results = [];
+  for (var kw in data) {
+    if (data[kw].length > 0) {
+      var total = 0;
+      for (var i = 0; i < data[kw].length; i++) total += Number(data[kw][i].score || 0);
+      results.push({ keyword: kw, score: (total / data[kw].length).toFixed(1), entries: data[kw].length });
+    }
+  }
+  results.sort(function(a, b) { return Number(b.score) - Number(a.score); });
+  return results;
+}
+
+function openPerfModal(keyword) {
+  var kw = (keyword || "").toLowerCase();
+  var data = loadPerfData();
+  var history = data[kw] || [];
+
+  var h = '<div class="modal">';
+  h += '<button class="modal-close" onclick="closePerfModal()">CLOSE</button>';
+  h += '<h3>Log Performance</h3>';
+  h += '<div class="modal-kw">' + titleCase(kw) + '</div>';
+
+  h += '<div class="modal-input-grid">';
+  h += '<div class="modal-field"><label>Views</label><input id="perfViews" type="number" placeholder="0"></div>';
+  h += '<div class="modal-field"><label>Likes</label><input id="perfLikes" type="number" placeholder="0"></div>';
+  h += '<div class="modal-field"><label>Comments</label><input id="perfComments" type="number" placeholder="0"></div>';
+  h += '<div class="modal-field"><label>Shares</label><input id="perfShares" type="number" placeholder="0"></div>';
+  h += '</div>';
+
+  h += '<button class="modal-submit" onclick="submitPerf(\'' + kw.replace(/'/g, "\\'") + '\')">Save Performance Data</button>';
+
+  if (history.length > 0) {
+    h += '<div class="modal-history">';
+    h += '<div class="modal-history-title">Previous Entries (' + history.length + ')</div>';
+    for (var i = history.length - 1; i >= Math.max(0, history.length - 5); i--) {
+      var e = history[i];
+      h += '<div class="history-entry">';
+      h += '<span class="he-date">' + (e.date || "N/A") + '</span>';
+      h += '<span>V:' + e.views + ' L:' + e.likes + ' C:' + e.comments + ' S:' + e.shares + '</span>';
+      h += '<span class="he-score">' + e.score + '/10</span>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '</div>';
+  document.getElementById("perfModal").innerHTML = h;
+  document.getElementById("perfModal").classList.remove("hidden");
+}
+
+function closePerfModal() {
+  document.getElementById("perfModal").classList.add("hidden");
+}
+
+function submitPerf(keyword) {
+  var views = document.getElementById("perfViews").value;
+  var likes = document.getElementById("perfLikes").value;
+  var comments = document.getElementById("perfComments").value;
+  var shares = document.getElementById("perfShares").value;
+
+  if (!views || views === "0") { alert("Please enter at least the view count."); return; }
+
+  var entry = { views: views, likes: likes || "0", comments: comments || "0", shares: shares || "0" };
+  entry.score = calcAudienceScore(entry);
+
+  var now = new Date();
+  var pad = function(n) { return String(n).padStart(2, "0"); };
+  entry.date = pad(now.getDate()) + "/" + pad(now.getMonth() + 1) + "/" + now.getFullYear();
+
+  var data = loadPerfData();
+  if (!data[keyword]) data[keyword] = [];
+  data[keyword].push(entry);
+  savePerfData(data);
+
+  closePerfModal();
+  loadLiveStats();
+  alert("Performance logged! Audience Score: " + entry.score + "/10");
+}
+
+function renderAudienceInsights(results) {
+  var allScores = getAllAudienceScores();
+  if (allScores.length === 0) return "";
+
+  var h = '<div class="card audience-card card-glow">';
+  h += '<div class="card-header"><h2>Audience Intelligence</h2><div class="section-icon">&#9733;</div></div>';
+
+  for (var i = 0; i < Math.min(5, allScores.length); i++) {
+    var s = allScores[i];
+    var pct = Number(s.score) * 10;
+    h += '<div class="audience-item">';
+    h += '<div class="audience-rank">' + (i + 1) + '</div>';
+    h += '<div class="audience-info">';
+    h += '<div class="audience-kw">' + titleCase(s.keyword) + '</div>';
+    h += '<div class="audience-detail">' + s.entries + ' post' + (s.entries > 1 ? 's' : '') + ' logged | ' + getGroup(s.keyword) + '</div>';
+    h += '<div class="audience-bar"><div class="audience-bar-fill" style="width:' + pct + '%"></div></div>';
+    h += '</div>';
+    h += '<div class="audience-score">' + s.score + '</div>';
+    h += '</div>';
+  }
+
+  if (allScores.length >= 2) {
+    var best = allScores[0];
+    var trending = null;
+    for (var j = 0; j < results.length; j++) {
+      var rKw = results[j].keyword.toLowerCase();
+      if (rKw !== best.keyword) {
+        var rScore = getKeywordAudienceScore(rKw);
+        if (rScore !== null && Number(rScore) < Number(best.score)) {
+          trending = { keyword: results[j].keyword, audienceScore: rScore };
+          break;
+        }
+      }
+    }
+
+    h += '<div class="audience-insight">';
+    h += 'Your audience responds best to <b>' + titleCase(best.keyword) + '</b> content (score: ' + best.score + '/10).';
+    if (trending) {
+      h += ' <b>' + titleCase(trending.keyword) + '</b> is trending but your audience only scores it ' + trending.audienceScore + '/10. Consider prioritising ' + titleCase(best.keyword) + ' content instead.';
+    }
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
 
 function generateHooks(keyword) {
   var gk = getGroupKey(keyword);
@@ -786,10 +1236,20 @@ function renderPrimary(item) {
   h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Trend</div></div><span class="tag ' + tc + '" style="margin:0">' + cl + '</span></div>';
   h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Confidence</div></div><span class="tag ' + confCls + '" style="margin:0">' + conf + '</span></div>';
   h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Best Content Type</div></div><span class="tag tag-content" style="margin:0">' + contentType + '</span></div>';
+
+  var audScore = getKeywordAudienceScore(item.keyword);
+  if (audScore !== null) {
+    h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Audience Score</div></div><span class="tag tag-conf-high" style="margin:0;font-size:11px">' + audScore + '/10</span></div>';
+  }
   h += '</div>';
 
-  h += '<div class="primary-section-label">Top Related Product</div>';
-  h += '<div class="primary-content-box" style="color:var(--green2);font-weight:700">' + (item.product || "N/A") + '</div>';
+  h += '<div class="primary-section-label">Recommended Products</div>';
+  h += '<div class="product-list">';
+  var prods = getProducts(item.keyword);
+  for (var pi = 0; pi < prods.length; pi++) {
+    h += '<div class="product-item"><div class="product-icon">&#9733;</div><div class="product-name">' + prods[pi].name + '</div><div class="product-type">' + prods[pi].type + '</div></div>';
+  }
+  h += '</div>';
 
   h += '<div class="primary-section-label">Auto-Generated Hooks (tap to copy)</div>';
   h += '<ul class="hooks-list">';
@@ -801,6 +1261,8 @@ function renderPrimary(item) {
   h += '<div class="primary-section-label">Caption</div>';
   h += '<div id="primaryCaption" class="primary-content-box" style="font-size:13px;color:var(--muted)">' + (item.caption || "N/A") + '</div>';
   h += '<button class="copy-btn" onclick="copyText(\'primaryCaption\')">&#9776; Copy Caption</button>';
+
+  h += '<div style="margin-top:16px"><button class="log-perf-btn" onclick="openPerfModal(\'' + (item.keyword || "").replace(/'/g, "\\'") + '\')">&#9998; Log Performance</button></div>';
 
   h += '</div>';
   return h;
@@ -932,9 +1394,19 @@ function renderFeed(items) {
     h += '</div>';
 
     h += '<div class="feed-bar"><div class="feed-bar-fill" style="width:' + Math.min(100, vs) + '%"></div></div>';
-    h += '<div class="feed-product">Product: ' + (item.product || "N/A") + '</div>';
 
-    h += '<div style="margin-top:8px"><button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:0">&#9776; Show Hooks</button></div>';
+    var feedProds = getProducts(item.keyword);
+    h += '<div class="feed-product">Top Product: ' + feedProds[0].name + ' (' + feedProds[0].type + ')</div>';
+
+    var feedAud = getKeywordAudienceScore(item.keyword);
+    if (feedAud !== null) {
+      h += '<div style="margin-top:4px;font-size:10px">Audience Score: <b class="rise-positive">' + feedAud + '/10</b></div>';
+    }
+
+    h += '<div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap">';
+    h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:0">&#9776; Show Hooks</button>';
+    h += '<button class="log-perf-btn" onclick="openPerfModal(\'' + (item.keyword || "").replace(/'/g, "\\'") + '\')">&#9998; Log Performance</button>';
+    h += '</div>';
     h += '<ul class="hooks-list hidden" id="' + hookId + '">';
     for (var j = 0; j < hooks.length; j++) {
       h += '<li onclick="copyHook(this)"><span class="hook-num">' + (j + 1) + '</span><span class="hook-text">' + hooks[j] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
@@ -975,6 +1447,7 @@ async function loadLiveStats() {
     }
 
     if (results.length > 0) {
+      document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
       document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
       document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
       document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
