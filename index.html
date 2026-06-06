@@ -42,7 +42,7 @@ body{
   top:0;left:0;
   width:100%;height:100%;
   z-index:0;
-  opacity:.08;
+  opacity:.35;
   pointer-events:none;
 }
 
@@ -50,8 +50,8 @@ body::after{
   content:"";
   position:fixed;
   inset:0;
-  background:radial-gradient(ellipse at 50% 0%,#0a2818 0%,#030504 55%);
-  opacity:.9;
+  background:radial-gradient(ellipse at 50% 0%,rgba(5,20,10,.6) 0%,rgba(3,5,4,.75) 55%);
+  opacity:1;
   z-index:1;
   pointer-events:none;
 }
@@ -840,27 +840,59 @@ function copyText(id) {
 function startMatrix() {
   var c = document.getElementById("matrix");
   var ctx = c.getContext("2d");
-  function resize() { c.width = window.innerWidth; c.height = window.innerHeight; }
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+    cols = Math.floor(c.width / fs);
+    while (drops.length < cols) drops.push(Math.random() * -50);
+    while (speeds.length < cols) speeds.push(0.3 + Math.random() * 0.7);
+    while (bright.length < cols) bright.push(Math.random() < 0.15);
+  }
+
+  var katakana = "゠ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミ";
+  var sym = katakana + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*<>{}[]";
+  var fs = 14;
+  var cols = 0;
+  var drops = [];
+  var speeds = [];
+  var bright = [];
+
   resize();
   window.addEventListener("resize", resize);
-  var sym = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  var fs = 16;
-  var cols = Math.floor(c.width / fs);
-  var drops = [];
-  for (var i = 0; i < cols; i++) drops[i] = Math.random() * -100;
 
   function draw() {
-    ctx.fillStyle = "rgba(0,0,0,0.06)";
+    ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.fillRect(0, 0, c.width, c.height);
-    ctx.fillStyle = "#00ff88";
-    ctx.font = fs + "px monospace";
-    for (var i = 0; i < drops.length; i++) {
-      ctx.fillText(sym[Math.floor(Math.random() * sym.length)], i * fs, drops[i] * fs);
-      if (drops[i] * fs > c.height && Math.random() > 0.975) drops[i] = 0;
-      drops[i]++;
+    ctx.font = "bold " + fs + "px monospace";
+
+    for (var i = 0; i < cols; i++) {
+      var ch = sym[Math.floor(Math.random() * sym.length)];
+      var x = i * fs;
+      var y = drops[i] * fs;
+
+      if (bright[i]) {
+        ctx.fillStyle = "#aaffcc";
+        ctx.shadowColor = "#00ff88";
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.fillStyle = "#00ff88";
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+      }
+      ctx.fillText(ch, x, y);
+
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = "transparent";
+
+      if (drops[i] * fs > c.height && Math.random() > 0.975) {
+        drops[i] = 0;
+        speeds[i] = 0.3 + Math.random() * 0.7;
+        bright[i] = Math.random() < 0.15;
+      }
+      drops[i] += speeds[i];
     }
   }
-  setInterval(draw, 45);
+  setInterval(draw, 33);
 }
 
 loadLiveStats();
