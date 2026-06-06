@@ -676,6 +676,12 @@ button:active{transform:scale(.98)}
     <div class="stat"><strong id="viralCount">0</strong><span>Viral Alerts</span></div>
   </div>
 
+  <div class="brightness-bar">
+    <label>Brightness</label>
+    <input type="range" id="brightnessSlider" min="80" max="200" value="140" oninput="adjustBrightness(this.value)">
+    <span class="brightness-val" id="brightnessVal">140%</span>
+  </div>
+
   <div id="authBox" class="card card-glow">
     <h2>Command Access</h2>
     <p class="intro">Authorised personnel only. Authenticate to access live intelligence feeds.</p>
@@ -701,12 +707,6 @@ button:active{transform:scale(.98)}
     <div class="topbar">
       <div class="status"><span class="scanner-dot"></span>LIVE SCANNER ONLINE</div>
       <button class="logout" onclick="logout()">Logout</button>
-    </div>
-
-    <div class="brightness-bar">
-      <label>Brightness</label>
-      <input type="range" id="brightnessSlider" min="80" max="200" value="140" oninput="adjustBrightness(this.value)">
-      <span class="brightness-val" id="brightnessVal">140%</span>
     </div>
 
     <div id="audienceInsights"></div>
