@@ -1,0 +1,54 @@
+{
+  "groups": {
+    "military": {
+      "label": "Military",
+      "keywords": ["raf", "royal air force", "royal navy", "veterans", "armed forces", "british army", "battle of britain", "spitfire", "hurricane", "national service", "victoria cross", "george cross", "the few", "armed forces day"]
+    },
+    "royal": {
+      "label": "Royal",
+      "keywords": ["king", "monarchy", "royal family", "buckingham palace", "crown", "loyal to the crown", "for king and country"]
+    },
+    "national_identity": {
+      "label": "National Identity",
+      "keywords": ["england", "britain", "great britain", "united kingdom", "british", "english", "union jack", "union flag", "british flag", "english flag", "st george", "st george's day", "national pride", "british pride", "english pride", "patriotism", "national identity", "british identity", "proudly british", "proudly english", "loyal to britain"]
+    },
+    "history": {
+      "label": "History",
+      "keywords": ["churchill", "winston churchill", "ve day", "d-day", "normandy", "dunkirk spirit", "dunkirk", "finest hour spirit", "spirit of 1940"]
+    },
+    "remembrance": {
+      "label": "Remembrance",
+      "keywords": ["remembrance", "poppy", "cenotaph", "war memorial", "sacrifice", "honour", "duty", "courage"]
+    },
+    "culture": {
+      "label": "Culture & Symbols",
+      "keywords": ["britannia", "rule britannia", "land of hope and glory", "keep calm and carry on", "british bulldog", "british lion", "english lion", "lionheart", "england expects", "green and pleasant land", "white cliffs of dover"]
+    },
+    "heritage": {
+      "label": "Heritage & Institutions",
+      "keywords": ["heritage", "tradition", "history", "westminster", "parliament", "leadership", "freedom", "democracy"]
+    }
+  },
+  "tiers": {
+    "core": [
+      "england", "britain", "great britain", "united kingdom", "british", "english",
+      "union jack", "union flag", "british flag", "english flag", "st george", "st george's day",
+      "veterans", "armed forces", "remembrance", "poppy", "churchill", "winston churchill",
+      "royal navy", "raf", "royal air force", "british army", "monarchy", "king", "royal family",
+      "national pride", "british pride", "english pride", "patriotism", "national identity", "british identity"
+    ],
+    "supporting": [
+      "battle of britain", "the few", "spitfire", "hurricane", "dunkirk spirit", "ve day", "d-day",
+      "normandy", "white cliffs of dover", "buckingham palace", "westminster", "parliament",
+      "cenotaph", "war memorial", "armed forces day", "victoria cross", "george cross",
+      "national service", "heritage", "tradition", "history", "courage", "honour", "duty",
+      "sacrifice", "leadership", "freedom", "democracy"
+    ],
+    "long_tail": [
+      "british lion", "english lion", "lionheart", "rule britannia", "britannia",
+      "land of hope and glory", "green and pleasant land", "spirit of 1940", "british bulldog",
+      "finest hour spirit", "england expects", "keep calm and carry on", "proudly british",
+      "proudly english", "loyal to britain", "loyal to the crown", "for king and country"
+    ]
+  }
+}

@@ -63,7 +63,6 @@ body::after{
   z-index:2;
 }
 
-/* ── LOGO ── */
 .logo{
   text-align:center;
   margin-top:16px;
@@ -111,77 +110,52 @@ body::after{
 
 .scanner-badge{
   display:inline-flex;align-items:center;gap:8px;
-  margin-top:12px;
-  padding:8px 16px;
-  border-radius:999px;
-  background:rgba(0,255,136,.06);
-  border:1px solid rgba(0,255,136,.3);
-  color:var(--green);
-  font-size:11px;font-weight:700;
-  letter-spacing:1px;
-  text-transform:uppercase;
+  margin-top:12px;padding:8px 16px;border-radius:999px;
+  background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.3);
+  color:var(--green);font-size:11px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;
 }
 
 .scanner-dot{
-  width:7px;height:7px;
-  border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 6px var(--green);
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 6px var(--green);
   animation:blink 2s infinite;
 }
 
-@keyframes blink{
-  0%,100%{opacity:1}
-  50%{opacity:.3}
-}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 .last-updated{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:8px;
-  letter-spacing:.5px;
+  text-align:center;color:var(--muted);
+  font-size:11px;margin-top:8px;letter-spacing:.5px;
 }
 
-/* ── STATS BAR ── */
 .stats{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr;
-  gap:8px;
-  margin-bottom:16px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:8px;margin-bottom:16px;
 }
 
 .stat{
   background:linear-gradient(180deg,rgba(13,23,18,.9) 0%,rgba(8,15,11,.95) 100%);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px 8px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
+  border:1px solid var(--border);border-radius:14px;
+  padding:14px 8px;text-align:center;
+  position:relative;overflow:hidden;
 }
 .stat::after{
-  content:"";position:absolute;top:0;left:0;right:0;
-  height:1px;
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(0,255,136,.3),transparent);
 }
 .stat strong{display:block;font-size:20px;color:var(--green);margin-bottom:2px}
 .stat span{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
 
-/* ── CARDS ── */
 .card{
   background:linear-gradient(180deg,rgba(12,20,16,.95) 0%,rgba(8,14,10,.98) 100%);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:22px;
-  margin-bottom:16px;
-  position:relative;
-  overflow:hidden;
+  border:1px solid var(--border);border-radius:18px;
+  padding:22px;margin-bottom:16px;
+  position:relative;overflow:hidden;
   box-shadow:0 20px 50px rgba(0,0,0,.4),0 0 1px rgba(0,255,136,.15);
 }
 .card::before{
-  content:"";position:absolute;top:0;left:0;right:0;
-  height:1px;
+  content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent 5%,rgba(0,255,136,.25) 50%,transparent 95%);
 }
 
@@ -196,23 +170,17 @@ body::after{
 }
 
 h2{
-  color:var(--green);
-  font-size:16px;
-  letter-spacing:2px;
-  text-transform:uppercase;
-  font-weight:900;
+  color:var(--green);font-size:16px;
+  letter-spacing:2px;text-transform:uppercase;font-weight:900;
 }
 
 .section-icon{
-  width:28px;height:28px;
-  border-radius:8px;
+  width:28px;height:28px;border-radius:8px;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(0,255,136,.08);
-  border:1px solid rgba(0,255,136,.2);
+  background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);
   font-size:13px;
 }
 
-/* ── AUTH ── */
 .intro{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:18px}
 
 label{
@@ -240,7 +208,6 @@ button:active{transform:scale(.98)}
 .hidden{display:none}
 .small{color:var(--muted);font-size:12px;text-align:center;line-height:1.5}
 
-/* ── TOPBAR ── */
 .topbar{
   display:flex;justify-content:space-between;align-items:center;
   margin-bottom:14px;
@@ -252,7 +219,6 @@ button:active{transform:scale(.98)}
   border:1px solid rgba(0,255,136,.2);
 }
 
-/* ── TAGS / BADGES ── */
 .tag{
   display:inline-flex;align-items:center;gap:4px;
   padding:5px 10px;border-radius:999px;
@@ -267,58 +233,68 @@ button:active{transform:scale(.98)}
   box-shadow:0 0 12px rgba(255,71,87,.15);
 }
 .tag-strong{
-  color:var(--amber);
-  background:rgba(251,191,36,.08);
+  color:var(--amber);background:rgba(251,191,36,.08);
   border:1px solid rgba(251,191,36,.35);
   box-shadow:0 0 10px rgba(251,191,36,.08);
 }
 .tag-uptick{
-  color:var(--green);
-  background:rgba(0,255,136,.06);
+  color:var(--green);background:rgba(0,255,136,.06);
   border:1px solid rgba(0,255,136,.25);
 }
 .tag-stable{
-  color:var(--blue);
-  background:rgba(77,201,246,.06);
+  color:var(--blue);background:rgba(77,201,246,.06);
   border:1px solid rgba(77,201,246,.25);
 }
 .tag-falling{
-  color:#8a9a92;
-  background:rgba(138,154,146,.06);
+  color:#8a9a92;background:rgba(138,154,146,.06);
   border:1px solid rgba(138,154,146,.2);
 }
 
-/* ── PRIMARY TARGET ── */
+.tag-conf-high{
+  color:var(--green);background:rgba(0,255,136,.08);
+  border:1px solid rgba(0,255,136,.3);
+}
+.tag-conf-med{
+  color:var(--amber);background:rgba(251,191,36,.08);
+  border:1px solid rgba(251,191,36,.3);
+}
+.tag-conf-low{
+  color:var(--red);background:rgba(255,71,87,.08);
+  border:1px solid rgba(255,71,87,.3);
+}
+
+.tag-content{
+  color:var(--purple);background:rgba(167,139,250,.08);
+  border:1px solid rgba(167,139,250,.3);
+}
+
+.tag-group{
+  color:var(--blue);background:rgba(77,201,246,.06);
+  border:1px solid rgba(77,201,246,.2);
+  font-size:8px;
+}
+
 .primary-keyword{
   font-size:26px;font-weight:900;
-  letter-spacing:1px;
-  margin:14px 0 6px 0;
+  letter-spacing:1px;margin:14px 0 6px 0;
   text-transform:uppercase;
 }
 
 .primary-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin:16px 0;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:8px;margin:16px 0;
 }
 
 .primary-metric{
   background:rgba(10,74,42,.12);
   border:1px solid rgba(0,255,136,.12);
-  border-radius:12px;
-  padding:12px;
-  position:relative;
+  border-radius:12px;padding:12px;position:relative;
 }
 .primary-metric .pm-label{
   font-size:9px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.8px;
-  margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;
 }
-.primary-metric .pm-value{
-  font-size:22px;font-weight:900;
-  color:var(--green);
-}
+.primary-metric .pm-value{font-size:22px;font-weight:900;color:var(--green)}
 .primary-metric .pm-value.white{color:var(--white)}
 
 .primary-metric-wide{
@@ -328,16 +304,10 @@ button:active{transform:scale(.98)}
 
 .score-bar-wrap{
   width:100%;height:6px;
-  background:rgba(0,255,136,.08);
-  border-radius:99px;
-  margin-top:6px;
-  overflow:hidden;
+  background:rgba(0,255,136,.08);border-radius:99px;
+  margin-top:6px;overflow:hidden;
 }
-.score-bar{
-  height:100%;
-  border-radius:99px;
-  transition:width .8s ease;
-}
+.score-bar{height:100%;border-radius:99px;transition:width .8s ease}
 .score-bar-green{background:linear-gradient(90deg,var(--green2),var(--green))}
 .score-bar-amber{background:linear-gradient(90deg,#b8860b,var(--amber))}
 .score-bar-red{background:linear-gradient(90deg,#aa2233,var(--red))}
@@ -349,12 +319,8 @@ button:active{transform:scale(.98)}
 }
 
 .primary-content-box{
-  background:#060d09;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-  line-height:1.5;
-  font-size:14px;
+  background:#060d09;border:1px solid var(--border);
+  border-radius:12px;padding:14px;line-height:1.5;font-size:14px;
 }
 
 .copy-btn{
@@ -362,21 +328,44 @@ button:active{transform:scale(.98)}
   width:auto;padding:6px 14px;font-size:9px;
   margin:6px 6px 0 0;
   background:rgba(0,255,136,.06);color:var(--green);
-  border:1px solid rgba(0,255,136,.2);
-  letter-spacing:.5px;
+  border:1px solid rgba(0,255,136,.2);letter-spacing:.5px;
 }
 
-/* ── TOP 5 OPPORTUNITIES ── */
+/* ── HOOKS ── */
+.hooks-list{
+  list-style:none;padding:0;margin:8px 0 0 0;
+}
+.hooks-list li{
+  background:#060d09;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 14px;
+  margin-bottom:6px;
+  font-size:13px;
+  line-height:1.4;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  cursor:pointer;
+  transition:border-color .2s;
+}
+.hooks-list li:hover{border-color:rgba(0,255,136,.3)}
+.hooks-list li .hook-num{
+  font-size:10px;font-weight:900;color:var(--green);
+  min-width:18px;
+}
+.hooks-list li .hook-text{flex:1}
+.hooks-list li .hook-copy{
+  font-size:8px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.5px;white-space:nowrap;
+}
+
+/* ── TOP 5 ── */
 .opp-item{
   display:flex;align-items:center;gap:10px;
-  padding:12px;
-  margin-bottom:8px;
+  padding:12px;margin-bottom:8px;
   background:rgba(10,18,14,.6);
   border:1px solid var(--border);
   border-radius:14px;
-  transition:border-color .2s;
-  position:relative;
-  overflow:hidden;
+  position:relative;overflow:hidden;
 }
 .opp-item::before{
   content:"";position:absolute;top:0;left:0;bottom:0;
@@ -388,11 +377,9 @@ button:active{transform:scale(.98)}
 .opp-item.rank-4::before,.opp-item.rank-5::before{background:var(--muted)}
 
 .opp-rank{
-  width:28px;height:28px;
-  border-radius:50%;
+  width:28px;height:28px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-weight:900;font-size:12px;
-  flex-shrink:0;
+  font-weight:900;font-size:12px;flex-shrink:0;
 }
 .rank-1 .opp-rank{background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.3)}
 .rank-2 .opp-rank{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.25)}
@@ -404,50 +391,41 @@ button:active{transform:scale(.98)}
 .opp-stats{display:flex;gap:10px;flex-wrap:wrap;font-size:10px;color:var(--muted)}
 .opp-stats b{color:var(--white)}
 .opp-product{font-size:9px;color:var(--green2);margin-top:3px;text-transform:uppercase;letter-spacing:.3px}
+.opp-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
 
-/* ── INTELLIGENCE FEED ── */
-.feed-item{
-  padding:16px 0;
-  border-bottom:1px solid rgba(26,48,40,.6);
-}
+/* ── FEED ── */
+.feed-item{padding:16px 0;border-bottom:1px solid rgba(26,48,40,.6)}
 .feed-item:last-child{border-bottom:none}
 
 .feed-header{
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:8px;
+  margin-bottom:4px;flex-wrap:wrap;gap:4px;
 }
 
 .feed-keyword{font-weight:800;font-size:15px}
 
+.feed-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+
 .feed-metrics{
-  display:grid;
-  grid-template-columns:1fr 1fr 1fr 1fr;
-  gap:6px;
-  margin-bottom:8px;
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;
+  gap:6px;margin-bottom:8px;
 }
 
 .feed-metric{
   background:rgba(10,18,14,.5);
   border:1px solid rgba(26,48,40,.5);
-  border-radius:8px;
-  padding:8px 6px;
-  text-align:center;
+  border-radius:8px;padding:8px 6px;text-align:center;
 }
 .feed-metric .fm-label{
   font-size:8px;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.5px;
-  margin-bottom:2px;
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;
 }
-.feed-metric .fm-value{
-  font-size:14px;font-weight:800;
-}
+.feed-metric .fm-value{font-size:14px;font-weight:800}
 
 .feed-bar{
   width:100%;height:3px;
-  background:rgba(0,255,136,.06);
-  border-radius:99px;
-  margin:8px 0;
-  overflow:hidden;
+  background:rgba(0,255,136,.06);border-radius:99px;
+  margin:8px 0;overflow:hidden;
 }
 .feed-bar-fill{
   height:100%;border-radius:99px;
@@ -458,30 +436,49 @@ button:active{transform:scale(.98)}
 .feed-product{font-size:10px;color:var(--green2)}
 .feed-question{font-size:11px;color:var(--muted);font-style:italic;margin-top:3px}
 
+/* ── THEME ANALYSIS ── */
+.theme-item{
+  background:rgba(10,18,14,.5);
+  border:1px solid var(--border);
+  border-radius:14px;padding:14px;
+  margin-bottom:8px;position:relative;overflow:hidden;
+}
+.theme-item::before{
+  content:"";position:absolute;top:0;left:0;bottom:0;
+  width:3px;background:var(--green);
+}
+.theme-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:6px;
+}
+.theme-name{font-weight:800;font-size:14px}
+.theme-stats{display:flex;gap:12px;font-size:11px;color:var(--muted)}
+.theme-stats b{color:var(--white)}
+.theme-keywords{
+  display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;
+}
+.theme-kw{
+  font-size:9px;padding:3px 8px;border-radius:999px;
+  background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);
+  color:var(--muted);
+}
+.theme-kw.active{color:var(--green);border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.08)}
+
 .rise-positive{color:#00ff88}
 .rise-negative{color:#ff4757}
 
-/* ── SCAN LINE ── */
 .scanline{
-  position:absolute;top:0;left:0;right:0;
-  height:2px;
+  position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,transparent,rgba(0,255,136,.4),transparent);
-  animation:scanmove 4s linear infinite;
-  opacity:.5;
+  animation:scanmove 4s linear infinite;opacity:.5;
 }
-@keyframes scanmove{
-  0%{top:0}
-  100%{top:100%}
-}
+@keyframes scanmove{0%{top:0}100%{top:100%}}
 
-/* ── FOOTER ── */
 .footer{
   text-align:center;color:var(--muted);
-  font-size:10px;margin-top:20px;padding-bottom:30px;
-  letter-spacing:1px;
+  font-size:10px;margin-top:20px;padding-bottom:30px;letter-spacing:1px;
 }
 
-/* ── MOBILE ── */
 @media(max-width:400px){
   body{padding:10px}
   .card{padding:16px;border-radius:14px}
@@ -494,11 +491,9 @@ button:active{transform:scale(.98)}
 </head>
 
 <body>
-
 <canvas id="matrix"></canvas>
 
 <div class="app">
-
   <div class="logo">
     <div class="logo-wrap">
       <div class="logo-pulse"></div>
@@ -507,29 +502,16 @@ button:active{transform:scale(.98)}
     </div>
     <h1>PATRIOT RADAR</h1>
     <p>Intelligence Command</p>
-    <div class="scanner-badge">
-      <span class="scanner-dot"></span>
-      Scanner Active
-    </div>
+    <div class="scanner-badge"><span class="scanner-dot"></span>Scanner Active</div>
     <div class="last-updated" id="lastUpdated"></div>
   </div>
 
   <div class="stats">
-    <div class="stat">
-      <strong id="keywordsAnalysed">0</strong>
-      <span>Keywords Tracked</span>
-    </div>
-    <div class="stat">
-      <strong id="opportunitiesFound">0</strong>
-      <span>Opportunities</span>
-    </div>
-    <div class="stat">
-      <strong id="viralCount">0</strong>
-      <span>Viral Alerts</span>
-    </div>
+    <div class="stat"><strong id="keywordsAnalysed">0</strong><span>Keywords Tracked</span></div>
+    <div class="stat"><strong id="opportunitiesFound">0</strong><span>Opportunities</span></div>
+    <div class="stat"><strong id="viralCount">0</strong><span>Viral Alerts</span></div>
   </div>
 
-  <!-- AUTH -->
   <div id="authBox" class="card card-glow">
     <h2>Command Access</h2>
     <p class="intro">Authorised personnel only. Authenticate to access live intelligence feeds.</p>
@@ -551,30 +533,182 @@ button:active{transform:scale(.98)}
     <p id="resetMessage" class="small" style="margin-top:10px"></p>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="dashboard" class="hidden">
-
     <div class="topbar">
-      <div class="status">
-        <span class="scanner-dot"></span>
-        LIVE SCANNER ONLINE
-      </div>
+      <div class="status"><span class="scanner-dot"></span>LIVE SCANNER ONLINE</div>
       <button class="logout" onclick="logout()">Logout</button>
     </div>
 
     <div id="primaryTarget"></div>
     <div id="topOpportunities"></div>
+    <div id="themeAnalysis"></div>
     <div id="intelligenceFeed"></div>
 
-    <div class="footer">PATRIOT RADAR v3.0 &bull; COMMAND NETWORK ACTIVE</div>
+    <div class="footer">PATRIOT RADAR v4.0 &bull; COMMAND NETWORK ACTIVE</div>
   </div>
-
 </div>
 
 <script>
 var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
 var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var KEYWORD_GROUPS = {
+  "military": {
+    label: "Military",
+    keywords: ["raf","royal air force","royal navy","veterans","armed forces","british army","battle of britain","spitfire","hurricane","national service","victoria cross","george cross","the few","armed forces day"]
+  },
+  "royal": {
+    label: "Royal",
+    keywords: ["king","monarchy","royal family","buckingham palace","crown","loyal to the crown","for king and country"]
+  },
+  "national_identity": {
+    label: "National Identity",
+    keywords: ["england","britain","great britain","united kingdom","british","english","union jack","union flag","british flag","english flag","st george","st george's day","national pride","british pride","english pride","patriotism","national identity","british identity","proudly british","proudly english","loyal to britain"]
+  },
+  "history": {
+    label: "History",
+    keywords: ["churchill","winston churchill","ve day","d-day","normandy","dunkirk spirit","dunkirk","finest hour spirit","spirit of 1940"]
+  },
+  "remembrance": {
+    label: "Remembrance",
+    keywords: ["remembrance","poppy","cenotaph","war memorial","sacrifice","honour","duty","courage"]
+  },
+  "culture": {
+    label: "Culture & Symbols",
+    keywords: ["britannia","rule britannia","land of hope and glory","keep calm and carry on","british bulldog","british lion","english lion","lionheart","england expects","green and pleasant land","white cliffs of dover"]
+  },
+  "heritage": {
+    label: "Heritage",
+    keywords: ["heritage","tradition","history","westminster","parliament","leadership","freedom","democracy"]
+  }
+};
+
+function getGroup(keyword) {
+  var kw = (keyword || "").toLowerCase();
+  for (var key in KEYWORD_GROUPS) {
+    if (KEYWORD_GROUPS[key].keywords.indexOf(kw) !== -1) return KEYWORD_GROUPS[key].label;
+  }
+  return "General";
+}
+
+function getGroupKey(keyword) {
+  var kw = (keyword || "").toLowerCase();
+  for (var key in KEYWORD_GROUPS) {
+    if (KEYWORD_GROUPS[key].keywords.indexOf(kw) !== -1) return key;
+  }
+  return "general";
+}
+
+var HOOK_TEMPLATES = {
+  military: [
+    "Should Britain invest more in {kw}?",
+    "Is {kw} still respected in modern Britain?",
+    "Do young people care enough about {kw}?",
+    "Would you support more funding for {kw}?",
+    "Is {kw} being forgotten by today's generation?"
+  ],
+  royal: [
+    "Does {kw} still matter to modern Britain?",
+    "Should Britain preserve {kw}?",
+    "Is {kw} worth the cost to taxpayers?",
+    "What role should {kw} play in Britain's future?",
+    "Do you support {kw}?"
+  ],
+  national_identity: [
+    "Are you proud of {kw}?",
+    "What does {kw} mean to you?",
+    "Is {kw} still relevant in 2025?",
+    "Does {kw} unite or divide the country?",
+    "How should {kw} be celebrated?"
+  ],
+  history: [
+    "Was {kw} Britain's finest moment?",
+    "Would {kw} be possible in today's Britain?",
+    "Is {kw} becoming a bigger talking point?",
+    "What can modern Britain learn from {kw}?",
+    "Should schools teach more about {kw}?"
+  ],
+  remembrance: [
+    "Are we forgetting {kw}?",
+    "Should {kw} be a bigger national event?",
+    "Is {kw} properly observed today?",
+    "What does {kw} mean to your generation?",
+    "Should more be done to honour {kw}?"
+  ],
+  culture: [
+    "Does {kw} still resonate with the British people?",
+    "Should {kw} be taught in schools?",
+    "Is {kw} making a comeback?",
+    "What does {kw} mean to you?",
+    "Is {kw} still relevant in modern Britain?"
+  ],
+  heritage: [
+    "Is {kw} under threat in modern Britain?",
+    "Should Britain do more to protect {kw}?",
+    "Does {kw} still define what it means to be British?",
+    "How important is {kw} to you?",
+    "Is {kw} being eroded?"
+  ],
+  general: [
+    "Is {kw} about to become a bigger talking point?",
+    "What do you think about {kw}?",
+    "Should {kw} get more attention?",
+    "Is {kw} important to modern Britain?",
+    "What does {kw} mean to you?"
+  ]
+};
+
+function generateHooks(keyword) {
+  var gk = getGroupKey(keyword);
+  var templates = HOOK_TEMPLATES[gk] || HOOK_TEMPLATES.general;
+  var kw = titleCase(keyword || "");
+  var hooks = [];
+  for (var i = 0; i < templates.length; i++) {
+    hooks.push(templates[i].replace(/\{kw\}/g, kw));
+  }
+  return hooks;
+}
+
+function calcConfidence(item) {
+  var ls = Number(item.latest_score || 0);
+  var ra = Number(item.recent_avg || 0);
+  var pa = Number(item.previous_avg || 0);
+
+  var consistencyGap = ra > 0 ? Math.abs(ls - ra) / ra : 1;
+  var growthSignal = ra > pa ? 1 : 0;
+  var volumeSignal = ls > 30 ? 1 : 0;
+
+  var score = 0;
+  if (consistencyGap < 0.3) score += 2;
+  else if (consistencyGap < 0.6) score += 1;
+  score += growthSignal;
+  score += volumeSignal;
+
+  if (score >= 3) return "High";
+  if (score >= 2) return "Medium";
+  return "Low";
+}
+
+function confTagClass(c) {
+  if (c === "High") return "tag-conf-high";
+  if (c === "Medium") return "tag-conf-med";
+  return "tag-conf-low";
+}
+
+function recommendContent(item) {
+  var gk = getGroupKey(item.keyword);
+  var rp = Number(item.rise_percent || 0);
+  var vs = Number(item.viral_score || 0);
+
+  if (gk === "history") return "Historical Post";
+  if (rp > 30 && vs > 40) return "Debate Question";
+  if (gk === "remembrance") return "Tribute Post";
+  if (item.category === "product" || (item.product && item.product.toLowerCase().indexOf("product") === -1)) return "Product Post";
+  if (rp > 15) return "News Post";
+  if (gk === "culture" || gk === "heritage") return "Educational Post";
+  return "Engagement Post";
+}
 
 function classifyTrend(vs, rp) {
   if (rp > 50 && vs >= 40) return "Viral Breakout";
@@ -585,14 +719,8 @@ function classifyTrend(vs, rp) {
 }
 
 function trendTagClass(c) {
-  var map = {
-    "Viral Breakout": "tag-viral",
-    "Strong Upward Trend": "tag-strong",
-    "Slight Uptick": "tag-uptick",
-    "Stable": "tag-stable",
-    "Falling": "tag-falling"
-  };
-  return map[c] || "tag-stable";
+  var m = {"Viral Breakout":"tag-viral","Strong Upward Trend":"tag-strong","Slight Uptick":"tag-uptick","Stable":"tag-stable","Falling":"tag-falling"};
+  return m[c] || "tag-stable";
 }
 
 function calcVitality(item) {
@@ -604,26 +732,24 @@ function calcVitality(item) {
 
 function formatRise(rp) {
   var v = Number(rp || 0);
-  return '<span class="' + (v >= 0 ? "rise-positive" : "rise-negative") + '">' +
-    (v >= 0 ? "+" : "") + v.toFixed(1) + "%</span>";
+  return '<span class="' + (v >= 0 ? "rise-positive" : "rise-negative") + '">' + (v >= 0 ? "+" : "") + v.toFixed(1) + "%</span>";
 }
 
-function titleCase(s) {
-  return s.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-}
-
-function scoreBarColor(v) {
-  if (v >= 40) return "score-bar-green";
-  if (v >= 20) return "score-bar-amber";
-  return "score-bar-red";
-}
+function titleCase(s) { return s.replace(/\b\w/g, function(c) { return c.toUpperCase(); }); }
+function scoreBarColor(v) { return v >= 40 ? "score-bar-green" : v >= 20 ? "score-bar-amber" : "score-bar-red"; }
 
 function formatTimestamp(d) {
-  var dt = new Date(d);
-  if (isNaN(dt.getTime())) return "";
-  var pad = function(n) { return String(n).padStart(2, "0"); };
-  return pad(dt.getDate()) + "/" + pad(dt.getMonth() + 1) + "/" + dt.getFullYear() +
-    " " + pad(dt.getHours()) + ":" + pad(dt.getMinutes());
+  var dt = new Date(d); if (isNaN(dt.getTime())) return "";
+  var p = function(n) { return String(n).padStart(2, "0"); };
+  return p(dt.getDate()) + "/" + p(dt.getMonth() + 1) + "/" + dt.getFullYear() + " " + p(dt.getHours()) + ":" + p(dt.getMinutes());
+}
+
+function copyHook(el) {
+  var text = el.querySelector(".hook-text").innerText;
+  navigator.clipboard.writeText(text);
+  var orig = el.querySelector(".hook-copy").innerText;
+  el.querySelector(".hook-copy").innerText = "COPIED!";
+  setTimeout(function() { el.querySelector(".hook-copy").innerText = orig; }, 1500);
 }
 
 function renderPrimary(item) {
@@ -632,18 +758,24 @@ function renderPrimary(item) {
   var tc = trendTagClass(cl);
   var vs = Number(item.viral_score || 0);
   var kw = titleCase(item.keyword || "");
+  var conf = calcConfidence(item);
+  var confCls = confTagClass(conf);
+  var contentType = recommendContent(item);
+  var group = getGroup(item.keyword);
+  var hooks = generateHooks(item.keyword);
 
   var h = '<div class="card card-glow" style="position:relative">';
   h += '<div class="scanline"></div>';
   h += '<div class="card-header"><h2>Primary Target</h2><div class="section-icon">&#9678;</div></div>';
 
-  h += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">';
+  h += '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">';
   h += '<span class="tag ' + tc + '">' + cl + '</span>';
-  h += '<span class="tag tag-uptick">Top Ranked</span>';
+  h += '<span class="tag ' + confCls + '">' + conf + ' Confidence</span>';
+  h += '<span class="tag tag-content">' + contentType + '</span>';
+  h += '<span class="tag tag-group">' + group + '</span>';
   h += '</div>';
 
   h += '<div class="primary-keyword">' + kw + '</div>';
-
   h += '<div class="score-bar-wrap"><div class="score-bar ' + scoreBarColor(vs) + '" style="width:' + Math.min(100, vs) + '%"></div></div>';
 
   h += '<div class="primary-grid">';
@@ -651,15 +783,20 @@ function renderPrimary(item) {
   h += '<div class="primary-metric"><div class="pm-label">Rise</div><div class="pm-value white">' + formatRise(item.rise_percent) + '</div></div>';
   h += '<div class="primary-metric"><div class="pm-label">24-Hour Score</div><div class="pm-value white">' + Number(item.latest_score || 0) + '</div></div>';
   h += '<div class="primary-metric"><div class="pm-label">Vitality</div><div class="pm-value">' + vit + '<span style="font-size:12px;color:var(--muted)">/10</span></div></div>';
-  h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Trend Classification</div></div><span class="tag ' + tc + '" style="margin:0">' + cl + '</span></div>';
+  h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Trend</div></div><span class="tag ' + tc + '" style="margin:0">' + cl + '</span></div>';
+  h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Confidence</div></div><span class="tag ' + confCls + '" style="margin:0">' + conf + '</span></div>';
+  h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Best Content Type</div></div><span class="tag tag-content" style="margin:0">' + contentType + '</span></div>';
   h += '</div>';
 
   h += '<div class="primary-section-label">Top Related Product</div>';
   h += '<div class="primary-content-box" style="color:var(--green2);font-weight:700">' + (item.product || "N/A") + '</div>';
 
-  h += '<div class="primary-section-label">Engagement Question</div>';
-  h += '<div id="primaryQuestion" class="primary-content-box">' + (item.question || "N/A") + '</div>';
-  h += '<button class="copy-btn" onclick="copyText(\'primaryQuestion\')">&#9776; Copy Question</button>';
+  h += '<div class="primary-section-label">Auto-Generated Hooks (tap to copy)</div>';
+  h += '<ul class="hooks-list">';
+  for (var i = 0; i < hooks.length; i++) {
+    h += '<li onclick="copyHook(this)"><span class="hook-num">' + (i + 1) + '</span><span class="hook-text">' + hooks[i] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
+  }
+  h += '</ul>';
 
   h += '<div class="primary-section-label">Caption</div>';
   h += '<div id="primaryCaption" class="primary-content-box" style="font-size:13px;color:var(--muted)">' + (item.caption || "N/A") + '</div>';
@@ -680,6 +817,9 @@ function renderOpportunities(items) {
     var vs = Number(item.viral_score || 0);
     var cl = classifyTrend(vs, Number(item.rise_percent || 0));
     var tc = trendTagClass(cl);
+    var conf = calcConfidence(item);
+    var confCls = confTagClass(conf);
+    var contentType = recommendContent(item);
     var rankCls = "rank-" + (i + 1);
 
     h += '<div class="opp-item ' + rankCls + '">';
@@ -696,8 +836,59 @@ function renderOpportunities(items) {
     h += '<span>Vitality: <b class="rise-positive">' + vit + '</b></span>';
     h += '</div>';
     h += '<div class="opp-product">' + (item.product || "N/A") + '</div>';
+    h += '<div class="opp-badges">';
+    h += '<span class="tag ' + confCls + '">' + conf + '</span>';
+    h += '<span class="tag tag-content">' + contentType + '</span>';
+    h += '<span class="tag tag-group">' + getGroup(item.keyword) + '</span>';
     h += '</div>';
+    h += '</div></div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
+function renderThemes(items) {
+  var groups = {};
+  for (var i = 0; i < items.length; i++) {
+    var g = getGroup(items[i].keyword);
+    if (!groups[g]) groups[g] = { items: [], totalViral: 0, avgRise: 0 };
+    groups[g].items.push(items[i]);
+    groups[g].totalViral += Number(items[i].viral_score || 0);
+  }
+
+  var sorted = Object.keys(groups).sort(function(a, b) {
+    return groups[b].totalViral - groups[a].totalViral;
+  });
+
+  var h = '<div class="card">';
+  h += '<div class="card-header"><h2>Theme Analysis</h2><div class="section-icon">&#9635;</div></div>';
+
+  for (var s = 0; s < sorted.length; s++) {
+    var name = sorted[s];
+    var grp = groups[name];
+    var avgViral = (grp.totalViral / grp.items.length).toFixed(1);
+    var avgRise = 0;
+    for (var j = 0; j < grp.items.length; j++) avgRise += Number(grp.items[j].rise_percent || 0);
+    avgRise = (avgRise / grp.items.length).toFixed(1);
+    var topKw = grp.items.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); })[0];
+
+    h += '<div class="theme-item">';
+    h += '<div class="theme-header">';
+    h += '<span class="theme-name">' + name + '</span>';
+    h += '<span class="tag ' + trendTagClass(classifyTrend(Number(avgViral), Number(avgRise))) + '">' + classifyTrend(Number(avgViral), Number(avgRise)) + '</span>';
     h += '</div>';
+    h += '<div class="theme-stats">';
+    h += '<span>Avg Viral: <b class="rise-positive">' + avgViral + '</b></span>';
+    h += '<span>Avg Rise: <b>' + formatRise(avgRise) + '</b></span>';
+    h += '<span>Keywords: <b>' + grp.items.length + '</b></span>';
+    h += '</div>';
+    h += '<div class="theme-keywords">';
+    for (var k = 0; k < grp.items.length; k++) {
+      var isTop = grp.items[k] === topKw;
+      h += '<span class="theme-kw' + (isTop ? ' active' : '') + '">' + titleCase(grp.items[k].keyword) + '</span>';
+    }
+    h += '</div></div>';
   }
 
   h += '</div>';
@@ -714,11 +905,23 @@ function renderFeed(items) {
     var cl = classifyTrend(vs, Number(item.rise_percent || 0));
     var vit = calcVitality(item);
     var tc = trendTagClass(cl);
+    var conf = calcConfidence(item);
+    var confCls = confTagClass(conf);
+    var contentType = recommendContent(item);
+    var group = getGroup(item.keyword);
+    var hooks = generateHooks(item.keyword);
+    var hookId = "hooks-" + i;
 
     h += '<div class="feed-item">';
     h += '<div class="feed-header">';
     h += '<span class="feed-keyword">' + titleCase(item.keyword || "") + '</span>';
     h += '<span class="tag ' + tc + '">' + cl + '</span>';
+    h += '</div>';
+
+    h += '<div class="feed-tags">';
+    h += '<span class="tag ' + confCls + '">' + conf + '</span>';
+    h += '<span class="tag tag-content">' + contentType + '</span>';
+    h += '<span class="tag tag-group">' + group + '</span>';
     h += '</div>';
 
     h += '<div class="feed-metrics">';
@@ -729,14 +932,25 @@ function renderFeed(items) {
     h += '</div>';
 
     h += '<div class="feed-bar"><div class="feed-bar-fill" style="width:' + Math.min(100, vs) + '%"></div></div>';
-
     h += '<div class="feed-product">Product: ' + (item.product || "N/A") + '</div>';
-    h += '<div class="feed-question">"' + (item.question || "N/A") + '"</div>';
+
+    h += '<div style="margin-top:8px"><button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:0">&#9776; Show Hooks</button></div>';
+    h += '<ul class="hooks-list hidden" id="' + hookId + '">';
+    for (var j = 0; j < hooks.length; j++) {
+      h += '<li onclick="copyHook(this)"><span class="hook-num">' + (j + 1) + '</span><span class="hook-text">' + hooks[j] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
+    }
+    h += '</ul>';
+
     h += '</div>';
   }
 
   h += '</div>';
   return h;
+}
+
+function toggleHooks(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle("hidden");
 }
 
 async function loadLiveStats() {
@@ -746,17 +960,13 @@ async function loadLiveStats() {
     var data = await res.json();
     var results = Array.isArray(data) ? data : data.results || [];
 
-    results.sort(function(a, b) {
-      return Number(b.viral_score || 0) - Number(a.viral_score || 0);
-    });
+    results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
 
     document.getElementById("keywordsAnalysed").textContent = results.length;
     document.getElementById("opportunitiesFound").textContent =
       results.filter(function(r) { return Number(r.viral_score || 0) >= 30; }).length;
     document.getElementById("viralCount").textContent =
-      results.filter(function(r) {
-        return Number(r.rise_percent || 0) > 50 && Number(r.viral_score || 0) >= 40;
-      }).length;
+      results.filter(function(r) { return Number(r.rise_percent || 0) > 50 && Number(r.viral_score || 0) >= 40; }).length;
 
     if (lastMod) {
       document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(lastMod);
@@ -767,11 +977,10 @@ async function loadLiveStats() {
     if (results.length > 0) {
       document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
       document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
+      document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
       document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
     }
-  } catch (err) {
-    console.error("Load error:", err);
-  }
+  } catch (err) { console.error("Load error:", err); }
 }
 
 async function checkSession() {
@@ -782,9 +991,8 @@ async function checkSession() {
     document.getElementById("dashboard").classList.add("hidden");
     return;
   }
-  if (sd.data.session) {
-    showDashboard();
-  } else {
+  if (sd.data.session) { showDashboard(); }
+  else {
     document.getElementById("authBox").classList.remove("hidden");
     document.getElementById("resetBox").classList.add("hidden");
     document.getElementById("dashboard").classList.add("hidden");
@@ -802,32 +1010,22 @@ async function login() {
   var pw = document.getElementById("password").value;
   document.getElementById("authMessage").innerText = "Authenticating...";
   var r = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
-  if (r.error) {
-    document.getElementById("authMessage").innerText = r.error.message;
-  } else {
-    document.getElementById("authMessage").innerText = "";
-    showDashboard();
-  }
+  if (r.error) { document.getElementById("authMessage").innerText = r.error.message; }
+  else { document.getElementById("authMessage").innerText = ""; showDashboard(); }
 }
 
 async function resetPassword() {
   var em = document.getElementById("email").value.trim();
   if (!em) { document.getElementById("authMessage").innerText = "Enter your email first."; return; }
-  var r = await supabaseClient.auth.resetPasswordForEmail(em, {
-    redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/"
-  });
+  var r = await supabaseClient.auth.resetPasswordForEmail(em, { redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/" });
   document.getElementById("authMessage").innerText = r.error ? r.error.message : "Check your email to create a new password.";
 }
 
 async function updatePassword() {
   var pw = document.getElementById("newPassword").value;
   var r = await supabaseClient.auth.updateUser({password: pw});
-  if (r.error) {
-    document.getElementById("resetMessage").innerText = r.error.message;
-  } else {
-    document.getElementById("resetMessage").innerText = "Password updated.";
-    showDashboard();
-  }
+  if (r.error) { document.getElementById("resetMessage").innerText = r.error.message; }
+  else { document.getElementById("resetMessage").innerText = "Password updated."; showDashboard(); }
 }
 
 async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
@@ -840,55 +1038,30 @@ function copyText(id) {
 function startMatrix() {
   var c = document.getElementById("matrix");
   var ctx = c.getContext("2d");
+  var katakana = "゠ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミ";
+  var sym = katakana + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*<>{}[]";
+  var fs = 14, cols = 0, drops = [], speeds = [], bright = [];
+
   function resize() {
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
+    c.width = window.innerWidth; c.height = window.innerHeight;
     cols = Math.floor(c.width / fs);
     while (drops.length < cols) drops.push(Math.random() * -50);
     while (speeds.length < cols) speeds.push(0.3 + Math.random() * 0.7);
     while (bright.length < cols) bright.push(Math.random() < 0.15);
   }
-
-  var katakana = "゠ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミ";
-  var sym = katakana + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*<>{}[]";
-  var fs = 14;
-  var cols = 0;
-  var drops = [];
-  var speeds = [];
-  var bright = [];
-
-  resize();
-  window.addEventListener("resize", resize);
+  resize(); window.addEventListener("resize", resize);
 
   function draw() {
     ctx.fillStyle = "rgba(0,0,0,0.05)";
     ctx.fillRect(0, 0, c.width, c.height);
     ctx.font = "bold " + fs + "px monospace";
-
     for (var i = 0; i < cols; i++) {
       var ch = sym[Math.floor(Math.random() * sym.length)];
-      var x = i * fs;
-      var y = drops[i] * fs;
-
-      if (bright[i]) {
-        ctx.fillStyle = "#aaffcc";
-        ctx.shadowColor = "#00ff88";
-        ctx.shadowBlur = 8;
-      } else {
-        ctx.fillStyle = "#00ff88";
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-      }
-      ctx.fillText(ch, x, y);
-
-      ctx.shadowBlur = 0;
-      ctx.shadowColor = "transparent";
-
-      if (drops[i] * fs > c.height && Math.random() > 0.975) {
-        drops[i] = 0;
-        speeds[i] = 0.3 + Math.random() * 0.7;
-        bright[i] = Math.random() < 0.15;
-      }
+      if (bright[i]) { ctx.fillStyle = "#aaffcc"; ctx.shadowColor = "#00ff88"; ctx.shadowBlur = 8; }
+      else { ctx.fillStyle = "#00ff88"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; }
+      ctx.fillText(ch, i * fs, drops[i] * fs);
+      ctx.shadowBlur = 0; ctx.shadowColor = "transparent";
+      if (drops[i] * fs > c.height && Math.random() > 0.975) { drops[i] = 0; speeds[i] = 0.3 + Math.random() * 0.7; bright[i] = Math.random() < 0.15; }
       drops[i] += speeds[i];
     }
   }
