@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+#<!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -601,16 +601,17 @@ async function checkSession() {
   if (window.location.hash.includes("type=recovery")) {
     document.getElementById("authBox").classList.add("hidden");
     document.getElementById("resetBox").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
     return;
   }
 
   if (data.session) {
     showDashboard();
-} else {
+  } else {
     document.getElementById("authBox").classList.remove("hidden");
     document.getElementById("resetBox").classList.add("hidden");
     document.getElementById("dashboard").classList.add("hidden");
-}
+  }
 }
 
 function showDashboard() {
@@ -620,43 +621,39 @@ function showDashboard() {
 }
 
 async function login() {
-  alert("Login function started");
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
+  document.getElementById("authMessage").innerText = "Authenticating...";
+
   const { error } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: password
+    email,
+    password
   });
 
   if (error) {
     document.getElementById("authMessage").innerText = error.message;
   } else {
+    document.getElementById("authMessage").innerText = "";
     showDashboard();
   }
 }
 
 async function resetPassword() {
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
 
   if (!email) {
-    document.getElementById("authMessage").innerText =
-      "Enter your email first.";
+    document.getElementById("authMessage").innerText = "Enter your email first.";
     return;
   }
 
-  const { error } = await supabaseClient.auth.resetPasswordForEmail(
-    email,
-    {
-      redirectTo:
-        "https://patriotradar.github.io/patriot-radar-dashboard/"
-    }
-  );
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/"
+  });
 
-  document.getElementById("authMessage").innerText =
-    error
-      ? error.message
-      : "Check your email to create a new password.";
+  document.getElementById("authMessage").innerText = error
+    ? error.message
+    : "Check your email to create a new password.";
 }
 
 async function updatePassword() {
@@ -669,8 +666,7 @@ async function updatePassword() {
   if (error) {
     document.getElementById("resetMessage").innerText = error.message;
   } else {
-    document.getElementById("resetMessage").innerText =
-      "Password updated.";
+    document.getElementById("resetMessage").innerText = "Password updated.";
     showDashboard();
   }
 }
@@ -698,8 +694,7 @@ function startMatrix() {
   resizeCanvas();
   window.addEventListener("resize", resizeCanvas);
 
-  const symbols =
-    "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const symbols = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const fontSize = 16;
   let columns = Math.floor(canvas.width / fontSize);
   let drops = [];
@@ -716,14 +711,9 @@ function startMatrix() {
     ctx.font = fontSize + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
-      const text =
-        symbols[Math.floor(Math.random() * symbols.length)];
+      const text = symbols[Math.floor(Math.random() * symbols.length)];
 
-      ctx.fillText(
-        text,
-        i * fontSize,
-        drops[i] * fontSize
-      );
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
       if (
         drops[i] * fontSize > canvas.height &&
@@ -736,8 +726,7 @@ function startMatrix() {
     }
   }
 
-}
-setInterval(draw, 45);
+  setInterval(draw, 45);
 }
 
 async function loadLiveStats() {
@@ -745,21 +734,19 @@ async function loadLiveStats() {
     const res = await fetch("results.json?cache=" + Date.now());
     const data = await res.json();
 
-    const results = Array.isArray(data) ? data : (data.results || []);
+    const results = Array.isArray(data) ? data : data.results || [];
 
     document.getElementById("keywordsAnalysed").textContent = results.length;
     document.getElementById("opportunitiesFound").textContent =
       results.filter(r => Number(r.viral_score || 0) >= 40).length;
     document.getElementById("scannerUptime").textContent = "LIVE";
-
   } catch (err) {
     console.error(err);
   }
 }
 
 loadLiveStats();
-
-showDashboard();
+checkSession();
 startMatrix();
 </script>
 </body>
