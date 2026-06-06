@@ -566,39 +566,44 @@ button:active{transform:scale(.98)}
 /* ── BRIGHTNESS SLIDER ── */
 .brightness-bar{
   display:flex;align-items:center;gap:10px;
-  padding:10px 16px;
+  padding:14px 16px;
   margin-bottom:14px;
   background:rgba(11,18,15,.82);
   border:1px solid var(--border);
   border-radius:14px;
+  position:relative;
+  z-index:50;
 }
 .brightness-bar label{
-  font-size:9px;color:var(--muted);
+  font-size:10px;color:var(--muted);
   text-transform:uppercase;letter-spacing:.8px;
   margin:0;white-space:nowrap;
+  font-weight:bold;
 }
 .brightness-bar input[type=range]{
   flex:1;
   -webkit-appearance:none;
   appearance:none;
-  height:4px;
+  height:8px;
   background:rgba(0,255,136,.15);
   border-radius:99px;
   outline:none;
   border:none;
   margin:0;padding:0;
+  touch-action:none;
 }
 .brightness-bar input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;
-  width:20px;height:20px;
+  width:32px;height:32px;
   border-radius:50%;
   background:var(--green);
   cursor:pointer;
-  box-shadow:0 0 8px rgba(0,255,136,.4);
+  box-shadow:0 0 12px rgba(0,255,136,.5);
+  border:2px solid #fff;
 }
 .brightness-val{
-  font-size:12px;color:var(--green);
-  font-weight:bold;min-width:32px;text-align:right;
+  font-size:14px;color:var(--green);
+  font-weight:bold;min-width:40px;text-align:right;
 }
 
 .log-perf-btn{
@@ -678,7 +683,9 @@ button:active{transform:scale(.98)}
 
   <div class="brightness-bar">
     <label>Brightness</label>
+    <button style="width:40px;padding:8px;margin:0;font-size:18px;background:#13231b;color:var(--green);border:1px solid var(--border);border-radius:8px" onclick="stepBrightness(-20)">-</button>
     <input type="range" id="brightnessSlider" min="80" max="200" value="140" oninput="adjustBrightness(this.value)">
+    <button style="width:40px;padding:8px;margin:0;font-size:18px;background:#13231b;color:var(--green);border:1px solid var(--border);border-radius:8px" onclick="stepBrightness(20)">+</button>
     <span class="brightness-val" id="brightnessVal">140%</span>
   </div>
 
@@ -1554,6 +1561,13 @@ async function logout() { await supabaseClient.auth.signOut(); location.reload()
 function copyText(id) {
   var el = document.getElementById(id);
   if (el) { navigator.clipboard.writeText(el.innerText); alert("Copied!"); }
+}
+
+function stepBrightness(step) {
+  var slider = document.getElementById("brightnessSlider");
+  var newVal = Math.min(200, Math.max(80, Number(slider.value) + step));
+  slider.value = newVal;
+  adjustBrightness(newVal);
 }
 
 function adjustBrightness(val) {
