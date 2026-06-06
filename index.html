@@ -606,7 +606,11 @@ async function checkSession() {
 
   if (data.session) {
     showDashboard();
-  }
+} else {
+    document.getElementById("authBox").classList.remove("hidden");
+    document.getElementById("resetBox").classList.add("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+}
 }
 
 function showDashboard() {
