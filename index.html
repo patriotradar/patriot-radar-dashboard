@@ -731,11 +731,31 @@ function startMatrix() {
     }
   }
 
-  setInterval(draw, 45);
+}
+setInterval(draw, 45);
 }
 
-startMatrix();
+async function loadLiveStats() {
+  try {
+    const res = await fetch("results.json?cache=" + Date.now());
+    const data = await res.json();
+
+    const results = Array.isArray(data) ? data : (data.results || []);
+
+    document.getElementById("keywordsAnalysed").textContent = results.length;
+    document.getElementById("opportunitiesFound").textContent =
+      results.filter(r => Number(r.viral_score || 0) >= 40).length;
+    document.getElementById("scannerUptime").textContent = "LIVE";
+
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+loadLiveStats();
+
 checkSession();
+startMatrix();
 </script>
 
 </body>
