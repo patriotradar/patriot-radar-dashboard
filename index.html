@@ -60,7 +60,6 @@ body::after{
   margin:0 auto;
   position:relative;
   z-index:2;
-  filter:brightness(1.4) contrast(1.1);
 }
 
 .logo{
@@ -564,6 +563,44 @@ button:active{transform:scale(.98)}
 }
 .audience-insight b{color:var(--green)}
 
+/* ── BRIGHTNESS SLIDER ── */
+.brightness-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;
+  margin-bottom:14px;
+  background:rgba(11,18,15,.82);
+  border:1px solid var(--border);
+  border-radius:14px;
+}
+.brightness-bar label{
+  font-size:9px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;
+  margin:0;white-space:nowrap;
+}
+.brightness-bar input[type=range]{
+  flex:1;
+  -webkit-appearance:none;
+  appearance:none;
+  height:4px;
+  background:rgba(0,255,136,.15);
+  border-radius:99px;
+  outline:none;
+  border:none;
+  margin:0;padding:0;
+}
+.brightness-bar input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:20px;height:20px;
+  border-radius:50%;
+  background:var(--green);
+  cursor:pointer;
+  box-shadow:0 0 8px rgba(0,255,136,.4);
+}
+.brightness-val{
+  font-size:12px;color:var(--green);
+  font-weight:bold;min-width:32px;text-align:right;
+}
+
 .log-perf-btn{
   width:100%;padding:14px;font-size:12px;
   margin:12px 0 0 0;
@@ -664,6 +701,12 @@ button:active{transform:scale(.98)}
     <div class="topbar">
       <div class="status"><span class="scanner-dot"></span>LIVE SCANNER ONLINE</div>
       <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="brightness-bar">
+      <label>Brightness</label>
+      <input type="range" id="brightnessSlider" min="80" max="200" value="140" oninput="adjustBrightness(this.value)">
+      <span class="brightness-val" id="brightnessVal">140%</span>
     </div>
 
     <div id="audienceInsights"></div>
@@ -1513,6 +1556,21 @@ function copyText(id) {
   if (el) { navigator.clipboard.writeText(el.innerText); alert("Copied!"); }
 }
 
+function adjustBrightness(val) {
+  var app = document.querySelector(".app");
+  app.style.filter = "brightness(" + (val / 100) + ") contrast(1.1)";
+  document.getElementById("brightnessVal").textContent = val + "%";
+  localStorage.setItem("patriot_brightness", val);
+}
+
+function loadBrightness() {
+  var saved = localStorage.getItem("patriot_brightness");
+  if (saved) {
+    var slider = document.getElementById("brightnessSlider");
+    if (slider) { slider.value = saved; adjustBrightness(saved); }
+  }
+}
+
 function startMatrix() {
   var c = document.getElementById("matrix");
   var ctx = c.getContext("2d");
@@ -1549,6 +1607,7 @@ function startMatrix() {
 loadLiveStats();
 checkSession();
 startMatrix();
+loadBrightness();
 </script>
 </body>
 </html>
