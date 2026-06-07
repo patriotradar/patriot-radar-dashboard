@@ -718,6 +718,7 @@ button:active{transform:scale(.98)}
 
     <button class="log-perf-btn" onclick="openPerfModal('')" style="width:100%;margin:0 0 12px 0;padding:14px;font-size:13px">&#9998; QUICK LOG - Record Video Views</button>
 
+    <div id="dailyPlan"></div>
     <div id="audienceInsights"></div>
     <div id="primaryTarget"></div>
     <div id="emergingTopics"></div>
@@ -1237,6 +1238,107 @@ function submitPerf(keyword) {
   alert("Performance logged! Audience Score: " + entry.score + "/10");
 }
 
+function renderDailyPlan(results) {
+  if (!results || results.length < 3) return "";
+  var perfData = loadPerfData();
+
+  function daysSince(kw) {
+    var entries = perfData[kw];
+    if (!entries || entries.length === 0) return 999;
+    var last = entries[entries.length - 1].date;
+    var parts = last.split("/");
+    if (parts.length !== 3) return 999;
+    return Math.floor((new Date() - new Date(parts[2], parts[1] - 1, parts[0])) / 86400000);
+  }
+
+  function avgViews(kw) {
+    var entries = perfData[kw];
+    if (!entries || entries.length === 0) return 0;
+    var t = 0; for (var i = 0; i < entries.length; i++) t += Number(entries[i].views || 0);
+    return Math.round(t / entries.length);
+  }
+
+  function relatedViews(kw) {
+    var grp = getGroup(kw);
+    var best = 0;
+    for (var k in perfData) {
+      if (getGroup(k) === grp && k !== kw) { var v = avgViews(k); if (v > best) best = v; }
+    }
+    return best;
+  }
+
+  var scored = [];
+  for (var i = 0; i < results.length; i++) {
+    var kw = results[i].keyword.toLowerCase();
+    var vs = Number(results[i].viral_score || 0);
+    var days = daysSince(kw);
+    var av = avgViews(kw);
+    var rv = relatedViews(kw);
+    var fresh = days >= 3 ? 3 : days >= 2 ? 2 : days >= 1 ? 1 : -2;
+    var score = vs / 10 + fresh + (av > 0 ? av / 1000 : rv / 2000);
+    scored.push({ item: results[i], kw: kw, score: score, views: av, relViews: rv, days: days });
+  }
+  scored.sort(function(a, b) { return b.score - a.score; });
+
+  var picks = [];
+  var usedGroups = {};
+  for (var j = 0; j < scored.length && picks.length < 3; j++) {
+    var grp = getGroup(scored[j].kw);
+    if (picks.length === 0 || !usedGroups[grp] || picks.length >= 2) {
+      picks.push(scored[j]);
+      usedGroups[grp] = true;
+    }
+  }
+  if (picks.length < 3) {
+    for (var k = 0; k < scored.length && picks.length < 3; k++) {
+      var exists = false;
+      for (var p = 0; p < picks.length; p++) { if (picks[p].kw === scored[k].kw) { exists = true; break; } }
+      if (!exists) picks.push(scored[k]);
+    }
+  }
+
+  var slots = [
+    { time: "8-10 AM", label: "MORNING", desc: "Best reach - post your strongest topic", color: "var(--green)" },
+    { time: "4-5 PM", label: "AFTERNOON", desc: "Engagement slot - drives comments", color: "var(--amber)" },
+    { time: "7-8 PM", label: "EVENING", desc: "Pin a product to this one", color: "var(--blue)" }
+  ];
+
+  var h = '<div class="card card-glow" style="border-color:var(--green)">';
+  h += '<div class="card-header"><h2>Today\'s Content Plan</h2><div class="section-icon" style="color:var(--green)">&#9776;</div></div>';
+
+  for (var s = 0; s < Math.min(3, picks.length); s++) {
+    var pk = picks[s];
+    var sl = slots[s];
+    var prods = getProducts(pk.kw);
+    var topProd = prods[0];
+    var hooks = generateHooks(pk.kw);
+    var hookId = "plan-hook-" + s;
+    var viewInfo = pk.views > 0 ? pk.views.toLocaleString() + " avg views" : pk.relViews > 0 ? "Similar: " + pk.relViews.toLocaleString() + " views" : "New topic";
+    var freshInfo = pk.days === 0 ? "Posted today" : pk.days < 999 ? pk.days + "d ago" : "Never posted";
+
+    h += '<div style="padding:14px;margin-bottom:10px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;border-left:3px solid ' + sl.color + '">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    h += '<span style="font-size:11px;font-weight:900;color:' + sl.color + ';text-transform:uppercase;letter-spacing:1px">' + sl.label + ' - ' + sl.time + '</span>';
+    h += '<span class="tag ' + trendTagClass(classifyTrend(Number(pk.item.viral_score||0), Number(pk.item.rise_percent||0))) + '">' + classifyTrend(Number(pk.item.viral_score||0), Number(pk.item.rise_percent||0)) + '</span>';
+    h += '</div>';
+    h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(pk.kw) + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
+    h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + hooks[0] + '"</div>';
+    h += '<div style="font-size:10px;color:var(--green2)">Pin: ' + topProd.name + ' (Earn &#163;' + topProd.commission + ')</div>';
+    h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:6px">More hooks</button>';
+    h += '<ul class="hooks-list hidden" id="' + hookId + '">';
+    for (var hk = 1; hk < hooks.length; hk++) {
+      h += '<li onclick="copyHook(this)"><span class="hook-num">' + hk + '</span><span class="hook-text">' + hooks[hk] + '</span><span class="hook-copy">COPY</span></li>';
+    }
+    h += '</ul>';
+    h += '</div>';
+  }
+
+  h += '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Plan updates automatically based on trends + your audience data</p>';
+  h += '</div>';
+  return h;
+}
+
 function renderAudienceInsights(results) {
   var allScores = getAllAudienceScores();
   if (allScores.length === 0) return "";
@@ -1744,6 +1846,7 @@ async function loadLiveStats() {
     saveTrendSnapshot(results);
 
     if (results.length > 0) {
+      document.getElementById("dailyPlan").innerHTML = renderDailyPlan(results);
       document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
       document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
       document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
