@@ -718,6 +718,7 @@ button:active{transform:scale(.98)}
 
     <div id="audienceInsights"></div>
     <div id="primaryTarget"></div>
+    <div id="emergingTopics"></div>
     <div id="topOpportunities"></div>
     <div id="themeAnalysis"></div>
     <div id="intelligenceFeed"></div>
@@ -1550,6 +1551,47 @@ function renderFeed(items) {
   return h;
 }
 
+function renderEmerging(items) {
+  if (!items || items.length === 0) return "";
+  var h = '<div class="card card-glow" style="border-color:var(--amber)">';
+  h += '<div class="card-header"><h2 style="color:var(--amber)">Emerging Topics</h2><div class="section-icon" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--amber)">&#9888;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">New topics discovered from rising Google searches and UK trends. These are NOT in your regular keyword list - they\'re fresh opportunities.</p>';
+
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var vs = Number(item.viral_score || 0);
+    var cl = classifyTrend(vs, Number(item.rise_percent || 0));
+    var tc = trendTagClass(cl);
+    var typeLabel = item.discovery_type === "uk_trending" ? "UK TRENDING" : item.discovery_type === "rising_query" ? "RISING QUERY" : "RELATED";
+    var typeCls = item.discovery_type === "uk_trending" ? "tag-viral" : "tag-strong";
+
+    h += '<div class="opp-item rank-' + Math.min(i + 1, 5) + '">';
+    h += '<div class="opp-rank" style="background:rgba(251,191,36,.15);color:var(--amber);border:1px solid rgba(251,191,36,.3);font-size:10px">NEW</div>';
+    h += '<div class="opp-info">';
+    h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">';
+    h += '<span class="opp-keyword">' + titleCase(item.keyword || "") + '</span>';
+    h += '<span class="tag ' + tc + '">' + cl + '</span>';
+    h += '</div>';
+    h += '<div class="opp-stats">';
+    h += '<span>Viral: <b class="rise-positive">' + vs.toFixed(1) + '</b></span>';
+    h += '<span>Rise: <b>' + formatRise(item.rise_percent) + '</b></span>';
+    h += '<span>24hr: <b>' + Number(item.latest_score || 0) + '</b></span>';
+    h += '</div>';
+    h += '<div class="opp-badges" style="margin-top:4px">';
+    h += '<span class="tag ' + typeCls + '">' + typeLabel + '</span>';
+    if (item.source_keyword && item.source_keyword !== "UK Trending") {
+      h += '<span class="tag tag-stable">via ' + titleCase(item.source_keyword) + '</span>';
+    }
+    h += '</div>';
+    h += '<div class="feed-product" style="margin-top:4px">' + (item.product || "Patriotic merchandise") + '</div>';
+    h += '<div class="feed-question" style="margin-top:2px">"' + (item.question || "") + '"</div>';
+    h += '</div></div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
 function toggleHooks(id) {
   var el = document.getElementById(id);
   if (el) el.classList.toggle("hidden");
@@ -1561,6 +1603,7 @@ async function loadLiveStats() {
     var lastMod = res.headers.get("Last-Modified");
     var data = await res.json();
     var results = Array.isArray(data) ? data : data.results || [];
+    var emerging = Array.isArray(data) ? [] : data.emerging || [];
 
     results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
 
@@ -1570,7 +1613,9 @@ async function loadLiveStats() {
     document.getElementById("viralCount").textContent =
       results.filter(function(r) { return Number(r.rise_percent || 0) > 50 && Number(r.viral_score || 0) >= 40; }).length;
 
-    if (lastMod) {
+    if (data.last_updated) {
+      document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(data.last_updated);
+    } else if (lastMod) {
       document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(lastMod);
     } else {
       document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(new Date().toISOString());
@@ -1581,6 +1626,7 @@ async function loadLiveStats() {
     if (results.length > 0) {
       document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
       document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
+      document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
       document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
       document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
       document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
