@@ -716,6 +716,8 @@ button:active{transform:scale(.98)}
       <button class="logout" onclick="logout()">Logout</button>
     </div>
 
+    <button class="log-perf-btn" onclick="openPerfModal('')" style="width:100%;margin:0 0 12px 0;padding:14px;font-size:13px">&#9998; QUICK LOG - Record Video Views</button>
+
     <div id="audienceInsights"></div>
     <div id="primaryTarget"></div>
     <div id="emergingTopics"></div>
@@ -1112,6 +1114,8 @@ function getAllAudienceScores() {
   return results;
 }
 
+var cachedResults = [];
+
 function openPerfModal(keyword) {
   var kw = (keyword || "").toLowerCase();
   var data = loadPerfData();
@@ -1120,16 +1124,26 @@ function openPerfModal(keyword) {
   var h = '<div class="modal">';
   h += '<button class="modal-close" onclick="closePerfModal()">CLOSE</button>';
   h += '<h3>Log Performance</h3>';
-  h += '<div class="modal-kw">' + titleCase(kw) + '</div>';
 
-  h += '<div class="modal-input-grid">';
-  h += '<div class="modal-field"><label>Views</label><input id="perfViews" type="number" placeholder="0"></div>';
-  h += '<div class="modal-field"><label>Likes</label><input id="perfLikes" type="number" placeholder="0"></div>';
-  h += '<div class="modal-field"><label>Comments</label><input id="perfComments" type="number" placeholder="0"></div>';
-  h += '<div class="modal-field"><label>Shares</label><input id="perfShares" type="number" placeholder="0"></div>';
-  h += '</div>';
+  if (kw) {
+    h += '<div class="modal-kw">' + titleCase(kw) + '</div>';
+  } else {
+    h += '<div style="margin-bottom:14px">';
+    h += '<label>Select Keyword</label>';
+    h += '<select id="perfKeywordSelect" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none;margin-top:4px">';
+    for (var i = 0; i < cachedResults.length; i++) {
+      h += '<option value="' + cachedResults[i].keyword.toLowerCase() + '">' + titleCase(cachedResults[i].keyword) + '</option>';
+    }
+    h += '</select></div>';
+  }
 
-  h += '<button class="modal-submit" onclick="submitPerf(\'' + kw.replace(/'/g, "\\'") + '\')">Save Performance Data</button>';
+  h += '<label>How many views did it get?</label>';
+  h += '<input id="perfViews" type="number" placeholder="Enter view count" style="font-size:20px;text-align:center;padding:18px">';
+
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px;text-align:center">Just enter the views - that\'s all we need!</p>';
+
+  var submitKw = kw ? "\\'" + kw.replace(/'/g, "\\\\'") + "\\'" : "null";
+  h += '<button class="modal-submit" onclick="submitPerfSimple(' + submitKw + ')">Save</button>';
 
   if (history.length > 0) {
     h += '<div class="modal-history">';
@@ -1138,7 +1152,7 @@ function openPerfModal(keyword) {
       var e = history[i];
       h += '<div class="history-entry">';
       h += '<span class="he-date">' + (e.date || "N/A") + '</span>';
-      h += '<span>V:' + e.views + ' L:' + e.likes + ' C:' + e.comments + ' S:' + e.shares + '</span>';
+      h += '<span>' + e.views + ' views</span>';
       h += '<span class="he-score">' + e.score + '/10</span>';
       h += '</div>';
     }
@@ -1152,6 +1166,33 @@ function openPerfModal(keyword) {
 
 function closePerfModal() {
   document.getElementById("perfModal").classList.add("hidden");
+}
+
+function submitPerfSimple(keyword) {
+  if (!keyword) {
+    var sel = document.getElementById("perfKeywordSelect");
+    if (sel) keyword = sel.value;
+  }
+  if (!keyword) { alert("Please select a keyword."); return; }
+
+  var views = document.getElementById("perfViews").value;
+  if (!views || views === "0") { alert("Please enter the view count."); return; }
+
+  var entry = { views: views, likes: "0", comments: "0", shares: "0" };
+  entry.score = Math.min(10, (Number(views) / 1000)).toFixed(1);
+
+  var now = new Date();
+  var pad = function(n) { return String(n).padStart(2, "0"); };
+  entry.date = pad(now.getDate()) + "/" + pad(now.getMonth() + 1) + "/" + now.getFullYear();
+
+  var data = loadPerfData();
+  if (!data[keyword]) data[keyword] = [];
+  data[keyword].push(entry);
+  savePerfData(data);
+
+  closePerfModal();
+  loadLiveStats();
+  alert("Logged! " + views + " views for " + titleCase(keyword));
 }
 
 function submitPerf(keyword) {
@@ -1618,6 +1659,7 @@ async function loadLiveStats() {
     var emerging = Array.isArray(data) ? [] : data.emerging || [];
 
     results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
+    cachedResults = results;
 
     document.getElementById("keywordsAnalysed").textContent = results.length;
     document.getElementById("opportunitiesFound").textContent =
