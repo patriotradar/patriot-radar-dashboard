@@ -1130,11 +1130,19 @@ function openPerfModal(keyword) {
   } else {
     h += '<div style="margin-bottom:14px">';
     h += '<label>Select Keyword</label>';
-    h += '<select id="perfKeywordSelect" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none;margin-top:4px">';
-    for (var i = 0; i < cachedResults.length; i++) {
-      h += '<option value="' + cachedResults[i].keyword.toLowerCase() + '">' + titleCase(cachedResults[i].keyword) + '</option>';
+    h += '<select id="perfKeywordSelect" onchange="toggleCustomKw(this)" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none;margin-top:4px">';
+    var allKws = {};
+    for (var i = 0; i < cachedResults.length; i++) allKws[cachedResults[i].keyword.toLowerCase()] = true;
+    var perfData = loadPerfData();
+    for (var pk in perfData) allKws[pk] = true;
+    var kwList = Object.keys(allKws).sort();
+    for (var k = 0; k < kwList.length; k++) {
+      h += '<option value="' + kwList[k] + '">' + titleCase(kwList[k]) + '</option>';
     }
-    h += '</select></div>';
+    h += '<option value="__custom__">+ Type a different keyword</option>';
+    h += '</select>';
+    h += '<input id="perfCustomKw" type="text" placeholder="Type keyword here" style="display:none;margin-top:8px;font-size:14px">';
+    h += '</div>';
   }
 
   h += '<label>How many views did it get?</label>';
@@ -1168,12 +1176,21 @@ function closePerfModal() {
   document.getElementById("perfModal").classList.add("hidden");
 }
 
+function toggleCustomKw(sel) {
+  var custom = document.getElementById("perfCustomKw");
+  if (custom) custom.style.display = sel.value === "__custom__" ? "block" : "none";
+}
+
 function submitPerfSimple(keyword) {
   if (!keyword) {
     var sel = document.getElementById("perfKeywordSelect");
     if (sel) keyword = sel.value;
+    if (keyword === "__custom__") {
+      var custom = document.getElementById("perfCustomKw");
+      keyword = custom ? custom.value.toLowerCase().trim() : "";
+    }
   }
-  if (!keyword) { alert("Please select a keyword."); return; }
+  if (!keyword) { alert("Please select or type a keyword."); return; }
 
   var views = document.getElementById("perfViews").value;
   if (!views || views === "0") { alert("Please enter the view count."); return; }
