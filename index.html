@@ -926,13 +926,69 @@ var PRODUCT_MAP = {
   ]
 };
 
+var PRODUCT_KEYWORDS = {
+  "union jack lion hoodie": ["union jack","england","britain","british army","st george","patriotism","british flag","armed forces","veterans","remembrance","raf","churchill"],
+  "england flag t-shirt": ["england","st george","british flag","union jack flag","patriotism","britain","national identity"],
+  "england flag pack": ["england","st george","british flag","union jack flag","union jack"],
+  "england wearable flag hat": ["england","st george","british flag","union jack flag"],
+  "great britain flags": ["union jack","britain","british flag","union jack flag","british army","raf","armed forces"],
+  "england flag large": ["england","union jack","union jack flag","british flag","st george"],
+  "patriotic hoodie": ["patriotism","england","britain","union jack","british army","armed forces","veterans"],
+  "flag offends hoodie": ["patriotism","england","britain","british army","immigration","national identity"],
+  "st george bunting": ["st george","england","british flag","union jack flag"],
+  "england baking set": ["england","st george"],
+  "london puzzle book": ["london","britain","churchill"]
+};
+
+function scoreProduct(productName, keyword) {
+  var kw = (keyword || "").toLowerCase();
+  var pn = (productName || "").toLowerCase();
+  var score = 50;
+  if (pn.indexOf(kw) !== -1) score += 30;
+  for (var pk in PRODUCT_KEYWORDS) {
+    if (pn.toLowerCase().indexOf(pk.split(" ")[0]) !== -1) {
+      var matches = PRODUCT_KEYWORDS[pk];
+      for (var i = 0; i < matches.length; i++) {
+        if (matches[i] === kw) { score += 25; break; }
+        if (kw.indexOf(matches[i]) !== -1 || matches[i].indexOf(kw) !== -1) { score += 15; break; }
+      }
+    }
+  }
+  var group = getGroupKey(keyword);
+  if (pn.indexOf("hoodie") !== -1 && (group === "military" || group === "national_identity")) score += 10;
+  if (pn.indexOf("flag") !== -1 && (group === "national_identity" || kw.indexOf("flag") !== -1)) score += 15;
+  if (pn.indexOf("flag") !== -1 && kw.indexOf("remembrance") !== -1) score += 5;
+  return Math.min(99, score);
+}
+
 function getProducts(keyword) {
   var kw = (keyword || "").toLowerCase();
-  if (PRODUCT_MAP[kw]) return PRODUCT_MAP[kw];
-  for (var key in PRODUCT_MAP) {
-    if (kw.indexOf(key) !== -1 || key.indexOf(kw) !== -1) return PRODUCT_MAP[key];
+  var directMatch = PRODUCT_MAP[kw];
+  var prods = directMatch || PRODUCT_MAP["england"] || [];
+  var scored = [];
+  for (var i = 0; i < prods.length; i++) {
+    var p = JSON.parse(JSON.stringify(prods[i]));
+    p.matchScore = scoreProduct(p.name, keyword);
+    scored.push(p);
   }
-  return PRODUCT_MAP["england"] || [];
+  if (!directMatch) {
+    for (var key in PRODUCT_MAP) {
+      if (key !== kw) {
+        var extras = PRODUCT_MAP[key];
+        for (var j = 0; j < extras.length; j++) {
+          var ep = JSON.parse(JSON.stringify(extras[j]));
+          ep.matchScore = scoreProduct(ep.name, keyword);
+          if (ep.matchScore >= 65) {
+            var exists = false;
+            for (var s = 0; s < scored.length; s++) { if (scored[s].name === ep.name) { exists = true; break; } }
+            if (!exists) scored.push(ep);
+          }
+        }
+      }
+    }
+  }
+  scored.sort(function(a, b) { return b.matchScore - a.matchScore; });
+  return scored.slice(0, 4);
 }
 
 var HISTORY_KEY = "patriot_radar_history";
@@ -1306,11 +1362,11 @@ function renderPrimary(item) {
   h += '<div class="primary-section-label">TikTok Shop Products (sorted by commission)</div>';
   h += '<div class="product-list">';
   var prods = getProducts(item.keyword);
-  prods.sort(function(a,b){ return Number(b.commission||0) - Number(a.commission||0); });
   for (var pi = 0; pi < prods.length; pi++) {
     var p = prods[pi];
+    var matchCol = p.matchScore >= 80 ? "var(--green)" : p.matchScore >= 65 ? "var(--amber)" : "var(--muted)";
     h += '<div class="product-item">';
-    h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:var(--green);font-size:9px;font-weight:900">&#163;' + p.commission + '</div>';
+    h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:' + matchCol + ';font-size:9px;font-weight:900">' + (p.matchScore || 0) + '</div>';
     h += '<div style="flex:1;min-width:0"><div class="product-name">' + p.name + '</div>';
     h += '<div style="font-size:9px;color:var(--muted);margin-top:2px">&#163;' + p.price + ' | Earn &#163;' + p.commission + ' | ' + (p.sold !== "NEW" ? p.sold + ' sold' : 'New listing') + '</div></div>';
     h += '<div class="product-type">' + p.type + '</div>';
@@ -1469,9 +1525,8 @@ function renderFeed(items) {
     h += '</div>';
 
     var feedProds = getProducts(item.keyword);
-    feedProds.sort(function(a,b){ return Number(b.commission||0) - Number(a.commission||0); });
     var topP = feedProds[0];
-    h += '<div class="feed-product">Top Product: ' + topP.name + ' | Earn &#163;' + (topP.commission||'?') + ' per sale</div>';
+    h += '<div class="feed-product">Top Product (' + (topP.matchScore||0) + ' match): ' + topP.name + ' | Earn &#163;' + (topP.commission||'?') + '</div>';
 
     var feedAud = getKeywordAudienceScore(item.keyword);
     if (feedAud !== null) {
