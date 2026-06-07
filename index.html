@@ -1241,41 +1241,90 @@ function renderAudienceInsights(results) {
   var allScores = getAllAudienceScores();
   if (allScores.length === 0) return "";
 
+  var perfData = loadPerfData();
+
+  function daysSinceLastPost(kw) {
+    var entries = perfData[kw];
+    if (!entries || entries.length === 0) return 999;
+    var last = entries[entries.length - 1].date;
+    var parts = last.split("/");
+    if (parts.length !== 3) return 999;
+    var posted = new Date(parts[2], parts[1] - 1, parts[0]);
+    var now = new Date();
+    return Math.floor((now - posted) / 86400000);
+  }
+
+  function getAvgViews(kw) {
+    var entries = perfData[kw];
+    if (!entries || entries.length === 0) return 0;
+    var total = 0;
+    for (var i = 0; i < entries.length; i++) total += Number(entries[i].views || 0);
+    return Math.round(total / entries.length);
+  }
+
   var h = '<div class="card audience-card card-glow">';
   h += '<div class="card-header"><h2>Audience Intelligence</h2><div class="section-icon">&#9733;</div></div>';
 
   for (var i = 0; i < Math.min(5, allScores.length); i++) {
     var s = allScores[i];
-    var pct = Number(s.score) * 10;
+    var avgViews = getAvgViews(s.keyword);
+    var days = daysSinceLastPost(s.keyword);
+    var freshLabel = days === 0 ? "Posted today" : days === 1 ? "Posted yesterday" : days < 7 ? days + " days ago" : days < 999 ? days + " days ago" : "";
+    var maxViews = getAvgViews(allScores[0].keyword);
+    var pct = maxViews > 0 ? Math.round((avgViews / maxViews) * 100) : 0;
+
     h += '<div class="audience-item">';
     h += '<div class="audience-rank">' + (i + 1) + '</div>';
     h += '<div class="audience-info">';
     h += '<div class="audience-kw">' + titleCase(s.keyword) + '</div>';
-    h += '<div class="audience-detail">' + s.entries + ' post' + (s.entries > 1 ? 's' : '') + ' logged | ' + getGroup(s.keyword) + '</div>';
+    h += '<div class="audience-detail">' + avgViews.toLocaleString() + ' avg views | ' + s.entries + ' post' + (s.entries > 1 ? 's' : '') + (freshLabel ? ' | ' + freshLabel : '') + '</div>';
     h += '<div class="audience-bar"><div class="audience-bar-fill" style="width:' + pct + '%"></div></div>';
     h += '</div>';
-    h += '<div class="audience-score">' + s.score + '</div>';
+    h += '<div class="audience-score" style="font-size:14px">' + avgViews.toLocaleString() + '</div>';
     h += '</div>';
   }
 
-  if (allScores.length >= 2) {
-    var best = allScores[0];
-    var trending = null;
-    for (var j = 0; j < results.length; j++) {
-      var rKw = results[j].keyword.toLowerCase();
-      if (rKw !== best.keyword) {
-        var rScore = getKeywordAudienceScore(rKw);
-        if (rScore !== null && Number(rScore) < Number(best.score)) {
-          trending = { keyword: results[j].keyword, audienceScore: rScore };
-          break;
-        }
+  var bestRec = null;
+  var bestRecScore = 0;
+  for (var r = 0; r < results.length; r++) {
+    var rKw = results[r].keyword.toLowerCase();
+    var rViews = getAvgViews(rKw);
+    var rDays = daysSinceLastPost(rKw);
+    var freshBonus = rDays >= 3 ? 2 : rDays >= 1 ? 1 : 0;
+    var viralBonus = Number(results[r].viral_score || 0) / 50;
+
+    var relatedViews = 0;
+    var rGroup = getGroup(rKw);
+    for (var ak in perfData) {
+      if (getGroup(ak) === rGroup && ak !== rKw) {
+        var av = getAvgViews(ak);
+        if (av > relatedViews) relatedViews = av;
       }
     }
 
+    var recScore = (rViews > 0 ? rViews / 1000 : relatedViews / 2000) + freshBonus + viralBonus;
+    if (rDays === 0) recScore = recScore * 0.3;
+
+    if (recScore > bestRecScore) {
+      bestRecScore = recScore;
+      bestRec = { keyword: results[r].keyword, views: rViews, days: rDays, relatedViews: relatedViews, viral: results[r].viral_score };
+    }
+  }
+
+  if (bestRec) {
     h += '<div class="audience-insight">';
-    h += 'Your audience responds best to <b>' + titleCase(best.keyword) + '</b> content (score: ' + best.score + '/10).';
-    if (trending) {
-      h += ' <b>' + titleCase(trending.keyword) + '</b> is trending but your audience only scores it ' + trending.audienceScore + '/10. Consider prioritising ' + titleCase(best.keyword) + ' content instead.';
+    if (bestRec.views > 0) {
+      if (bestRec.days === 0) {
+        h += 'You already posted about <b>' + titleCase(bestRec.keyword) + '</b> today. Try a different topic for your next video to keep your content fresh.';
+      } else if (bestRec.days >= 2) {
+        h += 'Recommended next post: <b>' + titleCase(bestRec.keyword) + '</b> (trending at ' + bestRec.viral + ', your avg ' + bestRec.views.toLocaleString() + ' views, last posted ' + bestRec.days + ' days ago - fresh for your audience!)';
+      } else {
+        h += 'Recommended next post: <b>' + titleCase(bestRec.keyword) + '</b> (trending at ' + bestRec.viral + ', your avg ' + bestRec.views.toLocaleString() + ' views)';
+      }
+    } else if (bestRec.relatedViews > 0) {
+      h += 'Try posting about <b>' + titleCase(bestRec.keyword) + '</b> - it\'s trending at ' + bestRec.viral + ' and your similar topic ' + getGroup(bestRec.keyword) + ' content averages ' + bestRec.relatedViews.toLocaleString() + ' views. Could perform well!';
+    } else {
+      h += 'Recommended next post: <b>' + titleCase(bestRec.keyword) + '</b> (trending at ' + bestRec.viral + '). You haven\'t tried this topic yet - give it a go!';
     }
     h += '</div>';
   }
