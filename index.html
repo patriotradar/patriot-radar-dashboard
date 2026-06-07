@@ -1053,14 +1053,55 @@ function renderSparkline(points) {
 }
 
 var PERF_KEY = "patriot_radar_performance";
+var perfDataCache = null;
 
 function loadPerfData() {
-  try { return JSON.parse(localStorage.getItem(PERF_KEY) || "{}"); }
-  catch(e) { return {}; }
+  if (perfDataCache) return perfDataCache;
+  try {
+    var data = JSON.parse(localStorage.getItem(PERF_KEY) || "{}");
+    perfDataCache = data;
+    return data;
+  } catch(e) { return {}; }
 }
 
 function savePerfData(data) {
+  perfDataCache = data;
   localStorage.setItem(PERF_KEY, JSON.stringify(data));
+  savePerfToSupabase(data);
+}
+
+async function savePerfToSupabase(data) {
+  try {
+    var session = await supabaseClient.auth.getSession();
+    if (session.data.session) {
+      await supabaseClient.auth.updateUser({ data: { performance: data } });
+    }
+  } catch(e) { console.log("Supabase save skipped:", e); }
+}
+
+async function loadPerfFromSupabase() {
+  try {
+    var session = await supabaseClient.auth.getSession();
+    if (session.data.session) {
+      var user = session.data.session.user;
+      var cloud = user.user_metadata && user.user_metadata.performance;
+      if (cloud && Object.keys(cloud).length > 0) {
+        var local = {};
+        try { local = JSON.parse(localStorage.getItem(PERF_KEY) || "{}"); } catch(e) {}
+        var merged = JSON.parse(JSON.stringify(cloud));
+        for (var kw in local) {
+          if (!merged[kw]) {
+            merged[kw] = local[kw];
+          } else if (local[kw].length > merged[kw].length) {
+            merged[kw] = local[kw];
+          }
+        }
+        localStorage.setItem(PERF_KEY, JSON.stringify(merged));
+        perfDataCache = merged;
+        return;
+      }
+    }
+  } catch(e) { console.log("Supabase load skipped:", e); }
 }
 
 function calcAudienceScore(entry) {
@@ -1941,10 +1982,12 @@ async function checkSession() {
   }
 }
 
-function showDashboard() {
+async function showDashboard() {
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
   document.getElementById("dashboard").classList.remove("hidden");
+  await loadPerfFromSupabase();
+  loadLiveStats();
 }
 
 async function login() {
