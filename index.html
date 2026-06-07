@@ -1435,7 +1435,75 @@ function renderAudienceInsights(results) {
   return h;
 }
 
+var KEYWORD_SPECIFIC_HOOKS = {
+  "duty": [
+    "Has Britain lost its sense of duty? Yes or No?",
+    "Do young people understand the meaning of duty? Yes or No?",
+    "Is duty to your country still important? Yes or No?",
+    "Should duty and service be taught to every child? Yes or No?",
+    "Has modern Britain forgotten what duty means? Yes or No?"
+  ],
+  "honour": [
+    "Does honour still mean anything in modern Britain? Yes or No?",
+    "Has Britain lost its sense of honour? Yes or No?",
+    "Should we bring back honour and respect in Britain? Yes or No?",
+    "Do politicians still understand the meaning of honour? Yes or No?",
+    "Is honour a forgotten value in modern Britain? Yes or No?"
+  ],
+  "courage": [
+    "Does Britain still have the courage to stand up for itself? Yes or No?",
+    "Is British courage a thing of the past? Yes or No?",
+    "Would the British people show courage if tested today? Yes or No?",
+    "Has Britain lost its backbone? Yes or No?",
+    "Do we still raise our children with courage? Yes or No?"
+  ],
+  "sacrifice": [
+    "Is Britain forgetting the sacrifice of its heroes? Yes or No?",
+    "Do young people understand real sacrifice? Yes or No?",
+    "Should we do more to honour those who sacrificed everything? Yes or No?",
+    "Has modern Britain become too comfortable to understand sacrifice? Yes or No?",
+    "Would the British people sacrifice like their grandparents did? Yes or No?"
+  ],
+  "leadership": [
+    "Does Britain have real leaders anymore? Yes or No?",
+    "Is strong leadership missing from modern Britain? Yes or No?",
+    "Would Churchill recognise Britain's leaders today? Yes or No?",
+    "Does Britain need stronger leadership? Yes or No?",
+    "Has Britain lost its ability to produce great leaders? Yes or No?"
+  ],
+  "tradition": [
+    "Is Britain losing its traditions? Yes or No?",
+    "Should British traditions be protected by law? Yes or No?",
+    "Are traditions still important in modern Britain? Yes or No?",
+    "Will the next generation carry on British traditions? Yes or No?",
+    "Is it wrong to want to preserve British traditions? Yes or No?"
+  ],
+  "heritage": [
+    "Is British heritage being erased? Yes or No?",
+    "Should the government do more to protect our heritage? Yes or No?",
+    "Is it still okay to be proud of British heritage? Yes or No?",
+    "Will future generations know their heritage? Yes or No?",
+    "Is British heritage under attack? Yes or No?"
+  ],
+  "freedom": [
+    "Is freedom of speech under threat in Britain? Yes or No?",
+    "Are British people still truly free? Yes or No?",
+    "Would our grandparents recognise Britain's freedoms today? Yes or No?",
+    "Is freedom being taken away bit by bit? Yes or No?",
+    "Should Britain fight harder for its freedoms? Yes or No?"
+  ],
+  "democracy": [
+    "Is British democracy still working? Yes or No?",
+    "Do politicians actually listen to the British people? Yes or No?",
+    "Is democracy in Britain under threat? Yes or No?",
+    "Should the public have more say in how Britain is run? Yes or No?",
+    "Has the government forgotten who they work for? Yes or No?"
+  ]
+};
+
 function generateHooks(keyword) {
+  var kwLower = (keyword || "").toLowerCase();
+  if (KEYWORD_SPECIFIC_HOOKS[kwLower]) return KEYWORD_SPECIFIC_HOOKS[kwLower];
   var gk = getGroupKey(keyword);
   var templates = HOOK_TEMPLATES[gk] || HOOK_TEMPLATES.general;
   var kw = titleCase(keyword || "");
