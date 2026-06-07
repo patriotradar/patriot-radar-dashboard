@@ -782,189 +782,147 @@ function getGroupKey(keyword) {
 
 var HOOK_TEMPLATES = {
   military: [
-    "Should Britain invest more in {kw}?",
-    "Is {kw} still respected in modern Britain?",
-    "Do young people care enough about {kw}?",
-    "Would you support more funding for {kw}?",
-    "Is {kw} being forgotten by today's generation?"
+    "Should every school in Britain teach children about {kw}? Yes or No?",
+    "Should Britain double its spending on {kw}? Yes or No?",
+    "Should every young person in Britain serve in {kw}? Yes or No?",
+    "Should {kw} veterans get free housing for life? Yes or No?",
+    "Is Britain forgetting the sacrifice of {kw}? Yes or No?"
   ],
   royal: [
-    "Does {kw} still matter to modern Britain?",
-    "Should Britain preserve {kw}?",
-    "Is {kw} worth the cost to taxpayers?",
-    "What role should {kw} play in Britain's future?",
-    "Do you support {kw}?"
+    "Should every school in Britain celebrate {kw}? Yes or No?",
+    "Should British taxpayers continue to fund {kw}? Yes or No?",
+    "Should {kw} have more power in modern Britain? Yes or No?",
+    "Is {kw} still important to British identity? Yes or No?",
+    "Should Britain abolish {kw}? Yes or No?"
   ],
   national_identity: [
-    "Are you proud of {kw}?",
-    "What does {kw} mean to you?",
-    "Is {kw} still relevant in 2025?",
-    "Does {kw} unite or divide the country?",
-    "How should {kw} be celebrated?"
+    "Should every school in Britain fly the {kw} flag? Yes or No?",
+    "Should it be compulsory to learn about {kw} in British schools? Yes or No?",
+    "Is being proud of {kw} still acceptable in modern Britain? Yes or No?",
+    "Should {kw} be celebrated with a national holiday? Yes or No?",
+    "Are young people losing pride in {kw}? Yes or No?"
   ],
   history: [
-    "Was {kw} Britain's finest moment?",
-    "Would {kw} be possible in today's Britain?",
-    "Is {kw} becoming a bigger talking point?",
-    "What can modern Britain learn from {kw}?",
-    "Should schools teach more about {kw}?"
+    "Should every school in Britain teach children about {kw}? Yes or No?",
+    "Would Britain survive another {kw} today? Yes or No?",
+    "Should there be a national {kw} day in Britain? Yes or No?",
+    "Is modern Britain forgetting the lessons of {kw}? Yes or No?",
+    "Should every child in Britain visit a {kw} memorial? Yes or No?"
   ],
   remembrance: [
-    "Are we forgetting {kw}?",
-    "Should {kw} be a bigger national event?",
-    "Is {kw} properly observed today?",
-    "What does {kw} mean to your generation?",
-    "Should more be done to honour {kw}?"
+    "Should every school in Britain hold a {kw} assembly? Yes or No?",
+    "Should {kw} Day be a national bank holiday? Yes or No?",
+    "Should every workplace in Britain observe {kw}? Yes or No?",
+    "Is Britain doing enough to honour {kw}? Yes or No?",
+    "Should wearing a poppy for {kw} be compulsory? Yes or No?"
   ],
   culture: [
-    "Does {kw} still resonate with the British people?",
-    "Should {kw} be taught in schools?",
-    "Is {kw} making a comeback?",
-    "What does {kw} mean to you?",
-    "Is {kw} still relevant in modern Britain?"
+    "Should every school in Britain teach {kw}? Yes or No?",
+    "Is {kw} being erased from modern Britain? Yes or No?",
+    "Should Britain bring back {kw}? Yes or No?",
+    "Does {kw} still represent what Britain stands for? Yes or No?",
+    "Should {kw} be protected by law? Yes or No?"
   ],
   heritage: [
-    "Is {kw} under threat in modern Britain?",
-    "Should Britain do more to protect {kw}?",
-    "Does {kw} still define what it means to be British?",
-    "How important is {kw} to you?",
-    "Is {kw} being eroded?"
+    "Should every school in Britain celebrate British {kw}? Yes or No?",
+    "Is British {kw} under threat from modern culture? Yes or No?",
+    "Should the government do more to protect {kw}? Yes or No?",
+    "Should {kw} be a compulsory subject in schools? Yes or No?",
+    "Is Britain losing its {kw}? Yes or No?"
   ],
   general: [
-    "Is {kw} about to become a bigger talking point?",
-    "What do you think about {kw}?",
-    "Should {kw} get more attention?",
-    "Is {kw} important to modern Britain?",
-    "What does {kw} mean to you?"
+    "Should every school in Britain teach children about {kw}? Yes or No?",
+    "Is {kw} being ignored in modern Britain? Yes or No?",
+    "Should Britain invest more in {kw}? Yes or No?",
+    "Should {kw} be a bigger priority for the government? Yes or No?",
+    "Does Britain still care about {kw}? Yes or No?"
   ]
 };
 
 var PRODUCT_MAP = {
-  "churchill": [
-    {name: "Churchill: Walking with Destiny (Biography)", type: "Book"},
-    {name: "Churchill Bust Statue - Bronze Effect", type: "Decor"},
-    {name: "Churchill Famous Quotes Poster Set", type: "Print"},
-    {name: "We Shall Fight on the Beaches Framed Art", type: "Wall Art"}
-  ],
-  "winston churchill": [
-    {name: "The Splendid and the Vile (Erik Larson)", type: "Book"},
-    {name: "Churchill Toby Jug - Collectible", type: "Memorabilia"},
-    {name: "Churchill War Rooms Guide Book", type: "Book"},
-    {name: "Winston Churchill Cufflinks", type: "Accessories"}
+  "england": [
+    {name: "Union Jack Lion Hoodie - St Georges Design", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "ENGLAND Flag St George's Flag 5ft x 3ft (Pack of 2)", price: "9.99", commission: "0.50", type: "Flag", sold: "NEW"},
+    {name: "England Wearable Flag + Bucket Hat Set", price: "9.99", commission: "0.49", type: "Fan Gear", sold: "620"}
   ],
   "union jack": [
-    {name: "Premium Union Jack Flag 5x3ft", type: "Flag"},
-    {name: "Union Jack Cushion Cover Set", type: "Home Decor"},
-    {name: "Vintage Union Jack Metal Sign", type: "Wall Art"},
-    {name: "Union Jack Cufflinks - Gift Box", type: "Accessories"}
+    {name: "Union Jack Lion Hoodie - St Georges Design", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"},
+    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"}
   ],
-  "british army": [
-    {name: "British Army: A History (Book)", type: "Book"},
-    {name: "British Army Veteran T-Shirt", type: "Clothing"},
-    {name: "Army Surplus Field Jacket", type: "Clothing"},
-    {name: "Military History Map Print Set", type: "Print"}
+  "union jack flag": [
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"},
+    {name: "VIROSA St George Cross Flag Bunting 10m", price: "9.99", commission: "1.25", type: "Bunting", sold: "NEW"}
   ],
-  "raf": [
-    {name: "Spitfire Model Kit 1:48 Scale", type: "Model Kit"},
-    {name: "RAF Roundel T-Shirt", type: "Clothing"},
-    {name: "The Few: Battle of Britain (Book)", type: "Book"},
-    {name: "RAF Wings Enamel Pin Badge", type: "Accessories"}
+  "british flag": [
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"},
+    {name: "ENGLAND Flag St George's Flag 5ft x 3ft (Pack of 2)", price: "9.99", commission: "0.50", type: "Flag", sold: "NEW"},
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"}
   ],
-  "royal navy": [
-    {name: "Royal Navy Heritage Mug", type: "Drinkware"},
-    {name: "Trafalgar: Nelson's Victory (Book)", type: "Book"},
-    {name: "HMS Victory Model Ship Kit", type: "Model Kit"},
-    {name: "Royal Navy Ensign Flag", type: "Flag"}
-  ],
-  "veterans": [
-    {name: "Veterans Charity Wristband", type: "Charity"},
-    {name: "Thank a Veteran T-Shirt", type: "Clothing"},
-    {name: "Military Service Photo Frame", type: "Gift"},
-    {name: "Veterans Stories: Oral Histories (Book)", type: "Book"}
+  "st george": [
+    {name: "VIROSA St George Cross Flag Bunting 10m", price: "9.99", commission: "1.25", type: "Bunting", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "ENGLAND Flag St George's Flag 5ft x 3ft (Pack of 2)", price: "9.99", commission: "0.50", type: "Flag", sold: "NEW"},
+    {name: "England Wearable Flag + Bucket Hat Set", price: "9.99", commission: "0.49", type: "Fan Gear", sold: "620"}
   ],
   "remembrance": [
-    {name: "Enamel Poppy Brooch - Gift Boxed", type: "Accessories"},
-    {name: "Remembrance Wreath - Door Hanging", type: "Home Decor"},
-    {name: "Lest We Forget Wall Plaque", type: "Wall Art"},
-    {name: "Poppy Seeds Collection Pack", type: "Garden"}
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "England Wearable Flag + Bucket Hat Set", price: "9.99", commission: "0.49", type: "Fan Gear", sold: "620"}
   ],
-  "england": [
-    {name: "St George Cross Flag 5x3ft", type: "Flag"},
-    {name: "England Rugby/Football Scarf", type: "Sports"},
-    {name: "Proud to be English T-Shirt", type: "Clothing"},
-    {name: "England Heritage Pin Badge Set", type: "Accessories"}
+  "veterans": [
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"},
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"}
   ],
   "britain": [
-    {name: "Great Britain Heritage Map Print", type: "Print"},
-    {name: "Best of British Gift Hamper", type: "Gift"},
-    {name: "Proudly British T-Shirt", type: "Clothing"},
-    {name: "Britain: A History (Book)", type: "Book"}
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"},
+    {name: "The Transport for London Puzzle Book", price: "23.35", commission: "2.34", type: "Book", sold: "NEW"}
+  ],
+  "british army": [
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"}
+  ],
+  "raf": [
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"}
+  ],
+  "churchill": [
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "The Transport for London Puzzle Book", price: "23.35", commission: "2.34", type: "Book", sold: "NEW"},
+    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"}
   ],
   "london": [
-    {name: "London Skyline Canvas Print", type: "Wall Art"},
-    {name: "London Icons Mug Collection", type: "Drinkware"},
-    {name: "London A-Z Vintage Map Poster", type: "Print"},
-    {name: "London History Walking Guide", type: "Book"}
+    {name: "The Transport for London Puzzle Book", price: "23.35", commission: "2.34", type: "Book", sold: "NEW"},
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
+    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"}
   ],
   "armed forces": [
-    {name: "Armed Forces Day T-Shirt", type: "Clothing"},
-    {name: "Support Our Troops Car Sticker", type: "Accessories"},
-    {name: "Armed Forces Covenant Badge", type: "Accessories"},
-    {name: "Military Fitness Training Book", type: "Book"}
-  ],
-  "poppy": [
-    {name: "Crystal Poppy Brooch - Premium", type: "Accessories"},
-    {name: "Poppy Car Badge - Chrome", type: "Accessories"},
-    {name: "Ceramic Poppy - Tower of London Style", type: "Collectible"},
-    {name: "Poppy Seed Growing Kit", type: "Garden"}
-  ],
-  "monarchy": [
-    {name: "The Crown & Country (Book)", type: "Book"},
-    {name: "Royal Coat of Arms Wall Plaque", type: "Decor"},
-    {name: "Kings & Queens of England Poster", type: "Print"},
-    {name: "Royal Collection Tea Caddy", type: "Gift"}
-  ],
-  "king": [
-    {name: "King Charles III Coronation Mug", type: "Memorabilia"},
-    {name: "Royal Cypher Pin Badge", type: "Accessories"},
-    {name: "God Save the King Flag", type: "Flag"},
-    {name: "Royal Biography Collection", type: "Book"}
-  ],
-  "royal family": [
-    {name: "Royal Family Photo Book", type: "Book"},
-    {name: "Buckingham Palace Jigsaw Puzzle", type: "Gift"},
-    {name: "Royal Collection Commemorative Plate", type: "Collectible"},
-    {name: "Royal Family Timeline Poster", type: "Print"}
-  ],
-  "battle of britain": [
-    {name: "Battle of Britain Memorial Print", type: "Wall Art"},
-    {name: "Spitfire & Hurricane Model Set", type: "Model Kit"},
-    {name: "The Most Dangerous Enemy (Book)", type: "Book"},
-    {name: "Battle of Britain 75th Pin Badge", type: "Collectible"}
-  ],
-  "spitfire": [
-    {name: "Spitfire MK IX Model Kit 1:48", type: "Model Kit"},
-    {name: "Spitfire Blueprint Poster - Large", type: "Print"},
-    {name: "Spitfire Pilot Memoirs (Book)", type: "Book"},
-    {name: "Spitfire Metal Wall Art Sign", type: "Wall Art"}
-  ],
-  "dunkirk spirit": [
-    {name: "Dunkirk: The History (Book)", type: "Book"},
-    {name: "Dunkirk Little Ships Print", type: "Wall Art"},
-    {name: "Spirit of Dunkirk T-Shirt", type: "Clothing"},
-    {name: "Dunkirk 1940 Documentary DVD", type: "Media"}
-  ],
-  "immigration": [
-    {name: "British Values Discussion Book", type: "Book"},
-    {name: "Protect Our Borders Merchandise", type: "Clothing"},
-    {name: "UK Border Control History", type: "Book"},
-    {name: "British Identity Debate Collection", type: "Book"}
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "VIROSA St George Cross Flag Bunting 10m", price: "9.99", commission: "1.25", type: "Bunting", sold: "NEW"}
   ],
   "patriotism": [
-    {name: "Proudly Patriotic T-Shirt Range", type: "Clothing"},
-    {name: "British Patriot Pin Badge Set", type: "Accessories"},
-    {name: "This Is My Country Poster", type: "Print"},
-    {name: "Patriotic Gift Box - British Made", type: "Gift"}
+    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
+    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
+    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
+    {name: "200pc England Baking Set - Come On England", price: "20.00", commission: "2.50", type: "Party", sold: "NEW"}
   ]
 };
 
@@ -974,17 +932,64 @@ function getProducts(keyword) {
   for (var key in PRODUCT_MAP) {
     if (kw.indexOf(key) !== -1 || key.indexOf(kw) !== -1) return PRODUCT_MAP[key];
   }
-  var gk = getGroupKey(keyword);
-  var defaults = {
-    military: [{name:"Military Heritage Collection",type:"Book"},{name:"Armed Forces T-Shirt",type:"Clothing"},{name:"Military Pin Badge Set",type:"Accessories"}],
-    royal: [{name:"Royal Collection Gift",type:"Gift"},{name:"Royal Heritage Book",type:"Book"},{name:"Royal Commemorative Mug",type:"Drinkware"}],
-    national_identity: [{name:"Proud to be British T-Shirt",type:"Clothing"},{name:"British Heritage Gift Set",type:"Gift"},{name:"Union Jack Accessories",type:"Accessories"}],
-    history: [{name:"British History Collection",type:"Book"},{name:"Historical Timeline Poster",type:"Print"},{name:"Heritage Documentary Set",type:"Media"}],
-    remembrance: [{name:"Poppy Brooch - Premium",type:"Accessories"},{name:"Lest We Forget Plaque",type:"Wall Art"},{name:"Remembrance Gift Set",type:"Gift"}],
-    culture: [{name:"British Culture Heritage Book",type:"Book"},{name:"Iconic Britain Poster Set",type:"Print"},{name:"British Symbols Pin Set",type:"Accessories"}],
-    heritage: [{name:"British Heritage Map Print",type:"Print"},{name:"Heritage Gift Hamper",type:"Gift"},{name:"Traditional British Crafts Book",type:"Book"}]
-  };
-  return defaults[gk] || [{name:"British Patriotic Gift",type:"Gift"},{name:"Heritage Collection Book",type:"Book"}];
+  return PRODUCT_MAP["england"] || [];
+}
+
+var HISTORY_KEY = "patriot_radar_history";
+
+function saveTrendSnapshot(results) {
+  var data = {};
+  try { data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "{}"); } catch(e) {}
+  var today = new Date();
+  var pad = function(n) { return String(n).padStart(2, "0"); };
+  var dateKey = today.getFullYear() + "-" + pad(today.getMonth() + 1) + "-" + pad(today.getDate());
+  if (data[dateKey]) return;
+  var snapshot = {};
+  for (var i = 0; i < results.length; i++) {
+    snapshot[results[i].keyword.toLowerCase()] = Number(results[i].viral_score || 0);
+  }
+  data[dateKey] = snapshot;
+  var keys = Object.keys(data).sort();
+  if (keys.length > 14) {
+    for (var d = 0; d < keys.length - 14; d++) delete data[keys[d]];
+  }
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(data));
+}
+
+function getTrendHistory(keyword) {
+  var data = {};
+  try { data = JSON.parse(localStorage.getItem(HISTORY_KEY) || "{}"); } catch(e) {}
+  var kw = (keyword || "").toLowerCase();
+  var keys = Object.keys(data).sort();
+  var last7 = keys.slice(-7);
+  var points = [];
+  for (var i = 0; i < last7.length; i++) {
+    points.push({ date: last7[i], score: data[last7[i]][kw] || 0 });
+  }
+  return points;
+}
+
+function renderSparkline(points) {
+  if (points.length < 2) return '<span style="font-size:10px;color:var(--muted)">Collecting data...</span>';
+  var max = 0;
+  for (var i = 0; i < points.length; i++) { if (points[i].score > max) max = points[i].score; }
+  if (max === 0) max = 1;
+  var w = 120, h = 30;
+  var stepX = w / (points.length - 1);
+  var path = "";
+  for (var j = 0; j < points.length; j++) {
+    var x = j * stepX;
+    var y = h - (points[j].score / max * (h - 4)) - 2;
+    path += (j === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1);
+  }
+  var svg = '<svg width="' + w + '" height="' + h + '" style="display:inline-block;vertical-align:middle">';
+  svg += '<path d="' + path + '" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  var lastP = points[points.length - 1];
+  var lastX = (points.length - 1) * stepX;
+  var lastY = h - (lastP.score / max * (h - 4)) - 2;
+  svg += '<circle cx="' + lastX.toFixed(1) + '" cy="' + lastY.toFixed(1) + '" r="3" fill="#00ff88"/>';
+  svg += '</svg>';
+  return svg;
 }
 
 var PERF_KEY = "patriot_radar_performance";
@@ -1298,11 +1303,18 @@ function renderPrimary(item) {
   }
   h += '</div>';
 
-  h += '<div class="primary-section-label">Recommended Products</div>';
+  h += '<div class="primary-section-label">TikTok Shop Products (sorted by commission)</div>';
   h += '<div class="product-list">';
   var prods = getProducts(item.keyword);
+  prods.sort(function(a,b){ return Number(b.commission||0) - Number(a.commission||0); });
   for (var pi = 0; pi < prods.length; pi++) {
-    h += '<div class="product-item"><div class="product-icon">&#9733;</div><div class="product-name">' + prods[pi].name + '</div><div class="product-type">' + prods[pi].type + '</div></div>';
+    var p = prods[pi];
+    h += '<div class="product-item">';
+    h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:var(--green);font-size:9px;font-weight:900">&#163;' + p.commission + '</div>';
+    h += '<div style="flex:1;min-width:0"><div class="product-name">' + p.name + '</div>';
+    h += '<div style="font-size:9px;color:var(--muted);margin-top:2px">&#163;' + p.price + ' | Earn &#163;' + p.commission + ' | ' + (p.sold !== "NEW" ? p.sold + ' sold' : 'New listing') + '</div></div>';
+    h += '<div class="product-type">' + p.type + '</div>';
+    h += '</div>';
   }
   h += '</div>';
 
@@ -1450,8 +1462,16 @@ function renderFeed(items) {
 
     h += '<div class="feed-bar"><div class="feed-bar-fill" style="width:' + Math.min(100, vs) + '%"></div></div>';
 
+    var history = getTrendHistory(item.keyword);
+    h += '<div style="display:flex;align-items:center;gap:8px;margin:4px 0 8px 0">';
+    h += '<span style="font-size:9px;color:var(--muted);text-transform:uppercase">7-Day Trend:</span>';
+    h += renderSparkline(history);
+    h += '</div>';
+
     var feedProds = getProducts(item.keyword);
-    h += '<div class="feed-product">Top Product: ' + feedProds[0].name + ' (' + feedProds[0].type + ')</div>';
+    feedProds.sort(function(a,b){ return Number(b.commission||0) - Number(a.commission||0); });
+    var topP = feedProds[0];
+    h += '<div class="feed-product">Top Product: ' + topP.name + ' | Earn &#163;' + (topP.commission||'?') + ' per sale</div>';
 
     var feedAud = getKeywordAudienceScore(item.keyword);
     if (feedAud !== null) {
@@ -1500,6 +1520,8 @@ async function loadLiveStats() {
     } else {
       document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(new Date().toISOString());
     }
+
+    saveTrendSnapshot(results);
 
     if (results.length > 0) {
       document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
