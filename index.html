@@ -1584,7 +1584,19 @@ function renderEmerging(items) {
     }
     h += '</div>';
     h += '<div class="feed-product" style="margin-top:4px">' + (item.product || "Patriotic merchandise") + '</div>';
-    h += '<div class="feed-question" style="margin-top:2px">"' + (item.question || "") + '"</div>';
+
+    if (item.hooks && item.hooks.length > 0) {
+      var emHookId = "em-hooks-" + i;
+      h += '<div style="margin-top:6px"><button class="copy-btn" onclick="toggleHooks(\'' + emHookId + '\')" style="margin-top:0">&#9776; Show 5 Hooks</button></div>';
+      h += '<ul class="hooks-list hidden" id="' + emHookId + '">';
+      for (var eh = 0; eh < item.hooks.length; eh++) {
+        h += '<li onclick="copyHook(this)"><span class="hook-num">' + (eh + 1) + '</span><span class="hook-text">' + item.hooks[eh] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
+      }
+      h += '</ul>';
+    } else {
+      h += '<div class="feed-question" style="margin-top:2px">"' + (item.question || "") + '"</div>';
+    }
+
     h += '</div></div>';
   }
 
