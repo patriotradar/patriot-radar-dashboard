@@ -1316,7 +1316,10 @@ function renderDailyPlan(results) {
     var av = avgViews(kw);
     var rv = relatedViews(kw);
     var fresh = days >= 3 ? 3 : days >= 2 ? 2 : days >= 1 ? 1 : -2;
-    var score = vs / 10 + fresh + (av > 0 ? av / 1000 : rv / 2000);
+    var rise = Number(results[i].rise_percent || 0);
+    var riseMult = rise < -10 ? 0.3 : rise < 0 ? 0.6 : 1;
+    var riseAdd = rise > 50 ? 2 : rise > 20 ? 1 : 0;
+    var score = (vs / 10 + fresh + riseAdd + (av > 0 ? av / 1000 : rv / 2000)) * riseMult;
     scored.push({ item: results[i], kw: kw, score: score, views: av, relViews: rv, days: days });
   }
   scored.sort(function(a, b) { return b.score - a.score; });
@@ -1445,12 +1448,16 @@ function renderAudienceInsights(results) {
       }
     }
 
-    var recScore = (rViews > 0 ? rViews / 1000 : relatedViews / 2000) + freshBonus + viralBonus;
+    var risePercent = Number(results[r].rise_percent || 0);
+    var risePenalty = risePercent < -10 ? 0.3 : risePercent < 0 ? 0.6 : 1;
+    var riseBonus = risePercent > 50 ? 2 : risePercent > 20 ? 1 : 0;
+
+    var recScore = ((rViews > 0 ? rViews / 1000 : relatedViews / 2000) + freshBonus + viralBonus + riseBonus) * risePenalty;
     if (rDays === 0) recScore = recScore * 0.3;
 
     if (recScore > bestRecScore) {
       bestRecScore = recScore;
-      bestRec = { keyword: results[r].keyword, views: rViews, days: rDays, relatedViews: relatedViews, viral: results[r].viral_score };
+      bestRec = { keyword: results[r].keyword, views: rViews, days: rDays, relatedViews: relatedViews, viral: results[r].viral_score, rise: risePercent };
     }
   }
 
