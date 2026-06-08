@@ -1476,13 +1476,30 @@ function renderDailyPlan(results) {
     var viewInfo = pk.views > 0 ? pk.views.toLocaleString() + " avg views" : pk.relViews > 0 ? "Similar: " + pk.relViews.toLocaleString() + " views" : "New topic";
     var freshInfo = pk.days === 0 ? "Posted today" : pk.days < 999 ? pk.days + "d ago" : "Never posted";
 
+    var riseVal = Number(pk.item.rise_percent || 0);
+    var urgency, urgColor, urgMsg;
+    if (riseVal > 60) {
+      urgency = "POST NOW"; urgColor = "#ff4757";
+      urgMsg = "Spiking fast - post within 2 hours for maximum reach";
+    } else if (riseVal > 25) {
+      urgency = "POST TODAY"; urgColor = "var(--amber)";
+      urgMsg = "Strong trend with room to grow - take your time for quality";
+    } else if (riseVal > 0) {
+      urgency = "POST TODAY"; urgColor = "var(--green)";
+      urgMsg = "Steady upward trend - good window today";
+    } else {
+      urgency = "SCHEDULE"; urgColor = "var(--blue)";
+      urgMsg = "No rush - prepare quality content for when it picks up";
+    }
+
     h += '<div style="padding:14px;margin-bottom:10px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;border-left:3px solid ' + sl.color + '">';
     h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
     h += '<span style="font-size:11px;font-weight:900;color:' + sl.color + ';text-transform:uppercase;letter-spacing:1px">' + sl.label + ' - ' + sl.time + '</span>';
-    h += '<span class="tag ' + trendTagClass(classifyTrend(Number(pk.item.viral_score||0), Number(pk.item.rise_percent||0))) + '">' + classifyTrend(Number(pk.item.viral_score||0), Number(pk.item.rise_percent||0)) + '</span>';
+    h += '<span class="tag" style="background:rgba(0,0,0,.3);color:' + urgColor + ';border:1px solid ' + urgColor + '">' + urgency + '</span>';
     h += '</div>';
     h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(pk.kw) + '</div>';
-    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
+    h += '<div style="font-size:9px;color:' + urgColor + ';margin-bottom:4px;font-weight:700">' + urgMsg + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
     h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + hooks[0] + '"</div>';
     h += '<div style="font-size:10px;color:var(--green2)">Pin: ' + topProd.name + ' (Earn &#163;' + topProd.commission + ')</div>';
     h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:6px">More hooks</button>';
