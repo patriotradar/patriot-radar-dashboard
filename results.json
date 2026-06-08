@@ -2,53 +2,41 @@
   "results": [
     {
       "category": "content",
-      "keyword": "raf",
-      "latest_score": 88,
-      "recent_avg": 41.7,
-      "previous_avg": 62.2,
-      "rise_percent": -33.0,
-      "viral_score": 39.1,
-      "question": "Should every child in Britain visit an RAF memorial? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should every child in Britain visit an RAF memorial? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Patriotic merchandise"
+      "keyword": "britain",
+      "latest_score": 59,
+      "recent_avg": 50.5,
+      "previous_avg": 55.7,
+      "rise_percent": -9.3,
+      "viral_score": 30.8,
+      "question": "Is being proud of Britain still acceptable? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of Britain still acceptable? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Proudly British merchandise"
     },
     {
       "category": "content",
-      "keyword": "churchill",
-      "latest_score": 63,
-      "recent_avg": 52.5,
-      "previous_avg": 46.3,
-      "rise_percent": 13.3,
-      "viral_score": 38.5,
-      "question": "Was Churchill the greatest leader Britain ever had? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Was Churchill the greatest leader Britain ever had? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Churchill books"
+      "keyword": "england",
+      "latest_score": 8,
+      "recent_avg": 6.7,
+      "previous_avg": 9.7,
+      "rise_percent": -31.0,
+      "viral_score": 4.1,
+      "question": "Is being proud of England still acceptable today? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of England still acceptable today? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "England flags and St George merchandise"
     },
     {
       "category": "content",
-      "keyword": "hurricane",
+      "keyword": "great britain",
       "latest_score": 0,
-      "recent_avg": 40.0,
-      "previous_avg": 67.7,
-      "rise_percent": -40.9,
-      "viral_score": 8.0,
-      "question": "Is Hurricane being ignored in modern Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is Hurricane being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "RAF and Spitfire memorabilia"
-    },
-    {
-      "category": "content",
-      "keyword": "parliament",
-      "latest_score": 0,
-      "recent_avg": 33.0,
-      "previous_avg": 40.8,
-      "rise_percent": -19.2,
-      "viral_score": 6.6,
-      "question": "Is Parliament being ignored in modern Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is Parliament being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "Patriotic merchandise"
+      "recent_avg": 10.3,
+      "previous_avg": 62.7,
+      "rise_percent": -83.5,
+      "viral_score": 2.1,
+      "question": "Is Great Britain still the greatest country in the world? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Great Britain still the greatest country in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Proudly British merchandise"
     }
   ],
   "emerging": [],
-  "last_updated": "2026-06-08 06:11:18"
+  "last_updated": "2026-06-08 06:21:10"
 }
