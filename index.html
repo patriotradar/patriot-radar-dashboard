@@ -1395,9 +1395,18 @@ function submitPerf(keyword) {
   alert("Performance logged! Audience Score: " + entry.score + "/10");
 }
 
-function renderDailyPlan(results) {
+function renderDailyPlan(results, emerging) {
   if (!results || results.length < 3) return "";
   var perfData = loadPerfData();
+
+  if (emerging && emerging.length > 0) {
+    for (var ei = 0; ei < emerging.length; ei++) {
+      var em = emerging[ei];
+      if (Number(em.viral_score || 0) > 30) {
+        results = results.concat([em]);
+      }
+    }
+  }
 
   function daysSince(kw) {
     var entries = perfData[kw];
@@ -2411,7 +2420,7 @@ async function loadLiveStats() {
     saveTrendSnapshot(results);
 
     if (results.length > 0) {
-      document.getElementById("dailyPlan").innerHTML = renderDailyPlan(results);
+      document.getElementById("dailyPlan").innerHTML = renderDailyPlan(results, emerging);
       document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
       document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
       document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
