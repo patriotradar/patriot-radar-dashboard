@@ -2069,11 +2069,15 @@ function renderEmerging(items) {
     var vs = Number(item.viral_score || 0);
     var cl = classifyTrend(vs, Number(item.rise_percent || 0));
     var tc = trendTagClass(cl);
-    var typeLabel = item.discovery_type === "uk_trending" ? "UK TRENDING" : item.discovery_type === "rising_query" ? "RISING QUERY" : "RELATED";
-    var typeCls = item.discovery_type === "uk_trending" ? "tag-viral" : "tag-strong";
+    var platforms = item.platforms || [item.discovery_type];
+    var platformCount = item.platform_count || 1;
+    var platformLabels = {"rising_query":"GOOGLE","related_query":"GOOGLE","uk_trending":"GOOGLE","reddit":"REDDIT","twitter":"TWITTER","news":"NEWS"};
+
+    var confidenceLabel = platformCount >= 3 ? "HIGH CONFIDENCE" : platformCount >= 2 ? "MULTI-PLATFORM" : "";
+    var confidenceCls = platformCount >= 3 ? "tag-viral" : platformCount >= 2 ? "tag-strong" : "";
 
     h += '<div class="opp-item rank-' + Math.min(i + 1, 5) + '">';
-    h += '<div class="opp-rank" style="background:rgba(251,191,36,.15);color:var(--amber);border:1px solid rgba(251,191,36,.3);font-size:10px">NEW</div>';
+    h += '<div class="opp-rank" style="background:rgba(251,191,36,.15);color:var(--amber);border:1px solid rgba(251,191,36,.3);font-size:10px">' + (platformCount >= 2 ? platformCount + 'x' : 'NEW') + '</div>';
     h += '<div class="opp-info">';
     h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">';
     h += '<span class="opp-keyword">' + titleCase(item.keyword || "") + '</span>';
@@ -2085,8 +2089,15 @@ function renderEmerging(items) {
     h += '<span>24hr: <b>' + Number(item.latest_score || 0) + '</b></span>';
     h += '</div>';
     h += '<div class="opp-badges" style="margin-top:4px">';
-    h += '<span class="tag ' + typeCls + '">' + typeLabel + '</span>';
-    if (item.source_keyword && item.source_keyword !== "UK Trending") {
+    for (var pi = 0; pi < platforms.length; pi++) {
+      var pLabel = platformLabels[platforms[pi]] || platforms[pi].toUpperCase();
+      var pCls = platforms[pi] === "reddit" ? "tag-strong" : platforms[pi] === "twitter" ? "tag-stable" : platforms[pi] === "news" ? "tag-content" : "tag-uptick";
+      h += '<span class="tag ' + pCls + '">' + pLabel + '</span>';
+    }
+    if (confidenceLabel) {
+      h += '<span class="tag ' + confidenceCls + '">' + confidenceLabel + '</span>';
+    }
+    if (item.source_keyword && item.source_keyword.indexOf("Reddit") === -1 && item.source_keyword !== "UK Trending" && item.source_keyword !== "Twitter UK" && item.source_keyword !== "UK News") {
       h += '<span class="tag tag-stable">via ' + titleCase(item.source_keyword) + '</span>';
     }
     h += '</div>';
