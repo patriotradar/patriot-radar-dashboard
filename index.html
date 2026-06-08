@@ -811,6 +811,7 @@ button:active{transform:scale(.98)}
       <button class="tab-btn" data-tab="trends" onclick="switchTab('trends')">Trends</button>
       <button class="tab-btn" data-tab="discovery" onclick="switchTab('discovery')">Discovery</button>
       <button class="tab-btn" data-tab="audience" onclick="switchTab('audience')">Audience</button>
+      <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" data-tab="feed" onclick="switchTab('feed')">Live Feed</button>
     </div>
 
@@ -831,6 +832,10 @@ button:active{transform:scale(.98)}
 
     <div id="tab-audience" class="tab-content">
       <div id="audienceInsights"></div>
+    </div>
+
+    <div id="tab-products" class="tab-content">
+      <div id="productHub"></div>
     </div>
 
     <div id="tab-feed" class="tab-content">
@@ -2233,6 +2238,48 @@ function renderEmerging(items) {
   return h;
 }
 
+function renderProductHub(results) {
+  var h = '<div class="card card-glow" style="border-color:var(--green2)">';
+  h += '<div class="card-header"><h2>Product Opportunities</h2><div class="section-icon" style="color:var(--green2)">&#9733;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Best TikTok Shop products matched to trending keywords. Sorted by commission.</p>';
+
+  var allProds = [];
+  var seen = {};
+  for (var i = 0; i < results.length; i++) {
+    var prods = getProducts(results[i].keyword);
+    for (var j = 0; j < prods.length; j++) {
+      if (!seen[prods[j].name]) {
+        seen[prods[j].name] = true;
+        allProds.push({
+          product: prods[j],
+          keyword: results[i].keyword,
+          viral: results[i].viral_score,
+          rise: results[i].rise_percent
+        });
+      }
+    }
+  }
+  allProds.sort(function(a, b) { return Number(b.product.commission || 0) - Number(a.product.commission || 0); });
+
+  for (var p = 0; p < Math.min(10, allProds.length); p++) {
+    var item = allProds[p];
+    var pr = item.product;
+    var matchCol = (pr.matchScore || 0) >= 80 ? "var(--green)" : (pr.matchScore || 0) >= 65 ? "var(--amber)" : "var(--muted)";
+
+    h += '<div class="product-item" style="padding:12px;margin-bottom:8px">';
+    h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:' + matchCol + ';font-size:10px;font-weight:900;width:32px;height:32px">&#163;' + pr.commission + '</div>';
+    h += '<div style="flex:1;min-width:0">';
+    h += '<div class="product-name" style="font-size:13px">' + pr.name + '</div>';
+    h += '<div style="font-size:9px;color:var(--muted);margin-top:2px">&#163;' + pr.price + ' | ' + pr.type + ' | ' + (pr.sold !== "NEW" ? pr.sold + ' sold' : 'New') + '</div>';
+    h += '<div style="font-size:9px;color:var(--green2);margin-top:2px">Best for: <b>' + titleCase(item.keyword) + '</b> (Viral ' + Number(item.viral).toFixed(1) + ' ' + formatRise(item.rise) + ')</div>';
+    h += '</div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
 function renderLiveFeed(results, emerging) {
   var entries = [];
   var now = new Date();
@@ -2354,6 +2401,7 @@ async function loadLiveStats() {
       document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
       document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
       document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
+      document.getElementById("productHub").innerHTML = renderProductHub(results);
       document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
     }
   } catch (err) { console.error("Load error:", err); }
