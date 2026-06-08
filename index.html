@@ -2288,42 +2288,33 @@ function renderEmerging(items) {
   return h;
 }
 
-function renderProductHub(results) {
+function renderProductHub(results, productTrends) {
   var h = '<div class="card card-glow" style="border-color:var(--green2)">';
-  h += '<div class="card-header"><h2>Product Opportunities</h2><div class="section-icon" style="color:var(--green2)">&#9733;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Best TikTok Shop products matched to trending keywords. Sorted by commission.</p>';
+  h += '<div class="card-header"><h2>Product Trends</h2><div class="section-icon" style="color:var(--green2)">&#9733;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Live product category trends from Google. Search for these product types on TikTok Shop to find what\'s selling.</p>';
 
-  var allProds = [];
-  var seen = {};
-  for (var i = 0; i < results.length; i++) {
-    var prods = getProducts(results[i].keyword);
-    for (var j = 0; j < prods.length; j++) {
-      if (!seen[prods[j].name]) {
-        seen[prods[j].name] = true;
-        allProds.push({
-          product: prods[j],
-          keyword: results[i].keyword,
-          viral: results[i].viral_score,
-          rise: results[i].rise_percent
-        });
-      }
+  if (productTrends && productTrends.length > 0) {
+    for (var p = 0; p < productTrends.length; p++) {
+      var pt = productTrends[p];
+      var vs = Number(pt.viral_score || 0);
+      var rp = Number(pt.rise_percent || 0);
+      var cl = classifyTrend(vs, rp);
+      var tc = trendTagClass(cl);
+      var urgency = rp > 60 ? "SEARCH NOW" : rp > 20 ? "HOT" : rp > 0 ? "RISING" : "STEADY";
+      var urgCol = rp > 60 ? "#ff4757" : rp > 20 ? "var(--amber)" : rp > 0 ? "var(--green)" : "var(--muted)";
+
+      h += '<div class="product-item" style="padding:14px;margin-bottom:8px">';
+      h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:' + urgCol + ';font-size:8px;font-weight:900;width:36px;height:36px;text-align:center;line-height:1.2;padding-top:6px">' + urgency + '</div>';
+      h += '<div style="flex:1;min-width:0">';
+      h += '<div class="product-name" style="font-size:14px">' + titleCase(pt.keyword) + '</div>';
+      h += '<div style="font-size:10px;color:var(--muted);margin-top:3px">Viral: <b class="rise-positive">' + vs.toFixed(1) + '</b> | Rise: <b>' + formatRise(rp) + '</b> | 24hr: <b>' + pt.latest_score + '</b></div>';
+      h += '<div style="font-size:9px;color:var(--green2);margin-top:3px">Search TikTok Shop for: <b>"' + titleCase(pt.keyword) + '"</b></div>';
+      h += '</div>';
+      h += '<span class="tag ' + tc + '">' + cl + '</span>';
+      h += '</div>';
     }
-  }
-  allProds.sort(function(a, b) { return Number(b.product.commission || 0) - Number(a.product.commission || 0); });
-
-  for (var p = 0; p < Math.min(10, allProds.length); p++) {
-    var item = allProds[p];
-    var pr = item.product;
-    var matchCol = (pr.matchScore || 0) >= 80 ? "var(--green)" : (pr.matchScore || 0) >= 65 ? "var(--amber)" : "var(--muted)";
-
-    h += '<div class="product-item" style="padding:12px;margin-bottom:8px">';
-    h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:' + matchCol + ';font-size:10px;font-weight:900;width:32px;height:32px">&#163;' + pr.commission + '</div>';
-    h += '<div style="flex:1;min-width:0">';
-    h += '<div class="product-name" style="font-size:13px">' + pr.name + '</div>';
-    h += '<div style="font-size:9px;color:var(--muted);margin-top:2px">&#163;' + pr.price + ' | ' + pr.type + ' | ' + (pr.sold !== "NEW" ? pr.sold + ' sold' : 'New') + '</div>';
-    h += '<div style="font-size:9px;color:var(--green2);margin-top:2px">Best for: <b>' + titleCase(item.keyword) + '</b> (Viral ' + Number(item.viral).toFixed(1) + ' ' + formatRise(item.rise) + ')</div>';
-    h += '</div>';
-    h += '</div>';
+  } else {
+    h += '<p style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0">Product trend data loading... Check back after the next scan cycle.</p>';
   }
 
   h += '</div>';
@@ -2423,6 +2414,7 @@ async function loadLiveStats() {
     var data = await res.json();
     var results = Array.isArray(data) ? data : data.results || [];
     var emerging = Array.isArray(data) ? [] : data.emerging || [];
+    var productTrends = Array.isArray(data) ? [] : data.product_trends || [];
 
     results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
     cachedResults = results;
@@ -2451,7 +2443,7 @@ async function loadLiveStats() {
       document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
       document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
       document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
-      document.getElementById("productHub").innerHTML = renderProductHub(results);
+      document.getElementById("productHub").innerHTML = renderProductHub(results, productTrends);
       document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
     }
   } catch (err) { console.error("Load error:", err); }
