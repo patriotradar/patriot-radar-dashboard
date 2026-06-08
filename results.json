@@ -2,17 +2,29 @@
   "results": [
     {
       "category": "content",
-      "keyword": "armed forces",
-      "latest_score": 62,
-      "recent_avg": 44.3,
-      "previous_avg": 29.0,
-      "rise_percent": 52.9,
-      "viral_score": 54.4,
-      "question": "Should every young person in Britain serve in the Armed Forces? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Should every young person in Britain serve in the Armed Forces? Yes or No? #british #proud #england #uk",
-      "product": "Patriotic merchandise"
+      "keyword": "great britain",
+      "latest_score": 92,
+      "recent_avg": 54.8,
+      "previous_avg": 41.5,
+      "rise_percent": 32.1,
+      "viral_score": 57.6,
+      "question": "Is Great Britain still the greatest country in the world? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Great Britain still the greatest country in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Proudly British merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "remembrance",
+      "latest_score": 0,
+      "recent_avg": 16.2,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 3.2,
+      "question": "Should Remembrance Day be a national bank holiday? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should Remembrance Day be a national bank holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Remembrance gifts and poppy accessories"
     }
   ],
   "emerging": [],
-  "last_updated": "2026-06-08 10:01:26"
+  "last_updated": "2026-06-08 10:11:17"
 }
