@@ -2308,6 +2308,30 @@ function renderProductHub(results, productTrends) {
       h += '<div style="flex:1;min-width:0">';
       h += '<div class="product-name" style="font-size:14px">' + titleCase(pt.keyword) + '</div>';
       h += '<div style="font-size:10px;color:var(--muted);margin-top:3px">Viral: <b class="rise-positive">' + vs.toFixed(1) + '</b> | Rise: <b>' + formatRise(rp) + '</b> | 24hr: <b>' + pt.latest_score + '</b></div>';
+
+      var prodGroup = getGroup(pt.keyword);
+      var perfData = loadPerfData();
+      var bestMatch = 0;
+      var bestMatchKw = "";
+      for (var ak in perfData) {
+        if (perfData[ak].length > 0) {
+          var akGroup = getGroup(ak);
+          var kwLow = pt.keyword.toLowerCase();
+          if (ak === kwLow || akGroup === prodGroup || kwLow.indexOf(ak) !== -1 || ak.indexOf(kwLow) !== -1) {
+            var av = 0;
+            for (var ai = 0; ai < perfData[ak].length; ai++) av += Number(perfData[ak][ai].views || 0);
+            av = Math.round(av / perfData[ak].length);
+            if (av > bestMatch) { bestMatch = av; bestMatchKw = ak; }
+          }
+        }
+      }
+
+      if (bestMatch > 0) {
+        var matchLevel = bestMatch >= 3000 ? "HIGH MATCH" : bestMatch >= 1000 ? "GOOD MATCH" : "LOW MATCH";
+        var matchCol2 = bestMatch >= 3000 ? "var(--green)" : bestMatch >= 1000 ? "var(--amber)" : "var(--muted)";
+        h += '<div style="font-size:9px;margin-top:3px;color:' + matchCol2 + '">Audience: <b>' + matchLevel + '</b> - Your ' + titleCase(bestMatchKw) + ' content averages ' + bestMatch.toLocaleString() + ' views</div>';
+      }
+
       h += '<div style="font-size:9px;color:var(--green2);margin-top:3px">Search TikTok Shop for: <b>"' + titleCase(pt.keyword) + '"</b></div>';
       h += '</div>';
       h += '<span class="tag ' + tc + '">' + cl + '</span>';
