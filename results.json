@@ -3,218 +3,393 @@
     {
       "category": "content",
       "keyword": "immigration",
-      "latest_score": 90,
-      "recent_avg": 74.3,
-      "previous_avg": 54.3,
-      "rise_percent": 36.8,
-      "viral_score": 62.9,
+      "latest_score": 63,
+      "recent_avg": 73.0,
+      "previous_avg": 56.7,
+      "rise_percent": 28.8,
+      "viral_score": 49.6,
       "question": "Has Britain lost control of immigration? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Has Britain lost control of immigration? Yes or No? Comment below! #britain #patriotic #british #england #proud",
       "product": "Patriotic merchandise"
     },
     {
       "category": "content",
-      "keyword": "united kingdom",
-      "latest_score": 52,
-      "recent_avg": 70.3,
-      "previous_avg": 43.8,
-      "rise_percent": 60.5,
-      "viral_score": 59.5,
-      "question": "Is the United Kingdom still truly united? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is the United Kingdom still truly united? Yes or No? #british #proud #england #uk",
-      "product": "Royal family collectibles"
-    },
-    {
-      "category": "content",
-      "keyword": "british",
-      "latest_score": 83,
-      "recent_avg": 80.3,
-      "previous_avg": 85.2,
-      "rise_percent": -5.7,
-      "viral_score": 45.1,
-      "question": "Is being British still something to be proud of? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is being British still something to be proud of? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "Proudly British merchandise"
-    },
-    {
-      "category": "content",
       "keyword": "london",
       "latest_score": 81,
-      "recent_avg": 79.3,
-      "previous_avg": 78.8,
-      "rise_percent": 0.6,
-      "viral_score": 44.5,
+      "recent_avg": 77.5,
+      "previous_avg": 73.2,
+      "rise_percent": 5.9,
+      "viral_score": 46.5,
       "question": "Is London still the greatest city in the world? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is London still the greatest city in the world? Yes or No? #british #proud #england #uk",
       "product": "Patriotic merchandise"
     },
     {
       "category": "content",
-      "keyword": "st george",
-      "latest_score": 100,
-      "recent_avg": 37.0,
-      "previous_avg": 38.2,
-      "rise_percent": -3.1,
-      "viral_score": 42.4,
-      "question": "Should St George's Day be a national holiday? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a national holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "english",
-      "latest_score": 50,
-      "recent_avg": 55.5,
-      "previous_avg": 54.7,
-      "rise_percent": 1.5,
-      "viral_score": 29.3,
-      "question": "Is being English still something to be proud of? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is being English still something to be proud of? Yes or No? #british #proud #england #uk",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "britain",
-      "latest_score": 51,
-      "recent_avg": 52.7,
-      "previous_avg": 54.8,
-      "rise_percent": -4.0,
-      "viral_score": 28.4,
-      "question": "Is being proud of Britain still acceptable? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of Britain still acceptable? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "Proudly British merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "british army",
-      "latest_score": 0,
-      "recent_avg": 59.7,
-      "previous_avg": 64.7,
-      "rise_percent": -7.7,
-      "viral_score": 11.9,
-      "question": "Should Britain double its spending on the British Army? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Should Britain double its spending on the British Army? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "British Army history books"
-    },
-    {
-      "category": "content",
-      "keyword": "union jack",
-      "latest_score": 0,
-      "recent_avg": 56.0,
-      "previous_avg": 71.5,
-      "rise_percent": -21.7,
-      "viral_score": 11.2,
-      "question": "Would you fly the Union Jack outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Jack outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "content",
-      "keyword": "raf",
-      "latest_score": 0,
-      "recent_avg": 48.3,
-      "previous_avg": 77.8,
-      "rise_percent": -37.9,
-      "viral_score": 9.7,
-      "question": "Should every child in Britain visit an RAF memorial? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should every child in Britain visit an RAF memorial? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "keyword": "westminster",
+      "latest_score": 64,
+      "recent_avg": 64.0,
+      "previous_avg": 58.0,
+      "rise_percent": 10.3,
+      "viral_score": 39.9,
+      "question": "Has Westminster lost touch with ordinary British people? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Has Westminster lost touch with ordinary British people? Yes or No? Comment YES or NO! #britain #patriotic #english",
       "product": "Patriotic merchandise"
     },
     {
       "category": "content",
-      "keyword": "royal family",
-      "latest_score": 0,
-      "recent_avg": 38.3,
-      "previous_avg": 43.8,
-      "rise_percent": -12.5,
-      "viral_score": 7.7,
-      "question": "Should British taxpayers continue to fund the Royal Family? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Should British taxpayers continue to fund the Royal Family? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Royal family collectibles"
-    },
-    {
-      "category": "content",
-      "keyword": "veterans",
-      "latest_score": 0,
-      "recent_avg": 38.2,
-      "previous_avg": 55.3,
-      "rise_percent": -31.0,
-      "viral_score": 7.6,
-      "question": "Should veterans get free healthcare for life? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should veterans get free healthcare for life? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "Veteran gifts"
-    },
-    {
-      "category": "content",
       "keyword": "churchill",
-      "latest_score": 0,
-      "recent_avg": 36.7,
-      "previous_avg": 47.7,
-      "rise_percent": -23.1,
-      "viral_score": 7.3,
+      "latest_score": 52,
+      "recent_avg": 39.3,
+      "previous_avg": 45.0,
+      "rise_percent": -12.6,
+      "viral_score": 26.1,
       "question": "Was Churchill the greatest leader Britain ever had? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 This is important. Was Churchill the greatest leader Britain ever had? Yes or No? Comment YES or NO! #britain #patriotic #english",
       "product": "Churchill books"
     },
     {
       "category": "content",
-      "keyword": "poppy",
+      "keyword": "union jack",
       "latest_score": 0,
-      "recent_avg": 35.3,
-      "previous_avg": 72.3,
-      "rise_percent": -51.2,
-      "viral_score": 7.1,
-      "question": "Should wearing a poppy be compulsory in Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Should wearing a poppy be compulsory in Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Remembrance gifts and poppy accessories"
+      "recent_avg": 50.7,
+      "previous_avg": 70.0,
+      "rise_percent": -27.6,
+      "viral_score": 10.1,
+      "question": "Would you fly the Union Jack outside your home? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Jack outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "content",
+      "keyword": "national service",
+      "latest_score": 0,
+      "recent_avg": 37.7,
+      "previous_avg": 44.3,
+      "rise_percent": -15.0,
+      "viral_score": 7.5,
+      "question": "Should Britain bring back National Service? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should Britain bring back National Service? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
     },
     {
       "category": "content",
       "keyword": "british history",
       "latest_score": 0,
-      "recent_avg": 27.8,
-      "previous_avg": 27.3,
-      "rise_percent": 1.8,
-      "viral_score": 6.4,
+      "recent_avg": 36.8,
+      "previous_avg": 41.3,
+      "rise_percent": -10.9,
+      "viral_score": 7.4,
       "question": "Is British History being ignored in modern Britain? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Is British History being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
       "product": "British history books"
+    },
+    {
+      "category": "content",
+      "keyword": "parliament",
+      "latest_score": 0,
+      "recent_avg": 29.3,
+      "previous_avg": 38.0,
+      "rise_percent": -22.8,
+      "viral_score": 5.9,
+      "question": "Does Parliament still work for the British people? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Does Parliament still work for the British people? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "remembrance",
+      "latest_score": 0,
+      "recent_avg": 21.7,
+      "previous_avg": 30.3,
+      "rise_percent": -28.6,
+      "viral_score": 4.3,
+      "question": "Should Remembrance Day be a national bank holiday? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should Remembrance Day be a national bank holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Remembrance gifts and poppy accessories"
+    },
+    {
+      "category": "content",
+      "keyword": "george cross",
+      "latest_score": 0,
+      "recent_avg": 16.7,
+      "previous_avg": 23.0,
+      "rise_percent": -27.5,
+      "viral_score": 3.3,
+      "question": "Does modern Britain still recognise true bravery? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Does modern Britain still recognise true bravery? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "uk politics",
+      "latest_score": 0,
+      "recent_avg": 11.3,
+      "previous_avg": 33.0,
+      "rise_percent": -65.7,
+      "viral_score": 2.3,
+      "question": "Are ordinary people being ignored by UK politics? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Are ordinary people being ignored by UK politics? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "normandy",
+      "latest_score": 0,
+      "recent_avg": 9.7,
+      "previous_avg": 25.8,
+      "rise_percent": -62.6,
+      "viral_score": 1.9,
+      "question": "Is Britain forgetting what happened in Normandy? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Britain forgetting what happened in Normandy? Yes or No? #british #proud #england #uk",
+      "product": "WW2 history books and memorabilia"
+    },
+    {
+      "category": "content",
+      "keyword": "victoria cross",
+      "latest_score": 0,
+      "recent_avg": 8.7,
+      "previous_avg": 57.3,
+      "rise_percent": -84.9,
+      "viral_score": 1.7,
+      "question": "Is the Victoria Cross the greatest honour in the world? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is the Victoria Cross the greatest honour in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "royal air force",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 42.3,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "question": "Should every child in Britain visit an RAF memorial? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should every child in Britain visit an RAF memorial? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Royal family collectibles"
+    },
+    {
+      "category": "content",
+      "keyword": "d-day",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 7.0,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "question": "Is modern Britain forgetting the sacrifice of D-Day? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is modern Britain forgetting the sacrifice of D-Day? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "WW2 history books and memorabilia"
     }
   ],
   "emerging": [
     {
       "category": "emerging",
-      "keyword": "little britain anthony head",
+      "keyword": "winston churchill bank notes",
       "latest_score": 0,
       "recent_avg": 0,
       "previous_avg": 0,
       "rise_percent": 0,
-      "viral_score": 3310.0,
-      "source_keyword": "britain",
+      "viral_score": 13620.0,
+      "source_keyword": "winston churchill",
       "discovery_type": "rising_query",
       "platforms": [
         "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Little Britain Anthony Head be celebrated more in Britain? Yes or No?",
+      "question": "Should every child in Britain learn about Winston Churchill Bank Notes? Yes or No?",
       "hooks": [
-        "Should Little Britain Anthony Head be celebrated more in Britain? Yes or No?",
-        "Is Little Britain Anthony Head something every British person should be proud of? Yes or No?",
-        "Should Little Britain Anthony Head be taught in every British school? Yes or No?",
-        "Does Little Britain Anthony Head unite or divide Britain? Yes or No?",
-        "Is Little Britain Anthony Head under threat in modern Britain? Yes or No?"
+        "Should every child in Britain learn about Winston Churchill Bank Notes? Yes or No?",
+        "Is Britain forgetting the lessons of Winston Churchill Bank Notes? Yes or No?",
+        "Should Winston Churchill Bank Notes be a national day of remembrance? Yes or No?",
+        "Would Winston Churchill Bank Notes be possible in today's Britain? Yes or No?",
+        "Should Winston Churchill Bank Notes be a bigger part of the school curriculum? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is Little Britain Anthony Head being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "Proudly British merchandise"
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Winston Churchill Bank Notes being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Churchill books"
+    },
+    {
+      "category": "emerging",
+      "keyword": "d'day remembrance",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 4640.0,
+      "source_keyword": "remembrance",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should D'Day Remembrance be a bank holiday in Britain? Yes or No?",
+      "hooks": [
+        "Should D'Day Remembrance be a bank holiday in Britain? Yes or No?",
+        "Is Britain doing enough to honour D'Day Remembrance? Yes or No?",
+        "Should every workplace observe D'Day Remembrance? Yes or No?",
+        "Is D'Day Remembrance being forgotten by younger generations? Yes or No?",
+        "Should D'Day Remembrance be marked with a national silence? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is D'Day Remembrance being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Remembrance gifts and poppy accessories"
+    },
+    {
+      "category": "emerging",
+      "keyword": "why is the poppy used as a symbol for war remembrance",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 3355.0,
+      "source_keyword": "remembrance",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should Why Is The Poppy Used As A Symbol For War Remembrance be a bank holiday in Britain? Yes or No?",
+      "hooks": [
+        "Should Why Is The Poppy Used As A Symbol For War Remembrance be a bank holiday in Britain? Yes or No?",
+        "Is Britain doing enough to honour Why Is The Poppy Used As A Symbol For War Remembrance? Yes or No?",
+        "Should every workplace observe Why Is The Poppy Used As A Symbol For War Remembrance? Yes or No?",
+        "Is Why Is The Poppy Used As A Symbol For War Remembrance being forgotten by younger generations? Yes or No?",
+        "Should Why Is The Poppy Used As A Symbol For War Remembrance be marked with a national silence? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Why Is The Poppy Used As A Symbol For War Remembrance being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Remembrance gifts and poppy accessories"
+    },
+    {
+      "category": "emerging",
+      "keyword": "humber woodland of remembrance",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 2910.0,
+      "source_keyword": "remembrance",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should Humber Woodland Of Remembrance be a bank holiday in Britain? Yes or No?",
+      "hooks": [
+        "Should Humber Woodland Of Remembrance be a bank holiday in Britain? Yes or No?",
+        "Is Britain doing enough to honour Humber Woodland Of Remembrance? Yes or No?",
+        "Should every workplace observe Humber Woodland Of Remembrance? Yes or No?",
+        "Is Humber Woodland Of Remembrance being forgotten by younger generations? Yes or No?",
+        "Should Humber Woodland Of Remembrance be marked with a national silence? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Humber Woodland Of Remembrance being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "Remembrance gifts and poppy accessories"
+    },
+    {
+      "category": "emerging",
+      "keyword": "why is winston churchill famous",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 2385.0,
+      "source_keyword": "winston churchill",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should every child in Britain learn about Why Is Winston Churchill Famous? Yes or No?",
+      "hooks": [
+        "Should every child in Britain learn about Why Is Winston Churchill Famous? Yes or No?",
+        "Is Britain forgetting the lessons of Why Is Winston Churchill Famous? Yes or No?",
+        "Should Why Is Winston Churchill Famous be a national day of remembrance? Yes or No?",
+        "Would Why Is Winston Churchill Famous be possible in today's Britain? Yes or No?",
+        "Should Why Is Winston Churchill Famous be a bigger part of the school curriculum? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Why Is Winston Churchill Famous being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Churchill books"
+    },
+    {
+      "category": "emerging",
+      "keyword": "union jack socks",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 1935.0,
+      "source_keyword": "union jack",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should Union Jack Socks be celebrated more in Britain? Yes or No?",
+      "hooks": [
+        "Should Union Jack Socks be celebrated more in Britain? Yes or No?",
+        "Is Union Jack Socks something every British person should be proud of? Yes or No?",
+        "Should Union Jack Socks be taught in every British school? Yes or No?",
+        "Does Union Jack Socks unite or divide Britain? Yes or No?",
+        "Is Union Jack Socks under threat in modern Britain? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Union Jack Socks being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "emerging",
+      "keyword": "crochet remembrance poppy pattern",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "remembrance",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should Crochet Remembrance Poppy Pattern be a bank holiday in Britain? Yes or No?",
+      "hooks": [
+        "Should Crochet Remembrance Poppy Pattern be a bank holiday in Britain? Yes or No?",
+        "Is Britain doing enough to honour Crochet Remembrance Poppy Pattern? Yes or No?",
+        "Should every workplace observe Crochet Remembrance Poppy Pattern? Yes or No?",
+        "Is Crochet Remembrance Poppy Pattern being forgotten by younger generations? Yes or No?",
+        "Should Crochet Remembrance Poppy Pattern be marked with a national silence? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Crochet Remembrance Poppy Pattern being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "Remembrance gifts and poppy accessories"
+    },
+    {
+      "category": "emerging",
+      "keyword": "wylder remembrance quest",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.7,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "remembrance",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should Wylder Remembrance Quest be a bank holiday in Britain? Yes or No?",
+      "hooks": [
+        "Should Wylder Remembrance Quest be a bank holiday in Britain? Yes or No?",
+        "Is Britain doing enough to honour Wylder Remembrance Quest? Yes or No?",
+        "Should every workplace observe Wylder Remembrance Quest? Yes or No?",
+        "Is Wylder Remembrance Quest being forgotten by younger generations? Yes or No?",
+        "Should Wylder Remembrance Quest be marked with a national silence? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Wylder Remembrance Quest being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Remembrance gifts and poppy accessories"
     },
     {
       "category": "emerging",
       "keyword": "united kingdom national debt",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 1660.0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.8,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
       "source_keyword": "united kingdom",
       "discovery_type": "rising_query",
       "platforms": [
@@ -236,10 +411,10 @@
       "category": "emerging",
       "keyword": "hidden british island beaches",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 1620.0,
+      "recent_avg": 0.0,
+      "previous_avg": 5.2,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
       "source_keyword": "british",
       "discovery_type": "rising_query",
       "platforms": [
@@ -256,181 +431,6 @@
       ],
       "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Hidden British Island Beaches being ignored in modern Britain? Yes or No? #british #proud #england #uk",
       "product": "Proudly British merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british micro-preppers food supply",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 1400.0,
-      "source_keyword": "british",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Micro-Preppers Food Supply? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Micro-Preppers Food Supply? Yes or No?",
-        "Is British Micro-Preppers Food Supply important to modern Britain? Yes or No?",
-        "Is British Micro-Preppers Food Supply more important now than ever? Yes or No?",
-        "Does British Micro-Preppers Food Supply make you proud to be British? Yes or No?",
-        "Is British Micro-Preppers Food Supply being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Micro-Preppers Food Supply being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Proudly British merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "england squad snub maguire",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 920.0,
-      "source_keyword": "england",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should England Squad Snub Maguire be celebrated more in Britain? Yes or No?",
-      "hooks": [
-        "Should England Squad Snub Maguire be celebrated more in Britain? Yes or No?",
-        "Is England Squad Snub Maguire something every British person should be proud of? Yes or No?",
-        "Should England Squad Snub Maguire be taught in every British school? Yes or No?",
-        "Does England Squad Snub Maguire unite or divide Britain? Yes or No?",
-        "Is England Squad Snub Maguire under threat in modern Britain? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is England Squad Snub Maguire being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "english language grade boundaries",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 30.0,
-      "source_keyword": "english",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about English Language Grade Boundaries? Yes or No?",
-      "hooks": [
-        "Should Britain care more about English Language Grade Boundaries? Yes or No?",
-        "Is English Language Grade Boundaries important to modern Britain? Yes or No?",
-        "Is English Language Grade Boundaries more important now than ever? Yes or No?",
-        "Does English Language Grade Boundaries make you proud to be British? Yes or No?",
-        "Is English Language Grade Boundaries being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is English Language Grade Boundaries being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "english language paper 2",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 20.0,
-      "source_keyword": "english",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about English Language Paper 2? Yes or No?",
-      "hooks": [
-        "Should Britain care more about English Language Paper 2? Yes or No?",
-        "Is English Language Paper 2 important to modern Britain? Yes or No?",
-        "Is English Language Paper 2 more important now than ever? Yes or No?",
-        "Does English Language Paper 2 make you proud to be British? Yes or No?",
-        "Is English Language Paper 2 being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is English Language Paper 2 being ignored in modern Britain? Yes or No? #british #proud #england #uk",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "union jack scarf",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 19.0,
-      "source_keyword": "union jack",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Union Jack Scarf be celebrated more in Britain? Yes or No?",
-      "hooks": [
-        "Should Union Jack Scarf be celebrated more in Britain? Yes or No?",
-        "Is Union Jack Scarf something every British person should be proud of? Yes or No?",
-        "Should Union Jack Scarf be taught in every British school? Yes or No?",
-        "Does Union Jack Scarf unite or divide Britain? Yes or No?",
-        "Is Union Jack Scarf under threat in modern Britain? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Union Jack Scarf being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "emerging",
-      "keyword": "correct way up for union jack",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "union jack",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Correct Way Up For Union Jack be celebrated more in Britain? Yes or No?",
-      "hooks": [
-        "Should Correct Way Up For Union Jack be celebrated more in Britain? Yes or No?",
-        "Is Correct Way Up For Union Jack something every British person should be proud of? Yes or No?",
-        "Should Correct Way Up For Union Jack be taught in every British school? Yes or No?",
-        "Does Correct Way Up For Union Jack unite or divide Britain? Yes or No?",
-        "Is Correct Way Up For Union Jack under threat in modern Britain? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is Correct Way Up For Union Jack being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "emerging",
-      "keyword": "ministry of defence confirms the death of lance corporal jam",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Ministry Of Defence Confirms The Death Of Lance Corporal Jam? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Ministry Of Defence Confirms The Death Of Lance Corporal Jam? Yes or No?",
-        "Is Ministry Of Defence Confirms The Death Of Lance Corporal Jam important to modern Britain? Yes or No?",
-        "Is Ministry Of Defence Confirms The Death Of Lance Corporal Jam more important now than ever? Yes or No?",
-        "Does Ministry Of Defence Confirms The Death Of Lance Corporal Jam make you proud to be British? Yes or No?",
-        "Is Ministry Of Defence Confirms The Death Of Lance Corporal Jam being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is Ministry Of Defence Confirms The Death Of Lance Corporal Jam being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Patriotic merchandise"
     }
   ],
   "product_trends": [
@@ -438,56 +438,56 @@
       "category": "product",
       "keyword": "england flag",
       "latest_score": 0,
-      "recent_avg": 28.3,
-      "previous_avg": 66.5,
-      "rise_percent": -57.4,
-      "viral_score": 5.7,
+      "recent_avg": 22.5,
+      "previous_avg": 67.5,
+      "rise_percent": -66.7,
+      "viral_score": 4.5,
       "question": "Is England Flag being ignored in modern Britain? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is England Flag being ignored in modern Britain? Yes or No? #british #proud #england #uk",
       "product": "Union Jack flags and patriotic decor"
     },
     {
       "category": "product",
-      "keyword": "england shirt",
-      "latest_score": 0,
-      "recent_avg": 9.8,
-      "previous_avg": 25.5,
-      "rise_percent": -61.4,
-      "viral_score": 2.0,
-      "question": "Is England Shirt being ignored in modern Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is England Shirt being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "product",
       "keyword": "british flag",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 32.8,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 11.2,
+      "previous_avg": 61.8,
+      "rise_percent": -81.9,
+      "viral_score": 2.2,
       "question": "Would you fly the British flag outside your home? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Would you fly the British flag outside your home? Yes or No? #british #proud #england #uk",
       "product": "Union Jack flags and patriotic decor"
     },
     {
       "category": "product",
-      "keyword": "british t shirt",
+      "keyword": "england shirt",
+      "latest_score": 0,
+      "recent_avg": 10.8,
+      "previous_avg": 25.8,
+      "rise_percent": -58.1,
+      "viral_score": 2.2,
+      "question": "Is England Shirt being ignored in modern Britain? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is England Shirt being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "England flags and St George merchandise"
+    },
+    {
+      "category": "product",
+      "keyword": "union jack flag",
       "latest_score": 0,
       "recent_avg": 0.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
+      "previous_avg": 47.0,
+      "rise_percent": -100.0,
       "viral_score": 0.0,
-      "question": "Is British T Shirt being ignored in modern Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British T Shirt being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "Proudly British merchandise"
+      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Union Jack Flag being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Union Jack flags and patriotic decor"
     },
     {
       "category": "product",
       "keyword": "british clothing",
       "latest_score": 0,
       "recent_avg": 0.0,
-      "previous_avg": 30.5,
+      "previous_avg": 39.2,
       "rise_percent": -100.0,
       "viral_score": 0.0,
       "question": "Is British Clothing being ignored in modern Britain? Yes or No?",
@@ -495,5 +495,5 @@
       "product": "British patriotic clothing"
     }
   ],
-  "last_updated": "2026-06-09 03:24:14"
+  "last_updated": "2026-06-09 03:34:03"
 }
