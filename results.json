@@ -2,6 +2,66 @@
   "results": [
     {
       "category": "content",
+      "keyword": "parliament",
+      "latest_score": 53,
+      "recent_avg": 52.5,
+      "previous_avg": 35.2,
+      "rise_percent": 49.3,
+      "viral_score": 51.2,
+      "question": "Does Parliament still work for the British people? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Does Parliament still work for the British people? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "george cross",
+      "latest_score": 0,
+      "recent_avg": 22.7,
+      "previous_avg": 12.8,
+      "rise_percent": 76.6,
+      "viral_score": 39.0,
+      "question": "Does modern Britain still recognise true bravery? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Does modern Britain still recognise true bravery? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "westminster",
+      "latest_score": 58,
+      "recent_avg": 68.0,
+      "previous_avg": 66.3,
+      "rise_percent": 2.5,
+      "viral_score": 35.0,
+      "question": "Has Westminster lost touch with ordinary British people? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Has Westminster lost touch with ordinary British people? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "victoria cross",
+      "latest_score": 0,
+      "recent_avg": 15.2,
+      "previous_avg": 9.0,
+      "rise_percent": 68.5,
+      "viral_score": 33.9,
+      "question": "Is the Victoria Cross the greatest honour in the world? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is the Victoria Cross the greatest honour in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "buckingham palace",
+      "latest_score": 35,
+      "recent_avg": 38.7,
+      "previous_avg": 32.3,
+      "rise_percent": 19.6,
+      "viral_score": 28.8,
+      "question": "Should Buckingham Palace be open to every British citizen for free? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should Buckingham Palace be open to every British citizen for free? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Royal family collectibles"
+    },
+    {
+      "category": "content",
       "keyword": "armed forces day",
       "latest_score": 0,
       "recent_avg": 29.7,
@@ -14,27 +74,27 @@
     },
     {
       "category": "content",
-      "keyword": "small boats",
+      "keyword": "d-day",
       "latest_score": 0,
-      "recent_avg": 8.3,
-      "previous_avg": 6.0,
-      "rise_percent": 38.9,
-      "viral_score": 19.2,
-      "question": "Is Britain doing enough about small boats? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Britain doing enough about small boats? Yes or No? #british #proud #england #uk",
-      "product": "Patriotic merchandise"
+      "recent_avg": 1.3,
+      "previous_avg": 3.2,
+      "rise_percent": -57.9,
+      "viral_score": 0.3,
+      "question": "Is modern Britain forgetting the sacrifice of D-Day? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is modern Britain forgetting the sacrifice of D-Day? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "WW2 history books and memorabilia"
     },
     {
       "category": "content",
-      "keyword": "victoria cross",
+      "keyword": "ve day",
       "latest_score": 0,
-      "recent_avg": 22.0,
+      "recent_avg": 0.0,
       "previous_avg": 0.0,
       "rise_percent": 0,
-      "viral_score": 4.4,
-      "question": "Is the Victoria Cross the greatest honour in the world? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is the Victoria Cross the greatest honour in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Patriotic merchandise"
+      "viral_score": 0.0,
+      "question": "Should VE Day be a national bank holiday? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should VE Day be a national bank holiday? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "WW2 history books and memorabilia"
     },
     {
       "category": "content",
@@ -251,31 +311,6 @@
       "product": "Royal family collectibles"
     }
   ],
-  "product_trends": [
-    {
-      "category": "product",
-      "keyword": "england shirt",
-      "latest_score": 21,
-      "recent_avg": 17.0,
-      "previous_avg": 16.2,
-      "rise_percent": 5.2,
-      "viral_score": 13.1,
-      "question": "Is England Shirt being ignored in modern Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is England Shirt being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "product",
-      "keyword": "british clothing",
-      "latest_score": 0,
-      "recent_avg": 16.7,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 3.3,
-      "question": "Is British Clothing being ignored in modern Britain? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Clothing being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "British patriotic clothing"
-    }
-  ],
-  "last_updated": "2026-06-09 16:21:55"
+  "product_trends": [],
+  "last_updated": "2026-06-09 16:32:15"
 }
