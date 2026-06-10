@@ -2244,62 +2244,62 @@ function renderFeed(items) {
 
 function renderEmerging(items) {
   if (!items || items.length === 0) return "";
-  var h = '<div class="card card-glow" style="border-color:var(--amber)">';
-  h += '<div class="card-header"><h2 style="color:var(--amber)">Emerging Topics</h2><div class="section-icon" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--amber)">&#9888;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">New topics discovered from rising Google searches and UK trends. These are NOT in your regular keyword list - they\'re fresh opportunities.</p>';
 
+  var sourceConfig = {
+    "autocomplete": {label: "FROM GOOGLE SEARCH", color: "var(--green)", icon: "&#128269;", desc: "What people are typing into Google right now"},
+    "news": {label: "FROM UK NEWS", color: "var(--purple)", icon: "&#128240;", desc: "Breaking UK headlines"},
+    "rising_query": {label: "FROM GOOGLE TRENDS", color: "var(--amber)", icon: "&#128200;", desc: "Rising search queries"},
+    "related_query": {label: "FROM GOOGLE TRENDS", color: "var(--amber)", icon: "&#128200;", desc: "Related rising queries"},
+    "uk_trending": {label: "FROM UK TRENDING", color: "var(--amber)", icon: "&#128200;", desc: "UK trending searches"},
+    "reddit": {label: "FROM REDDIT", color: "#ff4500", icon: "&#128172;", desc: "UK Reddit discussions"},
+    "twitter": {label: "FROM TWITTER/X", color: "var(--blue)", icon: "&#128038;", desc: "UK trending topics"}
+  };
+
+  var grouped = {};
   for (var i = 0; i < items.length; i++) {
-    var item = items[i];
-    var vs = Number(item.viral_score || 0);
-    var cl = classifyTrend(vs, Number(item.rise_percent || 0));
-    var tc = trendTagClass(cl);
-    var platforms = item.platforms || [item.discovery_type];
-    var platformCount = item.platform_count || 1;
-    var platformLabels = {"rising_query":"GOOGLE","related_query":"GOOGLE","uk_trending":"GOOGLE","reddit":"REDDIT","twitter":"TWITTER","news":"NEWS","autocomplete":"SEARCH"};
+    var type = items[i].discovery_type || "other";
+    if (type === "related_query") type = "rising_query";
+    if (type === "uk_trending") type = "rising_query";
+    if (!grouped[type]) grouped[type] = [];
+    grouped[type].push(items[i]);
+  }
 
-    var confidenceLabel = platformCount >= 3 ? "HIGH CONFIDENCE" : platformCount >= 2 ? "MULTI-PLATFORM" : "";
-    var confidenceCls = platformCount >= 3 ? "tag-viral" : platformCount >= 2 ? "tag-strong" : "";
+  var h = '<div class="card card-glow" style="border-color:var(--amber)">';
+  h += '<div class="card-header"><h2 style="color:var(--amber)">Discovery</h2><div class="section-icon" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--amber)">&#9888;</div></div>';
 
-    h += '<div class="opp-item rank-' + Math.min(i + 1, 5) + '">';
-    h += '<div class="opp-rank" style="background:rgba(251,191,36,.15);color:var(--amber);border:1px solid rgba(251,191,36,.3);font-size:10px">' + (platformCount >= 2 ? platformCount + 'x' : 'NEW') + '</div>';
-    h += '<div class="opp-info">';
-    h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">';
-    h += '<span class="opp-keyword">' + titleCase(item.keyword || "") + '</span>';
-    h += '<span class="tag ' + tc + '">' + cl + '</span>';
-    h += '</div>';
-    h += '<div class="opp-stats">';
-    h += '<span>Viral: <b class="rise-positive">' + vs.toFixed(1) + '</b></span>';
-    h += '<span>Rise: <b>' + formatRise(item.rise_percent) + '</b></span>';
-    h += '<span>24hr: <b>' + Number(item.latest_score || 0) + '</b></span>';
-    h += '</div>';
-    h += '<div class="opp-badges" style="margin-top:4px">';
-    for (var pi = 0; pi < platforms.length; pi++) {
-      var pLabel = platformLabels[platforms[pi]] || platforms[pi].toUpperCase();
-      var pCls = platforms[pi] === "reddit" ? "tag-strong" : platforms[pi] === "twitter" ? "tag-stable" : platforms[pi] === "news" ? "tag-content" : platforms[pi] === "autocomplete" ? "tag-conf-high" : "tag-uptick";
-      h += '<span class="tag ' + pCls + '">' + pLabel + '</span>';
-    }
-    if (confidenceLabel) {
-      h += '<span class="tag ' + confidenceCls + '">' + confidenceLabel + '</span>';
-    }
-    if (item.source_keyword && item.source_keyword.indexOf("Reddit") === -1 && item.source_keyword !== "UK Trending" && item.source_keyword !== "Twitter UK" && item.source_keyword !== "UK News") {
-      h += '<span class="tag tag-stable">via ' + titleCase(item.source_keyword) + '</span>';
-    }
-    h += '</div>';
-    h += '<div class="feed-product" style="margin-top:4px">' + (item.product || "Patriotic merchandise") + '</div>';
+  var sourceOrder = ["autocomplete", "rising_query", "news", "reddit", "twitter"];
+  for (var s = 0; s < sourceOrder.length; s++) {
+    var sKey = sourceOrder[s];
+    if (!grouped[sKey] || grouped[sKey].length === 0) continue;
+    var cfg = sourceConfig[sKey] || {label: sKey.toUpperCase(), color: "var(--muted)", icon: "&#9679;", desc: ""};
 
-    if (item.hooks && item.hooks.length > 0) {
-      var emHookId = "em-hooks-" + i;
-      h += '<div style="margin-top:6px"><button class="copy-btn" onclick="toggleHooks(\'' + emHookId + '\')" style="margin-top:0">&#9776; Show 5 Hooks</button></div>';
-      h += '<ul class="hooks-list hidden" id="' + emHookId + '">';
-      for (var eh = 0; eh < item.hooks.length; eh++) {
-        h += '<li onclick="copyHook(this)"><span class="hook-num">' + (eh + 1) + '</span><span class="hook-text">' + item.hooks[eh] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
+    h += '<div style="margin-bottom:16px">';
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">';
+    h += '<span style="font-size:16px">' + cfg.icon + '</span>';
+    h += '<span style="font-size:12px;font-weight:900;color:' + cfg.color + ';text-transform:uppercase;letter-spacing:1px">' + cfg.label + '</span>';
+    h += '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">' + cfg.desc + '</div>';
+
+    for (var j = 0; j < grouped[sKey].length; j++) {
+      var item = grouped[sKey][j];
+      var vs = Number(item.viral_score || 0);
+      var cl = classifyTrend(vs, Number(item.rise_percent || 0));
+      var tc = trendTagClass(cl);
+
+      h += '<div style="padding:10px;margin-bottom:6px;background:rgba(10,18,14,.5);border:1px solid var(--border);border-radius:12px;border-left:3px solid ' + cfg.color + '">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h += '<span style="font-weight:800;font-size:13px">' + titleCase(item.keyword || "") + '</span>';
+      h += '<span class="tag ' + tc + '">' + cl + '</span>';
+      h += '</div>';
+      h += '<div style="font-size:10px;color:var(--muted)">Viral: <b class="rise-positive">' + vs.toFixed(1) + '</b>';
+      if (item.source_keyword && item.source_keyword !== "UK Trending" && item.source_keyword !== "Twitter UK" && item.source_keyword !== "UK News") {
+        h += ' | via <b>' + titleCase(item.source_keyword) + '</b>';
       }
-      h += '</ul>';
-    } else {
-      h += '<div class="feed-question" style="margin-top:2px">"' + (item.question || "") + '"</div>';
+      h += '</div>';
+      h += '<div style="font-size:10px;color:var(--green2);margin-top:3px">"' + (item.question || "") + '"</div>';
+      h += '</div>';
     }
-
-    h += '</div></div>';
+    h += '</div>';
   }
 
   h += '</div>';
