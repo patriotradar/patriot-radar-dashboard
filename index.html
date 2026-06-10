@@ -2255,7 +2255,7 @@ function renderEmerging(items) {
     var tc = trendTagClass(cl);
     var platforms = item.platforms || [item.discovery_type];
     var platformCount = item.platform_count || 1;
-    var platformLabels = {"rising_query":"GOOGLE","related_query":"GOOGLE","uk_trending":"GOOGLE","reddit":"REDDIT","twitter":"TWITTER","news":"NEWS"};
+    var platformLabels = {"rising_query":"GOOGLE","related_query":"GOOGLE","uk_trending":"GOOGLE","reddit":"REDDIT","twitter":"TWITTER","news":"NEWS","autocomplete":"SEARCH"};
 
     var confidenceLabel = platformCount >= 3 ? "HIGH CONFIDENCE" : platformCount >= 2 ? "MULTI-PLATFORM" : "";
     var confidenceCls = platformCount >= 3 ? "tag-viral" : platformCount >= 2 ? "tag-strong" : "";
@@ -2275,7 +2275,7 @@ function renderEmerging(items) {
     h += '<div class="opp-badges" style="margin-top:4px">';
     for (var pi = 0; pi < platforms.length; pi++) {
       var pLabel = platformLabels[platforms[pi]] || platforms[pi].toUpperCase();
-      var pCls = platforms[pi] === "reddit" ? "tag-strong" : platforms[pi] === "twitter" ? "tag-stable" : platforms[pi] === "news" ? "tag-content" : "tag-uptick";
+      var pCls = platforms[pi] === "reddit" ? "tag-strong" : platforms[pi] === "twitter" ? "tag-stable" : platforms[pi] === "news" ? "tag-content" : platforms[pi] === "autocomplete" ? "tag-conf-high" : "tag-uptick";
       h += '<span class="tag ' + pCls + '">' + pLabel + '</span>';
     }
     if (confidenceLabel) {
