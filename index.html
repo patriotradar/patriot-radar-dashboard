@@ -828,6 +828,7 @@ button:active{transform:scale(.98)}
 
     <div id="tab-discovery" class="tab-content">
       <div id="emergingTopics"></div>
+      <div id="creatorInsights"></div>
     </div>
 
     <div id="tab-audience" class="tab-content">
@@ -2425,6 +2426,25 @@ function renderLiveFeed(results, emerging) {
   return h;
 }
 
+function renderCreatorInsights(items) {
+  if (!items || items.length === 0) return "";
+  var h = '<div class="card" style="border-color:var(--purple);margin-top:16px">';
+  h += '<div class="card-header"><h2 style="color:var(--purple)">Creator Insights</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128161;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">What creators are searching for right now. Use these topics for your Creator Radar TikTok account.</p>';
+
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    h += '<div style="padding:10px;margin-bottom:6px;background:rgba(10,18,14,.5);border:1px solid var(--border);border-radius:12px;border-left:3px solid var(--purple)">';
+    h += '<div style="font-weight:800;font-size:13px;margin-bottom:3px">' + titleCase(item.keyword || "") + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted)">People are searching: <b>"' + item.keyword + '"</b></div>';
+    h += '<div style="font-size:9px;color:var(--purple);margin-top:3px">Make a video answering this question and link to Creator Radar</div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
 function switchTab(tab) {
   var tabs = document.querySelectorAll('.tab-content');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
@@ -2457,6 +2477,7 @@ async function loadLiveStats() {
     var results = Array.isArray(data) ? data : data.results || [];
     var emerging = Array.isArray(data) ? [] : data.emerging || [];
     var productTrends = Array.isArray(data) ? [] : data.product_trends || [];
+    var creatorInsights = Array.isArray(data) ? [] : data.creator_insights || [];
 
     results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
     cachedResults = results;
@@ -2482,6 +2503,7 @@ async function loadLiveStats() {
       document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
       document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
       document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
+      document.getElementById("creatorInsights").innerHTML = renderCreatorInsights(creatorInsights);
       document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
       document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
       document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
