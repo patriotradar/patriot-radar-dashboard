@@ -2,23 +2,11 @@
   "results": [
     {
       "category": "content",
-      "keyword": "british",
-      "latest_score": 77,
-      "recent_avg": 73,
-      "previous_avg": 61,
-      "rise_percent": 50,
-      "viral_score": 77,
-      "question": "Is being British still something to be proud of? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is being British still something to be proud of? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "Proudly British merchandise"
-    },
-    {
-      "category": "content",
       "keyword": "great britain",
       "latest_score": 76,
-      "recent_avg": 71,
-      "previous_avg": 68,
-      "rise_percent": 60,
+      "recent_avg": 70,
+      "previous_avg": 62,
+      "rise_percent": 42,
       "viral_score": 76,
       "question": "Is Great Britain still the greatest country in the world? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Great Britain still the greatest country in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
@@ -26,126 +14,263 @@
     },
     {
       "category": "content",
-      "keyword": "st george's day",
-      "latest_score": 76,
-      "recent_avg": 75,
-      "previous_avg": 56,
-      "rise_percent": 52,
-      "viral_score": 76,
-      "question": "Should St George's Day be a bank holiday? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a bank holiday? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "english flag",
-      "latest_score": 75,
-      "recent_avg": 71,
-      "previous_avg": 65,
-      "rise_percent": 66,
-      "viral_score": 75,
-      "question": "Would you fly the English flag outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Would you fly the English flag outside your home? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "content",
-      "keyword": "united kingdom",
-      "latest_score": 70,
-      "recent_avg": 62,
-      "previous_avg": 52,
-      "rise_percent": 16,
-      "viral_score": 70,
-      "question": "Is the United Kingdom still truly united? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is the United Kingdom still truly united? Yes or No? #british #proud #england #uk",
-      "product": "Royal family collectibles"
-    },
-    {
-      "category": "content",
-      "keyword": "st george",
-      "latest_score": 70,
-      "recent_avg": 62,
-      "previous_avg": 51,
-      "rise_percent": 33,
-      "viral_score": 70,
-      "question": "Should St George's Day be a national holiday? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a national holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "british flag",
-      "latest_score": 64,
-      "recent_avg": 57,
-      "previous_avg": 48,
-      "rise_percent": 29,
-      "viral_score": 64,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Would you fly the British flag outside your home? Yes or No? #british #proud #england #uk",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "content",
-      "keyword": "england",
-      "latest_score": 62,
-      "recent_avg": 61,
-      "previous_avg": 43,
-      "rise_percent": 52,
-      "viral_score": 62,
-      "question": "Is being proud of England still acceptable today? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of England still acceptable today? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "content",
       "keyword": "english",
-      "latest_score": 62,
-      "recent_avg": 60,
-      "previous_avg": 49,
-      "rise_percent": 61,
-      "viral_score": 62,
+      "latest_score": 74,
+      "recent_avg": 66,
+      "previous_avg": 59,
+      "rise_percent": 70,
+      "viral_score": 74,
       "question": "Is being English still something to be proud of? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is being English still something to be proud of? Yes or No? #british #proud #england #uk",
       "product": "England flags and St George merchandise"
     },
     {
       "category": "content",
+      "keyword": "st george's day",
+      "latest_score": 71,
+      "recent_avg": 68,
+      "previous_avg": 57,
+      "rise_percent": 46,
+      "viral_score": 71,
+      "question": "Should St George's Day be a bank holiday? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a bank holiday? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "England flags and St George merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "british flag",
+      "latest_score": 69,
+      "recent_avg": 68,
+      "previous_avg": 53,
+      "rise_percent": 16,
+      "viral_score": 69,
+      "question": "Would you fly the British flag outside your home? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Would you fly the British flag outside your home? Yes or No? #british #proud #england #uk",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "content",
+      "keyword": "st george",
+      "latest_score": 67,
+      "recent_avg": 59,
+      "previous_avg": 49,
+      "rise_percent": 16,
+      "viral_score": 67,
+      "question": "Should St George's Day be a national holiday? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a national holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "England flags and St George merchandise"
+    },
+    {
+      "category": "content",
       "keyword": "union jack",
-      "latest_score": 62,
-      "recent_avg": 58,
-      "previous_avg": 42,
-      "rise_percent": 36,
-      "viral_score": 62,
+      "latest_score": 65,
+      "recent_avg": 57,
+      "previous_avg": 49,
+      "rise_percent": 10,
+      "viral_score": 65,
       "question": "Would you fly the Union Jack outside your home? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Jack outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
       "product": "Union Jack flags and patriotic decor"
     },
     {
       "category": "content",
+      "keyword": "england",
+      "latest_score": 64,
+      "recent_avg": 60,
+      "previous_avg": 50,
+      "rise_percent": 35,
+      "viral_score": 64,
+      "question": "Is being proud of England still acceptable today? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of England still acceptable today? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "England flags and St George merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "english flag",
+      "latest_score": 64,
+      "recent_avg": 60,
+      "previous_avg": 54,
+      "rise_percent": 65,
+      "viral_score": 64,
+      "question": "Would you fly the English flag outside your home? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Would you fly the English flag outside your home? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "content",
+      "keyword": "union flag",
+      "latest_score": 60,
+      "recent_avg": 57,
+      "previous_avg": 50,
+      "rise_percent": 30,
+      "viral_score": 60,
+      "question": "Would you fly the Union Flag outside your home? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Flag outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "content",
       "keyword": "britain",
-      "latest_score": 51,
-      "recent_avg": 49,
-      "previous_avg": 40,
-      "rise_percent": 18,
-      "viral_score": 51,
+      "latest_score": 57,
+      "recent_avg": 51,
+      "previous_avg": 46,
+      "rise_percent": 43,
+      "viral_score": 57,
       "question": "Is being proud of Britain still acceptable? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of Britain still acceptable? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
       "product": "Proudly British merchandise"
     },
     {
       "category": "content",
-      "keyword": "union flag",
-      "latest_score": 50,
-      "recent_avg": 46,
-      "previous_avg": 35,
-      "rise_percent": 61,
-      "viral_score": 50,
-      "question": "Would you fly the Union Flag outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Flag outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Union Jack flags and patriotic decor"
+      "keyword": "british",
+      "latest_score": 52,
+      "recent_avg": 45,
+      "previous_avg": 36,
+      "rise_percent": 46,
+      "viral_score": 52,
+      "question": "Is being British still something to be proud of? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is being British still something to be proud of? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "Proudly British merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "united kingdom",
+      "latest_score": 49,
+      "recent_avg": 42,
+      "previous_avg": 37,
+      "rise_percent": 51,
+      "viral_score": 49,
+      "question": "Is the United Kingdom still truly united? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is the United Kingdom still truly united? Yes or No? #british #proud #england #uk",
+      "product": "Royal family collectibles"
     }
   ],
   "emerging": [
+    {
+      "category": "emerging",
+      "keyword": "what roles in the british army give the best job",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 20.0,
+      "source_keyword": "Reddit r/BritishMilitary",
+      "discovery_type": "reddit",
+      "platforms": [
+        "reddit"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about What Roles In The British Army Give The Best Job? Yes or No?",
+      "hooks": [
+        "Should Britain care more about What Roles In The British Army Give The Best Job? Yes or No?",
+        "Is What Roles In The British Army Give The Best Job important to modern Britain? Yes or No?",
+        "Is What Roles In The British Army Give The Best Job more important now than ever? Yes or No?",
+        "Does What Roles In The British Army Give The Best Job make you proud to be British? Yes or No?",
+        "Is What Roles In The British Army Give The Best Job being ignored by the government? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is What Roles In The British Army Give The Best Job being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "British Army history books"
+    },
+    {
+      "category": "emerging",
+      "keyword": "new \u201cberet traditions\u201d ???",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 20.0,
+      "source_keyword": "Reddit r/BritishMilitary",
+      "discovery_type": "reddit",
+      "platforms": [
+        "reddit"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about New \u201cBeret Traditions\u201d ???? Yes or No?",
+      "hooks": [
+        "Should Britain care more about New \u201cBeret Traditions\u201d ???? Yes or No?",
+        "Is New \u201cBeret Traditions\u201d ??? important to modern Britain? Yes or No?",
+        "Is New \u201cBeret Traditions\u201d ??? more important now than ever? Yes or No?",
+        "Does New \u201cBeret Traditions\u201d ??? make you proud to be British? Yes or No?",
+        "Is New \u201cBeret Traditions\u201d ??? being ignored by the government? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is New \u201cBeret Traditions\u201d ??? being ignored in modern Britain? Yes or No? #british #proud #england #uk",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "emerging",
+      "keyword": "fractured ankle can i still join british armed forces",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 20.0,
+      "source_keyword": "Reddit r/BritishMilitary",
+      "discovery_type": "reddit",
+      "platforms": [
+        "reddit"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Fractured Ankle Can I Still Join British Armed Forces? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Fractured Ankle Can I Still Join British Armed Forces? Yes or No?",
+        "Is Fractured Ankle Can I Still Join British Armed Forces important to modern Britain? Yes or No?",
+        "Is Fractured Ankle Can I Still Join British Armed Forces more important now than ever? Yes or No?",
+        "Does Fractured Ankle Can I Still Join British Armed Forces make you proud to be British? Yes or No?",
+        "Is Fractured Ankle Can I Still Join British Armed Forces being ignored by the government? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Fractured Ankle Can I Still Join British Armed Forces being ignored in modern Britain? Yes or No? #british #proud #england #uk",
+      "product": "Proudly British merchandise"
+    },
+    {
+      "category": "emerging",
+      "keyword": "joining motorsports within the army",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 20.0,
+      "source_keyword": "Reddit r/BritishMilitary",
+      "discovery_type": "reddit",
+      "platforms": [
+        "reddit"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Joining Motorsports Within The Army? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Joining Motorsports Within The Army? Yes or No?",
+        "Is Joining Motorsports Within The Army important to modern Britain? Yes or No?",
+        "Is Joining Motorsports Within The Army more important now than ever? Yes or No?",
+        "Does Joining Motorsports Within The Army make you proud to be British? Yes or No?",
+        "Is Joining Motorsports Within The Army being ignored by the government? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Joining Motorsports Within The Army being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "British Army history books"
+    },
+    {
+      "category": "emerging",
+      "keyword": "sunday emergency dentist nhs",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 20.0,
+      "source_keyword": "Reddit r/BritishSuccess",
+      "discovery_type": "reddit",
+      "platforms": [
+        "reddit"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Sunday Emergency Dentist Nhs? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Sunday Emergency Dentist Nhs? Yes or No?",
+        "Is Sunday Emergency Dentist Nhs important to modern Britain? Yes or No?",
+        "Is Sunday Emergency Dentist Nhs more important now than ever? Yes or No?",
+        "Does Sunday Emergency Dentist Nhs make you proud to be British? Yes or No?",
+        "Is Sunday Emergency Dentist Nhs being ignored by the government? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Sunday Emergency Dentist Nhs being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
+    },
     {
       "category": "emerging",
       "keyword": "british army celebrates sikh military heritage at sandhurst ",
@@ -348,6 +473,31 @@
     },
     {
       "category": "emerging",
+      "keyword": "should britain pay reparations",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 15.0,
+      "source_keyword": "should britain",
+      "discovery_type": "autocomplete",
+      "platforms": [
+        "autocomplete"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Should Britain Pay Reparations? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Should Britain Pay Reparations? Yes or No?",
+        "Is Should Britain Pay Reparations important to modern Britain? Yes or No?",
+        "Is Should Britain Pay Reparations more important now than ever? Yes or No?",
+        "Does Should Britain Pay Reparations make you proud to be British? Yes or No?",
+        "Is Should Britain Pay Reparations being ignored by the government? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Should Britain Pay Reparations being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "Proudly British merchandise"
+    },
+    {
+      "category": "emerging",
       "keyword": "do british people hug",
       "latest_score": 0,
       "recent_avg": 0,
@@ -370,31 +520,6 @@
       ],
       "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Do British People Hug being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
       "product": "Proudly British merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army 2026 intake",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
-      "platforms": [
-        "autocomplete"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army 2026 Intake? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army 2026 Intake? Yes or No?",
-        "Is British Army 2026 Intake important to modern Britain? Yes or No?",
-        "Is British Army 2026 Intake more important now than ever? Yes or No?",
-        "Does British Army 2026 Intake make you proud to be British? Yes or No?",
-        "Is British Army 2026 Intake being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Army 2026 Intake being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "British Army history books"
     }
   ],
   "product_trends": [],
@@ -460,5 +585,5 @@
       "discovery_type": "creator_search"
     }
   ],
-  "last_updated": "2026-06-11 07:12:34"
+  "last_updated": "2026-06-11 07:13:26"
 }
