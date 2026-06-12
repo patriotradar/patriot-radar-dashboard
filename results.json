@@ -2,150 +2,188 @@
   "results": [
     {
       "category": "content",
-      "keyword": "england",
-      "latest_score": 68,
-      "recent_avg": 63,
-      "previous_avg": 58,
-      "rise_percent": 10,
-      "viral_score": 68,
-      "question": "Is being proud of England still acceptable today? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of England still acceptable today? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "England flags and St George merchandise"
+      "keyword": "westminster",
+      "latest_score": 89,
+      "recent_avg": 69.3,
+      "previous_avg": 55.2,
+      "rise_percent": 25.7,
+      "viral_score": 56.6,
+      "question": "Has Westminster lost touch with ordinary British people? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Has Westminster lost touch with ordinary British people? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Patriotic merchandise"
     },
     {
       "category": "content",
-      "keyword": "st george",
-      "latest_score": 67,
-      "recent_avg": 62,
-      "previous_avg": 52,
-      "rise_percent": 15,
-      "viral_score": 67,
-      "question": "Should St George's Day be a national holiday? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a national holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "England flags and St George merchandise"
+      "keyword": "uk politics",
+      "latest_score": 0,
+      "recent_avg": 33.5,
+      "previous_avg": 15.2,
+      "rise_percent": 120.9,
+      "viral_score": 51.7,
+      "question": "Are ordinary people being ignored by UK politics? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Are ordinary people being ignored by UK politics? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
     },
     {
       "category": "content",
-      "keyword": "british flag",
-      "latest_score": 65,
-      "recent_avg": 63,
-      "previous_avg": 45,
-      "rise_percent": 22,
-      "viral_score": 65,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Would you fly the British flag outside your home? Yes or No? #british #proud #england #uk",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "content",
-      "keyword": "britain",
-      "latest_score": 64,
-      "recent_avg": 57,
-      "previous_avg": 46,
-      "rise_percent": 25,
-      "viral_score": 64,
-      "question": "Is being proud of Britain still acceptable? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Is being proud of Britain still acceptable? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "Proudly British merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "st george's day",
-      "latest_score": 63,
-      "recent_avg": 56,
-      "previous_avg": 54,
-      "rise_percent": 39,
-      "viral_score": 63,
-      "question": "Should St George's Day be a bank holiday? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Should St George's Day be a bank holiday? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "England flags and St George merchandise"
-    },
-    {
-      "category": "content",
-      "keyword": "union jack",
-      "latest_score": 62,
-      "recent_avg": 54,
-      "previous_avg": 51,
-      "rise_percent": 53,
-      "viral_score": 62,
-      "question": "Would you fly the Union Jack outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Jack outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Union Jack flags and patriotic decor"
-    },
-    {
-      "category": "content",
-      "keyword": "great britain",
-      "latest_score": 54,
-      "recent_avg": 49,
-      "previous_avg": 35,
-      "rise_percent": 68,
-      "viral_score": 54,
-      "question": "Is Great Britain still the greatest country in the world? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is Great Britain still the greatest country in the world? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Proudly British merchandise"
+      "keyword": "winston churchill",
+      "latest_score": 0,
+      "recent_avg": 29.7,
+      "previous_avg": 6.3,
+      "rise_percent": 368.4,
+      "viral_score": 50.9,
+      "question": "Would Churchill recognise Britain today? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Would Churchill recognise Britain today? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Churchill books"
     },
     {
       "category": "content",
       "keyword": "british",
-      "latest_score": 51,
-      "recent_avg": 50,
-      "previous_avg": 40,
-      "rise_percent": 35,
-      "viral_score": 51,
+      "latest_score": 80,
+      "recent_avg": 72.3,
+      "previous_avg": 66.7,
+      "rise_percent": 8.5,
+      "viral_score": 46.3,
       "question": "Is being British still something to be proud of? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Is being British still something to be proud of? Yes or No? Comment below! #britain #patriotic #british #england #proud",
       "product": "Proudly British merchandise"
     },
     {
       "category": "content",
-      "keyword": "english flag",
-      "latest_score": 50,
-      "recent_avg": 48,
-      "previous_avg": 41,
-      "rise_percent": 22,
-      "viral_score": 50,
-      "question": "Would you fly the English flag outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Would you fly the English flag outside your home? Yes or No? Comment YES or NO! #britain #patriotic #english",
-      "product": "Union Jack flags and patriotic decor"
+      "keyword": "london",
+      "latest_score": 72,
+      "recent_avg": 75.0,
+      "previous_avg": 75.8,
+      "rise_percent": -1.1,
+      "viral_score": 40.2,
+      "question": "Is London still the greatest city in the world? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is London still the greatest city in the world? Yes or No? #british #proud #england #uk",
+      "product": "Patriotic merchandise"
     },
     {
       "category": "content",
       "keyword": "english",
-      "latest_score": 48,
-      "recent_avg": 44,
-      "previous_avg": 38,
-      "rise_percent": 20,
-      "viral_score": 48,
+      "latest_score": 70,
+      "recent_avg": 62.3,
+      "previous_avg": 62.0,
+      "rise_percent": 0.5,
+      "viral_score": 37.2,
       "question": "Is being English still something to be proud of? Yes or No?",
       "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is being English still something to be proud of? Yes or No? #british #proud #england #uk",
       "product": "England flags and St George merchandise"
     },
     {
       "category": "content",
-      "keyword": "united kingdom",
-      "latest_score": 47,
-      "recent_avg": 45,
-      "previous_avg": 37,
-      "rise_percent": 46,
-      "viral_score": 47,
-      "question": "Is the United Kingdom still truly united? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is the United Kingdom still truly united? Yes or No? #british #proud #england #uk",
-      "product": "Royal family collectibles"
+      "keyword": "the few",
+      "latest_score": 64,
+      "recent_avg": 55.5,
+      "previous_avg": 56.5,
+      "rise_percent": -1.8,
+      "viral_score": 33.5,
+      "question": "Will Britain ever forget The Few who saved us? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Will Britain ever forget The Few who saved us? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "Patriotic merchandise"
     },
     {
       "category": "content",
-      "keyword": "union flag",
-      "latest_score": 46,
-      "recent_avg": 41,
-      "previous_avg": 38,
-      "rise_percent": 23,
-      "viral_score": 46,
-      "question": "Would you fly the Union Flag outside your home? Yes or No?",
-      "caption": "\ud83c\uddec\ud83c\udde7 Would you fly the Union Flag outside your home? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "keyword": "british history",
+      "latest_score": 67,
+      "recent_avg": 34.5,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 30.4,
+      "question": "Is British History being ignored in modern Britain? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is British History being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
+      "product": "British history books"
+    },
+    {
+      "category": "content",
+      "keyword": "armed forces day",
+      "latest_score": 0,
+      "recent_avg": 30.2,
+      "previous_avg": 22.3,
+      "rise_percent": 35.1,
+      "viral_score": 21.8,
+      "question": "Should Armed Forces Day be a national bank holiday? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Should Armed Forces Day be a national bank holiday? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "Patriotic merchandise"
+    },
+    {
+      "category": "content",
+      "keyword": "british flag",
+      "latest_score": 0,
+      "recent_avg": 17.3,
+      "previous_avg": 21.8,
+      "rise_percent": -20.6,
+      "viral_score": 3.5,
+      "question": "Would you fly the British flag outside your home? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Would you fly the British flag outside your home? Yes or No? #british #proud #england #uk",
       "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "content",
+      "keyword": "d-day",
+      "latest_score": 0,
+      "recent_avg": 0.8,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 0.2,
+      "question": "Is modern Britain forgetting the sacrifice of D-Day? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is modern Britain forgetting the sacrifice of D-Day? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "WW2 history books and memorabilia"
     }
   ],
   "emerging": [
+    {
+      "category": "emerging",
+      "keyword": "little britain anthony head",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 2665.0,
+      "source_keyword": "britain",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should Little Britain Anthony Head be celebrated more in Britain? Yes or No?",
+      "hooks": [
+        "Should Little Britain Anthony Head be celebrated more in Britain? Yes or No?",
+        "Is Little Britain Anthony Head something every British person should be proud of? Yes or No?",
+        "Should Little Britain Anthony Head be taught in every British school? Yes or No?",
+        "Does Little Britain Anthony Head unite or divide Britain? Yes or No?",
+        "Is Little Britain Anthony Head under threat in modern Britain? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Little Britain Anthony Head being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "Proudly British merchandise"
+    },
+    {
+      "category": "emerging",
+      "keyword": "england 6-0 friendly result",
+      "latest_score": 76,
+      "recent_avg": 85.5,
+      "previous_avg": 0.7,
+      "rise_percent": 11914.2,
+      "viral_score": 88.7,
+      "source_keyword": "england",
+      "discovery_type": "rising_query",
+      "platforms": [
+        "rising_query"
+      ],
+      "platform_count": 1,
+      "question": "Should England 6-0 Friendly Result be celebrated more in Britain? Yes or No?",
+      "hooks": [
+        "Should England 6-0 Friendly Result be celebrated more in Britain? Yes or No?",
+        "Is England 6-0 Friendly Result something every British person should be proud of? Yes or No?",
+        "Should England 6-0 Friendly Result be taught in every British school? Yes or No?",
+        "Does England 6-0 Friendly Result unite or divide Britain? Yes or No?",
+        "Is England 6-0 Friendly Result under threat in modern Britain? Yes or No?"
+      ],
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is England 6-0 Friendly Result being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "England flags and St George merchandise"
+    },
     {
       "category": "emerging",
       "keyword": "armed forces minister quits after healey exit as defence fun",
@@ -173,335 +211,160 @@
     },
     {
       "category": "emerging",
-      "keyword": "deep underground: inside the army's secret exercise beneath ",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
+      "keyword": "england v costa rica",
+      "latest_score": 1,
+      "recent_avg": 0.5,
+      "previous_avg": 4.8,
+      "rise_percent": -89.5,
+      "viral_score": 0.4,
+      "source_keyword": "england",
+      "discovery_type": "rising_query",
       "platforms": [
-        "news"
+        "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about Deep Underground: Inside The Army'S Secret Exercise Beneath ? Yes or No?",
+      "question": "Should England V Costa Rica be celebrated more in Britain? Yes or No?",
       "hooks": [
-        "Should Britain care more about Deep Underground: Inside The Army'S Secret Exercise Beneath ? Yes or No?",
-        "Is Deep Underground: Inside The Army'S Secret Exercise Beneath  important to modern Britain? Yes or No?",
-        "Is Deep Underground: Inside The Army'S Secret Exercise Beneath  more important now than ever? Yes or No?",
-        "Does Deep Underground: Inside The Army'S Secret Exercise Beneath  make you proud to be British? Yes or No?",
-        "Is Deep Underground: Inside The Army'S Secret Exercise Beneath  being ignored by the government? Yes or No?"
+        "Should England V Costa Rica be celebrated more in Britain? Yes or No?",
+        "Is England V Costa Rica something every British person should be proud of? Yes or No?",
+        "Should England V Costa Rica be taught in every British school? Yes or No?",
+        "Does England V Costa Rica unite or divide Britain? Yes or No?",
+        "Is England V Costa Rica under threat in modern Britain? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Deep Underground: Inside The Army'S Secret Exercise Beneath  being ignored in modern Britain? Yes or No? #british #proud #england #uk",
-      "product": "British Army history books"
+      "caption": "\ud83c\uddec\ud83c\udde7 Is England V Costa Rica being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "product": "England flags and St George merchandise"
     },
     {
       "category": "emerging",
-      "keyword": "broken tanks and cancelled jets \u2013 the uk military is",
+      "keyword": "tucci in great britain",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "great britain",
+      "discovery_type": "rising_query",
       "platforms": [
-        "news"
+        "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about Broken Tanks And Cancelled Jets \u2013 The Uk Military Is? Yes or No?",
+      "question": "Should Britain care more about Tucci In Great Britain? Yes or No?",
       "hooks": [
-        "Should Britain care more about Broken Tanks And Cancelled Jets \u2013 The Uk Military Is? Yes or No?",
-        "Is Broken Tanks And Cancelled Jets \u2013 The Uk Military Is important to modern Britain? Yes or No?",
-        "Is Broken Tanks And Cancelled Jets \u2013 The Uk Military Is more important now than ever? Yes or No?",
-        "Does Broken Tanks And Cancelled Jets \u2013 The Uk Military Is make you proud to be British? Yes or No?",
-        "Is Broken Tanks And Cancelled Jets \u2013 The Uk Military Is being ignored by the government? Yes or No?"
+        "Should Britain care more about Tucci In Great Britain? Yes or No?",
+        "Is Tucci In Great Britain important to modern Britain? Yes or No?",
+        "Is Tucci In Great Britain more important now than ever? Yes or No?",
+        "Does Tucci In Great Britain make you proud to be British? Yes or No?",
+        "Is Tucci In Great Britain being ignored by the government? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Broken Tanks And Cancelled Jets \u2013 The Uk Military Is being ignored in modern Britain? Yes or No? #british #proud #england #uk",
-      "product": "Patriotic merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "what is the british military actually for? - the telegraph",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about What Is The British Military Actually For? - The Telegraph? Yes or No?",
-      "hooks": [
-        "Should Britain care more about What Is The British Military Actually For? - The Telegraph? Yes or No?",
-        "Is What Is The British Military Actually For? - The Telegraph important to modern Britain? Yes or No?",
-        "Is What Is The British Military Actually For? - The Telegraph more important now than ever? Yes or No?",
-        "Does What Is The British Military Actually For? - The Telegraph make you proud to be British? Yes or No?",
-        "Is What Is The British Military Actually For? - The Telegraph being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is What Is The British Military Actually For? - The Telegraph being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Tucci In Great Britain being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
       "product": "Proudly British merchandise"
     },
     {
       "category": "emerging",
-      "keyword": "university academic and army reservist attends royal garden ",
+      "keyword": "england vs costa rica",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
+      "recent_avg": 0.2,
+      "previous_avg": 4.9,
+      "rise_percent": -96.6,
+      "viral_score": 0.0,
+      "source_keyword": "england",
+      "discovery_type": "rising_query",
       "platforms": [
-        "news"
+        "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about University Academic And Army Reservist Attends Royal Garden ? Yes or No?",
+      "question": "Should England Vs Costa Rica be celebrated more in Britain? Yes or No?",
       "hooks": [
-        "Should Britain care more about University Academic And Army Reservist Attends Royal Garden ? Yes or No?",
-        "Is University Academic And Army Reservist Attends Royal Garden  important to modern Britain? Yes or No?",
-        "Is University Academic And Army Reservist Attends Royal Garden  more important now than ever? Yes or No?",
-        "Does University Academic And Army Reservist Attends Royal Garden  make you proud to be British? Yes or No?",
-        "Is University Academic And Army Reservist Attends Royal Garden  being ignored by the government? Yes or No?"
+        "Should England Vs Costa Rica be celebrated more in Britain? Yes or No?",
+        "Is England Vs Costa Rica something every British person should be proud of? Yes or No?",
+        "Should England Vs Costa Rica be taught in every British school? Yes or No?",
+        "Does England Vs Costa Rica unite or divide Britain? Yes or No?",
+        "Is England Vs Costa Rica under threat in modern Britain? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is University Academic And Army Reservist Attends Royal Garden  being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
-      "product": "British Army history books"
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is England Vs Costa Rica being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "England flags and St George merchandise"
     },
     {
       "category": "emerging",
-      "keyword": "promises made to break 'toothless system' and create uk jobs",
+      "keyword": "england costa rica",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
+      "recent_avg": 0.2,
+      "previous_avg": 4.8,
+      "rise_percent": -96.6,
+      "viral_score": 0.0,
+      "source_keyword": "england",
+      "discovery_type": "rising_query",
       "platforms": [
-        "news"
+        "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about Promises Made To Break 'Toothless System' And Create Uk Jobs? Yes or No?",
+      "question": "Should England Costa Rica be celebrated more in Britain? Yes or No?",
       "hooks": [
-        "Should Britain care more about Promises Made To Break 'Toothless System' And Create Uk Jobs? Yes or No?",
-        "Is Promises Made To Break 'Toothless System' And Create Uk Jobs important to modern Britain? Yes or No?",
-        "Is Promises Made To Break 'Toothless System' And Create Uk Jobs more important now than ever? Yes or No?",
-        "Does Promises Made To Break 'Toothless System' And Create Uk Jobs make you proud to be British? Yes or No?",
-        "Is Promises Made To Break 'Toothless System' And Create Uk Jobs being ignored by the government? Yes or No?"
+        "Should England Costa Rica be celebrated more in Britain? Yes or No?",
+        "Is England Costa Rica something every British person should be proud of? Yes or No?",
+        "Should England Costa Rica be taught in every British school? Yes or No?",
+        "Does England Costa Rica unite or divide Britain? Yes or No?",
+        "Is England Costa Rica under threat in modern Britain? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is Promises Made To Break 'Toothless System' And Create Uk Jobs being ignored in modern Britain? Yes or No? #british #proud #england #uk",
-      "product": "Patriotic merchandise"
+      "caption": "\ud83c\uddec\ud83c\udde7 Is England Costa Rica being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "England flags and St George merchandise"
     },
     {
       "category": "emerging",
-      "keyword": "the decline of the british army: from the end of",
+      "keyword": "repurposed british railway stations",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
+      "recent_avg": 0.0,
+      "previous_avg": 4.4,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "british",
+      "discovery_type": "rising_query",
       "platforms": [
-        "news"
+        "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about The Decline Of The British Army: From The End Of? Yes or No?",
+      "question": "Should Britain care more about Repurposed British Railway Stations? Yes or No?",
       "hooks": [
-        "Should Britain care more about The Decline Of The British Army: From The End Of? Yes or No?",
-        "Is The Decline Of The British Army: From The End Of important to modern Britain? Yes or No?",
-        "Is The Decline Of The British Army: From The End Of more important now than ever? Yes or No?",
-        "Does The Decline Of The British Army: From The End Of make you proud to be British? Yes or No?",
-        "Is The Decline Of The British Army: From The End Of being ignored by the government? Yes or No?"
+        "Should Britain care more about Repurposed British Railway Stations? Yes or No?",
+        "Is Repurposed British Railway Stations important to modern Britain? Yes or No?",
+        "Is Repurposed British Railway Stations more important now than ever? Yes or No?",
+        "Does Repurposed British Railway Stations make you proud to be British? Yes or No?",
+        "Is Repurposed British Railway Stations being ignored by the government? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is The Decline Of The British Army: From The End Of being ignored in modern Britain? Yes or No? #british #proud #england #uk",
-      "product": "British Army history books"
-    },
-    {
-      "category": "emerging",
-      "keyword": "charing cross tube station used for major military exercise ",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Charing Cross Tube Station Used For Major Military Exercise ? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Charing Cross Tube Station Used For Major Military Exercise ? Yes or No?",
-        "Is Charing Cross Tube Station Used For Major Military Exercise  important to modern Britain? Yes or No?",
-        "Is Charing Cross Tube Station Used For Major Military Exercise  more important now than ever? Yes or No?",
-        "Does Charing Cross Tube Station Used For Major Military Exercise  make you proud to be British? Yes or No?",
-        "Is Charing Cross Tube Station Used For Major Military Exercise  being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is Charing Cross Tube Station Used For Major Military Exercise  being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "Patriotic merchandise"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army 2026 intake",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
-      "platforms": [
-        "autocomplete"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army 2026 Intake? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army 2026 Intake? Yes or No?",
-        "Is British Army 2026 Intake important to modern Britain? Yes or No?",
-        "Is British Army 2026 Intake more important now than ever? Yes or No?",
-        "Does British Army 2026 Intake make you proud to be British? Yes or No?",
-        "Is British Army 2026 Intake being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Army 2026 Intake being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "British Army history books"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army 2026 call forward list",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
-      "platforms": [
-        "autocomplete"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army 2026 Call Forward List? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army 2026 Call Forward List? Yes or No?",
-        "Is British Army 2026 Call Forward List important to modern Britain? Yes or No?",
-        "Is British Army 2026 Call Forward List more important now than ever? Yes or No?",
-        "Does British Army 2026 Call Forward List make you proud to be British? Yes or No?",
-        "Is British Army 2026 Call Forward List being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Army 2026 Call Forward List being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "British Army history books"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army 2026 calendar",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
-      "platforms": [
-        "autocomplete"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army 2026 Calendar? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army 2026 Calendar? Yes or No?",
-        "Is British Army 2026 Calendar important to modern Britain? Yes or No?",
-        "Is British Army 2026 Calendar more important now than ever? Yes or No?",
-        "Does British Army 2026 Calendar make you proud to be British? Yes or No?",
-        "Is British Army 2026 Calendar being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is British Army 2026 Calendar being ignored in modern Britain? Yes or No? #british #proud #england #uk",
-      "product": "British Army history books"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british military 2026",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
-      "platforms": [
-        "autocomplete"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Military 2026? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Military 2026? Yes or No?",
-        "Is British Military 2026 important to modern Britain? Yes or No?",
-        "Is British Military 2026 more important now than ever? Yes or No?",
-        "Does British Military 2026 make you proud to be British? Yes or No?",
-        "Is British Military 2026 being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Military 2026 being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is Repurposed British Railway Stations being ignored in modern Britain? Yes or No? Comment below! #britain #patriotic #british #england #proud",
       "product": "Proudly British merchandise"
     },
     {
       "category": "emerging",
-      "keyword": "british army recruitment 2026",
+      "keyword": "united kingdom national debt",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
+      "recent_avg": 0.0,
+      "previous_avg": 1.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "united kingdom",
+      "discovery_type": "rising_query",
       "platforms": [
-        "autocomplete"
+        "rising_query"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about British Army Recruitment 2026? Yes or No?",
+      "question": "Should Britain care more about United Kingdom National Debt? Yes or No?",
       "hooks": [
-        "Should Britain care more about British Army Recruitment 2026? Yes or No?",
-        "Is British Army Recruitment 2026 important to modern Britain? Yes or No?",
-        "Is British Army Recruitment 2026 more important now than ever? Yes or No?",
-        "Does British Army Recruitment 2026 make you proud to be British? Yes or No?",
-        "Is British Army Recruitment 2026 being ignored by the government? Yes or No?"
+        "Should Britain care more about United Kingdom National Debt? Yes or No?",
+        "Is United Kingdom National Debt important to modern Britain? Yes or No?",
+        "Is United Kingdom National Debt more important now than ever? Yes or No?",
+        "Does United Kingdom National Debt make you proud to be British? Yes or No?",
+        "Is United Kingdom National Debt being ignored by the government? Yes or No?"
       ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Army Recruitment 2026 being ignored in modern Britain? Yes or No? Let us know in the comments! #britain #english #patriotic #uk",
-      "product": "British Army history books"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army size 2026",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 15.0,
-      "source_keyword": "british army 2026",
-      "discovery_type": "autocomplete",
-      "platforms": [
-        "autocomplete"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army Size 2026? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army Size 2026? Yes or No?",
-        "Is British Army Size 2026 important to modern Britain? Yes or No?",
-        "Is British Army Size 2026 more important now than ever? Yes or No?",
-        "Does British Army Size 2026 make you proud to be British? Yes or No?",
-        "Is British Army Size 2026 being ignored by the government? Yes or No?"
-      ],
-      "caption": "\ud83c\uddec\ud83c\udde7 Is British Army Size 2026 being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
-      "product": "British Army history books"
+      "caption": "\ud83c\uddec\ud83c\udde7 This is important. Is United Kingdom National Debt being ignored in modern Britain? Yes or No? Comment YES or NO! #britain #patriotic #english",
+      "product": "Royal family collectibles"
     },
     {
       "category": "emerging",
       "keyword": "itvfootball",
       "latest_score": 0,
       "recent_avg": 0.0,
-      "previous_avg": 1.1,
+      "previous_avg": 1.2,
       "rise_percent": -100.0,
       "viral_score": 0.0,
       "source_keyword": "Twitter UK",
@@ -522,7 +385,44 @@
       "product": "Patriotic merchandise"
     }
   ],
-  "product_trends": [],
+  "product_trends": [
+    {
+      "category": "product",
+      "keyword": "england flag",
+      "latest_score": 79,
+      "recent_avg": 65.2,
+      "previous_avg": 17.3,
+      "rise_percent": 276.0,
+      "viral_score": 85.7,
+      "question": "Is England Flag being ignored in modern Britain? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Is England Flag being ignored in modern Britain? Yes or No? #british #proud #england #uk",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "product",
+      "keyword": "british flag",
+      "latest_score": 0,
+      "recent_avg": 17.0,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 3.4,
+      "question": "Would you fly the British flag outside your home? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Every generation should understand this. Would you fly the British flag outside your home? Yes or No? #british #proud #england #uk",
+      "product": "Union Jack flags and patriotic decor"
+    },
+    {
+      "category": "product",
+      "keyword": "england hoodie",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 0.0,
+      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
+      "caption": "\ud83c\uddec\ud83c\udde7 Is England Hoodie being ignored in modern Britain? Yes or No? Drop your answer below! #british #england #patriot #uk #proud",
+      "product": "British patriotic clothing"
+    }
+  ],
   "creator_insights": [
     {
       "keyword": "tiktok views and likes",
@@ -585,5 +485,5 @@
       "discovery_type": "creator_search"
     }
   ],
-  "last_updated": "2026-06-12 11:02:40"
+  "last_updated": "2026-06-12 11:19:51"
 }
