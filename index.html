@@ -334,6 +334,88 @@ button:active{transform:scale(.98)}
   border:1px solid rgba(0,255,136,.2);letter-spacing:.5px;
 }
 
+/* ── VIDEO ANALYZER ── */
+.az-input-wrap{
+  display:flex;gap:8px;margin-bottom:14px;
+}
+.az-input{
+  flex:1;padding:12px 14px;font-size:13px;
+  background:var(--panel);color:var(--white);
+  border:1px solid var(--border);border-radius:10px;
+  outline:none;font-family:inherit;
+}
+.az-input:focus{border-color:var(--green)}
+.az-input::placeholder{color:var(--muted)}
+.az-btn{
+  padding:12px 20px;font-size:12px;font-weight:900;
+  background:linear-gradient(135deg,var(--green2),var(--green));
+  color:var(--bg);border:none;border-radius:10px;
+  cursor:pointer;text-transform:uppercase;letter-spacing:1px;
+  white-space:nowrap;
+}
+.az-btn:active{opacity:.8}
+.az-btn:disabled{opacity:.4;cursor:not-allowed}
+.az-or{
+  text-align:center;font-size:10px;color:var(--muted);
+  margin:8px 0;text-transform:uppercase;letter-spacing:2px;
+}
+.az-textarea{
+  width:100%;padding:12px 14px;font-size:13px;
+  background:var(--panel);color:var(--white);
+  border:1px solid var(--border);border-radius:10px;
+  outline:none;font-family:inherit;resize:vertical;
+  min-height:60px;margin-bottom:14px;
+}
+.az-textarea:focus{border-color:var(--green)}
+.az-textarea::placeholder{color:var(--muted)}
+.az-result{margin-top:16px}
+.az-section{
+  padding:14px;margin-bottom:10px;
+  background:rgba(10,18,14,.5);
+  border:1px solid var(--border);border-radius:12px;
+}
+.az-section-title{
+  font-size:10px;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;
+  font-weight:700;margin-bottom:8px;
+}
+.az-detail{
+  display:flex;justify-content:space-between;
+  align-items:center;padding:6px 0;
+  border-bottom:1px solid rgba(26,48,40,.4);
+  font-size:12px;
+}
+.az-detail:last-child{border-bottom:none}
+.az-detail-label{color:var(--muted)}
+.az-detail-value{font-weight:800;color:var(--white)}
+.az-alt{
+  padding:12px;margin-bottom:8px;
+  background:rgba(0,255,136,.03);
+  border:1px solid rgba(0,255,136,.12);
+  border-radius:10px;cursor:pointer;
+}
+.az-alt:active{background:rgba(0,255,136,.08)}
+.az-alt-hook{font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px}
+.az-alt-meta{font-size:10px;color:var(--muted)}
+.az-alt-copy{
+  font-size:9px;color:var(--green);
+  text-transform:uppercase;letter-spacing:1px;
+  margin-top:4px;font-weight:700;
+}
+.az-loading{
+  text-align:center;padding:30px;
+  font-size:12px;color:var(--green);
+}
+.az-loading-dot{animation:pulse 1.5s infinite}
+.az-history{margin-top:16px}
+.az-history-item{
+  padding:10px;margin-bottom:6px;
+  background:rgba(10,18,14,.4);
+  border:1px solid var(--border);border-radius:10px;
+  cursor:pointer;font-size:11px;
+}
+.az-history-item:active{background:rgba(10,18,14,.7)}
+
 /* ── CONTENT SCORE ── */
 .cs-wrap{
   margin:10px 0 6px 0;
@@ -847,6 +929,7 @@ button:active{transform:scale(.98)}
       <button class="tab-btn" data-tab="audience" onclick="switchTab('audience')">Audience</button>
       <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" data-tab="feed" onclick="switchTab('feed')">Live Feed</button>
+      <button class="tab-btn" data-tab="analyzer" onclick="switchTab('analyzer')">Analyzer</button>
     </div>
 
     <div id="tab-plan" class="tab-content active">
@@ -877,7 +960,11 @@ button:active{transform:scale(.98)}
       <div id="liveFeed"></div>
     </div>
 
-    <div class="footer">CREATOR RADAR v6.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div id="tab-analyzer" class="tab-content">
+      <div id="videoAnalyzer"></div>
+    </div>
+
+    <div class="footer">CREATOR RADAR v7.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 </div>
 
@@ -2532,6 +2619,432 @@ function renderCreatorInsights(items) {
   return h;
 }
 
+var AZ_HISTORY_KEY = "cr_analyzer_history";
+
+function getAnalyzerHistory() {
+  try { return JSON.parse(localStorage.getItem(AZ_HISTORY_KEY) || "[]"); } catch(e) { return []; }
+}
+function saveAnalyzerHistory(entry) {
+  var hist = getAnalyzerHistory();
+  hist.unshift(entry);
+  if (hist.length > 10) hist = hist.slice(0, 10);
+  localStorage.setItem(AZ_HISTORY_KEY, JSON.stringify(hist));
+}
+
+function detectFormat(text) {
+  var t = text.toLowerCase();
+  if (/yes\s*(or|\/)\s*no/i.test(t) || /\?\s*(yes|no)/i.test(t)) return { format: "Yes/No Question", icon: "?", color: "var(--green)" };
+  if (/\b[a-d]\)|\ba\s*or\s*b\b|\boption\s*[a-d]/i.test(t)) return { format: "A/B/C/D Multiple Choice", icon: "ABCD", color: "var(--purple)" };
+  if (/rank|top\s*\d|list|worst.*best|best.*worst/i.test(t)) return { format: "Ranking/List", icon: "#", color: "var(--amber)" };
+  if (/what\s*(do|would|should)\s*you|your\s*opinion|thoughts\s*\?|comment\s*(below|your)|drop\s*(your|a)\s*(answer|comment)/i.test(t)) return { format: "Opinion Poll", icon: "!", color: "var(--blue)" };
+  if (/story|when\s*i|i\s*remember|back\s*in|growing\s*up|my\s*(dad|mum|gran)/i.test(t)) return { format: "Story/Nostalgia", icon: "~", color: "#ff6b9d" };
+  if (/did\s*you\s*know|bet\s*you|most\s*people\s*don|nobody\s*knows|secret/i.test(t)) return { format: "Did You Know / Fact", icon: "i", color: "var(--blue)" };
+  if (/vs\b|versus|compared|better\s*than|or\s*is\s*it/i.test(t)) return { format: "Comparison/VS", icon: "VS", color: "var(--amber)" };
+  if (/should|is\s*it|does|has|are\s*(we|they|you)|will|can\s*(we|they|britain)/i.test(t) && /\?/.test(t)) return { format: "Debate Question", icon: "?", color: "var(--green)" };
+  return { format: "Statement/Hook", icon: ">", color: "var(--muted)" };
+}
+
+function detectEmotions(text) {
+  var t = text.toLowerCase();
+  var emotions = [];
+  var checks = [
+    { words: ["pride", "proud", "proudly", "pride in", "patriot", "patriotic"], label: "Pride", color: "var(--green)" },
+    { words: ["nostalgia", "remember when", "back in", "growing up", "miss the", "used to", "the old", "those days"], label: "Nostalgia", color: "var(--purple)" },
+    { words: ["anger", "angry", "furious", "outrage", "disgrace", "disgusting", "ridiculous", "unacceptable", "shameful"], label: "Anger", color: "var(--red)" },
+    { words: ["curiosity", "curious", "wonder", "did you know", "bet you", "secret", "hidden", "unknown", "mystery"], label: "Curiosity", color: "var(--blue)" },
+    { words: ["concern", "worried", "fear", "threat", "crisis", "danger", "losing", "decline", "collapse", "dying"], label: "Concern", color: "var(--amber)" },
+    { words: ["respect", "honour", "honor", "tribute", "salute", "hero", "brave", "sacrifice", "duty", "service"], label: "Respect", color: "#00b86b" },
+    { words: ["hope", "inspiring", "incredible", "amazing", "powerful", "beautiful", "love", "faith", "belief"], label: "Hope", color: "#4dc9f6" },
+    { words: ["shock", "shocking", "unbelievable", "can not believe", "stunned", "jaw", "mind blown", "insane"], label: "Shock", color: "#ff4757" }
+  ];
+  for (var i = 0; i < checks.length; i++) {
+    for (var j = 0; j < checks[i].words.length; j++) {
+      if (t.indexOf(checks[i].words[j]) !== -1) { emotions.push(checks[i]); break; }
+    }
+  }
+  if (emotions.length === 0) {
+    if (/should|ban|compulsory|abolish|bring back|get rid/i.test(t)) emotions.push({ label: "Debate", color: "var(--amber)" });
+    if (/britain|british|england|english|uk /i.test(t)) emotions.push({ label: "Identity", color: "var(--green)" });
+  }
+  return emotions;
+}
+
+function detectTopic(text) {
+  var t = text.toLowerCase();
+  var topics = [
+    { words: ["army", "navy", "raf", "military", "armed forces", "soldier", "troops", "regiment", "battalion"], label: "Military/Defence" },
+    { words: ["remembrance", "poppy", "cenotaph", "memorial", "veterans", "lest we forget", "fallen", "armistice"], label: "Remembrance" },
+    { words: ["king", "queen", "royal", "monarchy", "prince", "princess", "buckingham", "coronation", "throne"], label: "Royal Family" },
+    { words: ["churchill", "spitfire", "dunkirk", "d-day", "ve day", "blitz", "ww2", "ww1", "normandy", "battle of britain"], label: "British History" },
+    { words: ["immigration", "migrant", "small boats", "channel", "border", "asylum", "deportation"], label: "Immigration" },
+    { words: ["flag", "union jack", "st george", "england flag", "english flag", "cross of st george"], label: "National Symbols" },
+    { words: ["tradition", "heritage", "culture", "identity", "values", "way of life", "british culture"], label: "Culture/Identity" },
+    { words: ["parliament", "government", "politics", "labour", "conservative", "reform", "mp ", "minister"], label: "Politics" },
+    { words: ["school", "education", "teach", "curriculum", "children", "young", "generation"], label: "Education" },
+    { words: ["nhs", "hospital", "healthcare", "doctor", "nurse"], label: "NHS/Healthcare" },
+    { words: ["police", "crime", "law", "justice", "court", "prison", "sentence"], label: "Law & Order" }
+  ];
+  for (var i = 0; i < topics.length; i++) {
+    for (var j = 0; j < topics[i].words.length; j++) {
+      if (t.indexOf(topics[i].words[j]) !== -1) return topics[i].label;
+    }
+  }
+  return "General/Topical";
+}
+
+function detectBritishRelevance(text) {
+  var t = text.toLowerCase();
+  var strong = ["army", "navy", "raf", "military", "armed forces", "veterans",
+    "remembrance", "poppy", "cenotaph", "memorial", "churchill", "spitfire",
+    "dunkirk", "d-day", "patriot", "heritage", "tradition", "pride",
+    "union jack", "st george", "flag", "king charles", "coronation"];
+  var general = ["britain", "british", "england", "english", "uk ", "united kingdom",
+    "royal", "queen", "prince", "parliament", "westminster", "buckingham",
+    "london", "scotland", "wales", "nhs", "bbc", "commonwealth"];
+  var strongHits = 0, genHits = 0;
+  for (var i = 0; i < strong.length; i++) { if (t.indexOf(strong[i]) !== -1) strongHits++; }
+  for (var i = 0; i < general.length; i++) { if (t.indexOf(general[i]) !== -1) genHits++; }
+  var score = Math.min(25, strongHits * 6 + genHits * 3);
+  if (score >= 20) return { score: score, label: "Very High", color: "var(--green)" };
+  if (score >= 14) return { score: score, label: "High", color: "var(--green2)" };
+  if (score >= 8) return { score: score, label: "Medium", color: "var(--amber)" };
+  return { score: score, label: "Low", color: "var(--red)" };
+}
+
+function detectDebatePotential(text) {
+  var t = text.toLowerCase();
+  var triggers = ["should", "is it", "does", "will", "can", "has", "are we",
+    "yes or no", "agree", "right or wrong", "too far", "not enough",
+    "bring back", "abolish", "ban", "compulsory", "still", "anymore",
+    "acceptable", "unacceptable", "free", "pay", "fund", "tax", "every", "all"];
+  var hits = 0;
+  for (var i = 0; i < triggers.length; i++) { if (t.indexOf(triggers[i]) !== -1) hits++; }
+  var hasQ = /\?/.test(t);
+  var score = Math.min(25, hits * 4 + (hasQ ? 8 : 0));
+  if (score >= 20) return { score: score, label: "Explosive", color: "var(--red)" };
+  if (score >= 14) return { score: score, label: "Strong", color: "var(--amber)" };
+  if (score >= 8) return { score: score, label: "Moderate", color: "var(--green)" };
+  return { score: score, label: "Low", color: "var(--muted)" };
+}
+
+function generateAlternatives(text, topic, emotions, format) {
+  var t = text.toLowerCase();
+  var templates = {
+    "Military/Defence": [
+      "Should Britain double its defence spending? Yes or No?",
+      "Should every school take children to a military memorial? Yes or No?",
+      "Is Britain still capable of defending itself? Yes or No?",
+      "Should National Service be brought back? Yes or No?",
+      "Are our Armed Forces being forgotten? Yes or No?"
+    ],
+    "Remembrance": [
+      "Should Remembrance Day be a national bank holiday? Yes or No?",
+      "Should wearing a poppy be compulsory? Yes or No?",
+      "Is Britain forgetting its fallen heroes? Yes or No?",
+      "Should protesting near a war memorial be a criminal offence? Yes or No?",
+      "Do our veterans get the respect they deserve? Yes or No?"
+    ],
+    "Royal Family": [
+      "Should British taxpayers still fund the Royal Family? Yes or No?",
+      "Does the monarchy still represent Britain? Yes or No?",
+      "Should Buckingham Palace be free for every British citizen? Yes or No?",
+      "Is the Royal Family good for Britain? Yes or No?",
+      "Should the coronation be a bigger national celebration? Yes or No?"
+    ],
+    "British History": [
+      "Should every child learn about the Battle of Britain? Yes or No?",
+      "Is British history being erased from schools? Yes or No?",
+      "Was Churchill the greatest leader Britain ever had? Yes or No?",
+      "Could Britain survive another Dunkirk today? Yes or No?",
+      "Should D-Day be a national day of remembrance? Yes or No?"
+    ],
+    "Immigration": [
+      "Has Britain lost control of its borders? Yes or No?",
+      "Should Britain leave the ECHR? Yes or No?",
+      "Is the government doing enough about small boats? Yes or No?",
+      "Should illegal immigrants be deported immediately? Yes or No?",
+      "Is immigration changing Britain for the worse? Yes or No?"
+    ],
+    "National Symbols": [
+      "Would you fly the Union Jack outside your home? Yes or No?",
+      "Should St George's Day be a bank holiday? Yes or No?",
+      "Is it still acceptable to be proud of the English flag? Yes or No?",
+      "Should the flag be flown on every public building? Yes or No?",
+      "Is the Union Jack being disrespected? Yes or No?"
+    ],
+    "Culture/Identity": [
+      "Is British identity under threat? Yes or No?",
+      "Are British traditions being forgotten? Yes or No?",
+      "Should British values be taught in every school? Yes or No?",
+      "Is Britain losing what makes it great? Yes or No?",
+      "Should Rule Britannia still be sung at the Proms? Yes or No?"
+    ],
+    "Politics": [
+      "Has Parliament lost touch with ordinary people? Yes or No?",
+      "Is British democracy still working? Yes or No?",
+      "Should politicians serve in the military first? Yes or No?",
+      "Are politicians putting Britain first? Yes or No?",
+      "Is freedom of speech under threat in Britain? Yes or No?"
+    ],
+    "Education": [
+      "Should schools teach more British history? Yes or No?",
+      "Should every school hold a Remembrance assembly? Yes or No?",
+      "Are our children learning enough about their country? Yes or No?",
+      "Should patriotism be part of the curriculum? Yes or No?",
+      "Is the education system failing British children? Yes or No?"
+    ]
+  };
+  var defaults = [
+    "Is being proud of Britain still acceptable? Yes or No?",
+    "Does Britain still have the spirit that made it great? Yes or No?",
+    "Should Britain care more about its own people first? Yes or No?",
+    "Is modern Britain forgetting its past? Yes or No?",
+    "Does honour still mean anything in Britain today? Yes or No?"
+  ];
+  var pool = templates[topic] || defaults;
+  var origWords = t.split(/\s+/);
+  var filtered = [];
+  for (var i = 0; i < pool.length; i++) {
+    var overlap = 0;
+    var pw = pool[i].toLowerCase().split(/\s+/);
+    for (var j = 0; j < origWords.length; j++) {
+      if (origWords[j].length > 4 && pool[i].toLowerCase().indexOf(origWords[j]) !== -1) overlap++;
+    }
+    if (overlap < 3) filtered.push(pool[i]);
+  }
+  if (filtered.length < 3) filtered = pool;
+  return filtered.slice(0, 5);
+}
+
+function analyzeVideo(caption) {
+  var text = caption.trim();
+  if (!text) return null;
+
+  var format = detectFormat(text);
+  var emotions = detectEmotions(text);
+  var topic = detectTopic(text);
+  var british = detectBritishRelevance(text);
+  var debate = detectDebatePotential(text);
+
+  var emotionScore = Math.min(25, emotions.length * 8 + 4);
+  var freshScore = 18;
+  var totalScore = freshScore + british.score + emotionScore + debate.score;
+
+  var grade, gradeCls;
+  if (totalScore >= 80) { grade = "S"; gradeCls = "cs-grade-s"; }
+  else if (totalScore >= 60) { grade = "A"; gradeCls = "cs-grade-a"; }
+  else if (totalScore >= 40) { grade = "B"; gradeCls = "cs-grade-b"; }
+  else { grade = "C"; gradeCls = "cs-grade-c"; }
+
+  var alternatives = generateAlternatives(text, topic, emotions, format);
+
+  return {
+    text: text,
+    format: format,
+    emotions: emotions,
+    topic: topic,
+    british: british,
+    debate: debate,
+    freshScore: freshScore,
+    emotionScore: emotionScore,
+    totalScore: totalScore,
+    grade: grade,
+    gradeCls: gradeCls,
+    alternatives: alternatives,
+    timestamp: new Date().toLocaleString()
+  };
+}
+
+async function fetchTikTokCaption(url) {
+  try {
+    var oembed = "https://www.tiktok.com/oembed?url=" + encodeURIComponent(url);
+    var resp = await fetch(oembed);
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    return { title: data.title || "", author: data.author_name || "" };
+  } catch(e) { return null; }
+}
+
+async function runAnalyzer() {
+  var urlInput = document.getElementById("azUrl");
+  var captionInput = document.getElementById("azCaption");
+  var resultDiv = document.getElementById("azResult");
+  var btn = document.getElementById("azBtn");
+
+  var url = (urlInput.value || "").trim();
+  var caption = (captionInput.value || "").trim();
+
+  if (!url && !caption) { alert("Paste a TikTok URL or enter a caption to analyse"); return; }
+
+  btn.disabled = true;
+  btn.textContent = "ANALYSING...";
+  resultDiv.innerHTML = '<div class="az-loading"><div class="az-loading-dot">Scanning video data...</div></div>';
+
+  var text = caption;
+  var author = "";
+
+  if (url && !caption) {
+    var tiktokData = await fetchTikTokCaption(url);
+    if (tiktokData && tiktokData.title) {
+      text = tiktokData.title;
+      author = tiktokData.author;
+    } else {
+      resultDiv.innerHTML = '<div class="az-section" style="border-color:var(--red)"><p style="font-size:12px;color:var(--red)">Could not fetch video data. TikTok may be blocking the request. Try pasting the video caption directly instead.</p></div>';
+      btn.disabled = false;
+      btn.textContent = "ANALYSE";
+      return;
+    }
+  }
+
+  var result = analyzeVideo(text);
+  if (!result) {
+    resultDiv.innerHTML = "";
+    btn.disabled = false;
+    btn.textContent = "ANALYSE";
+    return;
+  }
+
+  result.url = url;
+  result.author = author;
+  saveAnalyzerHistory({ text: result.text, topic: result.topic, grade: result.grade, score: result.totalScore, time: result.timestamp, url: url });
+
+  var h = '<div class="az-result">';
+
+  h += '<div class="az-section" style="border-left:3px solid var(--green)">';
+  h += '<div class="az-section-title">Video Analysis</div>';
+  h += '<div style="font-size:14px;font-weight:800;color:var(--white);margin-bottom:10px;line-height:1.4">"' + result.text + '"</div>';
+  if (author) h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">By: @' + author + '</div>';
+
+  h += '<div class="az-detail"><span class="az-detail-label">Topic</span><span class="az-detail-value">' + result.topic + '</span></div>';
+  h += '<div class="az-detail"><span class="az-detail-label">Format</span><span class="az-detail-value" style="color:' + result.format.color + '">' + result.format.format + '</span></div>';
+  h += '<div class="az-detail"><span class="az-detail-label">Emotions</span><span class="az-detail-value">';
+  if (result.emotions.length > 0) {
+    for (var i = 0; i < result.emotions.length; i++) {
+      h += '<span style="color:' + result.emotions[i].color + ';margin-left:' + (i > 0 ? '6' : '0') + 'px">' + result.emotions[i].label + '</span>';
+    }
+  } else { h += '<span style="color:var(--muted)">Neutral</span>'; }
+  h += '</span></div>';
+  h += '<div class="az-detail"><span class="az-detail-label">British Relevance</span><span class="az-detail-value" style="color:' + result.british.color + '">' + result.british.label + ' (' + result.british.score + '/25)</span></div>';
+  h += '<div class="az-detail"><span class="az-detail-label">Debate Potential</span><span class="az-detail-value" style="color:' + result.debate.color + '">' + result.debate.label + ' (' + result.debate.score + '/25)</span></div>';
+  h += '</div>';
+
+  h += '<div class="cs-wrap">';
+  h += '<div class="cs-header">';
+  h += '<div><span class="cs-label">Content Score</span><br><span class="cs-total">' + result.totalScore + '</span><span style="font-size:12px;color:var(--muted)">/100</span></div>';
+  h += '<span class="cs-grade ' + result.gradeCls + '">Grade ' + result.grade + '</span>';
+  h += '</div>';
+  h += '<div class="cs-bars">';
+  h += '<div class="cs-dim"><span class="cs-dim-label">Fresh</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-fresh" style="width:' + (result.freshScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--green)">' + result.freshScore + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (result.british.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + result.british.score + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (result.emotionScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + result.emotionScore + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">Debate</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (result.debate.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + result.debate.score + '</span></div>';
+  h += '</div></div>';
+
+  h += '<div class="az-section" style="border-left:3px solid var(--amber)">';
+  h += '<div class="az-section-title">Why This Works</div>';
+  var whyPoints = [];
+  if (result.format.format.indexOf("Yes/No") !== -1 || result.format.format.indexOf("Debate") !== -1) whyPoints.push("Simple yes/no format drives massive comment engagement - people can answer in one word");
+  if (result.format.format.indexOf("Opinion") !== -1) whyPoints.push("Opinion format makes viewers feel their voice matters, boosting comments");
+  if (result.format.format.indexOf("Nostalgia") !== -1 || result.format.format.indexOf("Story") !== -1) whyPoints.push("Nostalgia/story format creates emotional connection and sharing");
+  for (var e = 0; e < result.emotions.length; e++) {
+    if (result.emotions[e].label === "Pride") whyPoints.push("Taps into national pride - people share to show identity");
+    if (result.emotions[e].label === "Anger") whyPoints.push("Anger is TikTok's strongest engagement driver - people comment to vent");
+    if (result.emotions[e].label === "Nostalgia") whyPoints.push("Nostalgia creates instant emotional connection and sharing");
+    if (result.emotions[e].label === "Concern") whyPoints.push("Concern about national issues drives passionate debate in comments");
+    if (result.emotions[e].label === "Respect") whyPoints.push("Honour/respect content gets shared widely as a form of tribute");
+  }
+  if (result.british.score >= 14) whyPoints.push("Strong British relevance targets a specific, passionate audience");
+  if (result.debate.score >= 14) whyPoints.push("High debate potential means the comments section becomes a conversation");
+  if (whyPoints.length === 0) whyPoints.push("General audience appeal with broad reach potential");
+  for (var w = 0; w < Math.min(4, whyPoints.length); w++) {
+    h += '<div style="font-size:11px;color:var(--white);padding:4px 0;border-bottom:1px solid rgba(26,48,40,.3)">- ' + whyPoints[w] + '</div>';
+  }
+  h += '</div>';
+
+  h += '<div class="az-section" style="border-left:3px solid var(--green)">';
+  h += '<div class="az-section-title">Fresh Content Ideas (Same Formula)</div>';
+  for (var a = 0; a < result.alternatives.length; a++) {
+    var alt = result.alternatives[a];
+    var altAnalysis = analyzeVideo(alt);
+    h += '<div class="az-alt" onclick="copyAlt(this)">';
+    h += '<div class="az-alt-hook">' + (a + 1) + '. ' + alt + '</div>';
+    if (altAnalysis) {
+      h += '<div class="az-alt-meta">';
+      h += 'Score: ' + altAnalysis.totalScore + '/100';
+      h += ' | Format: ' + altAnalysis.format.format;
+      if (altAnalysis.emotions.length > 0) {
+        h += ' | ';
+        for (var ae = 0; ae < altAnalysis.emotions.length; ae++) {
+          h += (ae > 0 ? ', ' : '') + altAnalysis.emotions[ae].label;
+        }
+      }
+      h += '</div>';
+    }
+    h += '<div class="az-alt-copy">TAP TO COPY</div>';
+    h += '</div>';
+  }
+  h += '</div>';
+
+  h += '</div>';
+  resultDiv.innerHTML = h;
+  btn.disabled = false;
+  btn.textContent = "ANALYSE";
+}
+
+function copyAlt(el) {
+  var text = el.querySelector(".az-alt-hook").innerText.replace(/^\d+\.\s*/, "");
+  navigator.clipboard.writeText(text);
+  var copyEl = el.querySelector(".az-alt-copy");
+  copyEl.textContent = "COPIED!";
+  setTimeout(function() { copyEl.textContent = "TAP TO COPY"; }, 1500);
+}
+
+function loadHistoryAnalysis(idx) {
+  var hist = getAnalyzerHistory();
+  if (hist[idx]) {
+    document.getElementById("azCaption").value = hist[idx].text || "";
+    document.getElementById("azUrl").value = hist[idx].url || "";
+    runAnalyzer();
+  }
+}
+
+function renderVideoAnalyzer() {
+  var h = '<div class="card card-glow" style="border-color:var(--purple)">';
+  h += '<div class="card-header"><h2 style="color:var(--purple)">Video Analyzer</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128269;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Paste a TikTok URL or caption to reverse-engineer why it went viral and get fresh content ideas using the same formula.</p>';
+
+  h += '<div class="az-input-wrap">';
+  h += '<input class="az-input" id="azUrl" type="text" placeholder="Paste TikTok video URL...">';
+  h += '</div>';
+  h += '<div class="az-or">or paste the caption directly</div>';
+  h += '<textarea class="az-textarea" id="azCaption" placeholder="Paste the video caption/hook here..."></textarea>';
+  h += '<button class="az-btn" id="azBtn" onclick="runAnalyzer()">ANALYSE</button>';
+
+  h += '<div id="azResult"></div>';
+
+  var hist = getAnalyzerHistory();
+  if (hist.length > 0) {
+    h += '<div class="az-history">';
+    h += '<div class="az-section-title" style="margin-top:16px">Recent Analyses</div>';
+    for (var i = 0; i < Math.min(5, hist.length); i++) {
+      var item = hist[i];
+      var g = item.grade || "?";
+      var gc = g === "S" ? "cs-grade-s" : g === "A" ? "cs-grade-a" : g === "B" ? "cs-grade-b" : "cs-grade-c";
+      h += '<div class="az-history-item" onclick="loadHistoryAnalysis(' + i + ')">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      h += '<span style="font-weight:700;color:var(--white)">' + (item.text || "").substring(0, 50) + (item.text && item.text.length > 50 ? "..." : "") + '</span>';
+      h += '<span class="cs-grade ' + gc + '" style="font-size:8px">' + (item.score || 0) + ' ' + g + '</span>';
+      h += '</div>';
+      h += '<div style="font-size:9px;color:var(--muted);margin-top:3px">' + (item.topic || "") + ' | ' + (item.time || "") + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
 function switchTab(tab) {
   var tabs = document.querySelectorAll('.tab-content');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
@@ -2596,6 +3109,7 @@ async function loadLiveStats() {
       document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
       document.getElementById("productHub").innerHTML = renderProductHub(results, productTrends);
       document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
+      document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
     }
   } catch (err) { console.error("Load error:", err); }
 }
