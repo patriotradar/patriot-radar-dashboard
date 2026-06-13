@@ -2123,7 +2123,20 @@ function renderContentScore(item) {
   h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (br * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + br + '</span></div>';
   h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (em * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + em + '</span></div>';
   h += '<div class="cs-dim"><span class="cs-dim-label">Debate</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (db * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + db + '</span></div>';
-  h += '</div></div>';
+  h += '</div>';
+  var og = Number(item.opportunity_gap || 0);
+  if (og > 0) {
+    var ogColor = og >= 8 ? "var(--green)" : og >= 6 ? "var(--amber)" : og >= 4 ? "var(--muted)" : "var(--red)";
+    var ogLabel = item.opportunity_label || (og >= 8 ? "High Opportunity" : og >= 6 ? "Good Opportunity" : og >= 4 ? "Moderate" : "Saturated");
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid rgba(26,48,40,.4)">';
+    h += '<div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Opportunity Gap</div>';
+    h += '<div style="display:flex;align-items:center;gap:6px">';
+    h += '<div style="width:60px;height:5px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden"><div style="height:100%;border-radius:99px;background:' + ogColor + ';width:' + (og * 10) + '%"></div></div>';
+    h += '<span style="font-size:11px;font-weight:800;color:' + ogColor + '">' + og + '/10</span>';
+    h += '<span style="font-size:8px;color:' + ogColor + ';font-weight:700">' + ogLabel + '</span>';
+    h += '</div></div>';
+  }
+  h += '</div>';
   return h;
 }
 
