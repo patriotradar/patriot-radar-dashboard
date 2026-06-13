@@ -334,6 +334,40 @@ button:active{transform:scale(.98)}
   border:1px solid rgba(0,255,136,.2);letter-spacing:.5px;
 }
 
+/* ── CONTENT SCORE ── */
+.cs-wrap{
+  margin:10px 0 6px 0;
+  padding:10px;
+  background:rgba(0,255,136,.03);
+  border:1px solid rgba(0,255,136,.12);
+  border-radius:10px;
+}
+.cs-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:8px;
+}
+.cs-total{font-size:18px;font-weight:900;color:var(--green)}
+.cs-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.cs-bars{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cs-dim{display:flex;align-items:center;gap:6px}
+.cs-dim-label{font-size:9px;color:var(--muted);width:48px;text-align:right;flex-shrink:0}
+.cs-dim-bar{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden}
+.cs-dim-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.cs-dim-val{font-size:9px;font-weight:700;width:20px;flex-shrink:0}
+.cs-fill-fresh{background:linear-gradient(90deg,#00b86b,#00ff88)}
+.cs-fill-british{background:linear-gradient(90deg,#1e40af,#4dc9f6)}
+.cs-fill-emotion{background:linear-gradient(90deg,#b8860b,#fbbf24)}
+.cs-fill-debate{background:linear-gradient(90deg,#7c3aed,#a78bfa)}
+.cs-grade{
+  font-size:10px;font-weight:900;
+  padding:2px 8px;border-radius:6px;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.cs-grade-s{background:rgba(0,255,136,.15);color:var(--green);border:1px solid rgba(0,255,136,.3)}
+.cs-grade-a{background:rgba(0,184,107,.12);color:var(--green2);border:1px solid rgba(0,184,107,.25)}
+.cs-grade-b{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.25)}
+.cs-grade-c{background:rgba(255,71,87,.08);color:var(--red);border:1px solid rgba(255,71,87,.2)}
+
 /* ── HOOKS ── */
 .hooks-list{
   list-style:none;padding:0;margin:8px 0 0 0;
@@ -1487,7 +1521,8 @@ function renderDailyPlan(results, emerging) {
     var rise = Number(results[i].rise_percent || 0);
     var riseMult = rise < -10 ? 0.3 : rise < 0 ? 0.6 : 1;
     var riseAdd = rise > 50 ? 2 : rise > 20 ? 1 : 0;
-    var score = (vs / 10 + fresh + riseAdd + (av > 0 ? av / 1000 : rv / 2000)) * riseMult;
+    var csBoost = Number(results[i].content_score || 0) / 25;
+    var score = (vs / 10 + fresh + riseAdd + csBoost + (av > 0 ? av / 1000 : rv / 2000)) * riseMult;
     scored.push({ item: results[i], kw: kw, score: score, views: av, relViews: rv, days: days });
   }
   scored.sort(function(a, b) { return b.score - a.score; });
@@ -1551,7 +1586,9 @@ function renderDailyPlan(results, emerging) {
     h += '</div>';
     h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(pk.kw) + '</div>';
     h += '<div style="font-size:9px;color:' + urgColor + ';margin-bottom:4px;font-weight:700">' + urgMsg + '</div>';
-    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
+    var planCS = Number(pk.item.content_score || 0);
+    var planCSText = planCS > 0 ? ' | Content: ' + planCS + '/100' : '';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + planCSText + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
     h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + hooks[0] + '"</div>';
     h += '<div style="font-size:10px;color:var(--green2)">Pin: ' + topProd.name + ' (Earn &#163;' + topProd.commission + ')</div>';
     h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:6px">More hooks</button>';
@@ -1977,6 +2014,32 @@ function classifyTrend(vs, rp) {
   return "Falling";
 }
 
+function renderContentScore(item) {
+  var cs = Number(item.content_score || 0);
+  var fr = Number(item.fresh || 0);
+  var br = Number(item.british || 0);
+  var em = Number(item.emotion || 0);
+  var db = Number(item.debate || 0);
+  if (cs === 0 && fr === 0) return "";
+  var grade, gcls;
+  if (cs >= 80) { grade = "S"; gcls = "cs-grade-s"; }
+  else if (cs >= 60) { grade = "A"; gcls = "cs-grade-a"; }
+  else if (cs >= 40) { grade = "B"; gcls = "cs-grade-b"; }
+  else { grade = "C"; gcls = "cs-grade-c"; }
+  var h = '<div class="cs-wrap">';
+  h += '<div class="cs-header">';
+  h += '<div><span class="cs-label">Content Score</span><br><span class="cs-total">' + cs + '</span><span style="font-size:12px;color:var(--muted)">/100</span></div>';
+  h += '<span class="cs-grade ' + gcls + '">Grade ' + grade + '</span>';
+  h += '</div>';
+  h += '<div class="cs-bars">';
+  h += '<div class="cs-dim"><span class="cs-dim-label">Fresh</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-fresh" style="width:' + (fr * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--green)">' + fr + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (br * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + br + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (em * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + em + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">Debate</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (db * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + db + '</span></div>';
+  h += '</div></div>';
+  return h;
+}
+
 function trendTagClass(c) {
   var m = {"Viral Breakout":"tag-viral","Strong Upward Trend":"tag-strong","Slight Uptick":"tag-uptick","Stable":"tag-stable","Falling":"tag-falling"};
   return m[c] || "tag-stable";
@@ -2036,6 +2099,8 @@ function renderPrimary(item) {
 
   h += '<div class="primary-keyword">' + kw + '</div>';
   h += '<div class="score-bar-wrap"><div class="score-bar ' + scoreBarColor(vs) + '" style="width:' + Math.min(100, vs) + '%"></div></div>';
+
+  h += renderContentScore(item);
 
   h += '<div class="primary-grid">';
   h += '<div class="primary-metric"><div class="pm-label">Viral Score</div><div class="pm-value">' + vs.toFixed(1) + '</div></div>';
@@ -2114,10 +2179,17 @@ function renderOpportunities(items) {
     h += '<span>Vitality: <b class="rise-positive">' + vit + '</b></span>';
     h += '</div>';
     h += '<div class="opp-product">' + (item.product || "N/A") + '</div>';
+    var oppCS = Number(item.content_score || 0);
+    var oppGrade, oppGCls;
+    if (oppCS >= 80) { oppGrade = "S"; oppGCls = "cs-grade-s"; }
+    else if (oppCS >= 60) { oppGrade = "A"; oppGCls = "cs-grade-a"; }
+    else if (oppCS >= 40) { oppGrade = "B"; oppGCls = "cs-grade-b"; }
+    else { oppGrade = "C"; oppGCls = "cs-grade-c"; }
     h += '<div class="opp-badges">';
     h += '<span class="tag ' + confCls + '">' + conf + '</span>';
     h += '<span class="tag tag-content">' + contentType + '</span>';
     h += '<span class="tag tag-group">' + getGroup(item.keyword) + '</span>';
+    if (oppCS > 0) h += '<span class="cs-grade ' + oppGCls + '" style="font-size:8px">' + oppCS + '/100 ' + oppGrade + '</span>';
     h += '</div>';
     h += '</div></div>';
   }
@@ -2211,6 +2283,8 @@ function renderFeed(items) {
 
     h += '<div class="feed-bar"><div class="feed-bar-fill" style="width:' + Math.min(100, vs) + '%"></div></div>';
 
+    h += renderContentScore(item);
+
     var history = getTrendHistory(item.keyword);
     h += '<div style="display:flex;align-items:center;gap:8px;margin:4px 0 8px 0">';
     h += '<span style="font-size:9px;color:var(--muted);text-transform:uppercase">7-Day Trend:</span>';
@@ -2297,6 +2371,19 @@ function renderEmerging(items) {
         h += ' | via <b>' + titleCase(item.source_keyword) + '</b>';
       }
       h += '</div>';
+      var emCS = Number(item.content_score || 0);
+      if (emCS > 0) {
+        var emG, emGC;
+        if (emCS >= 80) { emG = "S"; emGC = "cs-grade-s"; }
+        else if (emCS >= 60) { emG = "A"; emGC = "cs-grade-a"; }
+        else if (emCS >= 40) { emG = "B"; emGC = "cs-grade-b"; }
+        else { emG = "C"; emGC = "cs-grade-c"; }
+        h += '<div style="margin-top:4px;display:flex;align-items:center;gap:6px">';
+        h += '<span style="font-size:9px;color:var(--muted)">Content:</span>';
+        h += '<span class="cs-grade ' + emGC + '" style="font-size:8px">' + emCS + '/100 ' + emG + '</span>';
+        h += '<span style="font-size:8px;color:var(--muted)">F:' + Number(item.fresh||0) + ' B:' + Number(item.british||0) + ' E:' + Number(item.emotion||0) + ' D:' + Number(item.debate||0) + '</span>';
+        h += '</div>';
+      }
       h += '<div style="font-size:10px;color:var(--green2);margin-top:3px">"' + (item.question || "") + '"</div>';
       h += '</div>';
     }
@@ -2632,3 +2719,4 @@ loadActiveTab();
 </script>
 </body>
 </html>
+
