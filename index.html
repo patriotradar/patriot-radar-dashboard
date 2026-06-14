@@ -2741,63 +2741,132 @@ function detectDebatePotential(text) {
 }
 
 var IDEA_POOL = [
-  { text: "Should Britain double its defence spending? Yes or No?", topic: "Military/Defence", emotions: ["Concern", "Pride"], format: "yesno", debate: 3 },
-  { text: "Should every school take children to visit a war memorial? Yes or No?", topic: "Education", emotions: ["Respect", "Nostalgia"], format: "yesno", debate: 3 },
-  { text: "Is Britain still capable of defending itself? Yes or No?", topic: "Military/Defence", emotions: ["Concern", "Pride"], format: "yesno", debate: 3 },
-  { text: "Should National Service be brought back? Yes or No?", topic: "Culture/Identity", emotions: ["Debate", "Nostalgia"], format: "yesno", debate: 3 },
-  { text: "Are our Armed Forces being forgotten by modern Britain? Yes or No?", topic: "Military/Defence", emotions: ["Concern", "Respect"], format: "yesno", debate: 3 },
-  { text: "Should Remembrance Day be a national bank holiday? Yes or No?", topic: "Remembrance", emotions: ["Respect", "Pride"], format: "yesno", debate: 3 },
-  { text: "Should wearing a poppy be compulsory? Yes or No?", topic: "Remembrance", emotions: ["Debate", "Respect"], format: "yesno", debate: 3 },
-  { text: "Is Britain forgetting the sacrifice of its heroes? Yes or No?", topic: "Remembrance", emotions: ["Concern", "Respect"], format: "yesno", debate: 2 },
-  { text: "Should protesting near a war memorial be a criminal offence? Yes or No?", topic: "Law & Order", emotions: ["Anger", "Respect"], format: "yesno", debate: 3 },
-  { text: "Do our veterans get the respect they deserve? Yes or No?", topic: "Community", emotions: ["Respect", "Concern"], format: "yesno", debate: 2 },
-  { text: "Should British taxpayers still fund the Royal Family? Yes or No?", topic: "Royal Family", emotions: ["Debate", "Identity"], format: "yesno", debate: 3 },
-  { text: "Should Buckingham Palace be free for every British citizen? Yes or No?", topic: "Royal Family", emotions: ["Pride", "Debate"], format: "yesno", debate: 2 },
-  { text: "Is the monarchy still relevant in modern Britain? Yes or No?", topic: "Royal Family", emotions: ["Debate", "Identity"], format: "yesno", debate: 3 },
-  { text: "Should every child learn about the Battle of Britain? Yes or No?", topic: "Education", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 2 },
-  { text: "Is British history being erased from schools? Yes or No?", topic: "Education", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
-  { text: "Was Churchill the greatest leader Britain ever had? Yes or No?", topic: "History", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 2 },
-  { text: "Could Britain survive another Dunkirk today? Yes or No?", topic: "History", emotions: ["Pride", "Concern"], format: "yesno", debate: 2 },
-  { text: "Has Britain lost control of its borders? Yes or No?", topic: "Immigration", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
-  { text: "Is immigration changing Britain beyond recognition? Yes or No?", topic: "Immigration", emotions: ["Concern", "Identity"], format: "yesno", debate: 3 },
-  { text: "Would you fly the Union Jack outside your home? Yes or No?", topic: "National Symbols", emotions: ["Pride", "Identity"], format: "yesno", debate: 2 },
+  // --- Community ---
+  { text: "Has Britain lost its sense of community? Yes or No?", topic: "Community", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Is community spirit dying in Britain? Yes or No?", topic: "Community", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Would you trust your neighbour with a key to your house? Yes or No?", topic: "Community", emotions: ["Nostalgia", "Concern"], format: "yesno", debate: 1 },
+  { text: "Does Britain still look after its own people first? Yes or No?", topic: "Community", emotions: ["Concern", "Identity"], format: "yesno", debate: 2 },
+  { text: "Remember when communities actually looked after each other?", topic: "Community", emotions: ["Nostalgia", "Concern"], format: "story", debate: 1 },
+  { text: "Do young people today have any respect for their elders? Yes or No?", topic: "Community", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  // --- Traditions ---
+  { text: "Should British traditions be protected by law? Yes or No?", topic: "Traditions", emotions: ["Pride", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is bonfire night being quietly cancelled? Yes or No?", topic: "Traditions", emotions: ["Anger", "Nostalgia"], format: "yesno", debate: 3 },
+  { text: "Should Sunday roasts be considered a national treasure? Yes or No?", topic: "Traditions", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 1 },
+  { text: "Are we losing the traditions that made Britain special?", topic: "Traditions", emotions: ["Concern", "Nostalgia", "Identity"], format: "story", debate: 2 },
+  { text: "Should every school celebrate Harvest Festival? Yes or No?", topic: "Traditions", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Name one British tradition you'd fight to keep. Go!", topic: "Traditions", emotions: ["Pride", "Identity"], format: "opinion", debate: 1 },
+  // --- Local Pride ---
+  { text: "Is your town better or worse than 20 years ago?", topic: "Local Pride", emotions: ["Nostalgia", "Concern"], format: "opinion", debate: 2 },
+  { text: "Does Britain do enough to support local communities? Yes or No?", topic: "Local Pride", emotions: ["Concern", "Identity"], format: "yesno", debate: 2 },
+  { text: "Should local pubs be protected as community spaces? Yes or No?", topic: "Local Pride", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Is your high street dying? Who is to blame?", topic: "Local Pride", emotions: ["Anger", "Concern"], format: "opinion", debate: 2 },
+  { text: "Should every town be allowed to fly its own flag? Yes or No?", topic: "Local Pride", emotions: ["Pride", "Identity"], format: "yesno", debate: 1 },
+  { text: "What is the most underrated place in Britain? Comment below!", topic: "Local Pride", emotions: ["Pride", "Nostalgia"], format: "opinion", debate: 1 },
+  // --- National Symbols ---
   { text: "Should St George's Day be a national bank holiday? Yes or No?", topic: "National Symbols", emotions: ["Pride", "Identity"], format: "yesno", debate: 3 },
-  { text: "Is it still acceptable to be proud of the English flag? Yes or No?", topic: "Culture/Identity", emotions: ["Pride", "Concern"], format: "yesno", debate: 3 },
-  { text: "Is British identity under threat? Yes or No?", topic: "Culture/Identity", emotions: ["Concern", "Identity"], format: "yesno", debate: 3 },
-  { text: "Are British traditions being deliberately erased? Yes or No?", topic: "Culture/Identity", emotions: ["Anger", "Nostalgia"], format: "yesno", debate: 3 },
-  { text: "Should British values be taught in every school? Yes or No?", topic: "Education", emotions: ["Pride", "Debate"], format: "yesno", debate: 2 },
-  { text: "Is Britain losing what made it great? Yes or No?", topic: "Culture/Identity", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 3 },
-  { text: "Should Rule Britannia still be sung at the Proms? Yes or No?", topic: "Culture/Identity", emotions: ["Pride", "Debate"], format: "yesno", debate: 3 },
-  { text: "Has Parliament completely lost touch with ordinary people? Yes or No?", topic: "Politics", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
-  { text: "Is British democracy still working for the people? Yes or No?", topic: "Politics", emotions: ["Concern", "Debate"], format: "yesno", debate: 3 },
-  { text: "Is freedom of speech under threat in Britain? Yes or No?", topic: "Politics", emotions: ["Concern", "Anger"], format: "yesno", debate: 3 },
-  { text: "Should schools teach more British history? Yes or No?", topic: "Education", emotions: ["Pride", "Concern"], format: "yesno", debate: 2 },
+  { text: "Would you fly the Union Jack outside your home? Yes or No?", topic: "National Symbols", emotions: ["Pride", "Identity"], format: "yesno", debate: 2 },
+  { text: "Is it still acceptable to be proud of the English flag? Yes or No?", topic: "National Symbols", emotions: ["Pride", "Concern"], format: "yesno", debate: 3 },
+  { text: "Should Rule Britannia still be sung at the Proms? Yes or No?", topic: "National Symbols", emotions: ["Pride", "Debate"], format: "yesno", debate: 3 },
+  // --- Education ---
   { text: "Are our children learning enough about their own country? Yes or No?", topic: "Education", emotions: ["Concern", "Identity"], format: "yesno", debate: 2 },
+  { text: "Is British history being erased from schools? Yes or No?", topic: "Education", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Should British values be taught in every school? Yes or No?", topic: "Education", emotions: ["Pride", "Debate"], format: "yesno", debate: 2 },
+  { text: "Should children be taught how to cook a proper British meal? Yes or No?", topic: "Education", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 1 },
+  { text: "Is our education system failing working class children? Yes or No?", topic: "Education", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  // --- History ---
+  { text: "Was Churchill the greatest leader Britain ever had? Yes or No?", topic: "History", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "What would Churchill say if he saw Britain today?", topic: "History", emotions: ["Nostalgia", "Concern"], format: "opinion", debate: 2 },
+  { text: "Name a British hero who deserves more recognition. Go!", topic: "History", emotions: ["Pride", "Respect"], format: "opinion", debate: 1 },
+  { text: "Could Britain survive another Dunkirk today? Yes or No?", topic: "History", emotions: ["Pride", "Concern"], format: "yesno", debate: 2 },
+  { text: "Who was braver: the Spitfire pilots, the D-Day soldiers, or the Blitz survivors?", topic: "History", emotions: ["Pride", "Respect", "Nostalgia"], format: "abc", debate: 2 },
+  // --- NHS/Healthcare ---
   { text: "Is the NHS being taken for granted? Yes or No?", topic: "NHS/Healthcare", emotions: ["Concern", "Pride"], format: "yesno", debate: 2 },
   { text: "Should NHS workers be paid more than footballers? Yes or No?", topic: "NHS/Healthcare", emotions: ["Anger", "Respect"], format: "yesno", debate: 3 },
-  { text: "Is Britain still a country that looks after its own? Yes or No?", topic: "Community", emotions: ["Concern", "Identity"], format: "yesno", debate: 2 },
-  { text: "Should homeless veterans be housed before anyone else? Yes or No?", topic: "Community", emotions: ["Anger", "Respect"], format: "yesno", debate: 3 },
-  { text: "Does honour still mean anything in modern Britain? Yes or No?", topic: "Culture/Identity", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
-  { text: "Is community spirit dying in Britain? Yes or No?", topic: "Community", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
-  { text: "Should every town in Britain have a Remembrance parade? Yes or No?", topic: "Community", emotions: ["Pride", "Respect"], format: "yesno", debate: 2 },
-  { text: "Were the Greatest Generation the bravest people Britain ever produced? Yes or No?", topic: "History", emotions: ["Pride", "Respect", "Nostalgia"], format: "yesno", debate: 2 },
-  { text: "Should vandalising a war memorial carry a prison sentence? Yes or No?", topic: "Law & Order", emotions: ["Anger", "Respect"], format: "yesno", debate: 3 },
+  { text: "Would you trust the government to protect the NHS? Yes or No?", topic: "NHS/Healthcare", emotions: ["Concern", "Anger"], format: "yesno", debate: 3 },
+  { text: "Is Britain forgetting the people who kept us alive during Covid?", topic: "NHS/Healthcare", emotions: ["Respect", "Concern"], format: "story", debate: 2 },
+  // --- Law & Order ---
   { text: "Has Britain become too soft on crime? Yes or No?", topic: "Law & Order", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
   { text: "Should the death penalty be brought back for the worst crimes? Yes or No?", topic: "Law & Order", emotions: ["Anger", "Debate"], format: "yesno", debate: 3 },
-  { text: "Do young people today have any respect for their elders? Yes or No?", topic: "Community", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
-  { text: "Is social media destroying British culture? Yes or No?", topic: "Culture/Identity", emotions: ["Concern", "Debate"], format: "yesno", debate: 2 },
-  { text: "Would you trust your neighbour with a key to your house? Yes or No?", topic: "Community", emotions: ["Nostalgia", "Concern"], format: "yesno", debate: 1 },
-  { text: "Should the BBC be defunded? Yes or No?", topic: "Culture/Identity", emotions: ["Anger", "Debate"], format: "yesno", debate: 3 },
-  { text: "Is Britain a better or worse country than 30 years ago?", topic: "Culture/Identity", emotions: ["Nostalgia", "Debate"], format: "opinion", debate: 2 },
-  { text: "What is the most British thing you have ever seen? Comment below!", topic: "Culture/Identity", emotions: ["Pride", "Nostalgia", "Hope"], format: "opinion", debate: 1 },
-  { text: "Name a British hero who deserves more recognition. Go!", topic: "History", emotions: ["Pride", "Respect"], format: "opinion", debate: 1 },
-  { text: "What would Churchill say if he saw Britain today?", topic: "History", emotions: ["Nostalgia", "Concern"], format: "opinion", debate: 2 },
+  { text: "Do criminals in Britain get treated better than victims? Yes or No?", topic: "Law & Order", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is Britain still a safe country to walk alone at night? Yes or No?", topic: "Law & Order", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  // --- Sports/Football ---
+  { text: "Is football losing its connection to working class fans? Yes or No?", topic: "Sports", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Should players be forced to sing the national anthem? Yes or No?", topic: "Sports", emotions: ["Pride", "Debate"], format: "yesno", debate: 3 },
+  { text: "Has money ruined British football? Yes or No?", topic: "Sports", emotions: ["Anger", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Remember when football was about passion, not money?", topic: "Sports", emotions: ["Nostalgia", "Concern"], format: "story", debate: 1 },
+  { text: "Should ticket prices be capped so real fans can afford to go? Yes or No?", topic: "Sports", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  // --- Economy/Work ---
+  { text: "Can a young person in Britain still afford to buy a home? Yes or No?", topic: "Economy/Work", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is the cost of living destroying British families? Yes or No?", topic: "Economy/Work", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Should British companies be forced to hire British workers first? Yes or No?", topic: "Economy/Work", emotions: ["Pride", "Debate"], format: "yesno", debate: 3 },
+  { text: "Is hard work still rewarded in Britain? Yes or No?", topic: "Economy/Work", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Were your grandparents better off than you are? Yes or No?", topic: "Economy/Work", emotions: ["Nostalgia", "Anger"], format: "yesno", debate: 2 },
+  // --- Food/Lifestyle ---
+  { text: "Is the full English breakfast the greatest meal ever invented? Yes or No?", topic: "Food/Lifestyle", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 1 },
+  { text: "Fish and chips or Sunday roast? Pick one!", topic: "Food/Lifestyle", emotions: ["Pride", "Nostalgia"], format: "abc", debate: 1 },
+  { text: "Should British food be celebrated more? We are world class!", topic: "Food/Lifestyle", emotions: ["Pride", "Identity"], format: "opinion", debate: 1 },
+  { text: "Is the British chippy being forgotten? Yes or No?", topic: "Food/Lifestyle", emotions: ["Nostalgia", "Concern"], format: "yesno", debate: 1 },
+  { text: "Name a British food that foreigners will never understand. Go!", topic: "Food/Lifestyle", emotions: ["Pride", "Nostalgia"], format: "opinion", debate: 1 },
+  // --- Royal Family ---
+  { text: "Should British taxpayers still fund the Royal Family? Yes or No?", topic: "Royal Family", emotions: ["Debate", "Identity"], format: "yesno", debate: 3 },
+  { text: "Is the monarchy still relevant in modern Britain? Yes or No?", topic: "Royal Family", emotions: ["Debate", "Identity"], format: "yesno", debate: 3 },
+  { text: "Should Buckingham Palace be free for every British citizen? Yes or No?", topic: "Royal Family", emotions: ["Pride", "Debate"], format: "yesno", debate: 2 },
+  // --- Politics ---
+  { text: "Has Parliament completely lost touch with ordinary people? Yes or No?", topic: "Politics", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is freedom of speech under threat in Britain? Yes or No?", topic: "Politics", emotions: ["Concern", "Anger"], format: "yesno", debate: 3 },
+  { text: "Do politicians actually care about working class Britain? Yes or No?", topic: "Politics", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Biggest threat to Britain: immigration, woke culture, or weak leadership?", topic: "Politics", emotions: ["Anger", "Concern", "Debate"], format: "abc", debate: 3 },
+  // --- Immigration ---
+  { text: "Has Britain lost control of its borders? Yes or No?", topic: "Immigration", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is immigration changing Britain beyond recognition? Yes or No?", topic: "Immigration", emotions: ["Concern", "Identity"], format: "yesno", debate: 3 },
+  // --- Culture/Identity ---
+  { text: "Is British identity under threat? Yes or No?", topic: "Culture/Identity", emotions: ["Concern", "Identity"], format: "yesno", debate: 3 },
   { text: "Growing up in Britain used to mean something. Does it still?", topic: "Culture/Identity", emotions: ["Nostalgia", "Concern", "Identity"], format: "story", debate: 2 },
-  { text: "Remember when communities actually looked after each other?", topic: "Community", emotions: ["Nostalgia", "Concern"], format: "story", debate: 1 },
+  { text: "Is social media destroying British culture? Yes or No?", topic: "Culture/Identity", emotions: ["Concern", "Debate"], format: "yesno", debate: 2 },
+  { text: "What is the most British thing you have ever seen? Comment below!", topic: "Culture/Identity", emotions: ["Pride", "Nostalgia", "Hope"], format: "opinion", debate: 1 },
   { text: "The moment that made you proudest to be British. What was yours?", topic: "Culture/Identity", emotions: ["Pride", "Nostalgia"], format: "opinion", debate: 1 },
-  { text: "Britain's greatest invention: NHS, democracy, or the English language? Pick one!", topic: "Culture/Identity", emotions: ["Pride", "Debate"], format: "abc", debate: 2 },
-  { text: "Who was braver: the Spitfire pilots, the D-Day soldiers, or the Blitz survivors?", topic: "History", emotions: ["Pride", "Respect", "Nostalgia"], format: "abc", debate: 2 },
-  { text: "Biggest threat to Britain: immigration, woke culture, or weak leadership?", topic: "Politics", emotions: ["Anger", "Concern", "Debate"], format: "abc", debate: 3 }
+  { text: "Should the BBC be defunded? Yes or No?", topic: "Culture/Identity", emotions: ["Anger", "Debate"], format: "yesno", debate: 3 },
+  // --- Military/Defence ---
+  { text: "Should Britain double its defence spending? Yes or No?", topic: "Military/Defence", emotions: ["Concern", "Pride"], format: "yesno", debate: 3 },
+  { text: "Should National Service be brought back? Yes or No?", topic: "Military/Defence", emotions: ["Debate", "Nostalgia"], format: "yesno", debate: 3 },
+  // --- Remembrance ---
+  { text: "Should Remembrance Day be a national bank holiday? Yes or No?", topic: "Remembrance", emotions: ["Respect", "Pride"], format: "yesno", debate: 3 },
+  // --- Family/Generations ---
+  { text: "Are parents today too soft on their children? Yes or No?", topic: "Family/Generations", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Should grandparents be paid to look after their grandchildren? Yes or No?", topic: "Family/Generations", emotions: ["Respect", "Concern"], format: "yesno", debate: 2 },
+  { text: "Is the family unit breaking down in modern Britain? Yes or No?", topic: "Family/Generations", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Were children better behaved when they played outside instead of on screens? Yes or No?", topic: "Family/Generations", emotions: ["Nostalgia", "Concern"], format: "yesno", debate: 1 },
+  { text: "Should children be taught manners at school if parents won't? Yes or No?", topic: "Family/Generations", emotions: ["Anger", "Concern"], format: "yesno", debate: 2 },
+  // --- Environment/Countryside ---
+  { text: "Is the British countryside being destroyed by developers? Yes or No?", topic: "Countryside", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Should green belt land be protected forever? Yes or No?", topic: "Countryside", emotions: ["Pride", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is there a more beautiful country than Britain? Yes or No?", topic: "Countryside", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 1 },
+  { text: "Name the most beautiful place in Britain. Go!", topic: "Countryside", emotions: ["Pride", "Nostalgia"], format: "opinion", debate: 1 },
+  // --- Media/BBC ---
+  { text: "Does British media tell the truth anymore? Yes or No?", topic: "Media", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  { text: "Is the TV licence worth the money? Yes or No?", topic: "Media", emotions: ["Anger", "Debate"], format: "yesno", debate: 3 },
+  { text: "Should the government control what we see online? Yes or No?", topic: "Media", emotions: ["Concern", "Anger"], format: "yesno", debate: 3 },
+  // --- Faith/Church ---
+  { text: "Should church bells still ring on Sunday? Yes or No?", topic: "Faith/Church", emotions: ["Nostalgia", "Identity"], format: "yesno", debate: 2 },
+  { text: "Is Britain losing its Christian heritage? Yes or No?", topic: "Faith/Church", emotions: ["Concern", "Identity"], format: "yesno", debate: 3 },
+  { text: "Should Christmas be called Christmas? Not 'Winterval' or 'the holidays'? Yes or No?", topic: "Faith/Church", emotions: ["Anger", "Pride"], format: "yesno", debate: 3 },
+  // --- Housing ---
+  { text: "Should British-born people be given priority for council housing? Yes or No?", topic: "Housing", emotions: ["Anger", "Debate"], format: "yesno", debate: 3 },
+  { text: "Will your children ever be able to afford a house? Yes or No?", topic: "Housing", emotions: ["Concern", "Anger"], format: "yesno", debate: 2 },
+  { text: "Is Britain building enough homes for its own people? Yes or No?", topic: "Housing", emotions: ["Anger", "Concern"], format: "yesno", debate: 3 },
+  // --- Inventions/Innovation ---
+  { text: "Britain's greatest invention: NHS, democracy, or the English language? Pick one!", topic: "Inventions", emotions: ["Pride", "Debate"], format: "abc", debate: 2 },
+  { text: "Should 'Made in Britain' mean something again? Yes or No?", topic: "Inventions", emotions: ["Pride", "Identity"], format: "yesno", debate: 2 },
+  { text: "Is Britain still a nation of inventors and doers? Yes or No?", topic: "Inventions", emotions: ["Pride", "Concern"], format: "yesno", debate: 2 },
+  // --- Music/Entertainment ---
+  { text: "Is British music still the best in the world? Yes or No?", topic: "Music/Entertainment", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Best British band of all time: Beatles, Oasis, or Queen?", topic: "Music/Entertainment", emotions: ["Pride", "Nostalgia"], format: "abc", debate: 1 },
+  { text: "Has Britain lost its place as the music capital of the world?", topic: "Music/Entertainment", emotions: ["Concern", "Nostalgia"], format: "opinion", debate: 2 },
+  // --- Manners/Respect ---
+  { text: "Has Britain lost its manners? Yes or No?", topic: "Manners/Respect", emotions: ["Concern", "Nostalgia"], format: "yesno", debate: 2 },
+  { text: "Should 'please' and 'thank you' be taught in every school? Yes or No?", topic: "Manners/Respect", emotions: ["Pride", "Concern"], format: "yesno", debate: 1 },
+  { text: "Is the stiff upper lip still alive in Britain? Yes or No?", topic: "Manners/Respect", emotions: ["Pride", "Nostalgia"], format: "yesno", debate: 1 },
+  { text: "Do people still hold doors open for each other where you live?", topic: "Manners/Respect", emotions: ["Nostalgia", "Concern"], format: "opinion", debate: 1 }
 ];
 
 function generateAlternatives(text, topic, emotions, format) {
@@ -2811,19 +2880,21 @@ function generateAlternatives(text, topic, emotions, format) {
   else if (format.format.indexOf("Opinion") !== -1) origFormat = "opinion";
   else if (format.format.indexOf("Story") !== -1 || format.format.indexOf("Nostalgia") !== -1) origFormat = "story";
 
+  var origDebate = 2;
+  if (format.format.indexOf("Debate") !== -1 || t.indexOf("should") !== -1) origDebate = 3;
+
   var scored = [];
   for (var i = 0; i < IDEA_POOL.length; i++) {
     var idea = IDEA_POOL[i];
 
-    var tooSimilar = false;
+    if (idea.topic === topic) continue;
+
     var origWords = t.split(/\s+/);
     var overlap = 0;
     for (var w = 0; w < origWords.length; w++) {
       if (origWords[w].length > 4 && idea.text.toLowerCase().indexOf(origWords[w]) !== -1) overlap++;
     }
-    if (overlap >= 4) tooSimilar = true;
-    if (idea.topic === topic && overlap >= 2) tooSimilar = true;
-    if (tooSimilar) continue;
+    if (overlap >= 3) continue;
 
     var emotionMatch = 0;
     for (var e = 0; e < origEmotionLabels.length; e++) {
@@ -2832,26 +2903,33 @@ function generateAlternatives(text, topic, emotions, format) {
       }
     }
 
-    var formatMatch = (idea.format === origFormat) ? 1 : 0;
+    var emotionScore = 0;
+    if (origEmotionLabels.length > 0) {
+      emotionScore = (emotionMatch / origEmotionLabels.length) * 50;
+    }
 
-    var debateDiff = Math.abs(idea.debate - 2);
+    var formatScore = (idea.format === origFormat) ? 20 : 5;
 
-    var psychScore = (emotionMatch * 40) + (formatMatch * 25) + ((3 - debateDiff) * 10);
+    var debateDiff = Math.abs(idea.debate - origDebate);
+    var debateScore = (3 - debateDiff) * 5;
 
-    if (idea.topic !== topic) psychScore += 15;
+    var psychScore = emotionScore + formatScore + debateScore;
 
-    scored.push({ idea: idea, psychScore: psychScore, emotionMatch: emotionMatch, formatMatch: formatMatch });
+    var formula = origEmotionLabels.slice().sort().join("+");
+    var ideaFormula = idea.emotions.slice().sort().join("+");
+    if (formula === ideaFormula) psychScore += 10;
+
+    scored.push({ idea: idea, psychScore: psychScore, emotionMatch: emotionMatch, formatMatch: (idea.format === origFormat) ? 1 : 0, formula: ideaFormula });
   }
 
   scored.sort(function(a, b) { return b.psychScore - a.psychScore; });
 
   var picks = [];
   var usedTopics = {};
-  usedTopics[topic] = true;
 
-  for (var j = 0; j < scored.length && picks.length < 5; j++) {
+  for (var j = 0; j < scored.length && picks.length < 7; j++) {
     var s = scored[j];
-    if (picks.length < 3 && usedTopics[s.idea.topic] && s.idea.topic !== topic) continue;
+    if (usedTopics[s.idea.topic]) continue;
     picks.push(s);
     usedTopics[s.idea.topic] = true;
   }
@@ -3012,13 +3090,29 @@ async function runAnalyzer() {
   }
   h += '</div>';
 
+  var origFormula = [];
+  for (var ef = 0; ef < result.emotions.length; ef++) origFormula.push(result.emotions[ef].label);
+  var formulaStr = origFormula.length > 0 ? origFormula.join(" + ") : "General";
+
   h += '<div class="az-section" style="border-left:3px solid var(--green)">';
   h += '<div class="az-section-title">Fresh Ideas - Same Psychology, Different Topics</div>';
-  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:10px">These ideas use the same emotional triggers and debate formula as the original, but across different topics for variety.</div>';
+  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:6px">Psychology formula: <b style="color:var(--amber)">' + formulaStr + '</b></div>';
+  h += '<div style="font-size:9px;color:var(--muted);margin-bottom:6px">Every suggestion is from a DIFFERENT topic category. Same emotional triggers, fresh angles.</div>';
+
+  var catPath = [result.topic];
+  for (var cp = 0; cp < result.alternatives.length; cp++) catPath.push(result.alternatives[cp].idea.topic);
+  h += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;padding:8px;background:rgba(0,255,136,.03);border-radius:8px;border:1px solid rgba(0,255,136,.1)">';
+  h += '<span style="font-size:8px;color:var(--muted);width:100%;margin-bottom:2px">CATEGORY ROTATION:</span>';
+  for (var cpi = 0; cpi < catPath.length; cpi++) {
+    if (cpi > 0) h += '<span style="font-size:9px;color:var(--green-dim)">&#8594;</span>';
+    h += '<span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;' + (cpi === 0 ? 'background:rgba(167,139,250,.15);color:var(--purple)' : 'background:rgba(0,255,136,.08);color:var(--green)') + '">' + catPath[cpi] + '</span>';
+  }
+  h += '</div>';
+
   for (var a = 0; a < result.alternatives.length; a++) {
     var altPick = result.alternatives[a];
     var altIdea = altPick.idea;
-    var matchPct = Math.min(98, Math.round(altPick.psychScore * 0.7));
+    var matchPct = Math.min(98, Math.round(altPick.psychScore * 1.15));
     var matchColor = matchPct >= 80 ? "var(--green)" : matchPct >= 60 ? "var(--amber)" : "var(--muted)";
     var matchLabel = matchPct >= 80 ? "STRONG MATCH" : matchPct >= 60 ? "GOOD MATCH" : "PARTIAL";
     var stars = matchPct >= 90 ? "5" : matchPct >= 75 ? "4" : matchPct >= 60 ? "3" : matchPct >= 40 ? "2" : "1";
@@ -3032,10 +3126,10 @@ async function runAnalyzer() {
     h += '</div>';
     h += '<div class="az-alt-hook">' + (a + 1) + '. ' + altIdea.text + '</div>';
     h += '<div class="az-alt-meta">';
-    h += '<span style="background:rgba(167,139,250,.1);color:var(--purple);padding:1px 6px;border-radius:4px;font-size:8px;font-weight:700;margin-right:6px">' + altIdea.topic + '</span>';
-    h += '<span style="background:rgba(0,255,136,.08);color:var(--green);padding:1px 6px;border-radius:4px;font-size:8px;font-weight:700;margin-right:6px">' + (altIdea.format === "yesno" ? "Yes/No" : altIdea.format === "abc" ? "A/B/C" : altIdea.format === "opinion" ? "Opinion" : "Story") + '</span>';
+    h += '<span style="background:rgba(167,139,250,.15);color:var(--purple);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;margin-right:6px">' + altIdea.topic + '</span>';
+    h += '<span style="background:rgba(0,255,136,.08);color:var(--green);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;margin-right:6px">' + (altIdea.format === "yesno" ? "Yes/No" : altIdea.format === "abc" ? "A/B/C" : altIdea.format === "opinion" ? "Opinion" : "Story") + '</span>';
     for (var ae = 0; ae < altIdea.emotions.length; ae++) {
-      h += '<span style="font-size:8px;color:var(--amber);margin-right:4px">' + altIdea.emotions[ae] + '</span>';
+      h += '<span style="font-size:9px;color:var(--amber);margin-right:4px">' + altIdea.emotions[ae] + '</span>';
     }
     h += '</div>';
     h += '<div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center">';
