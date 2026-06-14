@@ -1011,7 +1011,18 @@ function getGroup(keyword) {
   for (var key in KEYWORD_GROUPS) {
     if (KEYWORD_GROUPS[key].keywords.indexOf(kw) !== -1) return KEYWORD_GROUPS[key].label;
   }
-  return "General";
+  var bestLabel = "General";
+  var bestLen = 0;
+  for (var key in KEYWORD_GROUPS) {
+    var gkws = KEYWORD_GROUPS[key].keywords;
+    for (var i = 0; i < gkws.length; i++) {
+      if (kw.indexOf(gkws[i]) !== -1 && gkws[i].length > bestLen) {
+        bestLen = gkws[i].length;
+        bestLabel = KEYWORD_GROUPS[key].label;
+      }
+    }
+  }
+  return bestLabel;
 }
 
 function getGroupKey(keyword) {
@@ -1019,7 +1030,18 @@ function getGroupKey(keyword) {
   for (var key in KEYWORD_GROUPS) {
     if (KEYWORD_GROUPS[key].keywords.indexOf(kw) !== -1) return key;
   }
-  return "general";
+  var bestKey = "general";
+  var bestLen = 0;
+  for (var key in KEYWORD_GROUPS) {
+    var gkws = KEYWORD_GROUPS[key].keywords;
+    for (var i = 0; i < gkws.length; i++) {
+      if (kw.indexOf(gkws[i]) !== -1 && gkws[i].length > bestLen) {
+        bestLen = gkws[i].length;
+        bestKey = key;
+      }
+    }
+  }
+  return bestKey;
 }
 
 var HOOK_TEMPLATES = {
@@ -2212,12 +2234,101 @@ var KEYWORD_SPECIFIC_HOOKS = {
   ]
 };
 
+var PHRASE_HOOK_TEMPLATES = {
+  military: [
+    '{kw}. Is this how Britain treats its Armed Forces? Yes or No?',
+    '{kw}. Should every British person be outraged? Yes or No?',
+    '{kw}. Is this the country our soldiers fought for? Yes or No?',
+    '{kw}. Would Churchill stand for this? Yes or No?',
+    '{kw}. Are we failing the people who protect us? Yes or No?',
+    '{kw}. Does this make you proud or ashamed of Britain? Yes or No?',
+    '{kw}. Is anyone in government paying attention? Yes or No?',
+    '{kw}. Should the British public demand better? Yes or No?'
+  ],
+  royal: [
+    '{kw}. Is the monarchy still worth it? Yes or No?',
+    '{kw}. Does this make you proud to be British? Yes or No?',
+    '{kw}. Is this the Royal Family you grew up with? Yes or No?',
+    '{kw}. Should the British public have a say? Yes or No?',
+    '{kw}. Is this what our monarchy has become? Yes or No?',
+    '{kw}. Would the Queen have allowed this? Yes or No?',
+    '{kw}. Are you surprised or did you see this coming? Yes or No?',
+    '{kw}. Does the monarchy still represent Britain? Yes or No?'
+  ],
+  national_identity: [
+    '{kw}. Is this the Britain you grew up in? Yes or No?',
+    '{kw}. Are you angry about this? Yes or No?',
+    '{kw}. Should every British person be talking about this? Yes or No?',
+    '{kw}. Is this acceptable in modern Britain? Yes or No?',
+    '{kw}. Are we losing our identity as a nation? Yes or No?',
+    '{kw}. Would our grandparents recognise this country? Yes or No?',
+    '{kw}. Is anyone going to stand up about this? Yes or No?',
+    '{kw}. Is being proud of your country now a crime? Yes or No?'
+  ],
+  history: [
+    '{kw}. Is modern Britain forgetting its own history? Yes or No?',
+    '{kw}. Should every child in Britain know about this? Yes or No?',
+    '{kw}. Would today\'s generation have survived? Yes or No?',
+    '{kw}. Has Britain forgotten the lessons of the past? Yes or No?',
+    '{kw}. Is this still taught in British schools? Yes or No?',
+    '{kw}. Does this moment still matter? Yes or No?',
+    '{kw}. Are we repeating history without realising it? Yes or No?',
+    '{kw}. Would you pass a test on British history? Yes or No?'
+  ],
+  remembrance: [
+    '{kw}. Is Britain still honouring its promise? Yes or No?',
+    '{kw}. Are we forgetting what really matters? Yes or No?',
+    '{kw}. Should this be front page news? Yes or No?',
+    '{kw}. Do young people still understand the sacrifice? Yes or No?',
+    '{kw}. Is this the respect our heroes deserve? Yes or No?',
+    '{kw}. Would you stay silent about this? Yes or No?',
+    '{kw}. Is Britain doing enough? Yes or No?',
+    '{kw}. Should every school in Britain teach this? Yes or No?'
+  ],
+  culture: [
+    '{kw}. Is British culture being erased? Yes or No?',
+    '{kw}. Should we fight to protect this? Yes or No?',
+    '{kw}. Is this what makes Britain great? Yes or No?',
+    '{kw}. Are they trying to cancel our way of life? Yes or No?',
+    '{kw}. Would you teach your children about this? Yes or No?',
+    '{kw}. Is this still British culture in 2025? Yes or No?',
+    '{kw}. Does this still represent who we are? Yes or No?',
+    '{kw}. Are you proud or embarrassed by this? Yes or No?'
+  ],
+  heritage: [
+    '{kw}. Is British heritage under attack? Yes or No?',
+    '{kw}. Should the government do something about this? Yes or No?',
+    '{kw}. Will the next generation even know about this? Yes or No?',
+    '{kw}. Did our grandparents fight for this? Yes or No?',
+    '{kw}. Is this what protecting heritage looks like? Yes or No?',
+    '{kw}. Should this be a bigger priority in Britain? Yes or No?',
+    '{kw}. Is anyone else concerned about this? Yes or No?',
+    '{kw}. Are we throwing away everything that made Britain great? Yes or No?'
+  ],
+  general: [
+    '{kw}. Is anyone talking about this? Yes or No?',
+    '{kw}. Should every British person care about this? Yes or No?',
+    '{kw}. Is this what Britain has come to? Yes or No?',
+    '{kw}. Are you angry or have you just accepted it? Yes or No?',
+    '{kw}. Should this be bigger news? Yes or No?',
+    '{kw}. Is this being ignored on purpose? Yes or No?',
+    '{kw}. Does this affect YOU? Yes or No?',
+    '{kw}. What do you think about this? Comment below.'
+  ]
+};
+
 function generateHooks(keyword) {
   var kwLower = (keyword || "").toLowerCase();
   if (KEYWORD_SPECIFIC_HOOKS[kwLower]) return KEYWORD_SPECIFIC_HOOKS[kwLower];
   var gk = getGroupKey(keyword);
-  var templates = HOOK_TEMPLATES[gk] || HOOK_TEMPLATES.general;
   var kw = titleCase(keyword || "");
+  var words = kw.trim().split(/\s+/);
+  var templates;
+  if (words.length >= 4) {
+    templates = PHRASE_HOOK_TEMPLATES[gk] || PHRASE_HOOK_TEMPLATES.general;
+  } else {
+    templates = HOOK_TEMPLATES[gk] || HOOK_TEMPLATES.general;
+  }
   var hooks = [];
   for (var i = 0; i < templates.length; i++) {
     hooks.push(templates[i].replace(/\{kw\}/g, kw));
