@@ -1637,8 +1637,88 @@ function renderDailyPlan(results, emerging) {
     { time: "7-8 PM", label: "EVENING", desc: "Pin a product to this one", color: "var(--blue)" }
   ];
 
+  var KEYWORD_EMOTIONS = {
+    military: ["Pride", "Respect", "Concern"],
+    royal: ["Pride", "Identity", "Debate"],
+    national_identity: ["Pride", "Identity", "Concern"],
+    history: ["Pride", "Nostalgia", "Respect"],
+    remembrance: ["Respect", "Pride", "Nostalgia"],
+    culture: ["Pride", "Identity", "Nostalgia"],
+    heritage: ["Nostalgia", "Identity", "Concern"],
+    general: ["Concern", "Pride"]
+  };
+
+  function getPlanAlternatives(keyword, slotIndex) {
+    var groupKey = getGroupKey(keyword);
+    var kwEmotions = KEYWORD_EMOTIONS[groupKey] || KEYWORD_EMOTIONS.general;
+    var groupLabel = getGroup(keyword);
+
+    var kwLower = keyword.toLowerCase();
+    var relatedTopics = [];
+    if (kwLower.indexOf("veteran") !== -1 || kwLower.indexOf("armed") !== -1 || kwLower.indexOf("army") !== -1 || kwLower.indexOf("raf") !== -1 || kwLower.indexOf("navy") !== -1) {
+      relatedTopics = ["Military/Defence", "Remembrance"];
+    } else if (kwLower.indexOf("remembr") !== -1 || kwLower.indexOf("poppy") !== -1 || kwLower.indexOf("cenotaph") !== -1) {
+      relatedTopics = ["Remembrance", "Military/Defence"];
+    } else if (kwLower.indexOf("flag") !== -1 || kwLower.indexOf("jack") !== -1 || kwLower.indexOf("george") !== -1) {
+      relatedTopics = ["National Symbols"];
+    } else if (kwLower.indexOf("church") !== -1 || kwLower.indexOf("dunkirk") !== -1 || kwLower.indexOf("d-day") !== -1) {
+      relatedTopics = ["History"];
+    } else if (kwLower.indexOf("king") !== -1 || kwLower.indexOf("royal") !== -1 || kwLower.indexOf("monarch") !== -1) {
+      relatedTopics = ["Royal Family"];
+    }
+
+    var ideaScored = [];
+    for (var i = 0; i < IDEA_POOL.length; i++) {
+      var idea = IDEA_POOL[i];
+
+      var skip = false;
+      for (var rt = 0; rt < relatedTopics.length; rt++) {
+        if (idea.topic === relatedTopics[rt]) { skip = true; break; }
+      }
+      if (skip) continue;
+
+      var wordOverlap = 0;
+      var kwWords = kwLower.split(/[\s\-]+/);
+      for (var w = 0; w < kwWords.length; w++) {
+        if (kwWords[w].length > 3 && idea.text.toLowerCase().indexOf(kwWords[w]) !== -1) wordOverlap++;
+      }
+      if (wordOverlap >= 2) continue;
+
+      var emotionMatch = 0;
+      for (var e = 0; e < kwEmotions.length; e++) {
+        for (var ie = 0; ie < idea.emotions.length; ie++) {
+          if (kwEmotions[e] === idea.emotions[ie]) { emotionMatch++; break; }
+        }
+      }
+
+      var emotionScore = kwEmotions.length > 0 ? (emotionMatch / kwEmotions.length) * 50 : 0;
+      var debateScore = idea.debate >= 2 ? 15 : 5;
+      var pScore = emotionScore + debateScore;
+
+      ideaScored.push({ idea: idea, pScore: pScore, emotionMatch: emotionMatch });
+    }
+
+    ideaScored.sort(function(a, b) { return b.pScore - a.pScore; });
+
+    var altPicks = [];
+    var usedCats = {};
+    var seed = (slotIndex + 1) * 7;
+    for (var j = 0; j < ideaScored.length && altPicks.length < 4; j++) {
+      var item = ideaScored[(j + seed) % ideaScored.length];
+      if (!item) continue;
+      if (usedCats[item.idea.topic]) continue;
+      if (item.pScore < 20) continue;
+      altPicks.push(item);
+      usedCats[item.idea.topic] = true;
+    }
+
+    return altPicks;
+  }
+
   var h = '<div class="card card-glow" style="border-color:var(--green)">';
   h += '<div class="card-header"><h2>Today\'s Content Plan</h2><div class="section-icon" style="color:var(--green)">&#9776;</div></div>';
+
+  var allUsedCats = {};
 
   for (var s = 0; s < Math.min(3, picks.length); s++) {
     var pk = picks[s];
@@ -1647,6 +1727,7 @@ function renderDailyPlan(results, emerging) {
     var topProd = prods[0];
     var hooks = generateHooks(pk.kw);
     var hookId = "plan-hook-" + s;
+    var altId = "plan-alt-" + s;
     var viewInfo = pk.views > 0 ? pk.views.toLocaleString() + " avg views" : pk.relViews > 0 ? "Similar: " + pk.relViews.toLocaleString() + " views" : "New topic";
     var freshInfo = pk.days === 0 ? "Posted today" : pk.days < 999 ? pk.days + "d ago" : "Never posted";
 
@@ -1684,6 +1765,38 @@ function renderDailyPlan(results, emerging) {
       h += '<li onclick="copyHook(this)"><span class="hook-num">' + hk + '</span><span class="hook-text">' + hooks[hk] + '</span><span class="hook-copy">COPY</span></li>';
     }
     h += '</ul>';
+
+    var planAlts = getPlanAlternatives(pk.kw, s);
+    var filteredAlts = [];
+    for (var fa = 0; fa < planAlts.length; fa++) {
+      if (!allUsedCats[planAlts[fa].idea.topic]) {
+        filteredAlts.push(planAlts[fa]);
+        allUsedCats[planAlts[fa].idea.topic] = true;
+      }
+    }
+
+    if (filteredAlts.length > 0) {
+      var groupKey = getGroupKey(pk.kw);
+      var kwEmotions = KEYWORD_EMOTIONS[groupKey] || KEYWORD_EMOTIONS.general;
+      h += '<button class="copy-btn" onclick="toggleHooks(\'' + altId + '\')" style="margin-top:4px;background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.3);color:var(--purple)">Fresh angles (' + filteredAlts.length + ' different topics)</button>';
+      h += '<div class="hidden" id="' + altId + '" style="margin-top:8px;padding:10px;background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);border-radius:10px">';
+      h += '<div style="font-size:9px;color:var(--purple);margin-bottom:6px;font-weight:700">SAME PSYCHOLOGY (' + kwEmotions.join(" + ") + ') - DIFFERENT TOPIC</div>';
+      for (var alt = 0; alt < Math.min(3, filteredAlts.length); alt++) {
+        var altItem = filteredAlts[alt];
+        h += '<div onclick="copyPlanAlt(this)" style="padding:8px;margin-bottom:6px;background:var(--panel);border-radius:8px;border-left:2px solid var(--purple);cursor:pointer">';
+        h += '<div style="font-size:11px;color:var(--white);font-weight:700;margin-bottom:3px">' + altItem.idea.text + '</div>';
+        h += '<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">';
+        h += '<span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(167,139,250,.12);color:var(--purple)">' + altItem.idea.topic + '</span>';
+        for (var ae = 0; ae < altItem.idea.emotions.length; ae++) {
+          h += '<span style="font-size:8px;color:var(--amber)">' + altItem.idea.emotions[ae] + '</span>';
+        }
+        h += '<span style="font-size:8px;color:var(--muted);margin-left:auto">TAP TO COPY</span>';
+        h += '</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
     h += '</div>';
   }
 
@@ -3152,6 +3265,19 @@ function copyAlt(el) {
   var copyEl = el.querySelector(".az-alt-copy");
   copyEl.textContent = "COPIED!";
   setTimeout(function() { copyEl.textContent = "TAP TO COPY"; }, 1500);
+}
+
+function copyPlanAlt(el) {
+  var textEl = el.querySelector("div[style*='font-weight:700']");
+  if (textEl) {
+    navigator.clipboard.writeText(textEl.innerText);
+    var copySpan = el.querySelector("span[style*='margin-left:auto']");
+    if (copySpan) {
+      copySpan.textContent = "COPIED!";
+      copySpan.style.color = "var(--green)";
+      setTimeout(function() { copySpan.textContent = "TAP TO COPY"; copySpan.style.color = "var(--muted)"; }, 1500);
+    }
+  }
 }
 
 function loadHistoryAnalysis(idx) {
