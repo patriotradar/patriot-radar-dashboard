@@ -3632,6 +3632,18 @@ async function loadLiveStats() {
 }
 
 async function checkSession() {
+  var hash = window.location.hash.substring(1);
+  if (hash && hash.indexOf("access_token=") !== -1 && hash.indexOf("type=recovery") === -1) {
+    var params = {};
+    hash.split("&").forEach(function(p) { var kv = p.split("="); if (kv.length === 2) params[kv[0]] = decodeURIComponent(kv[1]); });
+    if (params.access_token && params.refresh_token) {
+      try {
+        var sr = await supabaseClient.auth.setSession({access_token: params.access_token, refresh_token: params.refresh_token});
+        history.replaceState(null, "", window.location.pathname);
+        if (sr.data && sr.data.session) { showDashboard(); return; }
+      } catch(e) {}
+    }
+  }
   var sd = await supabaseClient.auth.getSession();
   if (window.location.hash.includes("type=recovery")) {
     document.getElementById("authBox").classList.add("hidden");
