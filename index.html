@@ -900,7 +900,7 @@ button:active{transform:scale(.98)}
       <label>Your Email</label>
       <input id="signupEmail" type="email" placeholder="your@email.com">
       <label>Create a Password</label>
-      <input id="signupPassword" type="password" placeholder="Choose a password">
+      <input id="signupPassword" type="password" placeholder="e.g. MyPass1!">
       <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('betaConsent');cb.checked=!cb.checked;">
         <input type="checkbox" id="betaConsent" style="min-width:20px;min-height:20px;margin-top:2px;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation()">
         <span style="font-size:12px;color:var(--muted);line-height:1.5">I agree to be contacted by Creator Radar about joining the beta programme. This includes account setup details and next steps only - no marketing emails.</span>
@@ -3854,10 +3854,11 @@ async function betaSignup() {
   var msg = document.getElementById("signupMessage");
   if (!em || !pw) { msg.innerText = "Please enter your email and create a password."; msg.style.color = "var(--red)"; return; }
   if (pw.length < 6) { msg.innerText = "Password must be at least 6 characters."; msg.style.color = "var(--red)"; return; }
+  if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) { msg.innerText = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.style.color = "var(--red)"; return; }
   if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
   var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString()}}});
-  if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; }
+  if (r.error) { var emsg = r.error.message; if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.innerText = emsg; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
   } else if (r.data && r.data.session) {
@@ -3965,4 +3966,5 @@ loadActiveTab();
 </script>
 </body>
 </html>
+
 
