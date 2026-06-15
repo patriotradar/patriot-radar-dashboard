@@ -3630,8 +3630,13 @@ async function betaSignup() {
   if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
+  } else if (r.data && r.data.session) {
+    msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)";
+    setTimeout(function() { showDashboard(); }, 1000);
   } else {
-    msg.innerHTML = "You're in! Check your email to confirm your account, then come back and log in."; msg.style.color = "var(--green)";
+    var lr = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
+    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; showLoginView(); }
+    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; setTimeout(function() { showDashboard(); }, 1000); }
   }
 }
 
