@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creator Radar - Analytics Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg:#030504;
+  --panel:#0a110e;
+  --panel2:#0d1712;
+  --border:#1f3a2d;
+  --green:#00ff88;
+  --green2:#00b86b;
+  --amber:#fbbf24;
+  --red:#ff4757;
+  --blue:#4dc9f6;
+  --purple:#a78bfa;
+  --muted:#8aa99a;
+  --white:#f5fff9;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--white);font-family:'Segoe UI','Inter',Arial,sans-serif;padding:16px;min-height:100vh}
+.app{max-width:900px;margin:0 auto}
+h1{color:var(--green);font-size:24px;text-align:center;margin-bottom:6px;letter-spacing:2px}
+.subtitle{text-align:center;color:var(--muted);font-size:12px;margin-bottom:24px;letter-spacing:1px}
+.auth-box{max-width:360px;margin:60px auto;padding:30px;background:var(--panel);border:1px solid var(--border);border-radius:18px}
+.auth-box label{display:block;color:var(--muted);font-size:10px;margin-bottom:5px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.auth-box input{width:100%;padding:12px;margin-bottom:12px;border-radius:10px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none}
+.auth-box input:focus{border-color:var(--green)}
+.auth-box button{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:14px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:1px}
+.auth-msg{text-align:center;font-size:12px;margin-top:8px;min-height:18px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+@media(max-width:600px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,.3),transparent)}
+.stat-card .val{font-size:32px;font-weight:900;color:var(--green);margin-bottom:4px}
+.stat-card .lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:18px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent 5%,rgba(0,255,136,.25) 50%,transparent 95%)}
+.card h2{color:var(--green);font-size:16px;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px}
+.funnel{display:flex;flex-direction:column;gap:8px}
+.funnel-row{display:flex;align-items:center;gap:12px}
+.funnel-bar-wrap{flex:1;height:28px;background:rgba(0,255,136,.04);border-radius:8px;overflow:hidden;position:relative}
+.funnel-bar{height:100%;border-radius:8px;transition:width .8s ease}
+.funnel-label{font-size:12px;font-weight:700;min-width:140px}
+.funnel-count{font-size:14px;font-weight:900;min-width:50px;text-align:right}
+.funnel-pct{font-size:11px;color:var(--muted);min-width:50px;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:10px 8px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border)}
+td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
+.badge{display:inline-block;padding:3px 8px;border-radius:99px;font-size:9px;font-weight:800;letter-spacing:.5px}
+.badge-green{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.3)}
+.badge-amber{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+.badge-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
+.badge-blue{background:rgba(77,201,246,.1);color:var(--blue);border:1px solid rgba(77,201,246,.3)}
+.retention-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
+.ret-cell{text-align:center;padding:8px 4px;border-radius:8px;font-size:11px;font-weight:700}
+.ret-header{font-size:9px;color:var(--muted);text-transform:uppercase;padding:4px}
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px}
+.filter-btn.active{background:rgba(0,255,136,.1);color:var(--green);border-color:rgba(0,255,136,.3)}
+.refresh-btn{position:fixed;bottom:20px;right:20px;width:50px;height:50px;border-radius:50%;background:var(--green);color:var(--bg);font-size:20px;font-weight:900;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(0,255,136,.3);z-index:50}
+.empty-state{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.hidden{display:none !important}
+#loadingState{text-align:center;padding:40px;color:var(--green);font-size:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:700px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<h1>CREATOR RADAR ANALYTICS</h1>
+<p class="subtitle">Beta User Behaviour & Conversion Tracking</p>
+
+<div id="authSection">
+  <div class="auth-box">
+    <label>Admin Password</label>
+    <input type="password" id="adminPw" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button onclick="adminLogin()">Access Analytics</button>
+    <div class="auth-msg" id="authMsg"></div>
+  </div>
+</div>
+
+<div id="analyticsSection" class="hidden">
+
+  <div id="loadingState">Loading analytics data...</div>
+
+  <div id="analyticsContent" class="hidden">
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="setRange('7d',this)">7 Days</button>
+      <button class="filter-btn" onclick="setRange('14d',this)">14 Days</button>
+      <button class="filter-btn" onclick="setRange('30d',this)">30 Days</button>
+      <button class="filter-btn" onclick="setRange('all',this)">All Time</button>
+    </div>
+
+    <div class="stats-grid" id="topStats"></div>
+
+    <div class="card">
+      <h2>Conversion Funnel</h2>
+      <div class="funnel" id="funnel"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Retention</h2>
+        <div id="retention"></div>
+      </div>
+      <div class="card">
+        <h2>Feature Usage</h2>
+        <div id="featureUsage"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>User Activity</h2>
+      <div style="overflow-x:auto">
+        <table id="userTable">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Niche</th>
+              <th>Signed Up</th>
+              <th>Sessions</th>
+              <th>Last Active</th>
+              <th>Trial Days Left</th>
+              <th>Survey</th>
+              <th>Converted</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Daily Signups</h2>
+        <div id="dailySignups"></div>
+      </div>
+      <div class="card">
+        <h2>Daily Active Users</h2>
+        <div id="dailyActive"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Drop-off Points</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Where users stop engaging</p>
+      <div id="dropoff"></div>
+    </div>
+
+    <div class="card">
+      <h2>Recent Events</h2>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>Time</th><th>User</th><th>Event</th><th>Details</th></tr></thead>
+          <tbody id="eventLog"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<button class="refresh-btn hidden" id="refreshBtn" onclick="loadAnalytics()">&#8635;</button>
+
+<script>
+var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var ADMIN_PASSWORD = "CreatorRadar2025!";
+var allEvents = [];
+var currentRange = "7d";
+
+function adminLogin() {
+  var pw = document.getElementById("adminPw").value;
+  if (pw === ADMIN_PASSWORD) {
+    document.getElementById("authSection").classList.add("hidden");
+    document.getElementById("analyticsSection").classList.remove("hidden");
+    document.getElementById("refreshBtn").classList.remove("hidden");
+    localStorage.setItem("cr_admin_auth", "1");
+    loadAnalytics();
+  } else {
+    document.getElementById("authMsg").innerText = "Wrong password.";
+    document.getElementById("authMsg").style.color = "#ff4757";
+  }
+}
+
+if (localStorage.getItem("cr_admin_auth") === "1") {
+  document.getElementById("authSection").classList.add("hidden");
+  document.getElementById("analyticsSection").classList.remove("hidden");
+  document.getElementById("refreshBtn").classList.remove("hidden");
+  loadAnalytics();
+}
+
+async function loadAnalytics() {
+  document.getElementById("loadingState").classList.remove("hidden");
+  document.getElementById("analyticsContent").classList.add("hidden");
+
+  try {
+    var res = await sb.from("cr_analytics").select("*").order("created_at", {ascending: false}).limit(10000);
+    if (res.error) {
+      document.getElementById("loadingState").innerHTML = '<span style="color:#ff4757">Could not load analytics. Make sure the cr_analytics table exists in Supabase.</span><br><br><span style="color:#8aa99a;font-size:11px">Run the SQL setup script in Supabase SQL Editor first.</span>';
+      return;
+    }
+    allEvents = res.data || [];
+  } catch(e) {
+    document.getElementById("loadingState").innerHTML = '<span style="color:#ff4757">Error connecting to Supabase.</span>';
+    return;
+  }
+
+  document.getElementById("loadingState").classList.add("hidden");
+  document.getElementById("analyticsContent").classList.remove("hidden");
+  renderAnalytics();
+}
+
+function setRange(range, btn) {
+  currentRange = range;
+  var btns = document.querySelectorAll(".filter-btn");
+  for (var i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+  btn.classList.add("active");
+  renderAnalytics();
+}
+
+function filterByRange(events) {
+  if (currentRange === "all") return events;
+  var days = parseInt(currentRange);
+  var cutoff = Date.now() - (days * 86400000);
+  return events.filter(function(e) { return new Date(e.created_at).getTime() >= cutoff; });
+}
+
+function renderAnalytics() {
+  var events = filterByRange(allEvents);
+
+  var uniqueUsers = {};
+  var signups = 0, logins = 0, scannerUses = 0, day1Returns = 0;
+  var weekActive = 0, surveysComplete = 0, paywallClicks = 0, conversions = 0;
+  var featureCounts = {};
+  var userSessions = {};
+  var userFirstSeen = {};
+  var userLastSeen = {};
+  var userNiche = {};
+  var userSurveyed = {};
+  var userConverted = {};
+  var dailySignupMap = {};
+  var dailyActiveMap = {};
+  var tabViews = {};
+
+  events.forEach(function(ev) {
+    var uid = ev.user_id || "anon";
+    var email = ev.user_email || uid;
+    uniqueUsers[uid] = email;
+
+    var ts = new Date(ev.created_at).getTime();
+    if (!userFirstSeen[uid] || ts < userFirstSeen[uid]) userFirstSeen[uid] = ts;
+    if (!userLastSeen[uid] || ts > userLastSeen[uid]) userLastSeen[uid] = ts;
+
+    var dateKey = new Date(ev.created_at).toISOString().split("T")[0];
+
+    if (ev.event_type === "signup") {
+      signups++;
+      dailySignupMap[dateKey] = (dailySignupMap[dateKey] || 0) + 1;
+      if (ev.metadata && ev.metadata.niche) userNiche[uid] = ev.metadata.niche;
+    }
+
+    if (ev.event_type === "login" || ev.event_type === "session_start") {
+      logins++;
+      if (!userSessions[uid]) userSessions[uid] = {};
+      userSessions[uid][dateKey] = true;
+      dailyActiveMap[dateKey] = dailyActiveMap[dateKey] || {};
+      dailyActiveMap[dateKey][uid] = true;
+    }
+
+    if (ev.event_type === "scanner_use" || ev.event_type === "load_trends") {
+      scannerUses++;
+    }
+
+    if (ev.event_type === "tab_switch") {
+      var tab = (ev.metadata && ev.metadata.tab) || "unknown";
+      featureCounts[tab] = (featureCounts[tab] || 0) + 1;
+      tabViews[tab] = (tabViews[tab] || 0) + 1;
+    }
+
+    if (ev.event_type === "feature_use") {
+      var feat = (ev.metadata && ev.metadata.feature) || "unknown";
+      featureCounts[feat] = (featureCounts[feat] || 0) + 1;
+    }
+
+    if (ev.event_type === "survey_complete") {
+      surveysComplete++;
+      userSurveyed[uid] = true;
+    }
+
+    if (ev.event_type === "paywall_click") paywallClicks++;
+
+    if (ev.event_type === "payment_complete") {
+      conversions++;
+      userConverted[uid] = true;
+    }
+  });
+
+  var totalUsers = Object.keys(uniqueUsers).length;
+
+  for (var uid in userSessions) {
+    var sessionDays = Object.keys(userSessions[uid]);
+    if (sessionDays.length > 1) day1Returns++;
+    if (sessionDays.length >= 3) weekActive++;
+  }
+
+  var avgSessions = 0;
+  var sessionCounts = [];
+  for (var u2 in userSessions) {
+    sessionCounts.push(Object.keys(userSessions[u2]).length);
+  }
+  if (sessionCounts.length > 0) {
+    var total = 0;
+    for (var s = 0; s < sessionCounts.length; s++) total += sessionCounts[s];
+    avgSessions = (total / sessionCounts.length).toFixed(1);
+  }
+
+  document.getElementById("topStats").innerHTML =
+    statCard(totalUsers, "Total Users") +
+    statCard(signups, "Signups") +
+    statCard(logins, "Total Logins") +
+    statCard(scannerUses, "Scanner Uses") +
+    statCard(day1Returns, "Returned After Day 1") +
+    statCard(weekActive, "Active 3+ Days") +
+    statCard(avgSessions, "Avg Sessions/User") +
+    statCard(conversions, "Paid Conversions");
+
+  var funnelSteps = [
+    {label: "Signed Up", count: signups, color: "var(--green)"},
+    {label: "Logged In", count: logins > 0 ? Object.keys(userSessions).length : 0, color: "var(--green2)"},
+    {label: "Used Scanner", count: scannerUses > 0 ? Math.min(scannerUses, totalUsers) : 0, color: "var(--blue)"},
+    {label: "Returned After Day 1", count: day1Returns, color: "var(--amber)"},
+    {label: "Active After 1 Week", count: weekActive, color: "var(--purple)"},
+    {label: "Completed Survey", count: surveysComplete, color: "#ff9f43"},
+    {label: "Clicked Continue", count: paywallClicks, color: "var(--red)"},
+    {label: "Paid Conversion", count: conversions, color: "var(--green)"}
+  ];
+
+  var maxF = Math.max(1, funnelSteps[0].count);
+  var funnelHTML = "";
+  for (var f = 0; f < funnelSteps.length; f++) {
+    var pct = maxF > 0 ? Math.round((funnelSteps[f].count / maxF) * 100) : 0;
+    var prevCount = f > 0 ? funnelSteps[f-1].count : funnelSteps[f].count;
+    var stepPct = prevCount > 0 ? Math.round((funnelSteps[f].count / prevCount) * 100) : 0;
+    funnelHTML += '<div class="funnel-row">' +
+      '<span class="funnel-label">' + funnelSteps[f].label + '</span>' +
+      '<div class="funnel-bar-wrap"><div class="funnel-bar" style="width:' + Math.max(2, pct) + '%;background:' + funnelSteps[f].color + ';opacity:.6"></div></div>' +
+      '<span class="funnel-count" style="color:' + funnelSteps[f].color + '">' + funnelSteps[f].count + '</span>' +
+      '<span class="funnel-pct">' + (f > 0 ? stepPct + '%' : '') + '</span>' +
+      '</div>';
+  }
+  document.getElementById("funnel").innerHTML = funnelHTML;
+
+  var sortedFeatures = Object.keys(featureCounts).sort(function(a,b) { return featureCounts[b] - featureCounts[a]; });
+  var featHTML = "";
+  var maxFeat = featureCounts[sortedFeatures[0]] || 1;
+  for (var fi = 0; fi < sortedFeatures.length; fi++) {
+    var fn = sortedFeatures[fi];
+    var fpct = Math.round((featureCounts[fn] / maxFeat) * 100);
+    featHTML += '<div style="margin-bottom:8px">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>' + titleCase(fn) + '</span><span style="color:var(--green);font-weight:900">' + featureCounts[fn] + '</span></div>' +
+      '<div style="height:6px;background:rgba(0,255,136,.06);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + fpct + '%;background:linear-gradient(90deg,var(--green2),var(--green));border-radius:99px"></div></div>' +
+      '</div>';
+  }
+  document.getElementById("featureUsage").innerHTML = featHTML || '<div class="empty-state">No feature data yet</div>';
+
+  var retHTML = '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">Users active on day N after signup</div>';
+  retHTML += '<div class="retention-grid">';
+  retHTML += '<div class="ret-header">Day 0</div><div class="ret-header">Day 1</div><div class="ret-header">Day 2</div><div class="ret-header">Day 3</div><div class="ret-header">Day 5</div><div class="ret-header">Day 7</div><div class="ret-header">Day 14</div>';
+  var retDays = [0,1,2,3,5,7,14];
+  for (var ri = 0; ri < retDays.length; ri++) {
+    var dayN = retDays[ri];
+    var activeOnDay = 0;
+    for (var ru in userFirstSeen) {
+      var startDate = userFirstSeen[ru];
+      var targetDate = startDate + (dayN * 86400000);
+      var targetKey = new Date(targetDate).toISOString().split("T")[0];
+      if (userSessions[ru] && userSessions[ru][targetKey]) activeOnDay++;
+    }
+    var retPct = totalUsers > 0 ? Math.round((activeOnDay / totalUsers) * 100) : 0;
+    var retColor = retPct >= 60 ? "rgba(0,255,136,.2)" : retPct >= 30 ? "rgba(251,191,36,.15)" : retPct > 0 ? "rgba(255,71,87,.1)" : "rgba(255,255,255,.03)";
+    retHTML += '<div class="ret-cell" style="background:' + retColor + '">' + retPct + '%</div>';
+  }
+  retHTML += '</div>';
+  document.getElementById("retention").innerHTML = retHTML;
+
+  var userList = Object.keys(uniqueUsers);
+  var tbody = "";
+  for (var ui = 0; ui < userList.length; ui++) {
+    var uId = userList[ui];
+    var uEmail = uniqueUsers[uId];
+    var uNiche = userNiche[uId] || "-";
+    var uSignup = userFirstSeen[uId] ? new Date(userFirstSeen[uId]).toLocaleDateString("en-GB") : "-";
+    var uSessionCount = userSessions[uId] ? Object.keys(userSessions[uId]).length : 0;
+    var uLast = userLastSeen[uId] ? new Date(userLastSeen[uId]).toLocaleDateString("en-GB") : "-";
+    var uTrialDays = 0;
+    if (userFirstSeen[uId]) {
+      var passed = Math.floor((Date.now() - userFirstSeen[uId]) / 86400000);
+      uTrialDays = Math.max(0, 14 - passed);
+    }
+    var uSurvey = userSurveyed[uId] ? '<span class="badge badge-green">Done</span>' : '<span class="badge badge-amber">Pending</span>';
+    var uConv = userConverted[uId] ? '<span class="badge badge-green">Paid</span>' : '<span class="badge badge-red">Free</span>';
+
+    tbody += '<tr><td>' + maskEmail(uEmail) + '</td><td>' + titleCase(uNiche) + '</td><td>' + uSignup + '</td><td>' + uSessionCount + '</td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
+  }
+  document.getElementById("userTableBody").innerHTML = tbody || '<tr><td colspan="8" class="empty-state">No users yet</td></tr>';
+
+  var sortedDays = Object.keys(dailySignupMap).sort();
+  var dsHTML = "";
+  if (sortedDays.length > 0) {
+    var maxDs = 0;
+    for (var di = 0; di < sortedDays.length; di++) { if (dailySignupMap[sortedDays[di]] > maxDs) maxDs = dailySignupMap[sortedDays[di]]; }
+    for (var dj = 0; dj < sortedDays.length; dj++) {
+      var dPct = Math.round((dailySignupMap[sortedDays[dj]] / Math.max(1,maxDs)) * 100);
+      dsHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+        '<span style="font-size:11px;min-width:80px;color:var(--muted)">' + sortedDays[dj].substring(5) + '</span>' +
+        '<div style="flex:1;height:18px;background:rgba(0,255,136,.04);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + dPct + '%;background:var(--green);border-radius:4px;opacity:.5"></div></div>' +
+        '<span style="font-size:12px;font-weight:900;min-width:24px;text-align:right;color:var(--green)">' + dailySignupMap[sortedDays[dj]] + '</span>' +
+        '</div>';
+    }
+  }
+  document.getElementById("dailySignups").innerHTML = dsHTML || '<div class="empty-state">No signup data yet</div>';
+
+  var activeDays = Object.keys(dailyActiveMap).sort();
+  var daHTML = "";
+  if (activeDays.length > 0) {
+    var maxDa = 0;
+    for (var ai = 0; ai < activeDays.length; ai++) { var ac = Object.keys(dailyActiveMap[activeDays[ai]]).length; if (ac > maxDa) maxDa = ac; }
+    for (var aj = 0; aj < activeDays.length; aj++) {
+      var daCount = Object.keys(dailyActiveMap[activeDays[aj]]).length;
+      var daPct = Math.round((daCount / Math.max(1,maxDa)) * 100);
+      daHTML += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+        '<span style="font-size:11px;min-width:80px;color:var(--muted)">' + activeDays[aj].substring(5) + '</span>' +
+        '<div style="flex:1;height:18px;background:rgba(77,201,246,.04);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + daPct + '%;background:var(--blue);border-radius:4px;opacity:.5"></div></div>' +
+        '<span style="font-size:12px;font-weight:900;min-width:24px;text-align:right;color:var(--blue)">' + daCount + '</span>' +
+        '</div>';
+    }
+  }
+  document.getElementById("dailyActive").innerHTML = daHTML || '<div class="empty-state">No activity data yet</div>';
+
+  var dropoffHTML = "";
+  if (funnelSteps.length > 1) {
+    var biggestDrop = 0, dropLabel = "";
+    for (var di2 = 1; di2 < funnelSteps.length; di2++) {
+      var prev = funnelSteps[di2-1].count;
+      var curr = funnelSteps[di2].count;
+      var drop = prev - curr;
+      if (drop > biggestDrop && prev > 0) {
+        biggestDrop = drop;
+        dropLabel = funnelSteps[di2-1].label + " -> " + funnelSteps[di2].label;
+      }
+    }
+    if (biggestDrop > 0) {
+      dropoffHTML += '<div style="padding:14px;background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.2);border-radius:12px;margin-bottom:10px">' +
+        '<div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:4px">Biggest Drop-off</div>' +
+        '<div style="font-size:12px;color:var(--muted)">' + dropLabel + '</div>' +
+        '<div style="font-size:20px;font-weight:900;color:var(--red);margin-top:4px">-' + biggestDrop + ' users</div>' +
+        '</div>';
+    }
+  }
+  document.getElementById("dropoff").innerHTML = dropoffHTML || '<div class="empty-state">Not enough data to determine drop-off points</div>';
+
+  var recentEvents = events.slice(0, 50);
+  var evHTML = "";
+  for (var ei = 0; ei < recentEvents.length; ei++) {
+    var ev = recentEvents[ei];
+    var evTime = new Date(ev.created_at).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+    var evUser = maskEmail(ev.user_email || "anon");
+    var evType = ev.event_type || "";
+    var evDetail = "";
+    if (ev.metadata) {
+      if (ev.metadata.tab) evDetail = "Tab: " + ev.metadata.tab;
+      else if (ev.metadata.feature) evDetail = ev.metadata.feature;
+      else if (ev.metadata.niche) evDetail = "Niche: " + ev.metadata.niche;
+      else if (ev.metadata.rating) evDetail = "Rating: " + ev.metadata.rating;
+    }
+    var evBadge = "badge-blue";
+    if (evType === "signup") evBadge = "badge-green";
+    else if (evType === "payment_complete") evBadge = "badge-green";
+    else if (evType === "survey_complete") evBadge = "badge-amber";
+    evHTML += '<tr><td>' + evTime + '</td><td>' + evUser + '</td><td><span class="badge ' + evBadge + '">' + evType + '</span></td><td style="color:var(--muted)">' + evDetail + '</td></tr>';
+  }
+  document.getElementById("eventLog").innerHTML = evHTML || '<tr><td colspan="4" class="empty-state">No events yet</td></tr>';
+}
+
+function statCard(val, label) {
+  return '<div class="stat-card"><div class="val">' + val + '</div><div class="lbl">' + label + '</div></div>';
+}
+
+function maskEmail(email) {
+  if (!email || email === "anon") return "anon";
+  var parts = email.split("@");
+  if (parts.length < 2) return email;
+  return parts[0].substring(0,2) + "***@" + parts[1];
+}
+
+function titleCase(s) {
+  if (!s) return "";
+  return s.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+}
+</script>
+</body>
+</html>
