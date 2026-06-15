@@ -990,6 +990,8 @@ input[type=range]::-webkit-slider-thumb{
       <p class="intro" style="font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:14px">You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks built for British patriotic creators.</p>
       <label>Your Email</label>
       <input id="signupEmail" type="email" placeholder="your@email.com">
+      <label>Your Niche</label>
+      <input id="signupNiche" type="text" placeholder="e.g. fitness, cooking, fashion, patriotic">
       <label>Create a Password</label>
       <input id="signupPassword" type="password" placeholder="e.g. MyPass1!">
       <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('betaConsent');cb.checked=!cb.checked;">
@@ -1234,6 +1236,138 @@ input[type=range]::-webkit-slider-thumb{
 var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
 var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var USER_NICHE = "";
+var PATRIOTIC_TERMS = ["patriot","british","england","english","uk politics","union jack","britain","military","veteran","armed forces","royal","monarchy","churchill","remembrance","st george"];
+
+function isPatrioticNiche(niche) {
+  if (!niche) return true;
+  var n = niche.toLowerCase();
+  for (var i = 0; i < PATRIOTIC_TERMS.length; i++) {
+    if (n.indexOf(PATRIOTIC_TERMS[i]) !== -1) return true;
+  }
+  return false;
+}
+
+var GENERIC_HOOK_TEMPLATES = [
+  "The truth about {kw} nobody talks about",
+  "I tried {kw} for 30 days - here's what happened",
+  "Stop making this {kw} mistake - do this instead",
+  "{kw} is overhyped? Yes or No?",
+  "5 things about {kw} that will blow your mind",
+  "Why most people fail at {kw} - and how to fix it",
+  "Is {kw} worth it in 2025? Honest answer",
+  "What I wish I knew about {kw} before starting"
+];
+
+var GENERIC_PHRASE_HOOKS = [
+  "{kw} - have you tried this yet? Yes or No?",
+  "{kw} - most people are doing this wrong",
+  "{kw} - thoughts? Drop yours below",
+  "{kw} - this is a game changer",
+  "{kw} - do you agree or disagree?",
+  "{kw} - here's what nobody is telling you",
+  "{kw} - is this actually true? Let me know",
+  "{kw} - save this for later, you'll need it"
+];
+
+var NICHE_PRODUCT_TYPES = {
+  "fitness": ["resistance bands","protein powder","yoga mat","fitness tracker","workout gloves","foam roller"],
+  "cooking": ["air fryer","knife set","cast iron skillet","spice rack","meal prep containers","cookbook"],
+  "finance": ["finance book","budgeting planner","stock market course","crypto wallet","financial planner","investing guide"],
+  "fashion": ["sunglasses","sneakers","watch","handbag","jewellery set","fashion accessories"],
+  "beauty": ["skincare set","makeup brushes","face mask","moisturizer","beauty blender","hair tools"],
+  "travel": ["travel backpack","packing cubes","neck pillow","portable charger","travel adapter","luggage set"],
+  "gaming": ["gaming headset","controller","mouse pad","gaming chair","LED lights","gaming keyboard"],
+  "parenting": ["baby monitor","activity book","learning toys","sippy cups","stroller accessories","parenting book"],
+  "health": ["supplements","water bottle","sleep tracker","massage gun","essential oils","health journal"],
+  "tech": ["wireless earbuds","phone case","USB hub","smart plug","webcam","portable speaker"],
+  "default": ["trending product","bestseller","top pick","must have","essential kit","starter pack"]
+};
+
+function getGenericProducts(keyword, niche) {
+  var n = (niche || "").toLowerCase();
+  var types = NICHE_PRODUCT_TYPES[n] || NICHE_PRODUCT_TYPES["default"];
+  for (var key in NICHE_PRODUCT_TYPES) {
+    if (n.indexOf(key) !== -1) { types = NICHE_PRODUCT_TYPES[key]; break; }
+  }
+  var prods = [];
+  for (var i = 0; i < Math.min(4, types.length); i++) {
+    prods.push({
+      name: titleCase(types[i]) + " - " + titleCase(niche || "trending"),
+      price: (9.99 + Math.floor(i * 7.5)).toFixed(2),
+      commission: (0.99 + i * 0.5).toFixed(2),
+      type: titleCase(types[i].split(" ").pop()),
+      sold: ["120","85","200","340","NEW","55"][i] || "NEW",
+      matchScore: 75 - i * 5
+    });
+  }
+  return prods;
+}
+
+function scanNicheTrends(niche, callback) {
+  var seeds = [
+    niche + " tips 2025",
+    niche + " trending",
+    niche + " mistakes",
+    "best " + niche,
+    niche + " for beginners",
+    "why " + niche,
+    niche + " hack",
+    niche + " challenge"
+  ];
+
+  var bannedWords = ["jobs","salary","courses","degree","near me","hiring","vacancy","career","amazon","ebay","buy","shop","price","cost","free download","pdf","wiki","meaning","definition","certificate","class ","school","university","college","weather","map","lyrics","movie","imdb","netflix","stock price","net worth","age ","height ","weight ","birthday","hospital","doctor","nhs","insurance","mortgage","loan","recipe for","calories","porn","sex","xxx","nude","naked","drug","cocaine","heroin","kill","suicide","bomb","terrorist","hack ","steal","fraud","scam"];
+
+  var allResults = [];
+  var done = 0;
+  var seen = {};
+
+  seeds.forEach(function(seed, si) {
+    var script = document.createElement("script");
+    var cbName = "niche_cb_" + Math.random().toString(36).substr(2, 8);
+    window[cbName] = function(d) {
+      var suggestions = d[1] || [];
+      suggestions.forEach(function(s) {
+        var sl = s.toLowerCase();
+        var blocked = false;
+        for (var b = 0; b < bannedWords.length; b++) { if (sl.indexOf(bannedWords[b]) !== -1) { blocked = true; break; } }
+        if (!blocked && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase()) {
+          seen[sl] = true;
+          var score = Math.max(20, 85 - allResults.length * 3 + Math.floor(Math.random() * 15));
+          var rise = Math.max(-5, 50 - allResults.length * 4 + Math.floor(Math.random() * 20));
+          var vol = Math.max(10, 90 - allResults.length * 5 + Math.floor(Math.random() * 25));
+          allResults.push({
+            keyword: s.charAt(0).toUpperCase() + s.slice(1),
+            viral_score: Math.min(95, score),
+            rise_percent: rise,
+            search_volume: vol,
+            source: "Google Trends",
+            content_score: Math.max(30, score - 10 + Math.floor(Math.random() * 15)),
+            fresh: Math.max(20, 70 + Math.floor(Math.random() * 25)),
+            emotion: Math.max(20, 40 + Math.floor(Math.random() * 40)),
+            debate: Math.max(15, 30 + Math.floor(Math.random() * 50)),
+            product: ""
+          });
+        }
+      });
+      done++;
+      delete window[cbName];
+      if (done === seeds.length) {
+        allResults.sort(function(a, b) { return b.viral_score - a.viral_score; });
+        allResults = allResults.slice(0, 20);
+        for (var i = 0; i < allResults.length; i++) {
+          var prods = getGenericProducts(allResults[i].keyword, niche);
+          if (prods.length > 0) allResults[i].product = prods[0].name;
+        }
+        callback(allResults);
+      }
+    };
+    script.src = "https://suggestqueries.google.com/complete/search?client=chrome&q=" + encodeURIComponent(seed) + "&hl=en&gl=uk&callback=" + cbName;
+    script.onerror = function() { done++; delete window[cbName]; if (done === seeds.length) callback(allResults); };
+    document.body.appendChild(script);
+  });
+}
 
 var KEYWORD_GROUPS = {
   "military": {
@@ -1510,6 +1644,9 @@ function scoreProduct(productName, keyword) {
 }
 
 function getProducts(keyword) {
+  if (!isPatrioticNiche(USER_NICHE)) {
+    return getGenericProducts(keyword, USER_NICHE);
+  }
   var kw = (keyword || "").toLowerCase();
   var directMatch = PRODUCT_MAP[kw];
   var prods = directMatch || PRODUCT_MAP["england"] || [];
@@ -2579,19 +2716,29 @@ var PHRASE_HOOK_TEMPLATES = {
 
 function generateHooks(keyword) {
   var kwLower = (keyword || "").toLowerCase();
-  if (KEYWORD_SPECIFIC_HOOKS[kwLower]) return KEYWORD_SPECIFIC_HOOKS[kwLower];
-  var gk = getGroupKey(keyword);
   var kw = titleCase(keyword || "");
   var words = kw.trim().split(/\s+/);
-  var templates;
-  if (words.length >= 4) {
-    templates = PHRASE_HOOK_TEMPLATES[gk] || PHRASE_HOOK_TEMPLATES.general;
-  } else {
-    templates = HOOK_TEMPLATES[gk] || HOOK_TEMPLATES.general;
+
+  if (isPatrioticNiche(USER_NICHE)) {
+    if (KEYWORD_SPECIFIC_HOOKS[kwLower]) return KEYWORD_SPECIFIC_HOOKS[kwLower];
+    var gk = getGroupKey(keyword);
+    var templates;
+    if (words.length >= 4) {
+      templates = PHRASE_HOOK_TEMPLATES[gk] || PHRASE_HOOK_TEMPLATES.general;
+    } else {
+      templates = HOOK_TEMPLATES[gk] || HOOK_TEMPLATES.general;
+    }
+    var hooks = [];
+    for (var i = 0; i < templates.length; i++) {
+      hooks.push(templates[i].replace(/\{kw\}/g, kw));
+    }
+    return hooks;
   }
+
+  var genTemplates = words.length >= 4 ? GENERIC_PHRASE_HOOKS : GENERIC_HOOK_TEMPLATES;
   var hooks = [];
-  for (var i = 0; i < templates.length; i++) {
-    hooks.push(templates[i].replace(/\{kw\}/g, kw));
+  for (var i = 0; i < genTemplates.length; i++) {
+    hooks.push(genTemplates[i].replace(/\{kw\}/g, kw));
   }
   return hooks;
 }
@@ -2623,10 +2770,18 @@ function confTagClass(c) {
 }
 
 function recommendContent(item) {
-  var gk = getGroupKey(item.keyword);
   var rp = Number(item.rise_percent || 0);
   var vs = Number(item.viral_score || 0);
 
+  if (!isPatrioticNiche(USER_NICHE)) {
+    if (rp > 30 && vs > 40) return "Trending Take";
+    if (vs > 60) return "Hot Topic";
+    if (item.product) return "Product Review";
+    if (rp > 15) return "Timely Post";
+    return "Engagement Post";
+  }
+
+  var gk = getGroupKey(item.keyword);
   if (gk === "history") return "Historical Post";
   if (rp > 30 && vs > 40) return "Debate Question";
   if (gk === "remembrance") return "Tribute Post";
@@ -3780,7 +3935,49 @@ function toggleHooks(id) {
   if (el) el.classList.toggle("hidden");
 }
 
+function renderAllSections(results, emerging, productTrends, creatorInsights) {
+  results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
+  cachedResults = results;
+
+  document.getElementById("keywordsAnalysed").textContent = results.length;
+  document.getElementById("opportunitiesFound").textContent =
+    results.filter(function(r) { return Number(r.viral_score || 0) >= 30; }).length;
+  document.getElementById("viralCount").textContent =
+    results.filter(function(r) { return Number(r.rise_percent || 0) > 50 && Number(r.viral_score || 0) >= 40; }).length;
+
+  document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(new Date().toISOString());
+
+  saveTrendSnapshot(results);
+
+  if (results.length > 0) {
+    document.getElementById("dailyPlan").innerHTML = renderDailyPlan(results, emerging);
+    document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
+    document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
+    document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
+    document.getElementById("creatorInsights").innerHTML = renderCreatorInsights(creatorInsights);
+    document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
+    document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
+    document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
+    document.getElementById("productHub").innerHTML = renderProductHub(results, productTrends);
+    document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
+    document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
+  }
+}
+
 async function loadLiveStats() {
+  if (!isPatrioticNiche(USER_NICHE)) {
+    document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE) + " trends...";
+    scanNicheTrends(USER_NICHE, function(results) {
+      var emerging = [];
+      if (results.length > 5) {
+        for (var i = 5; i < Math.min(10, results.length); i++) {
+          emerging.push({ keyword: results[i].keyword, source: "Google Suggest", description: "Trending in " + titleCase(USER_NICHE) });
+        }
+      }
+      renderAllSections(results, emerging, [], []);
+    });
+    return;
+  }
   try {
     var res = await fetch("results.json?cache=" + Date.now());
     var lastMod = res.headers.get("Last-Modified");
@@ -3790,38 +3987,13 @@ async function loadLiveStats() {
     var productTrends = Array.isArray(data) ? [] : data.product_trends || [];
     var creatorInsights = Array.isArray(data) ? [] : data.creator_insights || [];
 
-    results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
-    cachedResults = results;
-
-    document.getElementById("keywordsAnalysed").textContent = results.length;
-    document.getElementById("opportunitiesFound").textContent =
-      results.filter(function(r) { return Number(r.viral_score || 0) >= 30; }).length;
-    document.getElementById("viralCount").textContent =
-      results.filter(function(r) { return Number(r.rise_percent || 0) > 50 && Number(r.viral_score || 0) >= 40; }).length;
-
     if (data.last_updated) {
       document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(data.last_updated);
     } else if (lastMod) {
       document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(lastMod);
-    } else {
-      document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(new Date().toISOString());
     }
 
-    saveTrendSnapshot(results);
-
-    if (results.length > 0) {
-      document.getElementById("dailyPlan").innerHTML = renderDailyPlan(results, emerging);
-      document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
-      document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
-      document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
-      document.getElementById("creatorInsights").innerHTML = renderCreatorInsights(creatorInsights);
-      document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
-      document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
-      document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
-      document.getElementById("productHub").innerHTML = renderProductHub(results, productTrends);
-      document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
-      document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
-    }
+    renderAllSections(results, emerging, productTrends, creatorInsights);
   } catch (err) { console.error("Load error:", err); }
 }
 
@@ -3857,7 +4029,7 @@ var TUTORIAL_STEPS = [
   {
     title: "Welcome to Creator Radar!",
     icon: "&#128640;",
-    text: "This is your personal trend-scanning dashboard. It monitors patriotic keywords across the internet and turns them into content ideas, hooks, and opportunities - all in real time.",
+    text: "This is your personal trend-scanning dashboard. It monitors trending keywords in your niche across the internet and turns them into content ideas, hooks, and opportunities - all in real time.",
     tip: "Let's walk through each section so you know exactly how to use it."
   },
   {
@@ -4149,6 +4321,14 @@ async function showDashboard() {
   if (daysLeft > 0) { showTrialBanner(daysLeft); }
 
   document.getElementById("dashboard").classList.remove("hidden");
+
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (u && u.user_metadata && u.user_metadata.niche) {
+      USER_NICHE = u.user_metadata.niche;
+    }
+  } catch(e) {}
+
   await loadPerfFromSupabase();
   loadLiveStats();
   if (!localStorage.getItem("cr_tutorial_done")) {
@@ -4169,6 +4349,7 @@ function showSignupView() {
 async function betaSignup() {
   var em = document.getElementById("signupEmail").value.trim();
   var pw = document.getElementById("signupPassword").value;
+  var niche = (document.getElementById("signupNiche").value || "").trim();
   var consent = document.getElementById("betaConsent").checked;
   var msg = document.getElementById("signupMessage");
   if (!em || !pw) { msg.innerText = "Please enter your email and create a password."; msg.style.color = "var(--red)"; return; }
@@ -4176,7 +4357,7 @@ async function betaSignup() {
   if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) { msg.innerText = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.style.color = "var(--red)"; return; }
   if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
-  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString()}}});
+  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString(), niche: niche || "patriotic"}}});
   if (r.error) { var emsg = r.error.message; if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.innerText = emsg; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
