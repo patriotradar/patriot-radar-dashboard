@@ -1095,7 +1095,7 @@ input[type=range]::-webkit-slider-thumb{
 
     <button onclick="openSupportTicket()" style="width:100%;padding:14px;margin-top:12px;font-size:13px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px">&#9993; Need Help? Submit a Ticket</button>
 
-    <div class="footer">CREATOR RADAR v9.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v9.2 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 </div>
 
@@ -1236,6 +1236,25 @@ input[type=range]::-webkit-slider-thumb{
 var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
 var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var _trackQueue = [];
+var _trackReady = false;
+
+async function trackEvent(eventType, metadata) {
+  try {
+    var sess = await supabaseClient.auth.getSession();
+    var user = (sess.data && sess.data.session) ? sess.data.session.user : null;
+    var payload = {
+      event_type: eventType,
+      user_id: user ? user.id : null,
+      user_email: user ? user.email : null,
+      metadata: metadata || {},
+      page: "dashboard",
+      created_at: new Date().toISOString()
+    };
+    await supabaseClient.from("cr_analytics").insert([payload]);
+  } catch(e) {}
+}
 
 var USER_NICHE = "";
 var PATRIOTIC_TERMS = ["patriot","british","england","english","uk politics","union jack","britain","military","veteran","armed forces","royal","monarchy","churchill","remembrance","st george"];
@@ -1947,6 +1966,8 @@ function submitPerfSimple(keyword) {
   if (!data[keyword]) data[keyword] = [];
   data[keyword].push(entry);
   savePerfData(data);
+
+  trackEvent("feature_use", {feature: "quick_log", keyword: keyword, views: views});
 
   closePerfModal();
   loadLiveStats();
@@ -3702,6 +3723,7 @@ async function runAnalyzer() {
   var caption = (captionInput.value || "").trim();
 
   if (!url && !caption) { alert("Paste a TikTok URL or enter a caption to analyse"); return; }
+  trackEvent("feature_use", {feature: "video_analyzer"});
 
   btn.disabled = true;
   btn.textContent = "ANALYSING...";
@@ -3921,6 +3943,7 @@ function switchTab(tab) {
   }
   document.getElementById('tab-' + tab).classList.add('active');
   localStorage.setItem('patriot_active_tab', tab);
+  trackEvent("tab_switch", {tab: tab});
 }
 
 function loadActiveTab() {
@@ -3965,6 +3988,7 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
 }
 
 async function loadLiveStats() {
+  trackEvent("load_trends", {niche: USER_NICHE || "patriotic"});
   if (!isPatrioticNiche(USER_NICHE)) {
     document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE) + " trends...";
     scanNicheTrends(USER_NICHE, function(results) {
@@ -4006,7 +4030,7 @@ async function checkSession() {
       try {
         var sr = await supabaseClient.auth.setSession({access_token: params.access_token, refresh_token: params.refresh_token});
         history.replaceState(null, "", window.location.pathname);
-        if (sr.data && sr.data.session) { showDashboard(); return; }
+        if (sr.data && sr.data.session) { trackEvent("login", {method: "token_redirect", source: "landing_page"}); showDashboard(); return; }
       } catch(e) {}
     }
   }
@@ -4098,6 +4122,7 @@ var TUTORIAL_STEPS = [
 var tutorialStep = 0;
 
 function startTutorial() {
+  trackEvent("feature_use", {feature: "tutorial"});
   tutorialStep = 0;
   renderTutorialStep();
   document.getElementById("tutorialOverlay").style.display = "block";
@@ -4194,6 +4219,7 @@ async function submitTicket() {
     var r = await fetch("https://formsubmit.co/ajax/jamiemahon22@icloud.com", { method: "POST", body: fd });
     var d = await r.json();
     if (d.success) {
+      trackEvent("feature_use", {feature: "support_ticket", category: category});
       msg.innerHTML = "Ticket sent! We'll get back to you soon."; msg.style.color = "var(--green)";
       setTimeout(function() { closeSupportTicket(); }, 2000);
     } else {
@@ -4230,6 +4256,7 @@ function showTrialBanner(daysLeft) {
 }
 
 function showSurvey() {
+  trackEvent("survey_shown", {});
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
   document.getElementById("dashboard").classList.add("hidden");
@@ -4237,6 +4264,7 @@ function showSurvey() {
 }
 
 function showPaywall() {
+  trackEvent("paywall_shown", {});
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
   document.getElementById("dashboard").classList.add("hidden");
@@ -4291,11 +4319,13 @@ async function submitSurvey() {
   } catch(e) {}
 
   localStorage.setItem("cr_survey_done", "1");
+  trackEvent("survey_complete", {rating: surveyData.stars, would_pay: surveyData.wouldPay, features: surveyData.features.join(",")});
   msg.innerText = "Thanks for your feedback!"; msg.style.color = "var(--green)";
   setTimeout(function() { showPaywall(); }, 1500);
 }
 
 function startPayment() {
+  trackEvent("paywall_click", {action: "upgrade"});
   var msg = document.getElementById("paywallMsg");
   msg.innerText = "Payment system coming soon. Contact us for early access.";
   msg.style.color = "var(--amber)";
@@ -4328,6 +4358,8 @@ async function showDashboard() {
       USER_NICHE = u.user_metadata.niche;
     }
   } catch(e) {}
+
+  trackEvent("session_start", {niche: USER_NICHE || "patriotic"});
 
   await loadPerfFromSupabase();
   loadLiveStats();
@@ -4363,11 +4395,12 @@ async function betaSignup() {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
   } else if (r.data && r.data.session) {
     msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)";
+    trackEvent("signup", {niche: niche || "patriotic", source: "dashboard"});
     setTimeout(function() { showDashboard(); }, 1000);
   } else {
     var lr = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
-    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; showLoginView(); }
-    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; setTimeout(function() { showDashboard(); }, 1000); }
+    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "patriotic", source: "dashboard"}); showLoginView(); }
+    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "patriotic", source: "dashboard"}); setTimeout(function() { showDashboard(); }, 1000); }
   }
 }
 
@@ -4377,7 +4410,7 @@ async function login() {
   document.getElementById("authMessage").innerText = "Logging in...";
   var r = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
   if (r.error) { document.getElementById("authMessage").innerText = r.error.message; }
-  else { document.getElementById("authMessage").innerText = ""; showDashboard(); }
+  else { document.getElementById("authMessage").innerText = ""; trackEvent("login", {method: "password"}); showDashboard(); }
 }
 
 async function resetPassword() {
@@ -4394,7 +4427,7 @@ async function updatePassword() {
   else { document.getElementById("resetMessage").innerText = "Password updated."; showDashboard(); }
 }
 
-async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+async function logout() { trackEvent("logout", {}); await supabaseClient.auth.signOut(); location.reload(); }
 
 function copyText(id) {
   var el = document.getElementById(id);
