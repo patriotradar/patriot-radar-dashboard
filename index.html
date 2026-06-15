@@ -985,6 +985,8 @@ button:active{transform:scale(.98)}
       <div id="videoAnalyzer"></div>
     </div>
 
+    <button onclick="openSupportTicket()" style="width:100%;padding:14px;margin-top:12px;font-size:13px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px">&#9993; Need Help? Submit a Ticket</button>
+
     <div class="footer">CREATOR RADAR v7.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 </div>
@@ -992,6 +994,43 @@ button:active{transform:scale(.98)}
 <div id="tutorialOverlay" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);overflow-y:auto;-webkit-overflow-scrolling:touch">
   <div style="max-width:500px;margin:0 auto;padding:20px">
     <div id="tutorialContent" style="background:var(--panel);border:1px solid var(--green);border-radius:16px;padding:24px;box-shadow:0 0 40px rgba(0,255,136,.15)"></div>
+  </div>
+</div>
+
+<div id="supportOverlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.85);overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="max-width:500px;margin:0 auto;padding:20px">
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="font-size:18px;color:var(--green)">Submit a Support Ticket</h2>
+        <span onclick="closeSupportTicket()" style="font-size:22px;color:var(--muted);cursor:pointer;padding:4px 8px">&times;</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Something not working right? Let us know and we'll get it sorted. Describe the issue below and we'll get back to you.</p>
+      <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">What's the issue?</label>
+      <select id="ticketCategory" style="width:100%;padding:14px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:14px;outline:none">
+        <option value="bug">Something isn't working</option>
+        <option value="content">Content/hooks don't make sense</option>
+        <option value="data">Scanner data seems wrong</option>
+        <option value="account">Account/login issue</option>
+        <option value="feature">Feature request</option>
+        <option value="other">Other</option>
+      </select>
+      <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Describe the problem</label>
+      <textarea id="ticketDescription" rows="4" placeholder="Tell us what happened, what you expected, and what you see instead..." style="width:100%;padding:14px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:14px;font-family:inherit;outline:none;resize:vertical"></textarea>
+      <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px">Which section? (optional)</label>
+      <select id="ticketSection" style="width:100%;padding:14px;margin-bottom:16px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:14px;outline:none">
+        <option value="">Not sure / General</option>
+        <option value="Content Plan">Content Plan</option>
+        <option value="Trends">Trends</option>
+        <option value="Discovery">Discovery</option>
+        <option value="Audience">Audience</option>
+        <option value="Products">Products</option>
+        <option value="Live Feed">Live Feed</option>
+        <option value="Analyzer">Video Analyzer</option>
+        <option value="Login/Signup">Login / Signup</option>
+      </select>
+      <button onclick="submitTicket()" style="width:100%;padding:14px;border:none;border-radius:10px;background:var(--green);color:#031109;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1px">Send Ticket</button>
+      <p id="ticketMessage" style="font-size:13px;margin-top:10px;text-align:center"></p>
+    </div>
   </div>
 </div>
 
@@ -3737,6 +3776,54 @@ function closeTutorial() {
   document.getElementById("tutorialOverlay").style.display = "none";
   localStorage.setItem("cr_tutorial_done", "1");
   switchTab("plan");
+}
+
+function openSupportTicket() {
+  document.getElementById("ticketCategory").value = "bug";
+  document.getElementById("ticketDescription").value = "";
+  document.getElementById("ticketSection").value = "";
+  document.getElementById("ticketMessage").innerText = "";
+  document.getElementById("supportOverlay").style.display = "block";
+}
+
+function closeSupportTicket() {
+  document.getElementById("supportOverlay").style.display = "none";
+}
+
+async function submitTicket() {
+  var category = document.getElementById("ticketCategory").value;
+  var description = document.getElementById("ticketDescription").value.trim();
+  var section = document.getElementById("ticketSection").value;
+  var msg = document.getElementById("ticketMessage");
+
+  if (!description) { msg.innerText = "Please describe the issue."; msg.style.color = "var(--red)"; return; }
+
+  msg.innerText = "Sending..."; msg.style.color = "var(--green)";
+
+  var session = await supabaseClient.auth.getSession();
+  var userEmail = (session.data && session.data.session) ? session.data.session.user.email : "Unknown";
+
+  try {
+    var fd = new FormData();
+    fd.append("_subject", "Support Ticket: " + category);
+    fd.append("_template", "table");
+    fd.append("User Email", userEmail);
+    fd.append("Category", category);
+    fd.append("Section", section || "General");
+    fd.append("Description", description);
+    fd.append("Timestamp", new Date().toLocaleString("en-GB"));
+
+    var r = await fetch("https://formsubmit.co/ajax/jamiemahon22@icloud.com", { method: "POST", body: fd });
+    var d = await r.json();
+    if (d.success) {
+      msg.innerHTML = "Ticket sent! We'll get back to you soon."; msg.style.color = "var(--green)";
+      setTimeout(function() { closeSupportTicket(); }, 2000);
+    } else {
+      msg.innerText = "Something went wrong. Try again."; msg.style.color = "var(--red)";
+    }
+  } catch(e) {
+    msg.innerText = "Could not send. Check your connection."; msg.style.color = "var(--red)";
+  }
 }
 
 async function showDashboard() {
