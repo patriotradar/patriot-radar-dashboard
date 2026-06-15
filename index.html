@@ -894,15 +894,33 @@ button:active{transform:scale(.98)}
   </div>
 
   <div id="authBox" class="card card-glow">
-    <h2>Command Access</h2>
-    <p class="intro">Authorised personnel only. Authenticate to access live intelligence feeds.</p>
-    <label>Email</label>
-    <input id="email" type="email" placeholder="operator@domain.com">
-    <label>Password</label>
-    <input id="password" type="password" placeholder="Enter password">
-    <button onclick="login()">Authenticate</button>
-    <button class="ghost" onclick="resetPassword()">Reset Password</button>
-    <p id="authMessage" class="small" style="margin-top:10px"></p>
+    <div id="signupView">
+      <h2 style="font-size:18px;margin-bottom:4px">Join the Creator Radar Beta</h2>
+      <p class="intro" style="font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:14px">You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks built for British patriotic creators.</p>
+      <label>Your Email</label>
+      <input id="signupEmail" type="email" placeholder="your@email.com">
+      <label>Create a Password</label>
+      <input id="signupPassword" type="password" placeholder="Choose a password">
+      <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('betaConsent');cb.checked=!cb.checked;">
+        <input type="checkbox" id="betaConsent" style="min-width:20px;min-height:20px;margin-top:2px;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation()">
+        <span style="font-size:12px;color:var(--muted);line-height:1.5">I agree to be contacted by Creator Radar about joining the beta programme. This includes account setup details and next steps only - no marketing emails.</span>
+      </div>
+      <button onclick="betaSignup()">Join the Beta</button>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">Already have an account? <a href="#" onclick="showLoginView();return false" style="color:var(--green);text-decoration:underline">Log in here</a></p>
+      <p id="signupMessage" class="small" style="margin-top:10px"></p>
+    </div>
+    <div id="loginView" style="display:none">
+      <h2 style="font-size:18px;margin-bottom:4px">Welcome Back</h2>
+      <p class="intro" style="font-size:13px;color:var(--muted);margin-bottom:14px">Log in to access your Creator Radar dashboard.</p>
+      <label>Email</label>
+      <input id="email" type="email" placeholder="your@email.com">
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Enter password">
+      <button onclick="login()">Log In</button>
+      <button class="ghost" onclick="resetPassword()">Forgot Password?</button>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">Don't have an account? <a href="#" onclick="showSignupView();return false" style="color:var(--green);text-decoration:underline">Join the beta</a></p>
+      <p id="authMessage" class="small" style="margin-top:10px"></p>
+    </div>
   </div>
 
   <div id="resetBox" class="card hidden">
@@ -3589,10 +3607,38 @@ async function showDashboard() {
   loadLiveStats();
 }
 
+function showLoginView() {
+  document.getElementById("signupView").style.display = "none";
+  document.getElementById("loginView").style.display = "block";
+}
+
+function showSignupView() {
+  document.getElementById("loginView").style.display = "none";
+  document.getElementById("signupView").style.display = "block";
+}
+
+async function betaSignup() {
+  var em = document.getElementById("signupEmail").value.trim();
+  var pw = document.getElementById("signupPassword").value;
+  var consent = document.getElementById("betaConsent").checked;
+  var msg = document.getElementById("signupMessage");
+  if (!em || !pw) { msg.innerText = "Please enter your email and create a password."; msg.style.color = "var(--red)"; return; }
+  if (pw.length < 6) { msg.innerText = "Password must be at least 6 characters."; msg.style.color = "var(--red)"; return; }
+  if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
+  msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
+  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString()}}});
+  if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; }
+  else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
+    msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
+  } else {
+    msg.innerHTML = "You're in! Check your email to confirm your account, then come back and log in."; msg.style.color = "var(--green)";
+  }
+}
+
 async function login() {
   var em = document.getElementById("email").value.trim();
   var pw = document.getElementById("password").value;
-  document.getElementById("authMessage").innerText = "Authenticating...";
+  document.getElementById("authMessage").innerText = "Logging in...";
   var r = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
   if (r.error) { document.getElementById("authMessage").innerText = r.error.message; }
   else { document.getElementById("authMessage").innerText = ""; showDashboard(); }
