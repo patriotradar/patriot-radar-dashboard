@@ -1097,8 +1097,8 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="referralCard" class="card" style="margin-top:16px;display:none">
       <h2 style="margin-bottom:6px">Invite a Creator Friend</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:10px;line-height:1.5">Share your link with a creator friend. When they sign up, you both get 2 extra weeks added to your trial. Up to 5 referrals max (10 bonus weeks).</p>
-      <p id="refLimit" style="font-size:11px;margin-bottom:14px;color:var(--green);font-weight:600">5 of 5 referral slots remaining</p>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:10px;line-height:1.5">Share your link with a creator friend. When they sign up, you both get an extra week added to your trial. Up to 3 referrals max (3 bonus weeks).</p>
+      <p id="refLimit" style="font-size:11px;margin-bottom:14px;color:var(--green);font-weight:600">3 of 3 referral slots remaining</p>
       <div style="display:flex;gap:8px;margin-bottom:14px">
         <input id="referralLink" readonly style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--green);outline:none;font-family:monospace" value="">
         <button onclick="copyReferralLink()" id="copyRefBtn" style="padding:12px 18px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap">COPY</button>
@@ -1115,7 +1115,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v9.6 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v9.7 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 </div>
 
@@ -4271,7 +4271,8 @@ async function submitTicket() {
 }
 
 var TRIAL_DAYS = 14;
-var MAX_REFERRALS = 5;
+var MAX_REFERRALS = 3;
+var REFERRAL_BONUS_DAYS = 7;
 
 async function getTrialDaysLeft() {
   try {
@@ -4283,9 +4284,9 @@ async function getTrialDaysLeft() {
       var myCode = getUserRefCode(u.id);
       var refRes = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", myCode);
       var refCount = (refRes.data && refRes.data.length) || 0;
-      bonusDays += Math.min(refCount, MAX_REFERRALS) * 14;
+      bonusDays += Math.min(refCount, MAX_REFERRALS) * REFERRAL_BONUS_DAYS;
       var refByRes = await supabaseClient.from("cr_referrals").select("id").eq("referred_id", u.id);
-      if (refByRes.data && refByRes.data.length > 0) bonusDays += 14;
+      if (refByRes.data && refByRes.data.length > 0) bonusDays += REFERRAL_BONUS_DAYS;
     } catch(e) {}
     var totalDays = TRIAL_DAYS + bonusDays;
     var sd = (u.user_metadata && u.user_metadata.signup_date) || u.created_at;
@@ -4404,7 +4405,7 @@ async function loadReferralCard() {
     var count = (res.data && res.data.length) || 0;
     var capped = Math.min(count, MAX_REFERRALS);
     document.getElementById("refCount").textContent = count;
-    document.getElementById("refBonusDays").textContent = capped * 14;
+    document.getElementById("refBonusDays").textContent = capped * REFERRAL_BONUS_DAYS;
     var limitEl = document.getElementById("refLimit");
     if (limitEl) {
       if (count >= MAX_REFERRALS) {
