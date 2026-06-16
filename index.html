@@ -1095,7 +1095,7 @@ input[type=range]::-webkit-slider-thumb{
 
     <button onclick="openSupportTicket()" style="width:100%;padding:14px;margin-top:12px;font-size:13px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px">&#9993; Need Help? Submit a Ticket</button>
 
-    <div class="footer">CREATOR RADAR v9.2 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v9.3 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 </div>
 
@@ -1259,6 +1259,26 @@ async function trackEvent(eventType, metadata) {
 var USER_NICHE = "";
 var PATRIOTIC_TERMS = ["patriot","british","england","english","uk politics","union jack","britain","military","veteran","armed forces","royal","monarchy","churchill","remembrance","st george"];
 
+var USER_REGION = (function() {
+  try {
+    var tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    var tzMap = {
+      "America/": "us", "US/": "us", "Pacific/Honolulu": "us",
+      "Europe/London": "gb", "Europe/Belfast": "gb",
+      "Europe/Dublin": "ie",
+      "Australia/": "au",
+      "Pacific/Auckland": "nz",
+      "America/Toronto": "ca", "America/Vancouver": "ca", "America/Edmonton": "ca", "America/Winnipeg": "ca", "America/Halifax": "ca", "America/St_Johns": "ca",
+      "Asia/Kolkata": "in", "Asia/Calcutta": "in",
+      "Europe/Berlin": "de", "Europe/Paris": "fr", "Europe/Madrid": "es", "Europe/Rome": "it", "Europe/Amsterdam": "nl"
+    };
+    for (var prefix in tzMap) { if (tz.indexOf(prefix) === 0 || tz === prefix) return tzMap[prefix]; }
+    var lang = (navigator.language || "en-US").split("-");
+    if (lang.length > 1) return lang[1].toLowerCase();
+  } catch(e) {}
+  return "us";
+})();
+
 function isPatrioticNiche(niche) {
   if (!niche) return true;
   var n = niche.toLowerCase();
@@ -1382,7 +1402,7 @@ function scanNicheTrends(niche, callback) {
         callback(allResults);
       }
     };
-    script.src = "https://suggestqueries.google.com/complete/search?client=chrome&q=" + encodeURIComponent(seed) + "&hl=en&gl=uk&callback=" + cbName;
+    script.src = "https://suggestqueries.google.com/complete/search?client=chrome&q=" + encodeURIComponent(seed) + "&hl=en&gl=" + USER_REGION + "&callback=" + cbName;
     script.onerror = function() { done++; delete window[cbName]; if (done === seeds.length) callback(allResults); };
     document.body.appendChild(script);
   });
@@ -4501,5 +4521,6 @@ loadActiveTab();
 </script>
 </body>
 </html>
+
 
 
