@@ -55,6 +55,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
 .badge-amber{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
 .badge-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
 .badge-blue{background:rgba(77,201,246,.1);color:var(--blue);border:1px solid rgba(77,201,246,.3)}
+.badge-purple{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
 .retention-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
 .ret-cell{text-align:center;padding:8px 4px;border-radius:8px;font-size:11px;font-weight:700}
 .ret-header{font-size:9px;color:var(--muted);text-transform:uppercase;padding:4px}
@@ -116,12 +117,19 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
     </div>
 
     <div class="card">
+      <h2>Traffic Sources</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Where your signups are coming from</p>
+      <div id="trafficSources"></div>
+    </div>
+
+    <div class="card">
       <h2>User Activity</h2>
       <div style="overflow-x:auto">
         <table id="userTable">
           <thead>
             <tr>
               <th>User</th>
+              <th>Source</th>
               <th>Niche</th>
               <th>Signed Up</th>
               <th>Sessions</th>
@@ -249,6 +257,7 @@ function renderAnalytics() {
   var userNiche = {};
   var userSurveyed = {};
   var userConverted = {};
+  var userSource = {};
   var dailySignupMap = {};
   var dailyActiveMap = {};
   var tabViews = {};
@@ -268,6 +277,7 @@ function renderAnalytics() {
       signups++;
       dailySignupMap[dateKey] = (dailySignupMap[dateKey] || 0) + 1;
       if (ev.metadata && ev.metadata.niche) userNiche[uid] = ev.metadata.niche;
+      if (ev.metadata && ev.metadata.utm_source) userSource[uid] = ev.metadata.utm_source;
     }
 
     if (ev.event_type === "login" || ev.event_type === "session_start") {
@@ -411,9 +421,11 @@ function renderAnalytics() {
     var uSurvey = userSurveyed[uId] ? '<span class="badge badge-green">Done</span>' : '<span class="badge badge-amber">Pending</span>';
     var uConv = userConverted[uId] ? '<span class="badge badge-green">Paid</span>' : '<span class="badge badge-red">Free</span>';
 
-    tbody += '<tr><td>' + maskEmail(uEmail) + '</td><td>' + titleCase(uNiche) + '</td><td>' + uSignup + '</td><td>' + uSessionCount + '</td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
+    var uSrc = userSource[uId] || "direct";
+    var srcBadge = uSrc === "pitchwall" ? "badge-purple" : "badge-blue";
+    tbody += '<tr><td>' + maskEmail(uEmail) + '</td><td><span class="badge ' + srcBadge + '">' + uSrc + '</span></td><td>' + titleCase(uNiche) + '</td><td>' + uSignup + '</td><td>' + uSessionCount + '</td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
   }
-  document.getElementById("userTableBody").innerHTML = tbody || '<tr><td colspan="8" class="empty-state">No users yet</td></tr>';
+  document.getElementById("userTableBody").innerHTML = tbody || '<tr><td colspan="9" class="empty-state">No users yet</td></tr>';
 
   var sortedDays = Object.keys(dailySignupMap).sort();
   var dsHTML = "";
@@ -447,6 +459,28 @@ function renderAnalytics() {
     }
   }
   document.getElementById("dailyActive").innerHTML = daHTML || '<div class="empty-state">No activity data yet</div>';
+
+  var sourceCounts = {};
+  for (var su in userSource) {
+    var src = userSource[su] || "direct";
+    sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+  }
+  var directCount = signups - Object.keys(userSource).length;
+  if (directCount > 0) sourceCounts["direct"] = (sourceCounts["direct"] || 0) + directCount;
+  var sortedSources = Object.keys(sourceCounts).sort(function(a,b) { return sourceCounts[b] - sourceCounts[a]; });
+  var srcHTML = "";
+  var maxSrc = sourceCounts[sortedSources[0]] || 1;
+  for (var si2 = 0; si2 < sortedSources.length; si2++) {
+    var sName = sortedSources[si2];
+    var sCount = sourceCounts[sName];
+    var sPct = Math.round((sCount / maxSrc) * 100);
+    var sColor = sName === "pitchwall" ? "var(--purple)" : sName === "direct" ? "var(--blue)" : "var(--amber)";
+    srcHTML += '<div style="margin-bottom:8px">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700">' + titleCase(sName) + '</span><span style="color:' + sColor + ';font-weight:900">' + sCount + ' signups</span></div>' +
+      '<div style="height:6px;background:rgba(0,255,136,.06);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + sPct + '%;background:' + sColor + ';border-radius:99px;opacity:.6"></div></div>' +
+      '</div>';
+  }
+  document.getElementById("trafficSources").innerHTML = srcHTML || '<div class="empty-state">No traffic source data yet</div>';
 
   var dropoffHTML = "";
   if (funnelSteps.length > 1) {
@@ -483,6 +517,7 @@ function renderAnalytics() {
       else if (ev.metadata.feature) evDetail = ev.metadata.feature;
       else if (ev.metadata.niche) evDetail = "Niche: " + ev.metadata.niche;
       else if (ev.metadata.rating) evDetail = "Rating: " + ev.metadata.rating;
+      if (ev.metadata.utm_source && ev.metadata.utm_source !== "direct") evDetail += (evDetail ? " | " : "") + "via " + ev.metadata.utm_source;
     }
     var evBadge = "badge-blue";
     if (evType === "signup") evBadge = "badge-green";
