@@ -4236,7 +4236,7 @@ async function getTrialDaysLeft() {
   try {
     var u = (await supabaseClient.auth.getUser()).data.user;
     if (!u) return 0;
-    if (u.user_metadata && u.user_metadata.paid) return -1;
+    if (u.user_metadata && (u.user_metadata.paid || u.user_metadata.role === "admin")) return -1;
     var sd = (u.user_metadata && u.user_metadata.signup_date) || u.created_at;
     if (!sd) return TRIAL_DAYS;
     var passed = Math.floor((Date.now() - new Date(sd).getTime()) / 86400000);
