@@ -1095,7 +1095,26 @@ input[type=range]::-webkit-slider-thumb{
 
     <button onclick="openSupportTicket()" style="width:100%;padding:14px;margin-top:12px;font-size:13px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:10px;cursor:pointer;text-transform:uppercase;letter-spacing:1px">&#9993; Need Help? Submit a Ticket</button>
 
-    <div class="footer">CREATOR RADAR v9.4 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div id="referralCard" class="card" style="margin-top:16px;display:none">
+      <h2 style="margin-bottom:6px">Invite a Creator Friend</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:16px;line-height:1.5">Share your link with a creator friend. When they sign up, you both get 2 extra weeks added to your trial. The more friends you invite, the longer you get free access!</p>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <input id="referralLink" readonly style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--green);outline:none;font-family:monospace" value="">
+        <button onclick="copyReferralLink()" id="copyRefBtn" style="padding:12px 18px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap">COPY</button>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:100px;padding:14px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;text-align:center">
+          <div id="refCount" style="font-size:28px;font-weight:900;color:var(--green)">0</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Friends Invited</div>
+        </div>
+        <div style="flex:1;min-width:100px;padding:14px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;text-align:center">
+          <div id="refBonusDays" style="font-size:28px;font-weight:900;color:var(--amber)">0</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Bonus Days Earned</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">CREATOR RADAR v9.5 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 </div>
 
@@ -4257,10 +4276,19 @@ async function getTrialDaysLeft() {
     var u = (await supabaseClient.auth.getUser()).data.user;
     if (!u) return 0;
     if (u.user_metadata && (u.user_metadata.paid || u.user_metadata.role === "admin")) return -1;
+    var bonusDays = 0;
+    try {
+      var myCode = getUserRefCode(u.id);
+      var refRes = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", myCode);
+      if (refRes.data) bonusDays += refRes.data.length * 14;
+      var refByRes = await supabaseClient.from("cr_referrals").select("id").eq("referred_id", u.id);
+      if (refByRes.data && refByRes.data.length > 0) bonusDays += 14;
+    } catch(e) {}
+    var totalDays = TRIAL_DAYS + bonusDays;
     var sd = (u.user_metadata && u.user_metadata.signup_date) || u.created_at;
-    if (!sd) return TRIAL_DAYS;
+    if (!sd) return totalDays;
     var passed = Math.floor((Date.now() - new Date(sd).getTime()) / 86400000);
-    return Math.max(0, TRIAL_DAYS - passed);
+    return Math.max(0, totalDays - passed);
   } catch(e) { return TRIAL_DAYS; }
 }
 
@@ -4356,6 +4384,41 @@ function toggleSettings() {
   p.classList.toggle("show");
 }
 
+function getUserRefCode(userId) {
+  return userId ? userId.replace(/-/g, "").substring(0, 8) : "";
+}
+
+async function loadReferralCard() {
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (!u) return;
+    var refCode = getUserRefCode(u.id);
+    var refLink = "creatorradar.co.uk?ref=" + refCode;
+    document.getElementById("referralLink").value = refLink;
+    document.getElementById("referralCard").style.display = "block";
+
+    var res = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", refCode);
+    var count = (res.data && res.data.length) || 0;
+    document.getElementById("refCount").textContent = count;
+    document.getElementById("refBonusDays").textContent = count * 14;
+  } catch(e) {}
+}
+
+function copyReferralLink() {
+  var input = document.getElementById("referralLink");
+  navigator.clipboard.writeText(input.value).then(function() {
+    var btn = document.getElementById("copyRefBtn");
+    btn.textContent = "COPIED!";
+    trackEvent("feature_use", {feature: "referral_copy"});
+    setTimeout(function() { btn.textContent = "COPY"; }, 2000);
+  }).catch(function() {
+    input.select();
+    document.execCommand("copy");
+    document.getElementById("copyRefBtn").textContent = "COPIED!";
+    setTimeout(function() { document.getElementById("copyRefBtn").textContent = "COPY"; }, 2000);
+  });
+}
+
 async function showDashboard() {
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
@@ -4383,6 +4446,7 @@ async function showDashboard() {
 
   await loadPerfFromSupabase();
   loadLiveStats();
+  loadReferralCard();
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
   }
