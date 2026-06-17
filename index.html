@@ -1127,7 +1127,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.1 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1391,19 +1391,47 @@ function getGenericProducts(keyword, niche) {
   return prods;
 }
 
+var NICHE_SEEDS = {
+  "football": [
+    "football transfer news today",
+    "premier league trending",
+    "champions league latest",
+    "la liga news today",
+    "saudi pro league transfer",
+    "mls highlights today",
+    "bundesliga trending",
+    "serie a latest news",
+    "football viral moments",
+    "football content ideas"
+  ],
+  "soccer": [
+    "soccer transfer news today",
+    "premier league trending",
+    "champions league latest",
+    "mls highlights today",
+    "la liga news today",
+    "saudi pro league transfer",
+    "soccer viral moments",
+    "soccer content ideas",
+    "world cup news",
+    "soccer trending"
+  ]
+};
+
 function scanNicheTrends(niche, callback) {
-  var seeds = [
-    niche + " tips 2025",
-    niche + " trending",
-    niche + " mistakes",
-    "best " + niche,
+  var nl = (niche || "").toLowerCase();
+  var seeds = NICHE_SEEDS[nl] || [
+    niche + " trending right now",
+    niche + " content ideas 2026",
+    "best " + niche + " tips",
+    niche + " hacks that work",
     niche + " for beginners",
-    "why " + niche,
-    niche + " hack",
+    "how to " + niche,
+    niche + " viral",
     niche + " challenge"
   ];
 
-  var bannedWords = ["jobs","salary","courses","degree","near me","hiring","vacancy","career","amazon","ebay","buy","shop","price","cost","free download","pdf","wiki","meaning","definition","certificate","class ","school","university","college","weather","map","lyrics","movie","imdb","netflix","stock price","net worth","age ","height ","weight ","birthday","hospital","doctor","nhs","insurance","mortgage","loan","recipe for","calories","porn","sex","xxx","nude","naked","drug","cocaine","heroin","kill","suicide","bomb","terrorist","hack ","steal","fraud","scam"];
+  var bannedWords = ["jobs","salary","courses","degree","near me","hiring","vacancy","career","amazon","ebay","buy","shop","price","cost","free download","pdf","wiki","meaning","definition","certificate","class ","school","university","college","weather","map","lyrics","movie","imdb","netflix","stock price","net worth","age ","height ","weight ","birthday","hospital","doctor","nhs","insurance","mortgage","loan","recipe for","calories","porn","sex","xxx","nude","naked","drug","cocaine","heroin","kill","suicide","bomb","terrorist","hack ","steal","fraud","scam","quit","stopped","hate","boring","overrated","dead","dying","worst","terrible","awful","toxic","pointless","useless","waste","sad truth","dark side"];
 
   var allResults = [];
   var done = 0;
