@@ -1080,6 +1080,7 @@ input[type=range]::-webkit-slider-thumb{
     </div>
 
     <div id="tab-trends" class="tab-content">
+      <div id="scoringGuide"></div>
       <div id="topOpportunities"></div>
       <div id="themeAnalysis"></div>
       <div id="intelligenceFeed"></div>
@@ -1127,7 +1128,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.3 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.4 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -3116,6 +3117,71 @@ function renderPrimary(item) {
   return h;
 }
 
+function renderScoringGuide() {
+  var shown = localStorage.getItem("cr_scoring_guide_shown");
+  var collapsed = shown ? true : false;
+  localStorage.setItem("cr_scoring_guide_shown", "1");
+  var h = '<div class="card" style="border-color:rgba(0,255,136,.25)">';
+  h += '<div class="card-header" onclick="toggleScoringGuide()" style="cursor:pointer">';
+  h += '<h2>How Scoring Works</h2>';
+  h += '<div id="sgToggle" style="font-size:16px;color:var(--green)">' + (collapsed ? '&#9660;' : '&#9650;') + '</div>';
+  h += '</div>';
+  h += '<div id="sgBody" style="' + (collapsed ? 'display:none' : '') + '">';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">';
+
+  h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:var(--green);margin-bottom:4px">VIRAL SCORE (0-95)</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">How much buzz a keyword has right now. 60+ = hot topic, 40-60 = growing, under 40 = early stage. Higher = more people searching for it.</div>';
+  h += '</div>';
+
+  h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:var(--green);margin-bottom:4px">RISE %</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">Momentum - how fast interest is growing. Positive = trending up. Over +30% = spiking fast, post ASAP. Negative = cooling down.</div>';
+  h += '</div>';
+
+  h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:var(--green);margin-bottom:4px">CONTENT SCORE (S/A/B/C)</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">Overall content potential combining freshness, emotional pull, and debate factor. S = exceptional (80+), A = strong (60+), B = decent (40+), C = low priority.</div>';
+  h += '</div>';
+
+  h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:var(--green);margin-bottom:4px">VITALITY (0-10)</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">Combined health score - viral potential plus growth speed. 7+ = prime posting window. Under 4 = topic may have peaked already.</div>';
+  h += '</div>';
+
+  h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:var(--green);margin-bottom:4px">CONFIDENCE</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">How reliable the data is. High = strong signal from multiple sources. Medium = good bet. Low = risky but could be an early win if it takes off.</div>';
+  h += '</div>';
+
+  h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:var(--green);margin-bottom:4px">AUDIENCE SCORE (0-10)</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">YOUR audience\'s response (appears after you log performance). Based on views, likes, comments, and shares. Higher = your audience loves this topic.</div>';
+  h += '</div>';
+
+  h += '</div>';
+
+  h += '<div style="padding:10px;background:rgba(127,86,217,.06);border:1px solid rgba(127,86,217,.15);border-radius:8px">';
+  h += '<div style="font-size:11px;font-weight:800;color:#a78bfa;margin-bottom:4px">HOW AUDIENCE LEARNING WORKS</div>';
+  h += '<div style="font-size:10px;color:var(--muted);line-height:1.5">Every time you log your video performance (views, likes, comments, shares), the system learns what YOUR audience responds to. Over time, it builds a picture of which topics, formats, and posting times get the best results for you specifically. The more you log, the smarter your recommendations get - your Content Plan and Audience tab personalise based on this data.</div>';
+  h += '</div>';
+
+  h += '</div></div>';
+  return h;
+}
+
+function toggleScoringGuide() {
+  var body = document.getElementById("sgBody");
+  var toggle = document.getElementById("sgToggle");
+  if (body.style.display === "none") {
+    body.style.display = "";
+    toggle.innerHTML = "&#9650;";
+  } else {
+    body.style.display = "none";
+    toggle.innerHTML = "&#9660;";
+  }
+}
+
 function renderOpportunities(items) {
   var top5 = items.slice(0, 5);
   var h = '<div class="card">';
@@ -4175,6 +4241,7 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
     document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
     document.getElementById("creatorInsights").innerHTML = renderCreatorInsights(creatorInsights);
+    document.getElementById("scoringGuide").innerHTML = renderScoringGuide();
     document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
     document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
     document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
@@ -4261,11 +4328,11 @@ var TUTORIAL_STEPS = [
     tip: "Slot 1 is based on what's trending RIGHT NOW. Slots 2-3 give you fresh angles from different categories so your content stays varied."
   },
   {
-    title: "Trends",
+    title: "Trends + Scoring",
     icon: "&#128200;",
     tab: "trends",
-    text: "See every keyword the scanner is tracking, ranked by opportunity score. Each keyword shows its viral score, rise percentage, content score, and how much competition there is.",
-    tip: "Look for keywords with high viral scores but low competition - those are your golden opportunities."
+    text: "Every keyword gets scored automatically. Viral Score (0-95) = how much buzz it has. Rise % = momentum (positive means growing fast). Content Score (S/A/B/C) = overall posting potential. Vitality (0-10) = combined health. Confidence = how reliable the data is. Look for keywords with high viral scores and positive rise - those are your best bets.",
+    tip: "There's a full 'How Scoring Works' guide at the top of the Trends tab you can check anytime."
   },
   {
     title: "Discovery",
@@ -4275,11 +4342,11 @@ var TUTORIAL_STEPS = [
     tip: "Check this daily - the best content comes from catching trends early."
   },
   {
-    title: "Audience",
+    title: "Audience Learning",
     icon: "&#127919;",
     tab: "audience",
-    text: "Track what YOUR audience responds to. Log your video views using the Quick Log button, and the system learns which topics, formats, and posting times work best for you.",
-    tip: "The more data you log, the smarter your recommendations get."
+    text: "This is where the magic happens. Every time you log a video's performance (views, likes, comments, shares), the system learns what YOUR specific audience responds to. Over time it builds your Audience Score (0-10) per topic, ranks your best-performing keywords, and personalises your Content Plan based on real data - not guesswork.",
+    tip: "Log at least once a day. After 5-10 logs, you'll see your personalised rankings and the system starts recommending topics based on what actually works for you."
   },
   {
     title: "Products",
