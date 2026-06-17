@@ -1115,7 +1115,22 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v9.8 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v9.9 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+  </div>
+
+  <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
+    <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;max-width:380px;width:100%;text-align:center;position:relative">
+      <div style="font-size:36px;margin-bottom:12px">&#127873;</div>
+      <h2 style="color:var(--green);font-size:20px;margin-bottom:8px">Get More Free Time!</h2>
+      <p style="color:var(--white);font-size:14px;line-height:1.6;margin-bottom:16px">Love Creator Radar? Share it with a creator friend and you BOTH get an extra week added to your trial.</p>
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;text-align:left">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">You get +7 days free</span></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">Your friend gets +7 days free</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--amber);font-size:16px">&#9733;</span><span style="color:var(--muted);font-size:12px">Up to 3 referrals (21 bonus days!)</span></div>
+      </div>
+      <p style="color:var(--muted);font-size:11px;margin-bottom:16px">Your referral link is at the bottom of the dashboard. Scroll down to find it anytime!</p>
+      <button onclick="closeReferralPopup()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:14px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:1px">Got It - Let's Go!</button>
+    </div>
   </div>
 </div>
 
@@ -1315,7 +1330,7 @@ var GENERIC_HOOK_TEMPLATES = [
   "{kw} is overhyped? Yes or No?",
   "5 things about {kw} that will blow your mind",
   "Why most people fail at {kw} - and how to fix it",
-  "Is {kw} worth it in 2025? Honest answer",
+  "Is {kw} worth it in 2026? Honest answer",
   "What I wish I knew about {kw} before starting"
 ];
 
@@ -4424,6 +4439,19 @@ async function loadReferralCard() {
   } catch(e) {}
 }
 
+function showReferralPopup() {
+  if (!localStorage.getItem("cr_ref_popup_shown")) {
+    var popup = document.getElementById("referralPopup");
+    if (popup) { popup.style.display = "flex"; }
+    localStorage.setItem("cr_ref_popup_shown", "1");
+  }
+}
+
+function closeReferralPopup() {
+  var popup = document.getElementById("referralPopup");
+  if (popup) { popup.style.display = "none"; }
+}
+
 function copyReferralLink() {
   var input = document.getElementById("referralLink");
   navigator.clipboard.writeText(input.value).then(function() {
@@ -4469,6 +4497,8 @@ async function showDashboard() {
   loadReferralCard();
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
+  } else {
+    setTimeout(function() { showReferralPopup(); }, 1500);
   }
 }
 
