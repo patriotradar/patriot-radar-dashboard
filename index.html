@@ -1051,6 +1051,18 @@ input[type=range]::-webkit-slider-thumb{
       <button class="log-perf-btn" onclick="startTutorial()" style="width:auto;margin:0;padding:12px 16px;font-size:12px;background:var(--panel2);border:1px solid var(--border)">&#63; GUIDE</button>
     </div>
 
+    <div id="nicheSwitcher" style="margin-bottom:10px;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:12px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Your Niche:</span>
+        <span id="currentNicheLabel" style="font-size:13px;color:var(--green);font-weight:900;text-transform:uppercase"></span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <input id="nicheInput" type="text" placeholder="Type a niche..." style="flex:1;min-width:120px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--white);outline:none" onkeydown="if(event.key==='Enter')changeNiche()">
+        <button onclick="changeNiche()" style="padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap">SCAN NEW NICHE</button>
+      </div>
+      <div id="nicheQuickPicks" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+    </div>
+
     <div class="tab-bar">
       <button class="tab-btn active" data-tab="plan" onclick="switchTab('plan')">Content Plan</button>
       <button class="tab-btn" data-tab="trends" onclick="switchTab('trends')">Trends</button>
@@ -1115,7 +1127,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v9.9 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -4008,6 +4020,55 @@ function loadActiveTab() {
   }
 }
 
+var POPULAR_NICHES = ["fitness","cooking","fashion","beauty","tech","gaming","finance","travel","parenting","health","music","comedy","motivation","astrology","sports","crypto"];
+
+function initNicheSwitcher() {
+  var label = document.getElementById("currentNicheLabel");
+  if (label) label.textContent = titleCase(USER_NICHE || "patriotic");
+  var quickPicks = document.getElementById("nicheQuickPicks");
+  if (!quickPicks) return;
+  var saved = JSON.parse(localStorage.getItem("cr_niche_history") || "[]");
+  var current = (USER_NICHE || "").toLowerCase();
+  var picks = [];
+  for (var i = 0; i < saved.length; i++) {
+    if (saved[i].toLowerCase() !== current && picks.length < 4) picks.push(saved[i]);
+  }
+  var suggested = POPULAR_NICHES.filter(function(n) { return n !== current && picks.indexOf(n) === -1; });
+  while (picks.length < 6 && suggested.length > 0) picks.push(suggested.shift());
+  var h = "";
+  for (var i = 0; i < picks.length; i++) {
+    h += '<button onclick="quickSwitchNiche(\'' + picks[i] + '\')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel2);color:var(--muted);font-size:10px;cursor:pointer;font-weight:600">' + titleCase(picks[i]) + '</button>';
+  }
+  quickPicks.innerHTML = h;
+}
+
+function changeNiche() {
+  var input = document.getElementById("nicheInput");
+  var newNiche = (input.value || "").trim();
+  if (!newNiche) return;
+  input.value = "";
+  quickSwitchNiche(newNiche);
+}
+
+async function quickSwitchNiche(newNiche) {
+  USER_NICHE = newNiche.toLowerCase();
+  var label = document.getElementById("currentNicheLabel");
+  if (label) label.textContent = titleCase(USER_NICHE);
+  var history = JSON.parse(localStorage.getItem("cr_niche_history") || "[]");
+  if (history.indexOf(USER_NICHE) === -1) history.unshift(USER_NICHE);
+  if (history.length > 10) history = history.slice(0, 10);
+  localStorage.setItem("cr_niche_history", JSON.stringify(history));
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (u) {
+      await supabaseClient.auth.updateUser({data: {niche: USER_NICHE}});
+    }
+  } catch(e) {}
+  trackEvent("niche_change", {niche: USER_NICHE});
+  initNicheSwitcher();
+  loadLiveStats();
+}
+
 function toggleHooks(id) {
   var el = document.getElementById(id);
   if (el) el.classList.toggle("hidden");
@@ -4492,6 +4553,7 @@ async function showDashboard() {
 
   trackEvent("session_start", {niche: USER_NICHE || "patriotic"});
 
+  initNicheSwitcher();
   await loadPerfFromSupabase();
   loadLiveStats();
   loadReferralCard();
