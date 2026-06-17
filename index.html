@@ -1127,7 +1127,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.1 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.2 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1335,26 +1335,72 @@ function isPatrioticNiche(niche) {
   return false;
 }
 
+var NICHE_HOOK_TEMPLATES = {
+  "football": [
+    "{kw} - what do you think? Hot take below",
+    "{kw} - agree or disagree?",
+    "Nobody is talking about {kw} and it's wild",
+    "{kw} - this changes everything",
+    "My honest take on {kw}",
+    "{kw} - rate this out of 10",
+    "Unpopular opinion about {kw}",
+    "{kw} - who saw this coming?"
+  ],
+  "soccer": [
+    "{kw} - what do you think? Hot take below",
+    "{kw} - agree or disagree?",
+    "Nobody is talking about {kw} and it's wild",
+    "{kw} - this changes everything",
+    "My honest take on {kw}",
+    "{kw} - rate this out of 10",
+    "Unpopular opinion about {kw}",
+    "{kw} - who saw this coming?"
+  ]
+};
+
+var NICHE_PHRASE_HOOKS = {
+  "football": [
+    "{kw} - thoughts? Drop yours below",
+    "{kw} - this is actually insane",
+    "{kw} - do you agree or disagree?",
+    "{kw} - nobody saw this coming",
+    "{kw} - W or L? Let me know",
+    "{kw} - here's what nobody is telling you",
+    "{kw} - how do we feel about this?",
+    "{kw} - this just changed everything"
+  ],
+  "soccer": [
+    "{kw} - thoughts? Drop yours below",
+    "{kw} - this is actually insane",
+    "{kw} - do you agree or disagree?",
+    "{kw} - nobody saw this coming",
+    "{kw} - W or L? Let me know",
+    "{kw} - here's what nobody is telling you",
+    "{kw} - how do we feel about this?",
+    "{kw} - this just changed everything"
+  ]
+};
+
 var GENERIC_HOOK_TEMPLATES = [
   "The truth about {kw} nobody talks about",
   "I tried {kw} for 30 days - here's what happened",
   "Stop making this {kw} mistake - do this instead",
   "{kw} is overhyped? Yes or No?",
   "5 things about {kw} that will blow your mind",
-  "Why most people fail at {kw} - and how to fix it",
+  "Why most people get {kw} wrong",
   "Is {kw} worth it in 2026? Honest answer",
-  "What I wish I knew about {kw} before starting"
+  "What I wish I knew about {kw} sooner"
 ];
 
 var GENERIC_PHRASE_HOOKS = [
-  "{kw} - have you tried this yet? Yes or No?",
-  "{kw} - most people are doing this wrong",
   "{kw} - thoughts? Drop yours below",
+  "{kw} - most people are doing this wrong",
   "{kw} - this is a game changer",
   "{kw} - do you agree or disagree?",
   "{kw} - here's what nobody is telling you",
   "{kw} - is this actually true? Let me know",
-  "{kw} - save this for later, you'll need it"
+  "{kw} - save this for later, you'll need it",
+  "{kw} - what's your experience with this?"
 ];
 
 var NICHE_PRODUCT_TYPES = {
@@ -1402,7 +1448,10 @@ var NICHE_SEEDS = {
     "bundesliga trending",
     "serie a latest news",
     "football viral moments",
-    "football content ideas"
+    "football content ideas",
+    "fifa world cup news",
+    "world cup 2026 latest",
+    "football news today"
   ],
   "soccer": [
     "soccer transfer news today",
@@ -1413,8 +1462,10 @@ var NICHE_SEEDS = {
     "saudi pro league transfer",
     "soccer viral moments",
     "soccer content ideas",
-    "world cup news",
-    "soccer trending"
+    "fifa world cup news",
+    "world cup 2026 latest",
+    "soccer trending",
+    "soccer news today"
   ]
 };
 
@@ -2851,7 +2902,9 @@ function generateHooks(keyword) {
     return hooks;
   }
 
-  var genTemplates = words.length >= 4 ? GENERIC_PHRASE_HOOKS : GENERIC_HOOK_TEMPLATES;
+  var nicheLower = (USER_NICHE || "").toLowerCase();
+  var nicheHooks = words.length >= 4 ? NICHE_PHRASE_HOOKS[nicheLower] : NICHE_HOOK_TEMPLATES[nicheLower];
+  var genTemplates = nicheHooks || (words.length >= 4 ? GENERIC_PHRASE_HOOKS : GENERIC_HOOK_TEMPLATES);
   var hooks = [];
   for (var i = 0; i < genTemplates.length; i++) {
     hooks.push(genTemplates[i].replace(/\{kw\}/g, kw));
