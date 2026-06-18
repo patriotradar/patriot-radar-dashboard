@@ -1138,7 +1138,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.5 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.6 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1154,6 +1154,22 @@ input[type=range]::-webkit-slider-thumb{
       <p style="color:var(--muted);font-size:11px;margin-bottom:16px">Your referral link is at the bottom of the dashboard. Scroll down to find it anytime!</p>
       <button onclick="closeReferralPopup()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:14px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:1px">Got It - Let's Go!</button>
     </div>
+  </div>
+</div>
+
+<div id="referralNudge" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.88);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:linear-gradient(135deg,var(--panel),#0d1f16);border:1.5px solid var(--green);border-radius:20px;padding:28px;max-width:400px;width:100%;text-align:center;position:relative;box-shadow:0 0 60px rgba(0,255,136,.12)">
+    <div style="font-size:40px;margin-bottom:8px">&#128293;</div>
+    <h2 style="color:var(--green);font-size:20px;margin-bottom:6px">You're on a roll!</h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:16px">You've been using Creator Radar for a few sessions now - clearly it's working for you!</p>
+    <div style="background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;text-align:left">
+      <p style="color:var(--white);font-size:14px;font-weight:700;margin-bottom:10px">Know a creator who'd love this?</p>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">You get +14 bonus days free</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">Your friend gets +14 bonus days free</span></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--amber);font-size:16px">&#9733;</span><span style="color:var(--muted);font-size:12px">Up to 3 invites - that's 42 extra days!</span></div>
+    </div>
+    <button onclick="closeNudgeAndScroll()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:14px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Share My Invite Link</button>
+    <button onclick="closeNudge()" style="width:100%;padding:10px;border:none;border-radius:10px;background:transparent;color:var(--muted);font-size:12px;cursor:pointer">Maybe Later</button>
   </div>
 </div>
 
@@ -4696,6 +4712,32 @@ function scrollToReferral() {
   }
 }
 
+function closeNudge() {
+  var el = document.getElementById("referralNudge");
+  if (el) el.style.display = "none";
+  localStorage.setItem("cr_referral_nudge_shown", "1");
+}
+
+function closeNudgeAndScroll() {
+  closeNudge();
+  setTimeout(function() { scrollToReferral(); }, 300);
+}
+
+function checkReferralNudge() {
+  if (localStorage.getItem("cr_referral_nudge_shown")) return;
+  var count = parseInt(localStorage.getItem("cr_session_count") || "0", 10) + 1;
+  localStorage.setItem("cr_session_count", count.toString());
+  if (count >= 3) {
+    setTimeout(function() {
+      var el = document.getElementById("referralNudge");
+      if (el) {
+        el.style.display = "flex";
+        trackEvent("feature_use", {feature: "referral_nudge_shown", session_count: count});
+      }
+    }, 3000);
+  }
+}
+
 function copyReferralLink() {
   var input = document.getElementById("referralLink");
   navigator.clipboard.writeText(input.value).then(function() {
@@ -4744,6 +4786,7 @@ async function showDashboard() {
     setTimeout(function() { startTutorial(); }, 800);
   } else {
     setTimeout(function() { showReferralPopup(); }, 1500);
+    checkReferralNudge();
   }
 }
 
