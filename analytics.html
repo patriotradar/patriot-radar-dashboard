@@ -124,6 +124,7 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
 
     <div class="card">
       <h2>User Activity</h2>
+      <div style="margin-bottom:10px"><button class="filter-btn" id="emailToggle" onclick="toggleEmails()">Show Full Emails</button></div>
       <div style="overflow-x:auto">
         <table id="userTable">
           <thead>
@@ -142,6 +143,30 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
           <tbody id="userTableBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="card">
+      <h2>User Deep Dive</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Session history, niches used, and activity timeline per user</p>
+      <div id="userDeepDive"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Niche Popularity</h2>
+        <div id="nichePopularity"></div>
+      </div>
+      <div class="card">
+        <h2>Hourly Activity</h2>
+        <p style="color:var(--muted);font-size:11px;margin-bottom:8px">When your users are most active</p>
+        <div id="hourlyActivity"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Landing Page Traffic</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">All visits to the landing page (not just signups)</p>
+      <div id="landingTraffic"></div>
     </div>
 
     <div class="two-col">
@@ -186,6 +211,19 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var ADMIN_PASSWORD = "CreatorRadar2025!";
 var allEvents = [];
 var currentRange = "7d";
+var showFullEmails = false;
+
+function toggleEmails() {
+  showFullEmails = !showFullEmails;
+  var btn = document.getElementById("emailToggle");
+  btn.textContent = showFullEmails ? "Hide Full Emails" : "Show Full Emails";
+  if (showFullEmails) btn.classList.add("active");
+  else btn.classList.remove("active");
+  var cells = document.querySelectorAll(".user-email");
+  for (var i = 0; i < cells.length; i++) {
+    cells[i].textContent = showFullEmails ? cells[i].getAttribute("data-full") : cells[i].getAttribute("data-masked");
+  }
+}
 
 function adminLogin() {
   var pw = document.getElementById("adminPw").value;
@@ -261,6 +299,12 @@ function renderAnalytics() {
   var dailySignupMap = {};
   var dailyActiveMap = {};
   var tabViews = {};
+  var userSessionList = {};
+  var userNiches = {};
+  var nicheUsage = {};
+  var landingViews = [];
+  var hourlyMap = {};
+  var userTotalSessions = {};
 
   events.forEach(function(ev) {
     var uid = ev.user_id || "anon";
@@ -286,7 +330,27 @@ function renderAnalytics() {
       userSessions[uid][dateKey] = true;
       dailyActiveMap[dateKey] = dailyActiveMap[dateKey] || {};
       dailyActiveMap[dateKey][uid] = true;
+      userTotalSessions[uid] = (userTotalSessions[uid] || 0) + 1;
+      if (!userSessionList[uid]) userSessionList[uid] = [];
+      var sessionNiche = (ev.metadata && ev.metadata.niche) || "-";
+      userSessionList[uid].push({date: ev.created_at, niche: sessionNiche});
     }
+
+    if (ev.event_type === "niche_change" || ev.event_type === "load_trends") {
+      var evNiche = (ev.metadata && ev.metadata.niche) || "";
+      if (evNiche) {
+        if (!userNiches[uid]) userNiches[uid] = {};
+        userNiches[uid][evNiche.toLowerCase()] = true;
+        nicheUsage[evNiche.toLowerCase()] = (nicheUsage[evNiche.toLowerCase()] || 0) + 1;
+      }
+    }
+
+    if (ev.event_type === "page_view" && ev.metadata && ev.metadata.page === "landing") {
+      landingViews.push({date: ev.created_at, source: (ev.metadata.utm_source || "direct"), medium: (ev.metadata.utm_medium || ""), campaign: (ev.metadata.utm_campaign || "")});
+    }
+
+    var evHour = new Date(ev.created_at).getHours();
+    hourlyMap[evHour] = (hourlyMap[evHour] || 0) + 1;
 
     if (ev.event_type === "scanner_use" || ev.event_type === "load_trends") {
       scannerUses++;
@@ -411,7 +475,8 @@ function renderAnalytics() {
     var uEmail = uniqueUsers[uId];
     var uNiche = userNiche[uId] || "-";
     var uSignup = userFirstSeen[uId] ? new Date(userFirstSeen[uId]).toLocaleDateString("en-GB") : "-";
-    var uSessionCount = userSessions[uId] ? Object.keys(userSessions[uId]).length : 0;
+    var uSessionCount = userTotalSessions[uId] || 0;
+    var uDaysActive = userSessions[uId] ? Object.keys(userSessions[uId]).length : 0;
     var uLast = userLastSeen[uId] ? new Date(userLastSeen[uId]).toLocaleDateString("en-GB") : "-";
     var uTrialDays = 0;
     if (userFirstSeen[uId]) {
@@ -423,7 +488,8 @@ function renderAnalytics() {
 
     var uSrc = userSource[uId] || "direct";
     var srcBadge = uSrc === "pitchwall" ? "badge-purple" : "badge-blue";
-    tbody += '<tr><td>' + maskEmail(uEmail) + '</td><td><span class="badge ' + srcBadge + '">' + uSrc + '</span></td><td>' + titleCase(uNiche) + '</td><td>' + uSignup + '</td><td>' + uSessionCount + '</td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
+    var uNicheList = userNiches[uId] ? Object.keys(userNiches[uId]).map(function(n){return titleCase(n)}).join(", ") : titleCase(uNiche);
+    tbody += '<tr><td class="user-email" data-full="' + uEmail + '" data-masked="' + maskEmail(uEmail) + '">' + (showFullEmails ? uEmail : maskEmail(uEmail)) + '</td><td><span class="badge ' + srcBadge + '">' + uSrc + '</span></td><td>' + uNicheList + '</td><td>' + uSignup + '</td><td>' + uSessionCount + ' <span style="color:var(--muted);font-size:10px">(' + uDaysActive + 'd)</span></td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
   }
   document.getElementById("userTableBody").innerHTML = tbody || '<tr><td colspan="9" class="empty-state">No users yet</td></tr>';
 
@@ -503,6 +569,121 @@ function renderAnalytics() {
     }
   }
   document.getElementById("dropoff").innerHTML = dropoffHTML || '<div class="empty-state">Not enough data to determine drop-off points</div>';
+
+  // User Deep Dive
+  var ddHTML = "";
+  var sortedUsers = Object.keys(userSessionList).sort(function(a,b) {
+    return (userTotalSessions[b] || 0) - (userTotalSessions[a] || 0);
+  });
+  for (var ddi = 0; ddi < sortedUsers.length; ddi++) {
+    var ddUid = sortedUsers[ddi];
+    var ddEmail = uniqueUsers[ddUid] || ddUid;
+    var ddSessions = userSessionList[ddUid] || [];
+    var ddNicheList = userNiches[ddUid] ? Object.keys(userNiches[ddUid]) : [];
+    var ddTotalS = userTotalSessions[ddUid] || 0;
+    var ddDays = userSessions[ddUid] ? Object.keys(userSessions[ddUid]).length : 0;
+
+    ddHTML += '<div style="padding:14px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);border-radius:12px;margin-bottom:12px">';
+    ddHTML += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">';
+    ddHTML += '<span class="user-email" data-full="' + ddEmail + '" data-masked="' + maskEmail(ddEmail) + '" style="font-weight:800;font-size:14px;color:var(--green)">' + (showFullEmails ? ddEmail : maskEmail(ddEmail)) + '</span>';
+    ddHTML += '<div style="display:flex;gap:6px">';
+    ddHTML += '<span class="badge badge-green">' + ddTotalS + ' sessions</span>';
+    ddHTML += '<span class="badge badge-blue">' + ddDays + ' day' + (ddDays !== 1 ? 's' : '') + ' active</span>';
+    if (ddNicheList.length > 0) ddHTML += '<span class="badge badge-purple">' + ddNicheList.length + ' niche' + (ddNicheList.length !== 1 ? 's' : '') + '</span>';
+    ddHTML += '</div></div>';
+
+    if (ddNicheList.length > 0) {
+      ddHTML += '<div style="margin-bottom:8px;font-size:11px;color:var(--muted)">Niches: ';
+      for (var ni = 0; ni < ddNicheList.length; ni++) {
+        ddHTML += '<span style="display:inline-block;padding:2px 8px;margin:2px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:99px;font-size:10px;color:var(--purple)">' + titleCase(ddNicheList[ni]) + '</span>';
+      }
+      ddHTML += '</div>';
+    }
+
+    ddHTML += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Session Timeline</div>';
+    ddSessions.sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
+    for (var si3 = 0; si3 < Math.min(10, ddSessions.length); si3++) {
+      var sess = ddSessions[si3];
+      var sessTime = new Date(sess.date).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+      ddHTML += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px">';
+      ddHTML += '<span style="color:var(--muted);min-width:100px">' + sessTime + '</span>';
+      ddHTML += '<span style="color:var(--white)">' + titleCase(sess.niche) + '</span>';
+      ddHTML += '</div>';
+    }
+    if (ddSessions.length > 10) {
+      ddHTML += '<div style="font-size:10px;color:var(--muted);margin-top:4px">+ ' + (ddSessions.length - 10) + ' more sessions</div>';
+    }
+    ddHTML += '</div>';
+  }
+  document.getElementById("userDeepDive").innerHTML = ddHTML || '<div class="empty-state">No session data yet</div>';
+
+  // Niche Popularity
+  var sortedNiches = Object.keys(nicheUsage).sort(function(a,b) { return nicheUsage[b] - nicheUsage[a]; });
+  var nicheHTML = "";
+  var maxNiche = nicheUsage[sortedNiches[0]] || 1;
+  for (var ni2 = 0; ni2 < sortedNiches.length; ni2++) {
+    var nName = sortedNiches[ni2];
+    var nCount = nicheUsage[nName];
+    var nPct = Math.round((nCount / maxNiche) * 100);
+    nicheHTML += '<div style="margin-bottom:8px">' +
+      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700">' + titleCase(nName) + '</span><span style="color:var(--purple);font-weight:900">' + nCount + ' uses</span></div>' +
+      '<div style="height:6px;background:rgba(167,139,250,.06);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + nPct + '%;background:var(--purple);border-radius:99px;opacity:.6"></div></div>' +
+      '</div>';
+  }
+  document.getElementById("nichePopularity").innerHTML = nicheHTML || '<div class="empty-state">No niche data yet</div>';
+
+  // Hourly Activity
+  var hourHTML = "";
+  var maxHour = 0;
+  for (var h = 0; h < 24; h++) { if ((hourlyMap[h] || 0) > maxHour) maxHour = hourlyMap[h]; }
+  for (var h2 = 0; h2 < 24; h2++) {
+    var hCount = hourlyMap[h2] || 0;
+    var hPct = maxHour > 0 ? Math.round((hCount / maxHour) * 100) : 0;
+    var hLabel = (h2 < 10 ? "0" : "") + h2 + ":00";
+    var hColor = hCount === maxHour && hCount > 0 ? "var(--green)" : "var(--blue)";
+    hourHTML += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">' +
+      '<span style="font-size:10px;min-width:36px;color:var(--muted);text-align:right">' + hLabel + '</span>' +
+      '<div style="flex:1;height:10px;background:rgba(77,201,246,.04);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + Math.max(hCount > 0 ? 3 : 0, hPct) + '%;background:' + hColor + ';border-radius:4px;opacity:.5"></div></div>' +
+      '<span style="font-size:10px;min-width:20px;text-align:right;color:' + (hCount > 0 ? 'var(--blue)' : 'var(--muted)') + ';font-weight:' + (hCount > 0 ? '700' : '400') + '">' + hCount + '</span>' +
+      '</div>';
+  }
+  document.getElementById("hourlyActivity").innerHTML = hourHTML;
+
+  // Landing Page Traffic
+  var ltHTML = "";
+  if (landingViews.length > 0) {
+    var ltSources = {};
+    landingViews.forEach(function(lv) {
+      var srcKey = lv.source + (lv.campaign ? " (" + lv.campaign + ")" : "");
+      ltSources[srcKey] = (ltSources[srcKey] || 0) + 1;
+    });
+    var sortedLt = Object.keys(ltSources).sort(function(a,b) { return ltSources[b] - ltSources[a]; });
+    ltHTML += '<div style="margin-bottom:12px;font-size:13px"><span style="color:var(--green);font-weight:900;font-size:20px">' + landingViews.length + '</span> <span style="color:var(--muted)">total landing page visits</span></div>';
+    var maxLt = ltSources[sortedLt[0]] || 1;
+    for (var li = 0; li < sortedLt.length; li++) {
+      var ltName = sortedLt[li];
+      var ltCount = ltSources[ltName];
+      var ltPct = Math.round((ltCount / maxLt) * 100);
+      var ltColor = ltName.indexOf("pitchwall") >= 0 ? "var(--purple)" : "var(--blue)";
+      ltHTML += '<div style="margin-bottom:8px">' +
+        '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700">' + titleCase(ltName) + '</span><span style="color:' + ltColor + ';font-weight:900">' + ltCount + ' visits</span></div>' +
+        '<div style="height:6px;background:rgba(0,255,136,.06);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + ltPct + '%;background:' + ltColor + ';border-radius:99px;opacity:.6"></div></div>' +
+        '</div>';
+    }
+    ltHTML += '<div style="margin-top:12px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Recent Visits</div>';
+    var recentLv = landingViews.slice(0, 10);
+    for (var lvi = 0; lvi < recentLv.length; lvi++) {
+      var lv = recentLv[lvi];
+      var lvTime = new Date(lv.date).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+      var lvSrc = lv.source || "direct";
+      ltHTML += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px">';
+      ltHTML += '<span style="color:var(--muted);min-width:100px">' + lvTime + '</span>';
+      ltHTML += '<span class="badge ' + (lvSrc === "pitchwall" ? "badge-purple" : "badge-blue") + '">' + lvSrc + '</span>';
+      if (lv.campaign) ltHTML += '<span style="color:var(--muted)">' + lv.campaign + '</span>';
+      ltHTML += '</div>';
+    }
+  }
+  document.getElementById("landingTraffic").innerHTML = ltHTML || '<div class="empty-state">No landing page visits tracked yet</div>';
 
   var recentEvents = events.slice(0, 50);
   var evHTML = "";
