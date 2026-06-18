@@ -833,7 +833,17 @@ input[type=range]::-webkit-slider-thumb{
   background:linear-gradient(135deg,rgba(0,255,136,.06),rgba(0,184,107,.04));
   border:1px solid rgba(0,255,136,.25);
   border-radius:12px;
+  gap:8px;
 }
+.trial-invite-btn{
+  padding:6px 14px;border:none;border-radius:999px;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#031109;font-size:10px;font-weight:900;
+  cursor:pointer;white-space:nowrap;letter-spacing:.5px;
+  text-transform:uppercase;
+  transition:transform .15s,box-shadow .15s;
+}
+.trial-invite-btn:hover{transform:scale(1.05);box-shadow:0 0 12px rgba(0,255,136,.3)}
 .trial-banner-text{font-size:12px;color:var(--white);font-weight:600}
 .trial-banner-days{
   font-size:11px;font-weight:900;color:var(--green);
@@ -1128,7 +1138,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.4 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.5 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1489,49 +1499,62 @@ function scanNicheTrends(niche, callback) {
   var done = 0;
   var seen = {};
 
-  seeds.forEach(function(seed, si) {
-    var script = document.createElement("script");
-    var cbName = "niche_cb_" + Math.random().toString(36).substr(2, 8);
-    window[cbName] = function(d) {
-      var suggestions = d[1] || [];
-      suggestions.forEach(function(s) {
-        var sl = s.toLowerCase();
-        var blocked = false;
-        for (var b = 0; b < bannedWords.length; b++) { if (sl.indexOf(bannedWords[b]) !== -1) { blocked = true; break; } }
-        if (!blocked && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase()) {
-          seen[sl] = true;
-          var score = Math.max(20, 85 - allResults.length * 3 + Math.floor(Math.random() * 15));
-          var rise = Math.max(-5, 50 - allResults.length * 4 + Math.floor(Math.random() * 20));
-          var vol = Math.max(10, 90 - allResults.length * 5 + Math.floor(Math.random() * 25));
-          allResults.push({
-            keyword: s.charAt(0).toUpperCase() + s.slice(1),
-            viral_score: Math.min(95, score),
-            rise_percent: rise,
-            search_volume: vol,
-            source: "Google Trends",
-            content_score: Math.max(30, score - 10 + Math.floor(Math.random() * 15)),
-            fresh: Math.max(20, 70 + Math.floor(Math.random() * 25)),
-            emotion: Math.max(20, 40 + Math.floor(Math.random() * 40)),
-            debate: Math.max(15, 30 + Math.floor(Math.random() * 50)),
-            product: ""
-          });
-        }
-      });
-      done++;
-      delete window[cbName];
-      if (done === seeds.length) {
-        allResults.sort(function(a, b) { return b.viral_score - a.viral_score; });
-        allResults = allResults.slice(0, 20);
-        for (var i = 0; i < allResults.length; i++) {
-          var prods = getGenericProducts(allResults[i].keyword, niche);
-          if (prods.length > 0) allResults[i].product = prods[0].name;
-        }
-        callback(allResults);
+  function processSuggestions(suggestions, seed) {
+    (suggestions || []).forEach(function(s) {
+      var sl = s.toLowerCase();
+      var blocked = false;
+      for (var b = 0; b < bannedWords.length; b++) { if (sl.indexOf(bannedWords[b]) !== -1) { blocked = true; break; } }
+      if (!blocked && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase()) {
+        seen[sl] = true;
+        var score = Math.max(20, 85 - allResults.length * 3 + Math.floor(Math.random() * 15));
+        var rise = Math.max(-5, 50 - allResults.length * 4 + Math.floor(Math.random() * 20));
+        var vol = Math.max(10, 90 - allResults.length * 5 + Math.floor(Math.random() * 25));
+        allResults.push({
+          keyword: s.charAt(0).toUpperCase() + s.slice(1),
+          viral_score: Math.min(95, score),
+          rise_percent: rise,
+          search_volume: vol,
+          source: "Google Trends",
+          content_score: Math.max(30, score - 10 + Math.floor(Math.random() * 15)),
+          fresh: Math.max(20, 70 + Math.floor(Math.random() * 25)),
+          emotion: Math.max(20, 40 + Math.floor(Math.random() * 40)),
+          debate: Math.max(15, 30 + Math.floor(Math.random() * 50)),
+          product: ""
+        });
       }
-    };
-    script.src = "https://suggestqueries.google.com/complete/search?client=chrome&q=" + encodeURIComponent(seed) + "&hl=en&gl=" + USER_REGION + "&callback=" + cbName;
-    script.onerror = function() { done++; delete window[cbName]; if (done === seeds.length) callback(allResults); };
-    document.body.appendChild(script);
+    });
+  }
+
+  function checkDone() {
+    done++;
+    if (done === seeds.length) {
+      allResults.sort(function(a, b) { return b.viral_score - a.viral_score; });
+      allResults = allResults.slice(0, 20);
+      for (var i = 0; i < allResults.length; i++) {
+        var prods = getGenericProducts(allResults[i].keyword, niche);
+        if (prods.length > 0) allResults[i].product = prods[0].name;
+      }
+      callback(allResults);
+    }
+  }
+
+  seeds.forEach(function(seed, si) {
+    var url = "https://suggestqueries.google.com/complete/search?client=firefox&q=" + encodeURIComponent(seed) + "&hl=en&gl=" + USER_REGION;
+    fetch(url).then(function(r) { return r.json(); }).then(function(d) {
+      processSuggestions(d[1] || [], seed);
+      checkDone();
+    }).catch(function() {
+      var script = document.createElement("script");
+      var cbName = "niche_cb_" + Math.random().toString(36).substr(2, 8);
+      window[cbName] = function(d) {
+        processSuggestions(d[1] || [], seed);
+        delete window[cbName];
+        checkDone();
+      };
+      script.src = "https://suggestqueries.google.com/complete/search?client=chrome&q=" + encodeURIComponent(seed) + "&hl=en&gl=" + USER_REGION + "&callback=" + cbName;
+      script.onerror = function() { delete window[cbName]; checkDone(); };
+      document.body.appendChild(script);
+    });
   });
 }
 
@@ -4529,8 +4552,10 @@ function showTrialBanner(daysLeft) {
   var dayWord = daysLeft === 1 ? "day" : "days";
   el.innerHTML = '<div class="trial-banner ' + cls + '">' +
     '<span class="trial-banner-text">Beta trial' + (daysLeft === 0 ? ' ends today' : '') + '</span>' +
+    '<div style="display:flex;align-items:center;gap:8px">' +
     '<span class="trial-banner-days">' + (daysLeft === 0 ? 'Last day' : daysLeft + ' ' + dayWord + ' left') + '</span>' +
-    '</div>';
+    '<button class="trial-invite-btn" onclick="scrollToReferral()">&#127873; Invite a Friend</button>' +
+    '</div></div>';
 }
 
 function showSurvey() {
@@ -4659,6 +4684,16 @@ function showReferralPopup() {
 function closeReferralPopup() {
   var popup = document.getElementById("referralPopup");
   if (popup) { popup.style.display = "none"; }
+}
+
+function scrollToReferral() {
+  var card = document.getElementById("referralCard");
+  if (card) {
+    card.style.display = "block";
+    card.scrollIntoView({behavior: "smooth", block: "center"});
+    card.style.boxShadow = "0 0 20px rgba(0,255,136,.4)";
+    setTimeout(function() { card.style.boxShadow = ""; }, 2000);
+  }
 }
 
 function copyReferralLink() {
