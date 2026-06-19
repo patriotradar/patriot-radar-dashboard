@@ -4664,7 +4664,7 @@ async function loadReferralCard() {
     var u = (await supabaseClient.auth.getUser()).data.user;
     if (!u) return;
     var refCode = getUserRefCode(u.id);
-    var refLink = "creatorradar.co.uk?ref=" + refCode;
+    var refLink = "https://creatorradar.co.uk?ref=" + refCode;
     document.getElementById("referralLink").value = refLink;
     document.getElementById("referralCard").style.display = "block";
 
