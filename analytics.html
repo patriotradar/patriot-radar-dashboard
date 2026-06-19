@@ -692,8 +692,7 @@ function renderAnalytics() {
   document.getElementById("landingTraffic").innerHTML = ltHTML || '<div class="empty-state">No landing page visits tracked yet</div>';
 
   // Referral Tracking
-  try {
-    var refRes = await supabaseClient.from("cr_referrals").select("*").order("created_at", {ascending: false});
+  supabaseClient.from("cr_referrals").select("*").order("created_at", {ascending: false}).then(function(refRes) {
     var referrals = (refRes.data || []);
     var refHTML = "";
     if (referrals.length === 0) {
@@ -721,9 +720,9 @@ function renderAnalytics() {
       refHTML += '</tbody></table>';
     }
     document.getElementById("referralTracking").innerHTML = refHTML;
-  } catch(e) {
+  }).catch(function() {
     document.getElementById("referralTracking").innerHTML = '<div class="empty-state">Could not load referrals - make sure the cr_referrals table exists</div>';
-  }
+  });
 
   var recentEvents = events.slice(0, 50);
   var evHTML = "";
