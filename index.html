@@ -1138,7 +1138,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.6 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.7 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -4760,8 +4760,6 @@ async function showDashboard() {
   var daysLeft = await getTrialDaysLeft();
 
   if (daysLeft === 0) {
-    var surveyDone = localStorage.getItem("cr_survey_done");
-    if (!surveyDone) { showSurvey(); return; }
     showPaywall(); return;
   }
 
