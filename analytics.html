@@ -692,7 +692,7 @@ function renderAnalytics() {
   document.getElementById("landingTraffic").innerHTML = ltHTML || '<div class="empty-state">No landing page visits tracked yet</div>';
 
   // Referral Tracking
-  supabaseClient.from("cr_referrals").select("*").order("created_at", {ascending: false}).then(function(refRes) {
+  sb.from("cr_referrals").select("*").order("created_at", {ascending: false}).then(function(refRes) {
     var referrals = (refRes.data || []);
     var refHTML = "";
     if (referrals.length === 0) {
