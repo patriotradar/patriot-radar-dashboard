@@ -169,6 +169,12 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
       <div id="landingTraffic"></div>
     </div>
 
+    <div class="card">
+      <h2>Referral Tracking</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Who's inviting friends and how many signups they're driving</p>
+      <div id="referralTracking"></div>
+    </div>
+
     <div class="two-col">
       <div class="card">
         <h2>Daily Signups</h2>
@@ -684,6 +690,40 @@ function renderAnalytics() {
     }
   }
   document.getElementById("landingTraffic").innerHTML = ltHTML || '<div class="empty-state">No landing page visits tracked yet</div>';
+
+  // Referral Tracking
+  try {
+    var refRes = await supabaseClient.from("cr_referrals").select("*").order("created_at", {ascending: false});
+    var referrals = (refRes.data || []);
+    var refHTML = "";
+    if (referrals.length === 0) {
+      refHTML = '<div class="empty-state">No referrals yet - waiting for users to share their invite links</div>';
+    } else {
+      var refByCode = {};
+      for (var ri = 0; ri < referrals.length; ri++) {
+        var r = referrals[ri];
+        if (!refByCode[r.referrer_code]) refByCode[r.referrer_code] = [];
+        refByCode[r.referrer_code].push(r);
+      }
+      refHTML += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">';
+      refHTML += '<div class="stat-card"><div class="val">' + referrals.length + '</div><div class="lbl">Total Referrals</div></div>';
+      refHTML += '<div class="stat-card"><div class="val">' + Object.keys(refByCode).length + '</div><div class="lbl">Referrers</div></div>';
+      refHTML += '</div>';
+      refHTML += '<table><thead><tr><th>Referrer Code</th><th>Signups Driven</th><th>Referred Emails</th><th>Latest</th></tr></thead><tbody>';
+      var sortedCodes = Object.keys(refByCode).sort(function(a, b) { return refByCode[b].length - refByCode[a].length; });
+      for (var ci = 0; ci < sortedCodes.length; ci++) {
+        var code = sortedCodes[ci];
+        var refs = refByCode[code];
+        var emails = refs.map(function(r) { return r.referred_email || "unknown"; }).join(", ");
+        var latest = new Date(refs[0].created_at).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+        refHTML += '<tr><td><span class="badge badge-green">' + code + '</span></td><td style="font-weight:700;color:var(--green)">' + refs.length + '</td><td style="color:var(--muted);font-size:11px">' + emails + '</td><td>' + latest + '</td></tr>';
+      }
+      refHTML += '</tbody></table>';
+    }
+    document.getElementById("referralTracking").innerHTML = refHTML;
+  } catch(e) {
+    document.getElementById("referralTracking").innerHTML = '<div class="empty-state">Could not load referrals - make sure the cr_referrals table exists</div>';
+  }
 
   var recentEvents = events.slice(0, 50);
   var evHTML = "";
