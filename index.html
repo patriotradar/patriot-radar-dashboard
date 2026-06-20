@@ -5665,9 +5665,20 @@ async function showDashboard() {
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
 
+  var isAdmin = false;
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (u && u.user_metadata && u.user_metadata.role === "admin") isAdmin = true;
+    if (u && u.email) {
+      for (var i = 0; i < ADMIN_EMAILS.length; i++) {
+        if (u.email.toLowerCase() === ADMIN_EMAILS[i]) { isAdmin = true; break; }
+      }
+    }
+  } catch(e) {}
+
   var daysLeft = await getTrialDaysLeft();
 
-  if (daysLeft === 0) {
+  if (daysLeft === 0 && !isAdmin) {
     showPaywall(); return;
   }
 
