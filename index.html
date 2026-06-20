@@ -4825,42 +4825,52 @@ var PLATFORM_HASHTAG_BOOSTS = {
   linkedin: ["leadership","networking","careeradvice","professional","linkedintips"]
 };
 
+var STOP_WORDS = ["the","and","for","are","but","not","you","all","can","had","her","was","one","our","out","has","his","how","its","may","new","now","old","see","way","who","did","get","let","say","she","too","use","what","when","where","which","why","will","with","would","about","after","been","being","both","came","come","could","does","each","even","from","give","going","good","great","have","here","into","just","keep","know","last","like","long","look","made","make","many","more","most","much","must","name","need","next","only","over","part","same","some","still","such","sure","take","tell","than","that","them","then","there","these","they","thing","this","time","very","want","well","went","were","what","will","with","work","year","your","also","back","been","before","between","called","come","could","down","first","find","from","going","head","high","home","house","just","last","left","life","little","long","made","make","mean","might","most","much","never","next","nothing","once","only","other","over","people","place","point","right","same","should","show","side","since","small","something","state","still","those","three","through","turn","under","upon","used","using","went","were","while","world","years","young","every","above","along","always","another","around","away","because","become","before","began","begin","being","below","best","better","between","beyond","change","clear","close","different","during","each","early","either","enough","ever","everything","found","given","gone","half","hard","having","help","hold","however","important","kind","large","later","line","live","man","move","number","off","often","open","order","own","part","person","play","point","power","put","quite","read","real","second","set","several","shall","short","since","small","start","state","stop","story","system","tell","though","thought","times","together","took","turn","under","until","want","water","whole","without","woman","word","work","write"];
+
 function generateHashtags(keyword, niche, platform) {
   var kw = (keyword || "").toLowerCase().trim();
   var nl = (niche || "").toLowerCase().trim();
   var resolved = NICHE_ALIASES[nl] || nl;
-  var words = kw.split(/[\s\-\/,]+/).filter(function(w) { return w.length > 2; });
+  var words = kw.split(/[\s\-\/,]+/).filter(function(w) { return w.length > 2 && STOP_WORDS.indexOf(w) === -1; });
   var tags = [];
   var seen = {};
 
   function addTag(t) {
     var clean = t.replace(/[^a-z0-9]/g, "");
     if (clean.length < 3 || clean.length > 30 || seen[clean]) return;
+    if (STOP_WORDS.indexOf(clean) !== -1) return;
     seen[clean] = true;
     tags.push("#" + clean);
   }
 
-  addTag(kw.replace(/\s+/g, ""));
+  if (kw.replace(/\s+/g, "").length <= 25) addTag(kw.replace(/\s+/g, ""));
+
   for (var i = 0; i < words.length; i++) {
-    if (words[i].length > 3) addTag(words[i]);
+    if (words[i].length >= 4) addTag(words[i]);
   }
   if (words.length >= 2) {
     addTag(words[0] + words[1]);
-    if (words.length >= 3) addTag(words[0] + words[words.length - 1]);
+    if (words.length >= 3) addTag(words[words.length - 2] + words[words.length - 1]);
   }
+
+  var pool = NICHE_HASHTAG_POOLS[resolved] || [];
+  var shuffled = pool.slice();
+  for (var s = shuffled.length - 1; s > 0; s--) {
+    var j = (s * 7 + 3) % (s + 1);
+    var tmp = shuffled[s]; shuffled[s] = shuffled[j]; shuffled[j] = tmp;
+  }
+  for (var p = 0; p < shuffled.length; p++) addTag(shuffled[p]);
 
   var nicheClean = resolved.replace(/\s+/g, "");
   if (nicheClean.length <= 12 && nicheClean !== "general" && nicheClean !== "patriotic" && nicheClean !== "patriot") {
-    addTag(nicheClean + "trends");
     addTag(nicheClean + "tips");
     addTag(nicheClean + "content");
-    addTag(nicheClean + "creator");
   }
+
+  addTag("trending");
+  addTag("viral");
   addTag("contentcreator");
   addTag("creatorradar");
-
-  var pool = NICHE_HASHTAG_POOLS[resolved] || [];
-  for (var p = 0; p < pool.length; p++) addTag(pool[p]);
 
   if (platform) {
     var pBoost = PLATFORM_HASHTAG_BOOSTS[platform] || [];
