@@ -4919,7 +4919,11 @@ var PLATFORMS = [
 function generatePlatformOptimization(keyword, niche, platform) {
   var kw = titleCase(keyword);
   var kwLower = (keyword || "").toLowerCase();
+  var rawNiche = (niche || "").toLowerCase();
   var nicheTitle = titleCase(niche || "");
+  if (rawNiche === "patriot" || rawNiche === "patriotic" || rawNiche === "general") {
+    nicheTitle = "Trending";
+  }
   var opt = {};
 
   if (platform === "tiktok") {
