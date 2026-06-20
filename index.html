@@ -1119,6 +1119,7 @@ input[type=range]::-webkit-slider-thumb{
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button class="log-perf-btn" onclick="openPerfModal('')" style="flex:1;margin:0;padding:12px;font-size:12px">&#9998; QUICK LOG</button>
       <button class="log-perf-btn" onclick="openSupportTicket()" style="flex:1;margin:0;padding:12px;font-size:12px;background:var(--panel2);border:1px solid var(--border)">&#9993; SUPPORT</button>
+      <button class="log-perf-btn" onclick="openFeedbackManual()" style="flex:1;margin:0;padding:12px;font-size:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--purple)">&#128172; FEEDBACK</button>
       <button class="log-perf-btn" onclick="startTutorial()" style="width:auto;margin:0;padding:12px 16px;font-size:12px;background:var(--panel2);border:1px solid var(--border)">&#63; GUIDE</button>
     </div>
 
@@ -6057,10 +6058,18 @@ function renderDailyRecs(results) {
 // ── ADMIN PANEL ──
 var isAdminUser = false;
 
+var ADMIN_EMAILS = ["jamie.mahon1996@gmail.com"];
+
 async function checkAdminStatus() {
   try {
     var u = (await supabaseClient.auth.getUser()).data.user;
-    if (u && u.user_metadata && u.user_metadata.role === "admin") {
+    var isAdmin = (u && u.user_metadata && u.user_metadata.role === "admin");
+    if (!isAdmin && u && u.email) {
+      for (var i = 0; i < ADMIN_EMAILS.length; i++) {
+        if (u.email.toLowerCase() === ADMIN_EMAILS[i]) { isAdmin = true; break; }
+      }
+    }
+    if (isAdmin) {
       isAdminUser = true;
       var btn = document.getElementById("adminTabBtn");
       if (btn) btn.style.display = "";
@@ -6214,6 +6223,21 @@ function showFeedbackPopup() {
   if (localStorage.getItem("cr_fb_submitted")) return;
   sessionStorage.setItem("cr_fb_shown", "1");
   document.getElementById("feedbackPopup").style.display = "block";
+}
+
+function openFeedbackManual() {
+  fbStarVal = 0; fbSelectedFeatures = []; fbRecommendVal = "";
+  var popup = document.getElementById("feedbackPopup");
+  var stars = popup.querySelectorAll(".fb-star");
+  for (var i = 0; i < stars.length; i++) stars[i].style.opacity = "0.3";
+  var feats = popup.querySelectorAll(".fb-feature");
+  for (var i = 0; i < feats.length; i++) { feats[i].style.borderColor = "var(--border)"; feats[i].style.color = "var(--muted)"; feats[i].style.background = "var(--panel2)"; }
+  var recs = popup.querySelectorAll(".fb-rec-btn");
+  for (var i = 0; i < recs.length; i++) { recs[i].style.borderColor = "var(--border)"; recs[i].style.color = "var(--muted)"; recs[i].style.background = "var(--panel2)"; }
+  var ta = popup.querySelector("textarea"); if (ta) ta.value = "";
+  var msg = document.getElementById("fbMessage"); if (msg) msg.innerText = "";
+  localStorage.removeItem("cr_fb_submitted");
+  popup.style.display = "block";
 }
 
 function closeFeedbackPopup() {
