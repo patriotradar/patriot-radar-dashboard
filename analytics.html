@@ -68,6 +68,15 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
 #loadingState{text-align:center;padding:40px;color:var(--green);font-size:14px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:700px){.two-col{grid-template-columns:1fr}}
+.a-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.a-tab{padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px;white-space:nowrap}
+.a-tab.active{background:rgba(0,255,136,.1);color:var(--green);border-color:rgba(0,255,136,.3)}
+.a-section{display:none}
+.a-section.active{display:block}
+.card-toggle{cursor:pointer;user-select:none}
+.card-toggle h2::after{content:" ▾";font-size:12px;color:var(--muted)}
+.card-toggle.collapsed h2::after{content:" ▸"}
+.card-toggle.collapsed .card-body{display:none}
 </style>
 </head>
 <body>
@@ -100,111 +109,93 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
 
     <div class="stats-grid" id="topStats"></div>
 
-    <div class="card">
-      <h2>Conversion Funnel</h2>
-      <div class="funnel" id="funnel"></div>
+    <div class="a-tabs">
+      <button class="a-tab active" onclick="switchATab('overview',this)">Overview</button>
+      <button class="a-tab" onclick="switchATab('users',this)">Users</button>
+      <button class="a-tab" onclick="switchATab('engagement',this)">Engagement</button>
+      <button class="a-tab" onclick="switchATab('events',this)">Events</button>
     </div>
 
-    <div class="two-col">
+    <div id="a-overview" class="a-section active">
       <div class="card">
-        <h2>Retention</h2>
-        <div id="retention"></div>
+        <h2>Conversion Funnel</h2>
+        <div class="card-body"><div class="funnel" id="funnel"></div></div>
       </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>Daily Signups</h2>
+          <div class="card-body"><div id="dailySignups"></div></div>
+        </div>
+        <div class="card">
+          <h2>Daily Active Users</h2>
+          <div class="card-body"><div id="dailyActive"></div></div>
+        </div>
+      </div>
+
       <div class="card">
-        <h2>Feature Usage</h2>
-        <div id="featureUsage"></div>
+        <h2>Drop-off Points</h2>
+        <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Where users stop engaging</p>
+        <div class="card-body"><div id="dropoff"></div></div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Traffic Sources</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Where your signups are coming from</p>
-      <div id="trafficSources"></div>
-    </div>
-
-    <div class="card">
-      <h2>User Activity</h2>
-      <div style="margin-bottom:10px"><button class="filter-btn" id="emailToggle" onclick="toggleEmails()">Show Full Emails</button></div>
-      <div style="overflow-x:auto">
-        <table id="userTable">
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Source</th>
-              <th>Niche</th>
-              <th>Signed Up</th>
-              <th>Sessions</th>
-              <th>Last Active</th>
-              <th>Trial Days Left</th>
-              <th>Survey</th>
-              <th>Converted</th>
-            </tr>
-          </thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>User Deep Dive</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Session history, niches used, and activity timeline per user</p>
-      <div id="userDeepDive"></div>
-    </div>
-
-    <div class="two-col">
+    <div id="a-users" class="a-section">
       <div class="card">
-        <h2>Niche Popularity</h2>
-        <div id="nichePopularity"></div>
+        <h2>User Activity</h2>
+        <div class="card-body">
+          <div style="overflow-x:auto">
+            <table id="userTable">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Source</th>
+                  <th>Niche</th>
+                  <th>Signed Up</th>
+                  <th>Sessions</th>
+                  <th>Last Active</th>
+                  <th>Trial Days Left</th>
+                  <th>Survey</th>
+                  <th>Converted</th>
+                </tr>
+              </thead>
+              <tbody id="userTableBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
+
       <div class="card">
-        <h2>Hourly Activity</h2>
-        <p style="color:var(--muted);font-size:11px;margin-bottom:8px">When your users are most active</p>
-        <div id="hourlyActivity"></div>
+        <h2>Traffic Sources</h2>
+        <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Where your signups are coming from</p>
+        <div class="card-body"><div id="trafficSources"></div></div>
       </div>
     </div>
 
-    <div class="card">
-      <h2>Landing Page Traffic</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">All visits to the landing page (not just signups)</p>
-      <div id="landingTraffic"></div>
+    <div id="a-engagement" class="a-section">
+      <div class="two-col">
+        <div class="card">
+          <h2>Retention</h2>
+          <div class="card-body"><div id="retention"></div></div>
+        </div>
+        <div class="card">
+          <h2>Feature Usage</h2>
+          <div class="card-body"><div id="featureUsage"></div></div>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <h2>Support Tickets</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">User-submitted support requests from the dashboard</p>
-      <div id="supportTickets"></div>
-    </div>
-
-    <div class="card">
-      <h2>Referral Tracking</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Who's inviting friends and how many signups they're driving</p>
-      <div id="referralTracking"></div>
-    </div>
-
-    <div class="two-col">
+    <div id="a-events" class="a-section">
       <div class="card">
-        <h2>Daily Signups</h2>
-        <div id="dailySignups"></div>
-      </div>
-      <div class="card">
-        <h2>Daily Active Users</h2>
-        <div id="dailyActive"></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Drop-off Points</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Where users stop engaging</p>
-      <div id="dropoff"></div>
-    </div>
-
-    <div class="card">
-      <h2>Recent Events</h2>
-      <div style="overflow-x:auto">
-        <table>
-          <thead><tr><th>Time</th><th>User</th><th>Event</th><th>Details</th></tr></thead>
-          <tbody id="eventLog"></tbody>
-        </table>
+        <h2>Recent Events</h2>
+        <div class="card-body">
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr><th>Time</th><th>User</th><th>Event</th><th>Details</th></tr></thead>
+              <tbody id="eventLog"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -223,19 +214,6 @@ var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 var ADMIN_PASSWORD = "CreatorRadar2025!";
 var allEvents = [];
 var currentRange = "7d";
-var showFullEmails = false;
-
-function toggleEmails() {
-  showFullEmails = !showFullEmails;
-  var btn = document.getElementById("emailToggle");
-  btn.textContent = showFullEmails ? "Hide Full Emails" : "Show Full Emails";
-  if (showFullEmails) btn.classList.add("active");
-  else btn.classList.remove("active");
-  var cells = document.querySelectorAll(".user-email");
-  for (var i = 0; i < cells.length; i++) {
-    cells[i].textContent = showFullEmails ? cells[i].getAttribute("data-full") : cells[i].getAttribute("data-masked");
-  }
-}
 
 function adminLogin() {
   var pw = document.getElementById("adminPw").value;
@@ -311,16 +289,18 @@ function renderAnalytics() {
   var dailySignupMap = {};
   var dailyActiveMap = {};
   var tabViews = {};
-  var userSessionList = {};
-  var userNiches = {};
-  var nicheUsage = {};
-  var landingViews = [];
-  var hourlyMap = {};
-  var userTotalSessions = {};
+
+  var emailToUid = {};
+  events.forEach(function(ev) {
+    if (ev.user_id && ev.user_email) emailToUid[ev.user_email] = ev.user_id;
+  });
 
   events.forEach(function(ev) {
-    var uid = ev.user_id || "anon";
-    var email = ev.user_email || uid;
+    var uid = ev.user_id;
+    if (!uid && ev.user_email && emailToUid[ev.user_email]) uid = emailToUid[ev.user_email];
+    if (!uid) uid = "anon_" + (ev.user_email || "visitor");
+    var email = ev.user_email || "anon";
+    if (email === "anon" && uid.indexOf("anon_") === 0) return;
     uniqueUsers[uid] = email;
 
     var ts = new Date(ev.created_at).getTime();
@@ -342,27 +322,7 @@ function renderAnalytics() {
       userSessions[uid][dateKey] = true;
       dailyActiveMap[dateKey] = dailyActiveMap[dateKey] || {};
       dailyActiveMap[dateKey][uid] = true;
-      userTotalSessions[uid] = (userTotalSessions[uid] || 0) + 1;
-      if (!userSessionList[uid]) userSessionList[uid] = [];
-      var sessionNiche = (ev.metadata && ev.metadata.niche) || "-";
-      userSessionList[uid].push({date: ev.created_at, niche: sessionNiche});
     }
-
-    if (ev.event_type === "niche_change" || ev.event_type === "load_trends") {
-      var evNiche = (ev.metadata && ev.metadata.niche) || "";
-      if (evNiche) {
-        if (!userNiches[uid]) userNiches[uid] = {};
-        userNiches[uid][evNiche.toLowerCase()] = true;
-        nicheUsage[evNiche.toLowerCase()] = (nicheUsage[evNiche.toLowerCase()] || 0) + 1;
-      }
-    }
-
-    if (ev.event_type === "page_view" && ev.metadata && ev.metadata.page === "landing") {
-      landingViews.push({date: ev.created_at, source: (ev.metadata.utm_source || "direct"), medium: (ev.metadata.utm_medium || ""), campaign: (ev.metadata.utm_campaign || "")});
-    }
-
-    var evHour = new Date(ev.created_at).getHours();
-    hourlyMap[evHour] = (hourlyMap[evHour] || 0) + 1;
 
     if (ev.event_type === "scanner_use" || ev.event_type === "load_trends") {
       scannerUses++;
@@ -487,8 +447,7 @@ function renderAnalytics() {
     var uEmail = uniqueUsers[uId];
     var uNiche = userNiche[uId] || "-";
     var uSignup = userFirstSeen[uId] ? new Date(userFirstSeen[uId]).toLocaleDateString("en-GB") : "-";
-    var uSessionCount = userTotalSessions[uId] || 0;
-    var uDaysActive = userSessions[uId] ? Object.keys(userSessions[uId]).length : 0;
+    var uSessionCount = userSessions[uId] ? Object.keys(userSessions[uId]).length : 0;
     var uLast = userLastSeen[uId] ? new Date(userLastSeen[uId]).toLocaleDateString("en-GB") : "-";
     var uTrialDays = 0;
     if (userFirstSeen[uId]) {
@@ -500,8 +459,7 @@ function renderAnalytics() {
 
     var uSrc = userSource[uId] || "direct";
     var srcBadge = uSrc === "pitchwall" ? "badge-purple" : "badge-blue";
-    var uNicheList = userNiches[uId] ? Object.keys(userNiches[uId]).map(function(n){return titleCase(n)}).join(", ") : titleCase(uNiche);
-    tbody += '<tr><td class="user-email" data-full="' + uEmail + '" data-masked="' + maskEmail(uEmail) + '">' + (showFullEmails ? uEmail : maskEmail(uEmail)) + '</td><td><span class="badge ' + srcBadge + '">' + uSrc + '</span></td><td>' + uNicheList + '</td><td>' + uSignup + '</td><td>' + uSessionCount + ' <span style="color:var(--muted);font-size:10px">(' + uDaysActive + 'd)</span></td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
+    tbody += '<tr><td>' + maskEmail(uEmail) + '</td><td><span class="badge ' + srcBadge + '">' + uSrc + '</span></td><td>' + titleCase(uNiche) + '</td><td>' + uSignup + '</td><td>' + uSessionCount + '</td><td>' + uLast + '</td><td>' + uTrialDays + '</td><td>' + uSurvey + '</td><td>' + uConv + '</td></tr>';
   }
   document.getElementById("userTableBody").innerHTML = tbody || '<tr><td colspan="9" class="empty-state">No users yet</td></tr>';
 
@@ -582,181 +540,6 @@ function renderAnalytics() {
   }
   document.getElementById("dropoff").innerHTML = dropoffHTML || '<div class="empty-state">Not enough data to determine drop-off points</div>';
 
-  // User Deep Dive
-  var ddHTML = "";
-  var sortedUsers = Object.keys(userSessionList).sort(function(a,b) {
-    return (userTotalSessions[b] || 0) - (userTotalSessions[a] || 0);
-  });
-  for (var ddi = 0; ddi < sortedUsers.length; ddi++) {
-    var ddUid = sortedUsers[ddi];
-    var ddEmail = uniqueUsers[ddUid] || ddUid;
-    var ddSessions = userSessionList[ddUid] || [];
-    var ddNicheList = userNiches[ddUid] ? Object.keys(userNiches[ddUid]) : [];
-    var ddTotalS = userTotalSessions[ddUid] || 0;
-    var ddDays = userSessions[ddUid] ? Object.keys(userSessions[ddUid]).length : 0;
-
-    ddHTML += '<div style="padding:14px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);border-radius:12px;margin-bottom:12px">';
-    ddHTML += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">';
-    ddHTML += '<span class="user-email" data-full="' + ddEmail + '" data-masked="' + maskEmail(ddEmail) + '" style="font-weight:800;font-size:14px;color:var(--green)">' + (showFullEmails ? ddEmail : maskEmail(ddEmail)) + '</span>';
-    ddHTML += '<div style="display:flex;gap:6px">';
-    ddHTML += '<span class="badge badge-green">' + ddTotalS + ' sessions</span>';
-    ddHTML += '<span class="badge badge-blue">' + ddDays + ' day' + (ddDays !== 1 ? 's' : '') + ' active</span>';
-    if (ddNicheList.length > 0) ddHTML += '<span class="badge badge-purple">' + ddNicheList.length + ' niche' + (ddNicheList.length !== 1 ? 's' : '') + '</span>';
-    ddHTML += '</div></div>';
-
-    if (ddNicheList.length > 0) {
-      ddHTML += '<div style="margin-bottom:8px;font-size:11px;color:var(--muted)">Niches: ';
-      for (var ni = 0; ni < ddNicheList.length; ni++) {
-        ddHTML += '<span style="display:inline-block;padding:2px 8px;margin:2px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.2);border-radius:99px;font-size:10px;color:var(--purple)">' + titleCase(ddNicheList[ni]) + '</span>';
-      }
-      ddHTML += '</div>';
-    }
-
-    ddHTML += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Session Timeline</div>';
-    ddSessions.sort(function(a,b) { return new Date(b.date) - new Date(a.date); });
-    for (var si3 = 0; si3 < Math.min(10, ddSessions.length); si3++) {
-      var sess = ddSessions[si3];
-      var sessTime = new Date(sess.date).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-      ddHTML += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px">';
-      ddHTML += '<span style="color:var(--muted);min-width:100px">' + sessTime + '</span>';
-      ddHTML += '<span style="color:var(--white)">' + titleCase(sess.niche) + '</span>';
-      ddHTML += '</div>';
-    }
-    if (ddSessions.length > 10) {
-      ddHTML += '<div style="font-size:10px;color:var(--muted);margin-top:4px">+ ' + (ddSessions.length - 10) + ' more sessions</div>';
-    }
-    ddHTML += '</div>';
-  }
-  document.getElementById("userDeepDive").innerHTML = ddHTML || '<div class="empty-state">No session data yet</div>';
-
-  // Niche Popularity
-  var sortedNiches = Object.keys(nicheUsage).sort(function(a,b) { return nicheUsage[b] - nicheUsage[a]; });
-  var nicheHTML = "";
-  var maxNiche = nicheUsage[sortedNiches[0]] || 1;
-  for (var ni2 = 0; ni2 < sortedNiches.length; ni2++) {
-    var nName = sortedNiches[ni2];
-    var nCount = nicheUsage[nName];
-    var nPct = Math.round((nCount / maxNiche) * 100);
-    nicheHTML += '<div style="margin-bottom:8px">' +
-      '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700">' + titleCase(nName) + '</span><span style="color:var(--purple);font-weight:900">' + nCount + ' uses</span></div>' +
-      '<div style="height:6px;background:rgba(167,139,250,.06);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + nPct + '%;background:var(--purple);border-radius:99px;opacity:.6"></div></div>' +
-      '</div>';
-  }
-  document.getElementById("nichePopularity").innerHTML = nicheHTML || '<div class="empty-state">No niche data yet</div>';
-
-  // Hourly Activity
-  var hourHTML = "";
-  var maxHour = 0;
-  for (var h = 0; h < 24; h++) { if ((hourlyMap[h] || 0) > maxHour) maxHour = hourlyMap[h]; }
-  for (var h2 = 0; h2 < 24; h2++) {
-    var hCount = hourlyMap[h2] || 0;
-    var hPct = maxHour > 0 ? Math.round((hCount / maxHour) * 100) : 0;
-    var hLabel = (h2 < 10 ? "0" : "") + h2 + ":00";
-    var hColor = hCount === maxHour && hCount > 0 ? "var(--green)" : "var(--blue)";
-    hourHTML += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">' +
-      '<span style="font-size:10px;min-width:36px;color:var(--muted);text-align:right">' + hLabel + '</span>' +
-      '<div style="flex:1;height:10px;background:rgba(77,201,246,.04);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + Math.max(hCount > 0 ? 3 : 0, hPct) + '%;background:' + hColor + ';border-radius:4px;opacity:.5"></div></div>' +
-      '<span style="font-size:10px;min-width:20px;text-align:right;color:' + (hCount > 0 ? 'var(--blue)' : 'var(--muted)') + ';font-weight:' + (hCount > 0 ? '700' : '400') + '">' + hCount + '</span>' +
-      '</div>';
-  }
-  document.getElementById("hourlyActivity").innerHTML = hourHTML;
-
-  // Landing Page Traffic
-  var ltHTML = "";
-  if (landingViews.length > 0) {
-    var ltSources = {};
-    landingViews.forEach(function(lv) {
-      var srcKey = lv.source + (lv.campaign ? " (" + lv.campaign + ")" : "");
-      ltSources[srcKey] = (ltSources[srcKey] || 0) + 1;
-    });
-    var sortedLt = Object.keys(ltSources).sort(function(a,b) { return ltSources[b] - ltSources[a]; });
-    ltHTML += '<div style="margin-bottom:12px;font-size:13px"><span style="color:var(--green);font-weight:900;font-size:20px">' + landingViews.length + '</span> <span style="color:var(--muted)">total landing page visits</span></div>';
-    var maxLt = ltSources[sortedLt[0]] || 1;
-    for (var li = 0; li < sortedLt.length; li++) {
-      var ltName = sortedLt[li];
-      var ltCount = ltSources[ltName];
-      var ltPct = Math.round((ltCount / maxLt) * 100);
-      var ltColor = ltName.indexOf("pitchwall") >= 0 ? "var(--purple)" : "var(--blue)";
-      ltHTML += '<div style="margin-bottom:8px">' +
-        '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700">' + titleCase(ltName) + '</span><span style="color:' + ltColor + ';font-weight:900">' + ltCount + ' visits</span></div>' +
-        '<div style="height:6px;background:rgba(0,255,136,.06);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + ltPct + '%;background:' + ltColor + ';border-radius:99px;opacity:.6"></div></div>' +
-        '</div>';
-    }
-    ltHTML += '<div style="margin-top:12px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Recent Visits</div>';
-    var recentLv = landingViews.slice(0, 10);
-    for (var lvi = 0; lvi < recentLv.length; lvi++) {
-      var lv = recentLv[lvi];
-      var lvTime = new Date(lv.date).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-      var lvSrc = lv.source || "direct";
-      ltHTML += '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:11px">';
-      ltHTML += '<span style="color:var(--muted);min-width:100px">' + lvTime + '</span>';
-      ltHTML += '<span class="badge ' + (lvSrc === "pitchwall" ? "badge-purple" : "badge-blue") + '">' + lvSrc + '</span>';
-      if (lv.campaign) ltHTML += '<span style="color:var(--muted)">' + lv.campaign + '</span>';
-      ltHTML += '</div>';
-    }
-  }
-  document.getElementById("landingTraffic").innerHTML = ltHTML || '<div class="empty-state">No landing page visits tracked yet</div>';
-
-  // Support Tickets
-  sb.from("cr_support_tickets").select("*").order("created_at", {ascending: false}).then(function(ticketRes) {
-    var tickets = (ticketRes.data || []);
-    var stHTML = "";
-    if (tickets.length === 0) {
-      stHTML = '<div class="empty-state">No support tickets yet</div>';
-    } else {
-      var openCount = tickets.filter(function(t) { return t.status === "open"; }).length;
-      stHTML += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">';
-      stHTML += '<div class="stat-card"><div class="val">' + tickets.length + '</div><div class="lbl">Total Tickets</div></div>';
-      stHTML += '<div class="stat-card"><div class="val" style="color:' + (openCount > 0 ? 'var(--amber)' : 'var(--green)') + '">' + openCount + '</div><div class="lbl">Open</div></div>';
-      stHTML += '</div>';
-      stHTML += '<table><thead><tr><th>User</th><th>Category</th><th>Description</th><th>Status</th><th>Date</th></tr></thead><tbody>';
-      for (var ti = 0; ti < tickets.length; ti++) {
-        var t = tickets[ti];
-        var statusBadge = t.status === "open" ? '<span class="badge badge-amber">Open</span>' : '<span class="badge badge-green">Resolved</span>';
-        var date = new Date(t.created_at).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-        var desc = (t.description || "").length > 60 ? t.description.substring(0, 60) + "..." : (t.description || "");
-        stHTML += '<tr><td style="font-size:11px;color:var(--muted)">' + (t.user_email || "Unknown") + '</td><td><span class="badge badge-blue">' + (t.category || "other") + '</span></td><td style="font-size:11px">' + desc + '</td><td>' + statusBadge + '</td><td style="font-size:11px;color:var(--muted)">' + date + '</td></tr>';
-      }
-      stHTML += '</tbody></table>';
-    }
-    document.getElementById("supportTickets").innerHTML = stHTML;
-  }).catch(function() {
-    document.getElementById("supportTickets").innerHTML = '<div class="empty-state">Support tickets table not set up yet</div>';
-  });
-
-  // Referral Tracking
-  sb.from("cr_referrals").select("*").order("created_at", {ascending: false}).then(function(refRes) {
-    var referrals = (refRes.data || []);
-    var refHTML = "";
-    if (referrals.length === 0) {
-      refHTML = '<div class="empty-state">No referrals yet - waiting for users to share their invite links</div>';
-    } else {
-      var refByCode = {};
-      for (var ri = 0; ri < referrals.length; ri++) {
-        var r = referrals[ri];
-        if (!refByCode[r.referrer_code]) refByCode[r.referrer_code] = [];
-        refByCode[r.referrer_code].push(r);
-      }
-      refHTML += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">';
-      refHTML += '<div class="stat-card"><div class="val">' + referrals.length + '</div><div class="lbl">Total Referrals</div></div>';
-      refHTML += '<div class="stat-card"><div class="val">' + Object.keys(refByCode).length + '</div><div class="lbl">Referrers</div></div>';
-      refHTML += '</div>';
-      refHTML += '<table><thead><tr><th>Referrer Code</th><th>Signups Driven</th><th>Referred Emails</th><th>Latest</th></tr></thead><tbody>';
-      var sortedCodes = Object.keys(refByCode).sort(function(a, b) { return refByCode[b].length - refByCode[a].length; });
-      for (var ci = 0; ci < sortedCodes.length; ci++) {
-        var code = sortedCodes[ci];
-        var refs = refByCode[code];
-        var emails = refs.map(function(r) { return r.referred_email || "unknown"; }).join(", ");
-        var latest = new Date(refs[0].created_at).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-        refHTML += '<tr><td><span class="badge badge-green">' + code + '</span></td><td style="font-weight:700;color:var(--green)">' + refs.length + '</td><td style="color:var(--muted);font-size:11px">' + emails + '</td><td>' + latest + '</td></tr>';
-      }
-      refHTML += '</tbody></table>';
-    }
-    document.getElementById("referralTracking").innerHTML = refHTML;
-  }).catch(function() {
-    document.getElementById("referralTracking").innerHTML = '<div class="empty-state">Could not load referrals - make sure the cr_referrals table exists</div>';
-  });
-
   var recentEvents = events.slice(0, 50);
   var evHTML = "";
   for (var ei = 0; ei < recentEvents.length; ei++) {
@@ -795,6 +578,15 @@ function maskEmail(email) {
 function titleCase(s) {
   if (!s) return "";
   return s.replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+}
+
+function switchATab(tab, btn) {
+  var sections = document.querySelectorAll(".a-section");
+  for (var i = 0; i < sections.length; i++) sections[i].classList.remove("active");
+  var tabs = document.querySelectorAll(".a-tab");
+  for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove("active");
+  document.getElementById("a-" + tab).classList.add("active");
+  btn.classList.add("active");
 }
 </script>
 </body>
