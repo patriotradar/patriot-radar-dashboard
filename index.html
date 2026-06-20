@@ -1138,7 +1138,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.7 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.8 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1466,50 +1466,148 @@ function getGenericProducts(keyword, niche) {
 
 var NICHE_SEEDS = {
   "football": [
-    "football transfer news today",
-    "premier league trending",
-    "champions league latest",
-    "la liga news today",
-    "saudi pro league transfer",
-    "mls highlights today",
-    "bundesliga trending",
-    "serie a latest news",
-    "football viral moments",
-    "football content ideas",
-    "fifa world cup news",
-    "world cup 2026 latest",
-    "football news today"
+    "football transfer news today","premier league trending","champions league latest",
+    "la liga news today","saudi pro league transfer","mls highlights today",
+    "bundesliga trending","serie a latest news","football viral moments",
+    "football content ideas","fifa world cup news","world cup 2026 latest","football news today"
   ],
   "soccer": [
-    "soccer transfer news today",
-    "premier league trending",
-    "champions league latest",
-    "mls highlights today",
-    "la liga news today",
-    "saudi pro league transfer",
-    "soccer viral moments",
-    "soccer content ideas",
-    "fifa world cup news",
-    "world cup 2026 latest",
-    "soccer trending",
-    "soccer news today"
+    "soccer transfer news today","premier league trending","champions league latest",
+    "mls highlights today","la liga news today","saudi pro league transfer",
+    "soccer viral moments","soccer content ideas","fifa world cup news",
+    "world cup 2026 latest","soccer trending","soccer news today"
+  ],
+  "fashion": [
+    "fashion trends 2026","street style trending","outfit ideas trending",
+    "fashion week highlights","sustainable fashion trending","fashion tiktok viral",
+    "summer fashion trends","fashion haul ideas","styling tips trending",
+    "fashion influencer content ideas","thrift fashion trending","luxury fashion news"
+  ],
+  "fitness": [
+    "fitness trending right now","workout trends 2026","gym content ideas",
+    "fitness challenge viral","weight loss tips trending","home workout trending",
+    "fitness influencer content","protein diet trending","fitness motivation viral",
+    "strength training tips","fitness transformation trending","yoga trending"
+  ],
+  "beauty": [
+    "beauty trends 2026","skincare routine trending","makeup tutorial viral",
+    "beauty hacks tiktok","skincare products trending","beauty influencer content ideas",
+    "hair trends 2026","beauty review trending","clean beauty trending",
+    "makeup looks trending","beauty tips viral","nail trends 2026"
+  ],
+  "cooking": [
+    "cooking trending recipes","food content ideas","viral recipe tiktok",
+    "meal prep trending","cooking hacks viral","easy dinner ideas trending",
+    "food trends 2026","cooking challenge viral","healthy recipes trending",
+    "baking trends 2026","air fryer recipes trending","cooking tips viral"
+  ],
+  "tech": [
+    "tech news today","ai trending right now","gadgets trending 2026",
+    "tech review latest","apple news today","android trending",
+    "tech tips viral","coding trends 2026","tech content ideas",
+    "ai tools trending","cybersecurity news","tech unboxing trending"
+  ],
+  "business": [
+    "business trends 2026","startup ideas trending","entrepreneur content ideas",
+    "side hustle trending","business tips viral","marketing trends 2026",
+    "passive income ideas trending","business motivation viral","small business tips",
+    "ecommerce trends 2026","business news today","investment trends 2026"
+  ],
+  "finance": [
+    "finance tips trending","investing trends 2026","stock market today",
+    "crypto trending right now","personal finance viral","money saving hacks trending",
+    "finance content ideas","budgeting tips viral","real estate trends 2026",
+    "financial freedom tips","trading trending","finance news today"
+  ],
+  "gaming": [
+    "gaming trending right now","new games 2026","gaming viral moments",
+    "esports news today","gaming content ideas","game review trending",
+    "gaming tips viral","streaming trending","gaming challenge viral",
+    "pc gaming trending","playstation news today","xbox trending"
+  ],
+  "music": [
+    "music trending right now","new music releases today","music production tips",
+    "viral songs tiktok","music content ideas","album review trending",
+    "music industry news","songwriting tips trending","music marketing viral",
+    "music producer content","beat making trending","music gear review"
+  ],
+  "travel": [
+    "travel trends 2026","travel destinations trending","travel hacks viral",
+    "budget travel tips trending","travel vlog ideas","travel content ideas",
+    "solo travel trending","travel photography tips","hidden gems travel",
+    "travel itinerary trending","backpacking trending","luxury travel trending"
+  ],
+  "politics": [
+    "politics news today","political trending topics","election news latest",
+    "political debate trending","government policy news","political commentary viral",
+    "world politics today","political content ideas","democracy trending",
+    "political analysis latest","policy change news","political opinion trending"
+  ],
+  "ai": [
+    "ai news today","artificial intelligence trending","ai tools 2026",
+    "chatgpt trending","ai video creation trending","ai content ideas",
+    "machine learning news","ai automation trending","generative ai latest",
+    "ai for creators trending","ai startup news","ai tutorial viral"
+  ],
+  "crypto": [
+    "crypto news today","bitcoin trending","ethereum latest news",
+    "altcoin trending right now","defi trending","crypto content ideas",
+    "nft news today","web3 trending","crypto trading tips",
+    "blockchain news latest","crypto market analysis","meme coin trending"
   ]
 };
 
+var NICHE_ALIASES = {
+  "skincare":"beauty","makeup":"beauty","hair":"beauty",
+  "gym":"fitness","workout":"fitness","exercise":"fitness","health":"fitness",
+  "food":"cooking","recipe":"cooking","baking":"cooking","chef":"cooking",
+  "money":"finance","investing":"finance","stocks":"finance","trading":"finance",
+  "cryptocurrency":"crypto","bitcoin":"crypto","web3":"crypto",
+  "technology":"tech","coding":"tech","programming":"tech","software":"tech",
+  "entrepreneurship":"business","marketing":"business","startup":"business",
+  "style":"fashion","clothing":"fashion","outfit":"fashion",
+  "sport":"football","sports":"football",
+  "vlog":"travel","photography":"travel",
+  "artificial intelligence":"ai","chatgpt":"ai","machine learning":"ai",
+  "video games":"gaming","esports":"gaming","streaming":"gaming"
+};
+
 function scanNicheTrends(niche, callback) {
-  var nl = (niche || "").toLowerCase();
-  var seeds = NICHE_SEEDS[nl] || [
+  var nl = (niche || "").toLowerCase().trim();
+  var resolved = NICHE_ALIASES[nl] || nl;
+  var seeds = NICHE_SEEDS[resolved] || [
     niche + " trending right now",
+    niche + " latest news today",
     niche + " content ideas 2026",
-    "best " + niche + " tips",
-    niche + " hacks that work",
-    niche + " for beginners",
-    "how to " + niche,
-    niche + " viral",
-    niche + " challenge"
+    "best " + niche + " tips today",
+    niche + " viral tiktok",
+    niche + " tutorial trending",
+    niche + " for beginners 2026",
+    niche + " influencer content ideas",
+    niche + " trends this week",
+    niche + " hacks that actually work"
   ];
 
+  var nicheWords = resolved.split(/\s+/);
+  if (nl !== resolved) nicheWords = nicheWords.concat(nl.split(/\s+/));
+
   var bannedWords = ["jobs","salary","courses","degree","near me","hiring","vacancy","career","amazon","ebay","buy","shop","price","cost","free download","pdf","wiki","meaning","definition","certificate","class ","school","university","college","weather","map","lyrics","movie","imdb","netflix","stock price","net worth","age ","height ","weight ","birthday","hospital","doctor","nhs","insurance","mortgage","loan","recipe for","calories","porn","sex","xxx","nude","naked","drug","cocaine","heroin","kill","suicide","bomb","terrorist","hack ","steal","fraud","scam","quit","stopped","hate","boring","overrated","dead","dying","worst","terrible","awful","toxic","pointless","useless","waste","sad truth","dark side"];
+
+  function isRelevant(suggestion) {
+    var sl = suggestion.toLowerCase();
+    for (var n = 0; n < nicheWords.length; n++) {
+      if (nicheWords[n].length >= 3 && sl.indexOf(nicheWords[n]) !== -1) return true;
+    }
+    for (var s = 0; s < seeds.length; s++) {
+      var seedWords = seeds[s].toLowerCase().split(/\s+/);
+      var matchCount = 0;
+      for (var w = 0; w < seedWords.length; w++) {
+        if (seedWords[w].length >= 4 && sl.indexOf(seedWords[w]) !== -1) matchCount++;
+      }
+      if (matchCount >= 2) return true;
+    }
+    return false;
+  }
 
   var allResults = [];
   var done = 0;
@@ -1520,7 +1618,7 @@ function scanNicheTrends(niche, callback) {
       var sl = s.toLowerCase();
       var blocked = false;
       for (var b = 0; b < bannedWords.length; b++) { if (sl.indexOf(bannedWords[b]) !== -1) { blocked = true; break; } }
-      if (!blocked && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase()) {
+      if (!blocked && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase() && isRelevant(s)) {
         seen[sl] = true;
         var score = Math.max(20, 85 - allResults.length * 3 + Math.floor(Math.random() * 15));
         var rise = Math.max(-5, 50 - allResults.length * 4 + Math.floor(Math.random() * 20));
