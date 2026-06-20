@@ -2475,30 +2475,34 @@ function renderDailyPlan(results, emerging) {
   var topGroupKey = getGroupKey(topPick.kw);
   var topEmotions = KEYWORD_EMOTIONS[topGroupKey] || KEYWORD_EMOTIONS.general;
 
-  var relatedCats = [];
-  var topKwLower = topPick.kw.toLowerCase();
-  if (topKwLower.indexOf("veteran") !== -1 || topKwLower.indexOf("armed") !== -1 || topKwLower.indexOf("army") !== -1 || topKwLower.indexOf("raf") !== -1 || topKwLower.indexOf("navy") !== -1) {
-    relatedCats = ["Military/Defence", "Remembrance", "National Symbols"];
-  } else if (topKwLower.indexOf("remembr") !== -1 || topKwLower.indexOf("poppy") !== -1 || topKwLower.indexOf("cenotaph") !== -1) {
-    relatedCats = ["Remembrance", "Military/Defence", "National Symbols"];
-  } else if (topKwLower.indexOf("flag") !== -1 || topKwLower.indexOf("jack") !== -1 || topKwLower.indexOf("george") !== -1 || topKwLower.indexOf("english") !== -1) {
-    relatedCats = ["National Symbols", "Culture/Identity", "Military/Defence"];
-  } else if (topKwLower.indexOf("church") !== -1 || topKwLower.indexOf("dunkirk") !== -1 || topKwLower.indexOf("d-day") !== -1 || topKwLower.indexOf("battle") !== -1) {
-    relatedCats = ["History", "Military/Defence", "Remembrance"];
-  } else if (topKwLower.indexOf("king") !== -1 || topKwLower.indexOf("royal") !== -1 || topKwLower.indexOf("monarch") !== -1) {
-    relatedCats = ["Royal Family", "Culture/Identity"];
-  } else if (topKwLower.indexOf("immigra") !== -1 || topKwLower.indexOf("border") !== -1 || topKwLower.indexOf("boat") !== -1) {
-    relatedCats = ["Immigration", "Politics"];
-  } else {
-    relatedCats = ["Culture/Identity", "National Symbols"];
+  var freshPick2 = null, freshPick3 = null;
+  var useNichePlan = (!isPatrioticNiche(USER_NICHE) && picks.length >= 3);
+
+  if (!useNichePlan) {
+    var relatedCats = [];
+    var topKwLower = topPick.kw.toLowerCase();
+    if (topKwLower.indexOf("veteran") !== -1 || topKwLower.indexOf("armed") !== -1 || topKwLower.indexOf("army") !== -1 || topKwLower.indexOf("raf") !== -1 || topKwLower.indexOf("navy") !== -1) {
+      relatedCats = ["Military/Defence", "Remembrance", "National Symbols"];
+    } else if (topKwLower.indexOf("remembr") !== -1 || topKwLower.indexOf("poppy") !== -1 || topKwLower.indexOf("cenotaph") !== -1) {
+      relatedCats = ["Remembrance", "Military/Defence", "National Symbols"];
+    } else if (topKwLower.indexOf("flag") !== -1 || topKwLower.indexOf("jack") !== -1 || topKwLower.indexOf("george") !== -1 || topKwLower.indexOf("english") !== -1) {
+      relatedCats = ["National Symbols", "Culture/Identity", "Military/Defence"];
+    } else if (topKwLower.indexOf("church") !== -1 || topKwLower.indexOf("dunkirk") !== -1 || topKwLower.indexOf("d-day") !== -1 || topKwLower.indexOf("battle") !== -1) {
+      relatedCats = ["History", "Military/Defence", "Remembrance"];
+    } else if (topKwLower.indexOf("king") !== -1 || topKwLower.indexOf("royal") !== -1 || topKwLower.indexOf("monarch") !== -1) {
+      relatedCats = ["Royal Family", "Culture/Identity"];
+    } else if (topKwLower.indexOf("immigra") !== -1 || topKwLower.indexOf("border") !== -1 || topKwLower.indexOf("boat") !== -1) {
+      relatedCats = ["Immigration", "Politics"];
+    } else {
+      relatedCats = ["Culture/Identity", "National Symbols"];
+    }
+
+    var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+    freshPick2 = getFreshSlotIdea(topEmotions, relatedCats, dayOfYear);
+    var excludeForSlot3 = relatedCats.slice();
+    if (freshPick2) excludeForSlot3.push(freshPick2.idea.topic);
+    freshPick3 = getFreshSlotIdea(topEmotions, excludeForSlot3, dayOfYear + 7);
   }
-
-  var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-
-  var freshPick2 = getFreshSlotIdea(topEmotions, relatedCats, dayOfYear);
-  var excludeForSlot3 = relatedCats.slice();
-  if (freshPick2) excludeForSlot3.push(freshPick2.idea.topic);
-  var freshPick3 = getFreshSlotIdea(topEmotions, excludeForSlot3, dayOfYear + 7);
 
   var h = '<div class="card card-glow" style="border-color:var(--green)">';
   h += '<div class="card-header"><h2>Today\'s Content Plan</h2><div class="section-icon" style="color:var(--green)">&#9776;</div></div>';
@@ -2550,40 +2554,84 @@ function renderDailyPlan(results, emerging) {
   h += '</ul>';
   h += '</div>';
 
-  // --- SLOT 2 & 3: Fresh angle ideas from different categories ---
-  var freshSlots = [
-    { slot: slots[1], pick: freshPick2, idx: 1 },
-    { slot: slots[2], pick: freshPick3, idx: 2 }
-  ];
+  // --- SLOT 2 & 3 ---
+  if (useNichePlan) {
+    var nicheSlotPicks = [
+      { slot: slots[1], pk: picks[1], idx: 1, angle: "ENGAGEMENT ANGLE", angleDesc: "Different trend, drive comments and shares", angleColor: "var(--amber)" },
+      { slot: slots[2], pk: picks[2], idx: 2, angle: "PRODUCT TIE-IN", angleDesc: "Lower competition topic, pin a product", angleColor: "var(--blue)" }
+    ];
 
-  for (var fs = 0; fs < freshSlots.length; fs++) {
-    var fsl = freshSlots[fs];
-    if (!fsl.pick) continue;
-    var fIdea = fsl.pick.idea;
-    var fSlot = fsl.slot;
+    for (var ns = 0; ns < nicheSlotPicks.length; ns++) {
+      var nsp = nicheSlotPicks[ns];
+      var npk = nsp.pk;
+      var nsl = nsp.slot;
+      var nHooks = generateHooks(npk.kw);
+      var nHookId = "plan-hook-" + nsp.idx;
+      var nProds = getProducts(npk.kw);
+      var nProd = nProds[0];
+      var nRise = Number(npk.item.rise_percent || 0);
+      var nViewInfo = npk.views > 0 ? npk.views.toLocaleString() + " avg views" : npk.relViews > 0 ? "Similar: " + npk.relViews.toLocaleString() + " views" : "New topic";
+      var nFreshInfo = npk.days === 0 ? "Posted today" : npk.days < 999 ? npk.days + "d ago" : "Never posted";
 
-    h += '<div style="padding:14px;margin-bottom:10px;background:rgba(10,18,14,.6);border:1px solid rgba(167,139,250,.2);border-radius:14px;border-left:3px solid ' + fSlot.color + '">';
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-    h += '<span style="font-size:11px;font-weight:900;color:' + fSlot.color + ';text-transform:uppercase;letter-spacing:1px">' + fSlot.label + ' - ' + fSlot.time + '</span>';
-    h += '<span class="tag" style="background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)">FRESH ANGLE</span>';
-    h += '</div>';
-    h += '<div style="font-size:10px;color:var(--purple);margin-bottom:4px;font-weight:700">DIFFERENT TOPIC, SAME PSYCHOLOGY</div>';
-    h += '<div style="font-size:15px;font-weight:900;margin-bottom:4px;color:var(--white)">' + fIdea.topic.toUpperCase() + '</div>';
-    h += '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">';
-    for (var fe = 0; fe < fIdea.emotions.length; fe++) {
-      h += '<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(251,191,36,.08);color:var(--amber);font-weight:700">' + fIdea.emotions[fe] + '</span>';
+      h += '<div style="padding:14px;margin-bottom:10px;background:rgba(10,18,14,.6);border:1px solid rgba(167,139,250,.2);border-radius:14px;border-left:3px solid ' + nsl.color + '">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+      h += '<span style="font-size:11px;font-weight:900;color:' + nsl.color + ';text-transform:uppercase;letter-spacing:1px">' + nsl.label + ' - ' + nsl.time + '</span>';
+      h += '<span class="tag" style="background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)">' + nsp.angle + '</span>';
+      h += '</div>';
+      h += '<div style="font-size:10px;color:var(--purple);margin-bottom:4px;font-weight:700">' + nsp.angleDesc.toUpperCase() + '</div>';
+      h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(npk.kw) + '</div>';
+      var nCS = Number(npk.item.content_score || 0);
+      var nCSText = nCS > 0 ? ' | Content: ' + nCS + '/100' : '';
+      h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + npk.item.viral_score + ' | Rise: ' + formatRise(nRise) + nCSText + ' | ' + nViewInfo + ' | ' + nFreshInfo + '</div>';
+      h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + nHooks[0] + '"</div>';
+      if (nsp.idx === 2 && nProd) {
+        h += '<div style="font-size:10px;color:var(--green2)">Pin: ' + nProd.name + ' (Earn &#163;' + nProd.commission + ')</div>';
+      }
+      h += '<button class="copy-btn" onclick="toggleHooks(\'' + nHookId + '\')" style="margin-top:6px">More hooks</button>';
+      h += '<ul class="hooks-list hidden" id="' + nHookId + '">';
+      for (var nhk = 1; nhk < nHooks.length; nhk++) {
+        h += '<li onclick="copyHook(this)"><span class="hook-num">' + nhk + '</span><span class="hook-text">' + nHooks[nhk] + '</span><span class="hook-copy">COPY</span></li>';
+      }
+      h += '</ul>';
+      h += '</div>';
     }
-    h += '<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(0,255,136,.06);color:var(--green);font-weight:700">' + (fIdea.format === "yesno" ? "Yes/No" : fIdea.format === "abc" ? "A/B/C" : fIdea.format === "opinion" ? "Opinion" : "Story") + '</span>';
-    h += '</div>';
-    h += '<div onclick="copyPlanAlt(this)" style="font-size:13px;color:var(--white);background:var(--panel);padding:12px;border-radius:8px;margin-bottom:6px;cursor:pointer;border-left:2px solid var(--purple)">';
-    h += '<div style="font-weight:700;margin-bottom:4px">"' + fIdea.text + '"</div>';
-    h += '<span style="font-size:8px;color:var(--muted);margin-left:auto">TAP TO COPY</span>';
-    h += '</div>';
-    h += '<div style="font-size:9px;color:var(--muted)">Matched from trending: <b style="color:var(--green)">' + titleCase(topPick.kw) + '</b> (' + topEmotions.join(" + ") + ')</div>';
-    h += '</div>';
-  }
 
-  h += '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Slot 1 = trending topic | Slots 2-3 = fresh angles from different categories using the same psychology</p>';
+    h += '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">All 3 slots use your niche trends | Slot 1 = top trend | Slot 2 = engagement | Slot 3 = product</p>';
+  } else {
+    var freshSlots = [
+      { slot: slots[1], pick: freshPick2, idx: 1 },
+      { slot: slots[2], pick: freshPick3, idx: 2 }
+    ];
+
+    for (var fs = 0; fs < freshSlots.length; fs++) {
+      var fsl = freshSlots[fs];
+      if (!fsl.pick) continue;
+      var fIdea = fsl.pick.idea;
+      var fSlot = fsl.slot;
+
+      h += '<div style="padding:14px;margin-bottom:10px;background:rgba(10,18,14,.6);border:1px solid rgba(167,139,250,.2);border-radius:14px;border-left:3px solid ' + fSlot.color + '">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+      h += '<span style="font-size:11px;font-weight:900;color:' + fSlot.color + ';text-transform:uppercase;letter-spacing:1px">' + fSlot.label + ' - ' + fSlot.time + '</span>';
+      h += '<span class="tag" style="background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)">FRESH ANGLE</span>';
+      h += '</div>';
+      h += '<div style="font-size:10px;color:var(--purple);margin-bottom:4px;font-weight:700">DIFFERENT TOPIC, SAME PSYCHOLOGY</div>';
+      h += '<div style="font-size:15px;font-weight:900;margin-bottom:4px;color:var(--white)">' + fIdea.topic.toUpperCase() + '</div>';
+      h += '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">';
+      for (var fe = 0; fe < fIdea.emotions.length; fe++) {
+        h += '<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(251,191,36,.08);color:var(--amber);font-weight:700">' + fIdea.emotions[fe] + '</span>';
+      }
+      h += '<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(0,255,136,.06);color:var(--green);font-weight:700">' + (fIdea.format === "yesno" ? "Yes/No" : fIdea.format === "abc" ? "A/B/C" : fIdea.format === "opinion" ? "Opinion" : "Story") + '</span>';
+      h += '</div>';
+      h += '<div onclick="copyPlanAlt(this)" style="font-size:13px;color:var(--white);background:var(--panel);padding:12px;border-radius:8px;margin-bottom:6px;cursor:pointer;border-left:2px solid var(--purple)">';
+      h += '<div style="font-weight:700;margin-bottom:4px">"' + fIdea.text + '"</div>';
+      h += '<span style="font-size:8px;color:var(--muted);margin-left:auto">TAP TO COPY</span>';
+      h += '</div>';
+      h += '<div style="font-size:9px;color:var(--muted)">Matched from trending: <b style="color:var(--green)">' + titleCase(topPick.kw) + '</b> (' + topEmotions.join(" + ") + ')</div>';
+      h += '</div>';
+    }
+
+    h += '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Slot 1 = trending topic | Slots 2-3 = fresh angles from different categories using the same psychology</p>';
+  }
   h += '</div>';
   return h;
 }
