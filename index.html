@@ -1489,7 +1489,7 @@ var USER_REGION = (function() {
 })();
 
 function isPatrioticNiche(niche) {
-  if (!niche) return true;
+  if (!niche) return false;
   var n = niche.toLowerCase();
   for (var i = 0; i < PATRIOTIC_TERMS.length; i++) {
     if (n.indexOf(PATRIOTIC_TERMS[i]) !== -1) return true;
@@ -4735,7 +4735,7 @@ var POPULAR_NICHES = ["fitness","cooking","fashion","beauty","tech","gaming","fi
 
 function initNicheSwitcher() {
   var label = document.getElementById("currentNicheLabel");
-  if (label) label.textContent = titleCase(USER_NICHE || "patriotic");
+  if (label) label.textContent = titleCase(USER_NICHE || "general");
   var quickPicks = document.getElementById("nicheQuickPicks");
   if (!quickPicks) return;
   var saved = JSON.parse(localStorage.getItem("cr_niche_history") || "[]");
@@ -4849,11 +4849,15 @@ function generateHashtags(keyword, niche, platform) {
     if (words.length >= 3) addTag(words[0] + words[words.length - 1]);
   }
 
-  addTag(resolved + "trends");
-  addTag(resolved + "tips");
-  addTag(resolved + "content");
-  addTag(resolved + "creator");
-  addTag(resolved + "2026");
+  var nicheClean = resolved.replace(/\s+/g, "");
+  if (nicheClean.length <= 12 && nicheClean !== "general" && nicheClean !== "patriotic" && nicheClean !== "patriot") {
+    addTag(nicheClean + "trends");
+    addTag(nicheClean + "tips");
+    addTag(nicheClean + "content");
+    addTag(nicheClean + "creator");
+  }
+  addTag("contentcreator");
+  addTag("creatorradar");
 
   var pool = NICHE_HASHTAG_POOLS[resolved] || [];
   for (var p = 0; p < pool.length; p++) addTag(pool[p]);
@@ -5176,7 +5180,7 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
 }
 
 async function loadLiveStats() {
-  trackEvent("load_trends", {niche: USER_NICHE || "patriotic"});
+  trackEvent("load_trends", {niche: USER_NICHE || "general"});
   if (!isPatrioticNiche(USER_NICHE)) {
     document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE) + " trends...";
     scanNicheTrends(USER_NICHE, function(results) {
@@ -5693,7 +5697,7 @@ async function showDashboard() {
     }
   } catch(e) {}
 
-  trackEvent("session_start", {niche: USER_NICHE || "patriotic"});
+  trackEvent("session_start", {niche: USER_NICHE || "general"});
 
   checkAdminStatus();
   initNicheSwitcher();
@@ -5730,18 +5734,18 @@ async function betaSignup() {
   if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) { msg.innerText = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.style.color = "var(--red)"; return; }
   if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
-  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString(), niche: niche || "patriotic"}}});
+  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString(), niche: niche || "general"}}});
   if (r.error) { var emsg = r.error.message; if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.innerText = emsg; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
   } else if (r.data && r.data.session) {
     msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)";
-    trackEvent("signup", {niche: niche || "patriotic", source: "dashboard"});
+    trackEvent("signup", {niche: niche || "general", source: "dashboard"});
     setTimeout(function() { showDashboard(); }, 1000);
   } else {
     var lr = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
-    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "patriotic", source: "dashboard"}); showLoginView(); }
-    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "patriotic", source: "dashboard"}); setTimeout(function() { showDashboard(); }, 1000); }
+    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "general", source: "dashboard"}); showLoginView(); }
+    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "general", source: "dashboard"}); setTimeout(function() { showDashboard(); }, 1000); }
   }
 }
 
