@@ -1313,6 +1313,28 @@ input[type=range]::-webkit-slider-thumb{
   </div>
 </div>
 
+<div id="nichePromptPopup" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.92);overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="max-width:440px;margin:0 auto;padding:20px;min-height:100vh;display:flex;align-items:center">
+    <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;width:100%;box-shadow:0 0 40px rgba(0,255,136,.15)">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:36px;margin-bottom:8px">&#127919;</div>
+        <h2 style="font-size:18px;color:#fff;margin-bottom:6px">Choose Your Niche</h2>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5">Pick a niche so we can show you relevant trends, hooks, hashtags and content ideas tailored to YOUR audience. Without one, you'll only see generic results.</p>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:12px;color:var(--muted);margin-bottom:6px;display:block">Type your niche</label>
+        <input id="nichePromptInput" type="text" placeholder="e.g. fitness, cooking, fashion, tech, beauty" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:#fff;font-size:14px;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:16px">
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px">Or pick one:</p>
+        <div id="nichePromptPicks" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <button onclick="confirmNichePrompt()" style="width:100%;padding:14px;background:var(--green);color:#000;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px">Set My Niche</button>
+      <button onclick="skipNichePrompt()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer">Skip for now (show generic results)</button>
+    </div>
+  </div>
+</div>
+
 <div id="feedbackPopup" style="display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.88);overflow-y:auto;-webkit-overflow-scrolling:touch">
   <div style="max-width:460px;margin:0 auto;padding:20px;min-height:100vh;display:flex;align-items:center">
     <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;width:100%;box-shadow:0 0 40px rgba(0,255,136,.15)">
@@ -4857,6 +4879,44 @@ async function quickSwitchNiche(newNiche) {
   loadLiveStats();
 }
 
+function showNichePrompt() {
+  var niche = (USER_NICHE || "").toLowerCase().trim();
+  if (niche && niche !== "general" && niche !== "patriot" && niche !== "patriotic") return;
+  if (sessionStorage.getItem("cr_niche_prompt_shown")) return;
+  sessionStorage.setItem("cr_niche_prompt_shown", "1");
+  var popup = document.getElementById("nichePromptPopup");
+  if (!popup) return;
+  var picksDiv = document.getElementById("nichePromptPicks");
+  if (picksDiv) {
+    var h = "";
+    var picks = ["Fitness","Cooking","Fashion","Beauty","Tech","Gaming","Finance","Travel","Health","Music","Comedy","Motivation","Sports","Crypto","Photography","Education"];
+    for (var i = 0; i < picks.length; i++) {
+      h += '<button onclick="selectNicheQuick(\'' + picks[i].toLowerCase() + '\')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:border-color .2s,color .2s" onmouseover="this.style.borderColor=\'var(--green)\';this.style.color=\'var(--green)\'" onmouseout="this.style.borderColor=\'var(--border)\';this.style.color=\'var(--muted)\'">' + picks[i] + '</button>';
+    }
+    picksDiv.innerHTML = h;
+  }
+  popup.style.display = "block";
+}
+
+function selectNicheQuick(n) {
+  document.getElementById("nichePromptInput").value = n;
+  confirmNichePrompt();
+}
+
+function confirmNichePrompt() {
+  var input = document.getElementById("nichePromptInput");
+  var niche = (input.value || "").trim().toLowerCase();
+  if (!niche) { input.style.borderColor = "var(--red)"; input.placeholder = "Please type a niche first!"; return; }
+  document.getElementById("nichePromptPopup").style.display = "none";
+  quickSwitchNiche(niche);
+  trackEvent("niche_prompt_set", {niche: niche});
+}
+
+function skipNichePrompt() {
+  document.getElementById("nichePromptPopup").style.display = "none";
+  trackEvent("niche_prompt_skip", {});
+}
+
 function toggleHooks(id) {
   var el = document.getElementById(id);
   if (el) el.classList.toggle("hidden");
@@ -5798,7 +5858,8 @@ async function showDashboard() {
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
   } else {
-    setTimeout(function() { showFeedbackPopup(); }, 1200);
+    setTimeout(function() { showNichePrompt(); }, 600);
+    setTimeout(function() { if (document.getElementById("nichePromptPopup").style.display !== "block") showFeedbackPopup(); }, 1500);
     setTimeout(function() { if (!sessionStorage.getItem("cr_fb_shown") || localStorage.getItem("cr_fb_submitted")) { showReferralPopup(); } }, 2000);
     checkReferralNudge();
   }
