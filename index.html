@@ -961,6 +961,36 @@ input[type=range]::-webkit-slider-thumb{
 }
 .settings-panel.show{display:block}
 
+/* ── PLATFORM OPTIMIZER ── */
+.plat-card{background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+.plat-card:hover{border-color:var(--border-glow)}
+.plat-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer}
+.plat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0}
+.plat-name{font-size:14px;font-weight:800;color:var(--white)}
+.plat-format{font-size:10px;color:var(--muted);margin-top:2px}
+.plat-body{display:none}
+.plat-card.open .plat-body{display:block}
+.plat-card .plat-arrow{margin-left:auto;color:var(--muted);transition:transform .2s;font-size:12px}
+.plat-card.open .plat-arrow{transform:rotate(180deg)}
+.plat-section{margin-bottom:14px}
+.plat-section-title{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.plat-text{font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;cursor:pointer;border-left:2px solid var(--green);line-height:1.5}
+.plat-text:hover{background:rgba(0,255,136,.04)}
+.plat-desc-tmpl{font-size:11px;color:var(--muted);background:var(--panel);padding:10px;border-radius:8px;line-height:1.6;white-space:pre-line}
+.plat-tip{font-size:10px;color:var(--amber);background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:8px;padding:8px 10px;margin-top:8px;line-height:1.5}
+
+/* ── HASHTAGS ── */
+.hashtag-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.hashtag-tag{font-size:10px;padding:4px 10px;border-radius:6px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);color:var(--green);cursor:pointer;font-weight:600;transition:background .15s}
+.hashtag-tag:hover{background:rgba(0,255,136,.12)}
+.hashtag-tag.ht-amber{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.15);color:var(--amber)}
+.hashtag-tag.ht-blue{background:rgba(77,201,246,.06);border-color:rgba(77,201,246,.15);color:var(--blue)}
+.hashtag-tag.ht-purple{background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.15);color:var(--purple)}
+.hashtag-copy-all{font-size:10px;padding:5px 14px;border-radius:6px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;border:none;cursor:pointer;font-weight:800;margin-top:6px}
+.plat-topic-select{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.plat-topic-btn{padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--muted);font-size:11px;cursor:pointer;font-weight:700;transition:all .15s}
+.plat-topic-btn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06)}
+
 @media(max-width:400px){
   body{padding:10px}
   .card{padding:16px;border-radius:14px}
@@ -1080,6 +1110,7 @@ input[type=range]::-webkit-slider-thumb{
       <button class="tab-btn" data-tab="discovery" onclick="switchTab('discovery')">Discovery</button>
       <button class="tab-btn" data-tab="audience" onclick="switchTab('audience')">Audience</button>
       <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Products</button>
+      <button class="tab-btn" data-tab="platforms" onclick="switchTab('platforms')">Platforms</button>
       <button class="tab-btn" data-tab="feed" onclick="switchTab('feed')">Live Feed</button>
       <button class="tab-btn" data-tab="analyzer" onclick="switchTab('analyzer')">Analyzer</button>
     </div>
@@ -1107,6 +1138,10 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="tab-products" class="tab-content">
       <div id="productHub"></div>
+    </div>
+
+    <div id="tab-platforms" class="tab-content">
+      <div id="platformOptimizer"></div>
     </div>
 
     <div id="tab-feed" class="tab-content">
@@ -1138,7 +1173,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v11.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v11.1 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1206,6 +1241,7 @@ input[type=range]::-webkit-slider-thumb{
         <option value="Discovery">Discovery</option>
         <option value="Audience">Audience</option>
         <option value="Products">Products</option>
+        <option value="Platforms">Platform Optimizer</option>
         <option value="Live Feed">Live Feed</option>
         <option value="Analyzer">Video Analyzer</option>
         <option value="Login/Signup">Login / Signup</option>
@@ -2552,6 +2588,10 @@ function renderDailyPlan(results, emerging) {
     h += '<li onclick="copyHook(this)"><span class="hook-num">' + hk + '</span><span class="hook-text">' + hooks[hk] + '</span><span class="hook-copy">COPY</span></li>';
   }
   h += '</ul>';
+  h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
+  h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
+  h += renderHashtagBlock(pk.kw, USER_NICHE, null, "plan-hash-0");
+  h += '</div>';
   h += '</div>';
 
   // --- SLOT 2 & 3 ---
@@ -2593,6 +2633,10 @@ function renderDailyPlan(results, emerging) {
         h += '<li onclick="copyHook(this)"><span class="hook-num">' + nhk + '</span><span class="hook-text">' + nHooks[nhk] + '</span><span class="hook-copy">COPY</span></li>';
       }
       h += '</ul>';
+      h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
+      h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
+      h += renderHashtagBlock(npk.kw, USER_NICHE, null, "plan-hash-" + nsp.idx);
+      h += '</div>';
       h += '</div>';
     }
 
@@ -4410,6 +4454,351 @@ function toggleHooks(id) {
   if (el) el.classList.toggle("hidden");
 }
 
+/* ═══════════════════════════════════════════
+   HASHTAG GENERATOR
+   ═══════════════════════════════════════════ */
+
+var NICHE_HASHTAG_POOLS = {
+  fashion: ["fashion","style","ootd","fashiontrends","outfitinspo","streetstyle","fashiontiktok","grwm","whatiwore","styleinspo","fashionista","trendalert","lookbook","outfitoftheday","fashionreels","styleguide","fashionblogger","fashiondaily"],
+  fitness: ["fitness","gym","workout","fitnessmotivation","gymlife","fitfam","personaltrainer","workoutroutine","fitnesstips","strengthtraining","healthylifestyle","exercisemotivation","fitnessjourney","homeworkout","gainz","legday","gymmotivation","fitlife"],
+  beauty: ["beauty","skincare","makeup","beautytips","skincareroutine","makeupartist","beautyhacks","glowup","beautycommunity","skincareaddict","makeuptutorial","beautyreview","cleanskincare","beautyroutine","beautyblogger","skincaretips","makeuplover","beautytrends"],
+  cooking: ["cooking","foodie","recipe","homecooking","foodlover","cookingtiktok","easyrecipes","foodtok","healthyrecipes","foodcontent","chef","cookingathome","foodblogger","mealprep","foodphotography","recipeideas","whaticook","foodinspo"],
+  tech: ["tech","technology","gadgets","technews","techtok","techreview","innovation","ai","coding","softwaredev","techlife","futuretech","techtrends","programming","digitallife","startuplife","devlife","techtips"],
+  business: ["business","entrepreneur","startup","businesstips","hustle","sidehustle","entrepreneurship","businessowner","growthmindset","marketing","businessgrowth","smallbusiness","ceo","businesslife","digitalmarketing","workfromhome","motivation","buildingabrand"],
+  finance: ["finance","investing","money","personalfinance","financialfreedom","moneytips","stockmarket","wealthbuilding","budgeting","financetips","passiveincome","invest","moneymindset","savemoney","financialliteracy","crypto","trading","moneymanagement"],
+  gaming: ["gaming","gamer","videogames","gamingcommunity","twitch","esports","gamingclips","gamertok","gameplay","ps5","xbox","pcgaming","gaminglife","streamer","gamingsetup","gamereview","letsplay","gamingmoments"],
+  music: ["music","musician","newmusic","musicproducer","singer","musiclover","songwriter","musicvideo","independentartist","musicproduction","beats","studio","musictok","hiphop","producer","unsignedartist","musicindustry","originalmusic"],
+  travel: ["travel","traveltok","travelgram","wanderlust","travelblogger","explore","travelguide","adventure","travelvlog","bucketlist","travelphotography","hiddenspots","solotraveler","travelmore","worldtravel","backpacking","traveltips","nextstop"],
+  politics: ["politics","news","currentevents","politicaltok","debate","democracy","votersrights","election","politicalnews","government","policy","politicalcommentary","worldnews","opinion","politicaldebate","activism","changemakers","headlines"],
+  ai: ["ai","artificialintelligence","aitools","chatgpt","machinelearning","aiart","aitech","aitips","futureofai","deeplearning","generativeai","aicreator","techtrends","aiforbusiness","prompt","ainews","automation","airevolution"],
+  crypto: ["crypto","bitcoin","ethereum","blockchain","web3","defi","nft","cryptonews","cryptotrading","altcoins","btc","cryptotok","hodl","cryptomarket","decentralized","memecoin","cryptoinvesting","tokenomics"]
+};
+
+var PLATFORM_HASHTAG_BOOSTS = {
+  tiktok: ["fyp","foryou","foryoupage","viral","trending","tiktok"],
+  instagram: ["instagood","photooftheday","instadaily","explore","reels","instareels"],
+  youtube: ["youtube","subscribe","youtubeshorts","shorts","youtuber"],
+  twitter: ["trending","viral","thread"],
+  linkedin: ["leadership","networking","careeradvice","professional","linkedintips"]
+};
+
+function generateHashtags(keyword, niche, platform) {
+  var kw = (keyword || "").toLowerCase().trim();
+  var nl = (niche || "").toLowerCase().trim();
+  var resolved = NICHE_ALIASES[nl] || nl;
+  var words = kw.split(/[\s\-\/,]+/).filter(function(w) { return w.length > 2; });
+  var tags = [];
+  var seen = {};
+
+  function addTag(t) {
+    var clean = t.replace(/[^a-z0-9]/g, "");
+    if (clean.length < 3 || clean.length > 30 || seen[clean]) return;
+    seen[clean] = true;
+    tags.push("#" + clean);
+  }
+
+  addTag(kw.replace(/\s+/g, ""));
+  for (var i = 0; i < words.length; i++) {
+    if (words[i].length > 3) addTag(words[i]);
+  }
+  if (words.length >= 2) {
+    addTag(words[0] + words[1]);
+    if (words.length >= 3) addTag(words[0] + words[words.length - 1]);
+  }
+
+  addTag(resolved + "trends");
+  addTag(resolved + "tips");
+  addTag(resolved + "content");
+  addTag(resolved + "creator");
+  addTag(resolved + "2026");
+
+  var pool = NICHE_HASHTAG_POOLS[resolved] || [];
+  for (var p = 0; p < pool.length; p++) addTag(pool[p]);
+
+  if (platform) {
+    var pBoost = PLATFORM_HASHTAG_BOOSTS[platform] || [];
+    for (var b = 0; b < pBoost.length; b++) addTag(pBoost[b]);
+  }
+
+  var limits = { tiktok: 8, instagram: 20, youtube: 15, twitter: 5, linkedin: 6 };
+  var limit = limits[platform] || 15;
+  return tags.slice(0, limit);
+}
+
+function renderHashtagBlock(keyword, niche, platform, id) {
+  var tags = generateHashtags(keyword, niche, platform);
+  var h = '<div class="hashtag-wrap" id="' + id + '">';
+  for (var i = 0; i < tags.length; i++) {
+    var cls = i < 3 ? "" : i < 8 ? " ht-amber" : i < 14 ? " ht-blue" : " ht-purple";
+    h += '<span class="hashtag-tag' + cls + '" onclick="copyHashtag(this)">' + tags[i] + '</span>';
+  }
+  h += '</div>';
+  h += '<button class="hashtag-copy-all" onclick="copyAllHashtags(\'' + id + '\')">COPY ALL HASHTAGS</button>';
+  return h;
+}
+
+function copyHashtag(el) {
+  navigator.clipboard.writeText(el.textContent).then(function() {
+    el.style.background = "rgba(0,255,136,.25)";
+    setTimeout(function() { el.style.background = ""; }, 800);
+  });
+}
+
+function copyAllHashtags(id) {
+  var wrap = document.getElementById(id);
+  if (!wrap) return;
+  var spans = wrap.querySelectorAll(".hashtag-tag");
+  var all = [];
+  for (var i = 0; i < spans.length; i++) all.push(spans[i].textContent);
+  navigator.clipboard.writeText(all.join(" ")).then(function() {
+    var btn = wrap.nextElementSibling;
+    if (btn) { btn.textContent = "COPIED!"; setTimeout(function() { btn.textContent = "COPY ALL HASHTAGS"; }, 1500); }
+  });
+  trackEvent("feature_use", {feature: "hashtag_copy_all"});
+}
+
+/* ═══════════════════════════════════════════
+   PLATFORM-SPECIFIC OPTIMIZER
+   ═══════════════════════════════════════════ */
+
+var PLATFORMS = [
+  { key: "tiktok", name: "TikTok", icon: "&#9835;", color: "#ff0050", bg: "rgba(255,0,80,.08)", border: "rgba(255,0,80,.2)" },
+  { key: "instagram", name: "Instagram", icon: "&#9744;", color: "#E1306C", bg: "rgba(225,48,108,.08)", border: "rgba(225,48,108,.2)" },
+  { key: "youtube", name: "YouTube", icon: "&#9654;", color: "#FF0000", bg: "rgba(255,0,0,.08)", border: "rgba(255,0,0,.2)" },
+  { key: "twitter", name: "X / Twitter", icon: "&#10005;", color: "#1DA1F2", bg: "rgba(29,161,242,.08)", border: "rgba(29,161,242,.2)" },
+  { key: "linkedin", name: "LinkedIn", icon: "in", color: "#0A66C2", bg: "rgba(10,102,194,.08)", border: "rgba(10,102,194,.2)" }
+];
+
+function generatePlatformOptimization(keyword, niche, platform) {
+  var kw = titleCase(keyword);
+  var kwLower = (keyword || "").toLowerCase();
+  var nicheTitle = titleCase(niche || "");
+  var opt = {};
+
+  if (platform === "tiktok") {
+    opt.format = "Short-form video (15-60 seconds)";
+    opt.bestLength = "30-45 seconds for maximum completion rate";
+    opt.title = kw + " - What You NEED to Know";
+    opt.hook = "Wait for it... " + kw + " just changed everything";
+    opt.caption = kw + " is blowing up right now. Here's why every " + nicheTitle.toLowerCase() + " creator needs to know about this.";
+    opt.cta = "Follow for more " + nicheTitle.toLowerCase() + " updates you won't find anywhere else";
+    opt.tips = [
+      "Use trending sounds - check the TikTok Creative Center for current audio trends",
+      "Hook viewers in the first 1.5 seconds with a bold statement or question",
+      "Add on-screen text to boost accessibility and engagement",
+      "Post during peak hours: 7-9 AM, 12-3 PM, or 7-11 PM",
+      "Use 3-5 targeted hashtags (not generic ones like #fyp)"
+    ];
+    opt.description = kw + " is trending right now and here's what nobody is telling you...\n\nDrop a comment if you agree!\n\nFollow @[yourhandle] for daily " + nicheTitle.toLowerCase() + " insights";
+  } else if (platform === "instagram") {
+    opt.format = "Reels (primary) + Carousel post (secondary)";
+    opt.bestLength = "Reels: 15-30 seconds | Carousel: 7-10 slides";
+    opt.title = kw + " | " + nicheTitle + " Trends 2026";
+    opt.hook = "Stop scrolling - " + kw + " is about to change the game";
+    opt.caption = "Everyone's talking about " + kw + " and here's why it matters for " + nicheTitle.toLowerCase() + " creators right now.\n\nHere's what you need to know:\n\n1. It's trending across all platforms\n2. Early movers are seeing huge engagement\n3. There's still room to stand out\n\nSave this for later and share with a creator friend who needs to see this.\n\nWhat's your take? Drop it below.";
+    opt.cta = "Save this post + Follow @[yourhandle] for daily " + nicheTitle.toLowerCase() + " trends";
+    opt.tips = [
+      "Use 15-20 hashtags: mix of broad (1M+), mid-tier (100K-1M), and niche (under 100K)",
+      "Post Reels for reach, Carousels for saves, Stories for engagement",
+      "Add a strong CTA in slide 1 and the last slide of carousels",
+      "Best posting times: 11 AM-1 PM and 7-9 PM in your audience's timezone",
+      "Use the Collab feature to double your reach with another creator"
+    ];
+    opt.description = kw + " | " + nicheTitle + " Trends\n\nWhat you need to know about " + kw + " right now:\n\nThe full breakdown is in the post.\n\nSave + Share + Follow for daily " + nicheTitle.toLowerCase() + " content";
+  } else if (platform === "youtube") {
+    opt.format = "Shorts (15-60s) + Long-form (8-15 min)";
+    opt.bestLength = "Shorts: 30-45 seconds | Long-form: 10-12 minutes";
+    opt.title = kw + " - Everything You Need to Know in 2026";
+    opt.hook = "If you're in " + nicheTitle.toLowerCase() + " and you don't know about " + kw + ", you're already behind";
+    opt.caption = kw + " Explained | " + nicheTitle + " Deep Dive";
+    opt.cta = "Subscribe and hit the bell for weekly " + nicheTitle.toLowerCase() + " breakdowns";
+    opt.tips = [
+      "Front-load your keyword in the title for YouTube SEO",
+      "Write a 200+ word description with keywords in the first 2 lines",
+      "Add timestamps/chapters to long-form videos for better retention",
+      "Create a custom thumbnail with bold text and high contrast",
+      "Pin a comment with a question to drive engagement"
+    ];
+    opt.description = kw + " - Full Breakdown for " + nicheTitle + " Creators\n\nIn this video, I break down everything you need to know about " + kw + " and why it matters for " + nicheTitle.toLowerCase() + " creators in 2026.\n\nTimestamps:\n0:00 - Introduction\n0:30 - What is " + kw + "?\n2:00 - Why it's trending\n5:00 - How to use it\n8:00 - Key takeaways\n\nTags: " + kwLower + ", " + nicheTitle.toLowerCase() + " trends, " + kwLower + " 2026, " + nicheTitle.toLowerCase() + " tips";
+    opt.seoTags = [kwLower, kwLower + " 2026", kwLower + " explained", nicheTitle.toLowerCase() + " trends", nicheTitle.toLowerCase() + " " + kwLower, kwLower + " for creators", kwLower + " tips", nicheTitle.toLowerCase() + " content ideas"];
+  } else if (platform === "twitter") {
+    opt.format = "Thread (5-8 tweets) or Single hot take";
+    opt.bestLength = "Thread: 5-8 tweets | Single: under 280 chars";
+    opt.title = "Thread: " + kw;
+    opt.hook = kw + " is trending and most people are getting it wrong.";
+    opt.caption = kw + " just changed the game for " + nicheTitle.toLowerCase() + " creators.\n\nHere's what nobody's talking about:";
+    opt.cta = "Repost this if you agree. Follow me for daily " + nicheTitle.toLowerCase() + " takes.";
+    opt.tips = [
+      "Lead with a controversial or surprising take to stop the scroll",
+      "Use 1-2 hashtags max - X penalises hashtag stuffing",
+      "Quote tweet trending posts to ride existing momentum",
+      "Post threads between 8-10 AM or 5-7 PM for maximum visibility",
+      "End every thread with a clear CTA: follow, repost, or reply"
+    ];
+    opt.description = "1/ " + kw + " is blowing up right now.\n\nBut most " + nicheTitle.toLowerCase() + " creators are missing the real story.\n\nHere's what you need to know (thread):\n\n2/ [Key insight 1 about " + kw + "]\n\n3/ [Key insight 2 about " + kw + "]\n\n4/ [What this means for creators]\n\n5/ [Your unique take]\n\n6/ If this helped, repost the first tweet and follow @[handle] for more " + nicheTitle.toLowerCase() + " breakdowns.";
+  } else if (platform === "linkedin") {
+    opt.format = "Text post with image or document carousel";
+    opt.bestLength = "1,300 characters (shows 'See more' link)";
+    opt.title = "What " + kw + " Means for " + nicheTitle + " Professionals";
+    opt.hook = "I've been watching " + kw + " closely, and here's what I think most people are missing:";
+    opt.caption = "The conversation around " + kw + " is evolving fast.\n\nHere's my professional take on what it means for " + nicheTitle.toLowerCase() + ":";
+    opt.cta = "What's your perspective on " + kw + "? I'd love to hear from other " + nicheTitle.toLowerCase() + " professionals in the comments.";
+    opt.tips = [
+      "Write in first person with a professional but authentic voice",
+      "Use line breaks every 1-2 sentences for readability on mobile",
+      "Post between 7-8 AM or 5-6 PM on Tuesday-Thursday for peak reach",
+      "Tag relevant people or companies to expand reach",
+      "Use 3-5 hashtags at the bottom of the post, not inline"
+    ];
+    opt.description = "I've been following " + kw + " closely and here's what I've noticed:\n\nMost " + nicheTitle.toLowerCase() + " professionals are either ignoring it or overreacting.\n\nHere's the balanced take:\n\n1. [Professional insight about " + kw + "]\n2. [Industry impact]\n3. [Actionable advice]\n\nThe professionals who adapt early to trends like " + kw + " are the ones who build lasting authority.\n\nWhat's your take? Drop it in the comments.\n\n#" + nicheTitle.toLowerCase().replace(/\s+/g,"") + " #" + kwLower.replace(/\s+/g,"") + " #trends2026 #contentcreator #professionaldevelopment";
+  }
+
+  return opt;
+}
+
+var selectedPlatTopic = 0;
+
+function selectPlatTopic(idx) {
+  selectedPlatTopic = idx;
+  var btns = document.querySelectorAll(".plat-topic-btn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle("active", i === idx);
+  }
+  if (cachedResults && cachedResults.length > idx) {
+    var el = document.getElementById("platformOptimizer");
+    if (el) el.innerHTML = renderPlatformOptimizer(cachedResults, idx);
+  }
+  trackEvent("feature_use", {feature: "platform_topic_select", index: idx});
+}
+
+function togglePlatCard(el) {
+  el.closest(".plat-card").classList.toggle("open");
+}
+
+function copyPlatText(el) {
+  var text = el.textContent || el.innerText;
+  navigator.clipboard.writeText(text).then(function() {
+    el.style.borderLeftColor = "var(--amber)";
+    el.style.background = "rgba(0,255,136,.08)";
+    setTimeout(function() { el.style.borderLeftColor = "var(--green)"; el.style.background = ""; }, 1000);
+  });
+}
+
+function renderPlatformOptimizer(results, topicIdx) {
+  if (!results || results.length === 0) return '<div class="card"><p style="color:var(--muted)">Run a scan first to get platform-specific optimizations.</p></div>';
+
+  var topN = Math.min(5, results.length);
+  var idx = typeof topicIdx === "number" ? topicIdx : selectedPlatTopic;
+  if (idx >= results.length) idx = 0;
+  var topic = results[idx];
+  var kw = topic.keyword;
+  var niche = USER_NICHE || "general";
+
+  var h = '<div class="card card-glow" style="border-color:var(--blue)">';
+  h += '<div class="card-header"><h2 style="color:var(--blue)">Platform Optimizer</h2><div class="section-icon" style="background:rgba(77,201,246,.1);border-color:rgba(77,201,246,.3);color:var(--blue)">&#127760;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Optimised titles, descriptions, hashtags, and format tips for each platform. Tap any text to copy it.</p>';
+
+  h += '<div class="plat-topic-select">';
+  for (var t = 0; t < topN; t++) {
+    h += '<button class="plat-topic-btn' + (t === idx ? ' active' : '') + '" onclick="selectPlatTopic(' + t + ')">' + titleCase(results[t].keyword) + '</button>';
+  }
+  h += '</div>';
+
+  h += '<div style="font-size:16px;font-weight:900;color:var(--white);margin-bottom:4px">' + titleCase(kw) + '</div>';
+  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:16px">Viral Score: ' + topic.viral_score + ' | Rise: ' + formatRise(Number(topic.rise_percent || 0)) + '</div>';
+
+  for (var pi = 0; pi < PLATFORMS.length; pi++) {
+    var plat = PLATFORMS[pi];
+    var opt = generatePlatformOptimization(kw, niche, plat.key);
+    var isFirst = pi === 0;
+
+    h += '<div class="plat-card' + (isFirst ? ' open' : '') + '">';
+    h += '<div class="plat-header" onclick="togglePlatCard(this)">';
+    h += '<div class="plat-icon" style="background:' + plat.bg + ';border:1px solid ' + plat.border + ';color:' + plat.color + '">' + plat.icon + '</div>';
+    h += '<div><div class="plat-name">' + plat.name + '</div>';
+    h += '<div class="plat-format">' + opt.format + '</div></div>';
+    h += '<span class="plat-arrow">&#9660;</span>';
+    h += '</div>';
+
+    h += '<div class="plat-body">';
+
+    h += '<div class="plat-section">';
+    h += '<div class="plat-section-title">Optimised Title</div>';
+    h += '<div class="plat-text" onclick="copyPlatText(this)">' + opt.title + '</div>';
+    h += '</div>';
+
+    h += '<div class="plat-section">';
+    h += '<div class="plat-section-title">Opening Hook</div>';
+    h += '<div class="plat-text" onclick="copyPlatText(this)">' + opt.hook + '</div>';
+    h += '</div>';
+
+    h += '<div class="plat-section">';
+    h += '<div class="plat-section-title">Caption / Description Template</div>';
+    h += '<div class="plat-desc-tmpl" onclick="copyPlatText(this)">' + opt.description + '</div>';
+    h += '</div>';
+
+    h += '<div class="plat-section">';
+    h += '<div class="plat-section-title">Call to Action</div>';
+    h += '<div class="plat-text" onclick="copyPlatText(this)">' + opt.cta + '</div>';
+    h += '</div>';
+
+    if (opt.seoTags) {
+      h += '<div class="plat-section">';
+      h += '<div class="plat-section-title">SEO Tags</div>';
+      h += '<div class="hashtag-wrap">';
+      for (var st = 0; st < opt.seoTags.length; st++) {
+        h += '<span class="hashtag-tag ht-blue" onclick="copyHashtag(this)">' + opt.seoTags[st] + '</span>';
+      }
+      h += '</div>';
+      h += '</div>';
+    }
+
+    var hashId = "plat-hash-" + plat.key + "-" + idx;
+    h += '<div class="plat-section">';
+    h += '<div class="plat-section-title">Recommended Hashtags</div>';
+    h += renderHashtagBlock(kw, niche, plat.key, hashId);
+    h += '</div>';
+
+    h += '<div class="plat-section">';
+    h += '<div class="plat-section-title">Best Practices</div>';
+    for (var tip = 0; tip < opt.tips.length; tip++) {
+      h += '<div class="plat-tip" style="margin-bottom:4px">&#9889; ' + opt.tips[tip] + '</div>';
+    }
+    h += '</div>';
+
+    h += '<div style="display:flex;gap:8px;margin-top:8px;font-size:9px;color:var(--muted)">';
+    h += '<span>Best Length: ' + opt.bestLength + '</span>';
+    h += '</div>';
+
+    h += '</div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+
+  h += '<div class="card" style="margin-top:12px">';
+  h += '<div class="card-header"><h2>Hashtag Generator</h2><div class="section-icon">&#127991;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Full hashtag sets for ' + titleCase(kw) + ' across all platforms. Tap individual tags or copy all at once.</p>';
+  h += '<div style="display:grid;gap:12px">';
+  for (var hp = 0; hp < PLATFORMS.length; hp++) {
+    var hplat = PLATFORMS[hp];
+    var hid = "hash-gen-" + hplat.key + "-" + idx;
+    h += '<div style="background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:12px">';
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+    h += '<span style="color:' + hplat.color + ';font-weight:900;font-size:14px">' + hplat.icon + '</span>';
+    h += '<span style="font-size:12px;font-weight:700;color:var(--white)">' + hplat.name + '</span>';
+    var htags = generateHashtags(kw, niche, hplat.key);
+    h += '<span style="font-size:9px;color:var(--muted);margin-left:auto">' + htags.length + ' tags</span>';
+    h += '</div>';
+    h += renderHashtagBlock(kw, niche, hplat.key, hid);
+    h += '</div>';
+  }
+  h += '</div>';
+  h += '</div>';
+
+  return h;
+}
+
 function renderAllSections(results, emerging, productTrends, creatorInsights) {
   results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
   cachedResults = results;
@@ -4437,6 +4826,7 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     document.getElementById("productHub").innerHTML = renderProductHub(results, productTrends);
     document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
     document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
+    document.getElementById("platformOptimizer").innerHTML = renderPlatformOptimizer(results);
   }
 }
 
@@ -4543,6 +4933,13 @@ var TUTORIAL_STEPS = [
     tab: "products",
     text: "Matched affiliate products for each trending keyword. Shows the product, price, and estimated commission so you can monetise your content.",
     tip: "Pin a product link in your video comments to earn commission when viewers buy."
+  },
+  {
+    title: "Platform Optimizer",
+    icon: "&#127760;",
+    tab: "platforms",
+    text: "Get platform-specific titles, descriptions, hashtags, and format tips for every trending topic. Covers TikTok, Instagram, YouTube, X/Twitter, and LinkedIn. Everything is tap-to-copy so you can post in seconds.",
+    tip: "Use the topic selector at the top to switch between your trending keywords. Each platform gives you optimised captions, hashtag sets, and best practices."
   },
   {
     title: "Live Feed",
