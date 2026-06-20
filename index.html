@@ -1436,6 +1436,56 @@ function isPatrioticNiche(niche) {
 }
 
 var NICHE_HOOK_TEMPLATES = {
+  "ai movie": [
+    "I made a full movie scene using {kw} - mind blown",
+    "{kw} is about to replace Hollywood editors",
+    "This {kw} result looks like a real film",
+    "How I used {kw} to create a cinematic masterpiece",
+    "Stop sleeping on {kw} - this changes filmmaking forever",
+    "{kw} just levelled up and nobody's talking about it",
+    "I tested {kw} and the results are insane",
+    "The future of cinema is {kw} - here's proof"
+  ],
+  "ai video": [
+    "I generated this entire video with {kw}",
+    "{kw} just changed the game for video creators",
+    "This {kw} tool creates viral content in seconds",
+    "How I use {kw} to make content 10x faster",
+    "Stop editing manually - {kw} does it better",
+    "{kw} vs traditional editing - the results speak",
+    "I tested every {kw} tool so you don't have to",
+    "The {kw} workflow that's blowing up right now"
+  ],
+  "ai content": [
+    "This {kw} tool writes better hooks than most creators",
+    "How I use {kw} to post 3x more content",
+    "{kw} just made content creation stupidly easy",
+    "Stop doing it manually - {kw} is the cheat code",
+    "I tested {kw} for a week and here's what happened",
+    "The {kw} workflow every creator needs to know",
+    "{kw} is either genius or terrifying - you decide",
+    "How {kw} helped me grow to 10K followers"
+  ],
+  "motivation": [
+    "{kw} - the mindset shift that changed everything",
+    "Nobody wants to hear this about {kw} but it's true",
+    "{kw} - are you actually doing this or just talking?",
+    "The {kw} habit that separates winners from everyone else",
+    "{kw} - this hit different today",
+    "Stop scrolling and listen - {kw} will change your life",
+    "{kw} - the hard truth nobody tells you",
+    "I applied {kw} for 90 days and everything changed"
+  ],
+  "comedy": [
+    "{kw} - I can't make this up",
+    "POV: {kw} hits different at 3am",
+    "{kw} - why is this so accurate though",
+    "When {kw} catches you off guard",
+    "{kw} - tell me I'm wrong",
+    "The way {kw} just called me out",
+    "{kw} - if you know you know",
+    "Nobody talks about {kw} and it shows"
+  ],
   "football": [
     "{kw} - what do you think? Hot take below",
     "{kw} - agree or disagree?",
@@ -1459,6 +1509,56 @@ var NICHE_HOOK_TEMPLATES = {
 };
 
 var NICHE_PHRASE_HOOKS = {
+  "ai movie": [
+    "{kw} - this looks like a real movie scene",
+    "{kw} - AI filmmaking just hit another level",
+    "{kw} - would you watch a full film made with this?",
+    "{kw} - Hollywood should be worried",
+    "{kw} - the future of cinema is here",
+    "{kw} - I made this in 5 minutes, no joke",
+    "{kw} - creators are sleeping on this tool",
+    "{kw} - save this, you'll want to try it"
+  ],
+  "ai video": [
+    "{kw} - this tool just changed everything",
+    "{kw} - I can't believe AI made this",
+    "{kw} - every creator needs to see this",
+    "{kw} - stop editing the old way",
+    "{kw} - the results are actually insane",
+    "{kw} - this is the future of content creation",
+    "{kw} - save this before it blows up",
+    "{kw} - I tested it so you don't have to"
+  ],
+  "ai content": [
+    "{kw} - this changes how we create content",
+    "{kw} - tried this and I'm never going back",
+    "{kw} - the tool every creator is sleeping on",
+    "{kw} - save this, thank me later",
+    "{kw} - is AI replacing creators? My honest take",
+    "{kw} - I tested the hype and here's the truth",
+    "{kw} - this workflow saves me hours every day",
+    "{kw} - the creator cheat code nobody talks about"
+  ],
+  "motivation": [
+    "{kw} - this hit me hard today",
+    "{kw} - read this if you needed a sign",
+    "{kw} - stop making excuses, start doing this",
+    "{kw} - the difference between wanting it and having it",
+    "{kw} - most people will scroll past this and stay stuck",
+    "{kw} - your future self will thank you",
+    "{kw} - this is the wake up call you needed",
+    "{kw} - watch this when you feel like giving up"
+  ],
+  "comedy": [
+    "{kw} - I'm crying at this",
+    "{kw} - no way this is real",
+    "{kw} - my stomach hurts from laughing",
+    "{kw} - tell me you relate without telling me",
+    "{kw} - this is too accurate",
+    "{kw} - who made this I need answers",
+    "{kw} - send this to someone who needs to see it",
+    "{kw} - the accuracy is scary"
+  ],
   "football": [
     "{kw} - thoughts? Drop yours below",
     "{kw} - this is actually insane",
@@ -1514,6 +1614,15 @@ var NICHE_PRODUCT_TYPES = {
   "parenting": ["baby monitor","activity book","learning toys","sippy cups","stroller accessories","parenting book"],
   "health": ["supplements","water bottle","sleep tracker","massage gun","essential oils","health journal"],
   "tech": ["wireless earbuds","phone case","USB hub","smart plug","webcam","portable speaker"],
+  "ai movie": ["ai video generator subscription","gpu for ai rendering","filmmaking course","ai animation tool","green screen kit","cinematic lighting kit"],
+  "ai video": ["ai video tool subscription","video editing software","camera stabilizer","ring light","ai course","content creator kit"],
+  "ai content": ["ai writing tool","content planner","social media scheduler","mic for creators","ai course","productivity app"],
+  "motivation": ["journal","self help book","planner","motivational poster","productivity app","morning routine kit"],
+  "comedy": ["ring light","microphone","green screen","camera tripod","editing software","sound effects pack"],
+  "cars": ["dash cam","car cleaning kit","performance parts","car accessories","diagnostic tool","detailing kit"],
+  "anime": ["manga volume","anime figurine","poster set","cosplay accessories","art supplies","streaming subscription"],
+  "photography": ["camera lens","tripod","memory card","editing software","camera bag","lighting kit"],
+  "astrology": ["tarot deck","astrology book","birth chart reading","crystal set","zodiac jewellery","moon calendar"],
   "default": ["trending product","bestseller","top pick","must have","essential kit","starter pack"]
 };
 
@@ -1627,6 +1736,76 @@ var NICHE_SEEDS = {
     "altcoin trending right now","defi trending","crypto content ideas",
     "nft news today","web3 trending","crypto trading tips",
     "blockchain news latest","crypto market analysis","meme coin trending"
+  ],
+  "ai video": [
+    "ai video generator best 2026","sora ai video trending","ai movie maker tool",
+    "ai film creation tutorial","ai generated movie scene","best ai video tools for creators",
+    "ai animation trending","ai short film viral","runway ai video latest",
+    "kling ai video trending","ai video editing tools 2026","ai cinematic video creation",
+    "ai music video generator","ai video content ideas for tiktok","ai video effects trending",
+    "how to make ai movies","ai filmmaking tools","ai video monetization tips"
+  ],
+  "ai movie": [
+    "ai movie generator trending","ai film creation tools 2026","ai generated movie scenes",
+    "best ai tools for filmmaking","sora ai movie creation","ai short film viral tiktok",
+    "ai animated movie maker","ai movie trailer generator","ai cinematic content creation",
+    "ai screenplay writer tool","runway ai movie making","ai special effects trending",
+    "how to create ai movies","ai movie content ideas","ai blockbuster scene generator",
+    "ai filmmaking for beginners","ai movie editing tools","ai generated scenes trending"
+  ],
+  "ai content": [
+    "ai content creation tools 2026","ai writing tools trending","chatgpt content ideas",
+    "ai social media content","ai thumbnail generator","ai voiceover tools trending",
+    "ai content strategy tips","best ai tools for creators","ai blog writing trending",
+    "ai caption generator","ai script writer trending","ai content monetization"
+  ],
+  "motivation": [
+    "motivation trending today","motivational speech viral","self improvement tips trending",
+    "morning routine productivity","mindset shift trending","success habits 2026",
+    "motivational content ideas","discipline vs motivation trending","goal setting tips viral",
+    "motivational quotes trending","personal growth content ideas","grind culture trending"
+  ],
+  "comedy": [
+    "comedy skit ideas trending","funny content viral tiktok","comedy content ideas 2026",
+    "stand up comedy trending","comedy duo ideas","relatable comedy trending",
+    "dark humor memes trending","comedy reaction videos","funny voiceover trending",
+    "prank ideas viral","comedy sketch trending","funny trend tiktok"
+  ],
+  "parenting": [
+    "parenting tips trending","mom life content viral","dad content ideas trending",
+    "toddler hacks trending","parenting hacks tiktok","new parent tips viral",
+    "gentle parenting trending","parenting content ideas 2026","school tips for parents",
+    "baby products trending","parenting mistakes viral","family content ideas"
+  ],
+  "health": [
+    "health tips trending 2026","wellness trends viral","mental health content ideas",
+    "healthy habits trending","gut health trending","sleep tips viral",
+    "health hacks tiktok","nutrition tips trending","holistic health content",
+    "health awareness trending","healthy lifestyle viral","biohacking trending"
+  ],
+  "astrology": [
+    "astrology trending today","horoscope content ideas","zodiac signs trending",
+    "mercury retrograde viral","astrology tiktok content","birth chart trending",
+    "zodiac compatibility viral","astrology memes trending","new moon ritual trending",
+    "astrology for beginners","tarot reading trending","zodiac content ideas 2026"
+  ],
+  "photography": [
+    "photography tips trending","photo editing tools 2026","photography content ideas",
+    "iphone photography viral","lightroom presets trending","street photography trending",
+    "photography business tips","photo challenge tiktok","portrait photography tips",
+    "landscape photography trending","photography gear 2026","photography trends viral"
+  ],
+  "cars": [
+    "car review trending 2026","new car releases today","car modification trending",
+    "electric car news latest","supercar content viral","car content ideas tiktok",
+    "car detailing trending","drift car trending","car comparison review latest",
+    "car buying tips viral","jdm cars trending","car culture content ideas"
+  ],
+  "anime": [
+    "anime trending right now","new anime 2026","anime review trending",
+    "anime content ideas tiktok","anime recommendation viral","manga trending today",
+    "anime cosplay trending","anime memes viral","anime fight scenes trending",
+    "best anime this season","anime theory trending","anime reaction content"
   ]
 };
 
@@ -1642,24 +1821,47 @@ var NICHE_ALIASES = {
   "sport":"football","sports":"football",
   "vlog":"travel","photography":"travel",
   "artificial intelligence":"ai","chatgpt":"ai","machine learning":"ai",
+  "ai movies":"ai movie","ai film":"ai movie","ai filmmaking":"ai movie","ai cinema":"ai movie",
+  "ai videos":"ai video","ai video creation":"ai video","sora":"ai video","runway":"ai video",
+  "ai creator":"ai content","ai writing":"ai content","ai tools":"ai content",
+  "motivational":"motivation","self improvement":"motivation","self help":"motivation","mindset":"motivation",
+  "funny":"comedy","humor":"comedy","humour":"comedy","memes":"comedy","pranks":"comedy",
+  "mom":"parenting","dad":"parenting","family":"parenting","baby":"parenting",
+  "wellness":"health","mental health":"health","nutrition":"health",
+  "horoscope":"astrology","zodiac":"astrology","tarot":"astrology",
+  "photo":"photography","photographer":"photography","photos":"photography",
+  "car":"cars","automotive":"cars","auto":"cars","vehicles":"cars",
+  "manga":"anime","otaku":"anime","weeb":"anime",
   "video games":"gaming","esports":"gaming","streaming":"gaming"
 };
 
 function scanNicheTrends(niche, callback) {
   var nl = (niche || "").toLowerCase().trim();
   var resolved = NICHE_ALIASES[nl] || nl;
-  var seeds = NICHE_SEEDS[resolved] || [
-    niche + " trending right now",
-    niche + " latest news today",
-    niche + " content ideas 2026",
-    "best " + niche + " tips today",
-    niche + " viral tiktok",
-    niche + " tutorial trending",
-    niche + " for beginners 2026",
-    niche + " influencer content ideas",
-    niche + " trends this week",
-    niche + " hacks that actually work"
-  ];
+  var seeds = NICHE_SEEDS[resolved];
+  if (!seeds) {
+    var n = niche.toLowerCase().trim();
+    seeds = [
+      n + " trending right now",
+      n + " latest news today",
+      n + " content ideas 2026",
+      "best " + n + " tips today",
+      n + " viral tiktok",
+      n + " tutorial trending",
+      n + " for beginners 2026",
+      n + " influencer content ideas",
+      n + " trends this week",
+      n + " hacks that actually work",
+      "how to make " + n + " content",
+      n + " tips and tricks viral",
+      n + " creator tools 2026",
+      n + " growth strategy",
+      n + " vs ",
+      "top " + n + " 2026",
+      n + " review trending",
+      n + " ideas for tiktok reels"
+    ];
+  }
 
   var nicheWords = resolved.split(/\s+/);
   if (nl !== resolved) nicheWords = nicheWords.concat(nl.split(/\s+/));
@@ -4508,7 +4710,18 @@ var NICHE_HASHTAG_POOLS = {
   travel: ["travel","traveltok","travelgram","wanderlust","travelblogger","explore","travelguide","adventure","travelvlog","bucketlist","travelphotography","hiddenspots","solotraveler","travelmore","worldtravel","backpacking","traveltips","nextstop"],
   politics: ["politics","news","currentevents","politicaltok","debate","democracy","votersrights","election","politicalnews","government","policy","politicalcommentary","worldnews","opinion","politicaldebate","activism","changemakers","headlines"],
   ai: ["ai","artificialintelligence","aitools","chatgpt","machinelearning","aiart","aitech","aitips","futureofai","deeplearning","generativeai","aicreator","techtrends","aiforbusiness","prompt","ainews","automation","airevolution"],
-  crypto: ["crypto","bitcoin","ethereum","blockchain","web3","defi","nft","cryptonews","cryptotrading","altcoins","btc","cryptotok","hodl","cryptomarket","decentralized","memecoin","cryptoinvesting","tokenomics"]
+  crypto: ["crypto","bitcoin","ethereum","blockchain","web3","defi","nft","cryptonews","cryptotrading","altcoins","btc","cryptotok","hodl","cryptomarket","decentralized","memecoin","cryptoinvesting","tokenomics"],
+  "ai movie": ["aimovie","aifilm","aifilmmaking","aicinema","soraai","runwayml","aigenerated","aianimation","aishortfilm","aifilmmaker","aiart","generativeai","aitools","futureoffilm","aiscene","aitrailer","aimoviescene","aicreator"],
+  "ai video": ["aivideo","aivideocreator","aicontentcreation","soraai","runwayml","klingai","aiediting","aivideotool","aitools","aicreator","aiforcontentcreators","aitok","generativeai","videocreation","aivideogeneration","contentcreator","aiworkflow","futureofvideo"],
+  "ai content": ["aicontent","aiwriter","aitools","chatgpt","aicontentcreation","aicreator","contentcreator","aiworkflow","aitok","aiforbeginners","generativeai","aicopywriting","aicaptions","contentcreation","aihacks","aiproductivity","aistrategy","creatortools"],
+  motivation: ["motivation","mindset","success","selfimprovement","growthmindset","disciplineovermotivation","grindset","goals","motivationalquotes","hustle","nevergiveup","positivevibes","motivationdaily","successmindset","selfhelp","personalgrowth","dailymotivation","winnermentality"],
+  comedy: ["comedy","funny","humor","comedytok","memes","skit","comedyreels","laughing","funnymemes","comedyvideo","funnyvideos","relatable","prank","comedyskit","standupcomedy","hilarious","viralcomedy","funnycontent"],
+  cars: ["cars","automotive","carsoftiktok","carporn","supercar","carreview","jdm","carmods","carculture","carsofinstagram","luxurycars","electriccar","cardetailing","carguy","drifting","carmeet","autolife","carlife"],
+  anime: ["anime","manga","otaku","animelover","animetok","animerecommendation","animeart","cosplay","animefan","animelife","animecommunity","animememes","newanime","weeb","japanimation","mangarecommendation","animeedits","bestanime"],
+  photography: ["photography","photographer","photooftheday","photographytips","mobilephotography","portraitphotography","landscapephotography","streetphotography","photoedit","lightroom","canonphotography","sonyphotography","photographylovers","photographyislife","photochallenge","goldenhour","photographytok","capturethemoment"],
+  astrology: ["astrology","zodiac","horoscope","zodiacsigns","astrologytok","birthchart","mercuryretrograde","tarot","zodiacs","astrologylovers","astrologymemes","zodiaccompatibility","newmoon","fullmoon","starsigns","dailyhoroscope","cosmicenergy","spiritualtok"],
+  parenting: ["parenting","momlife","dadlife","parentingtips","momtok","toddlermom","newmom","parentingwin","familytime","motherhood","fatherhood","parentinghacks","momhacks","babytok","gentleparenting","parentinghumor","raisingkids","momcommunity"],
+  health: ["health","wellness","healthylifestyle","mentalhealth","wellnesstips","guthealth","holistichealth","selfcare","healthyliving","wellnessjourney","healthtips","biohacking","mindfulness","healthtok","nutrition","sleephealth","wellbeing","mentalhealthawareness"]
 };
 
 var PLATFORM_HASHTAG_BOOSTS = {
@@ -5525,6 +5738,15 @@ var PLATFORM_NOTIFICATIONS = [
     title: "Updates & Recommendations Tab",
     body: "New tab! Get platform updates, tips, and daily personalised recommendations all in one place. Look for the bell icon in the top bar.",
     date: "2026-06-20T12:00:00Z"
+  },
+  {
+    id: "notif-v11.2-niches",
+    type: "update",
+    icon: "&#127775;",
+    iconBg: "rgba(77,201,246,.1)",
+    title: "Better Results for All Niches",
+    body: "We've massively improved keyword scanning and content hooks for AI Video, AI Movie, AI Content, Motivation, Comedy, Cars, Anime, Photography, Astrology, Parenting, Health, and more. Custom niches now generate smarter, more relevant trending results.",
+    date: "2026-06-20T14:00:00Z"
   },
   {
     id: "notif-v11.1-platforms",
