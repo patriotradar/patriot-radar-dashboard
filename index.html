@@ -140,14 +140,29 @@ body{
   background:rgba(11,18,15,.82);
   border:1px solid var(--border);border-radius:16px;
   padding:14px 8px;text-align:center;
-  position:relative;overflow:hidden;
+  position:relative;overflow:hidden;cursor:pointer;
+  transition:border-color .2s,transform .15s;
 }
+.stat:hover{border-color:var(--green);transform:translateY(-2px)}
+.stat:active{transform:translateY(0)}
 .stat::after{
   content:"";position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(0,255,136,.3),transparent);
 }
 .stat strong{display:block;font-size:20px;color:var(--green);margin-bottom:2px}
 .stat span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat .stat-hint{font-size:9px;color:var(--green);opacity:.6;margin-top:4px;display:block}
+.stat-detail{
+  display:none;grid-column:1/-1;background:rgba(11,18,15,.92);
+  border:1px solid var(--border);border-radius:12px;padding:14px;
+  font-size:12px;color:var(--muted);line-height:1.6;
+  animation:fadeIn .25s ease;
+}
+.stat-detail.open{display:block}
+.stat-detail-item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.stat-detail-item:last-child{border-bottom:none}
+.stat-detail-label{color:var(--muted)}
+.stat-detail-value{color:var(--green);font-weight:600}
 
 .card{
   background:rgba(11,18,15,.92);
@@ -1048,9 +1063,10 @@ input[type=range]::-webkit-slider-thumb{
   </div>
 
   <div class="stats">
-    <div class="stat"><strong id="keywordsAnalysed">0</strong><span>Keywords Tracked</span></div>
-    <div class="stat"><strong id="opportunitiesFound">0</strong><span>Opportunities</span></div>
-    <div class="stat"><strong id="viralCount">0</strong><span>Viral Alerts</span></div>
+    <div class="stat" onclick="statTap('keywords')"><strong id="keywordsAnalysed">0</strong><span>Keywords Tracked</span><span class="stat-hint">Tap for details</span></div>
+    <div class="stat" onclick="statTap('opportunities')"><strong id="opportunitiesFound">0</strong><span>Opportunities</span><span class="stat-hint">Tap to view</span></div>
+    <div class="stat" onclick="statTap('viral')"><strong id="viralCount">0</strong><span>Viral Alerts</span><span class="stat-hint">Tap to view</span></div>
+    <div id="statDetailPanel" class="stat-detail"></div>
   </div>
 
   <div id="authBox" class="card card-glow">
@@ -4711,6 +4727,67 @@ function renderVideoAnalyzer() {
   return h;
 }
 
+var activeStatPanel = "";
+function statTap(type) {
+  var panel = document.getElementById("statDetailPanel");
+  if (activeStatPanel === type) {
+    panel.classList.remove("open");
+    activeStatPanel = "";
+    return;
+  }
+  activeStatPanel = type;
+  var h = "";
+  if (type === "keywords" && cachedResults && cachedResults.length > 0) {
+    h += '<div style="margin-bottom:8px;color:var(--green);font-weight:600">&#128270; Keywords Being Tracked</div>';
+    var sorted = cachedResults.slice().sort(function(a,b){return Number(b.viral_score||0)-Number(a.viral_score||0)});
+    var limit = Math.min(sorted.length, 10);
+    for (var i = 0; i < limit; i++) {
+      var r = sorted[i];
+      var score = Number(r.viral_score||0);
+      var bar = score > 60 ? "&#128308;" : score > 30 ? "&#128992;" : "&#9898;";
+      h += '<div class="stat-detail-item"><span class="stat-detail-label">' + bar + ' ' + (r.keyword||"Unknown") + '</span><span class="stat-detail-value">Score: ' + score + '</span></div>';
+    }
+    if (sorted.length > 10) h += '<div style="text-align:center;color:var(--muted);font-size:11px;margin-top:6px">+ ' + (sorted.length-10) + ' more keywords</div>';
+    h += '<div style="text-align:center;margin-top:10px"><button onclick="scrollToSection(\'intelligenceFeed\');statTap(\'keywords\')" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--green);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:11px">View Full Intelligence Feed &#8594;</button></div>';
+  } else if (type === "opportunities" && cachedResults) {
+    var opps = cachedResults.filter(function(r){return Number(r.viral_score||0)>=30});
+    h += '<div style="margin-bottom:8px;color:var(--green);font-weight:600">&#9733; Top Opportunities</div>';
+    if (opps.length === 0) {
+      h += '<div style="color:var(--muted);text-align:center;padding:8px">No opportunities found yet. Keep scanning!</div>';
+    } else {
+      var limit2 = Math.min(opps.length, 5);
+      for (var j = 0; j < limit2; j++) {
+        var o = opps[j];
+        h += '<div class="stat-detail-item"><span class="stat-detail-label">&#9733; ' + (o.keyword||"Unknown") + '</span><span class="stat-detail-value">' + Number(o.viral_score||0) + ' pts</span></div>';
+      }
+      if (opps.length > 5) h += '<div style="text-align:center;color:var(--muted);font-size:11px;margin-top:6px">+ ' + (opps.length-5) + ' more opportunities</div>';
+    }
+    h += '<div style="text-align:center;margin-top:10px"><button onclick="scrollToSection(\'topOpportunities\');statTap(\'opportunities\')" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--green);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:11px">View All Opportunities &#8594;</button></div>';
+  } else if (type === "viral" && cachedResults) {
+    var virals = cachedResults.filter(function(r){return Number(r.rise_percent||0)>50 && Number(r.viral_score||0)>=40});
+    h += '<div style="margin-bottom:8px;color:var(--green);font-weight:600">&#128293; Viral Alerts</div>';
+    if (virals.length === 0) {
+      h += '<div style="color:var(--muted);text-align:center;padding:8px">No viral alerts right now. Trends update regularly.</div>';
+    } else {
+      for (var k = 0; k < virals.length; k++) {
+        var v = virals[k];
+        h += '<div class="stat-detail-item"><span class="stat-detail-label">&#128293; ' + (v.keyword||"Unknown") + '</span><span class="stat-detail-value">+' + Number(v.rise_percent||0) + '% &#8593;</span></div>';
+      }
+    }
+    h += '<div style="text-align:center;margin-top:10px"><button onclick="scrollToSection(\'liveFeed\');statTap(\'viral\')" style="background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.3);color:var(--green);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:11px">View Live Feed &#8594;</button></div>';
+  } else {
+    h = '<div style="color:var(--muted);text-align:center;padding:8px">Loading data...</div>';
+  }
+  panel.innerHTML = h;
+  panel.classList.add("open");
+  trackEvent("stat_tap", {type: type});
+}
+
+function scrollToSection(id) {
+  var el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 function switchTab(tab) {
   var tabs = document.querySelectorAll('.tab-content');
   for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
@@ -5854,6 +5931,15 @@ function startMatrix() {
 
 // ── NOTIFICATIONS SYSTEM ──
 var PLATFORM_NOTIFICATIONS = [
+  {
+    id: "notif-v11.2-interactive-stats",
+    type: "feature",
+    icon: "&#128202;",
+    iconBg: "rgba(0,255,136,.1)",
+    title: "Interactive Top Stats",
+    body: "Your top stats (Keywords Tracked, Opportunities, Viral Alerts) are now tappable! Tap any stat to see a quick breakdown and jump straight to the full section. Requested by our beta testers.",
+    date: "2026-06-20T22:00:00Z"
+  },
   {
     id: "notif-v11.2-feedback-fixes",
     type: "update",
