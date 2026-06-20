@@ -997,11 +997,11 @@ input[type=range]::-webkit-slider-thumb{
   <div id="authBox" class="card card-glow">
     <div id="signupView">
       <h2 style="font-size:18px;margin-bottom:4px">Join the Creator Radar Beta</h2>
-      <p class="intro" style="font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:14px">You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks built for British patriotic creators.</p>
+      <p class="intro" style="font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:14px">You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks tailored to your niche.</p>
       <label>Your Email</label>
       <input id="signupEmail" type="email" placeholder="your@email.com">
       <label>Your Niche</label>
-      <input id="signupNiche" type="text" placeholder="e.g. fitness, cooking, fashion, patriotic">
+      <input id="signupNiche" type="text" placeholder="e.g. fitness, cooking, fashion, tech, beauty">
       <label>Create a Password</label>
       <input id="signupPassword" type="password" placeholder="e.g. MyPass1!">
       <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('betaConsent');cb.checked=!cb.checked;">
@@ -1138,7 +1138,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.8 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v10.9 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -4172,7 +4172,9 @@ async function runAnalyzer() {
     }
   } else { h += '<span style="color:var(--muted)">Neutral</span>'; }
   h += '</span></div>';
-  h += '<div class="az-detail"><span class="az-detail-label">British Relevance</span><span class="az-detail-value" style="color:' + result.british.color + '">' + result.british.label + ' (' + result.british.score + '/25)</span></div>';
+  if (isPatrioticNiche(USER_NICHE)) {
+    h += '<div class="az-detail"><span class="az-detail-label">British Relevance</span><span class="az-detail-value" style="color:' + result.british.color + '">' + result.british.label + ' (' + result.british.score + '/25)</span></div>';
+  }
   h += '<div class="az-detail"><span class="az-detail-label">Debate Potential</span><span class="az-detail-value" style="color:' + result.debate.color + '">' + result.debate.label + ' (' + result.debate.score + '/25)</span></div>';
   h += '</div>';
 
@@ -4183,7 +4185,9 @@ async function runAnalyzer() {
   h += '</div>';
   h += '<div class="cs-bars">';
   h += '<div class="cs-dim"><span class="cs-dim-label">Fresh</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-fresh" style="width:' + (result.freshScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--green)">' + result.freshScore + '</span></div>';
-  h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (result.british.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + result.british.score + '</span></div>';
+  if (isPatrioticNiche(USER_NICHE)) {
+    h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (result.british.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + result.british.score + '</span></div>';
+  }
   h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (result.emotionScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + result.emotionScore + '</span></div>';
   h += '<div class="cs-dim"><span class="cs-dim-label">Debate</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (result.debate.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + result.debate.score + '</span></div>';
   h += '</div></div>';
@@ -4195,13 +4199,13 @@ async function runAnalyzer() {
   if (result.format.format.indexOf("Opinion") !== -1) whyPoints.push("Opinion format makes viewers feel their voice matters, boosting comments");
   if (result.format.format.indexOf("Nostalgia") !== -1 || result.format.format.indexOf("Story") !== -1) whyPoints.push("Nostalgia/story format creates emotional connection and sharing");
   for (var e = 0; e < result.emotions.length; e++) {
-    if (result.emotions[e].label === "Pride") whyPoints.push("Taps into national pride - people share to show identity");
+    if (result.emotions[e].label === "Pride") whyPoints.push(isPatrioticNiche(USER_NICHE) ? "Taps into national pride - people share to show identity" : "Taps into community pride - people share to show who they are");
     if (result.emotions[e].label === "Anger") whyPoints.push("Anger is TikTok's strongest engagement driver - people comment to vent");
     if (result.emotions[e].label === "Nostalgia") whyPoints.push("Nostalgia creates instant emotional connection and sharing");
-    if (result.emotions[e].label === "Concern") whyPoints.push("Concern about national issues drives passionate debate in comments");
+    if (result.emotions[e].label === "Concern") whyPoints.push(isPatrioticNiche(USER_NICHE) ? "Concern about national issues drives passionate debate in comments" : "Concern drives passionate debate and comment engagement");
     if (result.emotions[e].label === "Respect") whyPoints.push("Honour/respect content gets shared widely as a form of tribute");
   }
-  if (result.british.score >= 14) whyPoints.push("Strong British relevance targets a specific, passionate audience");
+  if (isPatrioticNiche(USER_NICHE) && result.british.score >= 14) whyPoints.push("Strong British relevance targets a specific, passionate audience");
   if (result.debate.score >= 14) whyPoints.push("High debate potential means the comments section becomes a conversation");
   if (whyPoints.length === 0) whyPoints.push("General audience appeal with broad reach potential");
   for (var w = 0; w < Math.min(4, whyPoints.length); w++) {
