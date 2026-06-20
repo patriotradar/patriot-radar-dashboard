@@ -1289,6 +1289,60 @@ input[type=range]::-webkit-slider-thumb{
   </div>
 </div>
 
+<div id="feedbackPopup" style="display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.88);overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="max-width:460px;margin:0 auto;padding:20px;min-height:100vh;display:flex;align-items:center">
+    <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;width:100%;box-shadow:0 0 40px rgba(0,255,136,.15)">
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-size:36px;margin-bottom:8px">&#128172;</div>
+        <h2 style="font-size:20px;color:var(--green);margin-bottom:6px">Quick Feedback</h2>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5">Help us make Creator Radar better. Takes 30 seconds!</p>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">How would you rate Creator Radar so far?</label>
+        <div id="fbStars" style="display:flex;gap:8px;justify-content:center">
+          <span onclick="setFbStars(1)" class="fb-star" style="font-size:28px;cursor:pointer;opacity:.4;transition:opacity .15s">&#11088;</span>
+          <span onclick="setFbStars(2)" class="fb-star" style="font-size:28px;cursor:pointer;opacity:.4;transition:opacity .15s">&#11088;</span>
+          <span onclick="setFbStars(3)" class="fb-star" style="font-size:28px;cursor:pointer;opacity:.4;transition:opacity .15s">&#11088;</span>
+          <span onclick="setFbStars(4)" class="fb-star" style="font-size:28px;cursor:pointer;opacity:.4;transition:opacity .15s">&#11088;</span>
+          <span onclick="setFbStars(5)" class="fb-star" style="font-size:28px;cursor:pointer;opacity:.4;transition:opacity .15s">&#11088;</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:4px;padding:0 10px"><span>Needs work</span><span>Love it</span></div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">What's the most useful feature for you?</label>
+        <div id="fbFeatures" style="display:flex;flex-wrap:wrap;gap:6px">
+          <button onclick="toggleFbFeature(this)" class="fb-feat" style="padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">Content Plan</button>
+          <button onclick="toggleFbFeature(this)" class="fb-feat" style="padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">Trends</button>
+          <button onclick="toggleFbFeature(this)" class="fb-feat" style="padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">Hashtags</button>
+          <button onclick="toggleFbFeature(this)" class="fb-feat" style="padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">Platform Optimizer</button>
+          <button onclick="toggleFbFeature(this)" class="fb-feat" style="padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">Hooks</button>
+          <button onclick="toggleFbFeature(this)" class="fb-feat" style="padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:11px;cursor:pointer;font-weight:600;transition:all .15s">Discovery</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">What's missing or could be better?</label>
+        <textarea id="fbMissing" rows="3" placeholder="Any features you'd like to see, things that aren't working well, or suggestions..." style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;font-family:inherit;outline:none;resize:vertical"></textarea>
+      </div>
+
+      <div style="margin-bottom:16px">
+        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Would you recommend Creator Radar to other creators?</label>
+        <div id="fbRecommend" style="display:flex;gap:8px">
+          <button onclick="setFbRecommend(this,'yes')" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:12px;cursor:pointer;font-weight:600;transition:all .15s">Yes!</button>
+          <button onclick="setFbRecommend(this,'maybe')" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:12px;cursor:pointer;font-weight:600;transition:all .15s">Maybe</button>
+          <button onclick="setFbRecommend(this,'not yet')" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:12px;cursor:pointer;font-weight:600;transition:all .15s">Not yet</button>
+        </div>
+      </div>
+
+      <button onclick="submitFeedbackPopup()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:14px;font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:1px">Send Feedback</button>
+      <p id="fbMessage" style="font-size:12px;margin-top:8px;text-align:center"></p>
+      <p style="text-align:center;margin-top:10px"><a href="#" onclick="closeFeedbackPopup();return false" style="font-size:11px;color:var(--muted);text-decoration:underline">Skip for now</a></p>
+    </div>
+  </div>
+</div>
+
 <div id="surveyOverlay" class="survey-overlay">
   <div class="survey-wrap">
     <div class="survey-card">
@@ -5598,7 +5652,8 @@ async function showDashboard() {
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
   } else {
-    setTimeout(function() { showReferralPopup(); }, 1500);
+    setTimeout(function() { showFeedbackPopup(); }, 1200);
+    setTimeout(function() { if (!sessionStorage.getItem("cr_fb_shown") || localStorage.getItem("cr_fb_submitted")) { showReferralPopup(); } }, 2000);
     checkReferralNudge();
   }
 }
@@ -5989,6 +6044,116 @@ function renderDailyRecs(results) {
   h += '</div>';
   var el = document.getElementById("dailyRecs");
   if (el) el.innerHTML = h;
+}
+
+// ── FEEDBACK POPUP ──
+var fbStarVal = 0;
+var fbRecommendVal = "";
+var fbSelectedFeatures = [];
+
+function setFbStars(n) {
+  fbStarVal = n;
+  var stars = document.querySelectorAll("#fbStars .fb-star");
+  for (var i = 0; i < stars.length; i++) {
+    stars[i].style.opacity = i < n ? "1" : ".4";
+  }
+}
+
+function toggleFbFeature(el) {
+  var feat = el.textContent.trim();
+  var idx = fbSelectedFeatures.indexOf(feat);
+  if (idx === -1) {
+    fbSelectedFeatures.push(feat);
+    el.style.borderColor = "var(--green)";
+    el.style.color = "var(--green)";
+    el.style.background = "rgba(0,255,136,.06)";
+  } else {
+    fbSelectedFeatures.splice(idx, 1);
+    el.style.borderColor = "var(--border)";
+    el.style.color = "var(--muted)";
+    el.style.background = "var(--panel2)";
+  }
+}
+
+function setFbRecommend(el, val) {
+  fbRecommendVal = val;
+  var btns = document.querySelectorAll("#fbRecommend button");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].style.borderColor = "var(--border)";
+    btns[i].style.color = "var(--muted)";
+    btns[i].style.background = "var(--panel2)";
+  }
+  el.style.borderColor = "var(--green)";
+  el.style.color = "var(--green)";
+  el.style.background = "rgba(0,255,136,.06)";
+}
+
+function showFeedbackPopup() {
+  if (sessionStorage.getItem("cr_fb_shown")) return;
+  if (localStorage.getItem("cr_fb_submitted")) return;
+  sessionStorage.setItem("cr_fb_shown", "1");
+  document.getElementById("feedbackPopup").style.display = "block";
+}
+
+function closeFeedbackPopup() {
+  document.getElementById("feedbackPopup").style.display = "none";
+}
+
+async function submitFeedbackPopup() {
+  var missing = (document.getElementById("fbMissing").value || "").trim();
+  var msg = document.getElementById("fbMessage");
+
+  if (fbStarVal === 0 && !missing && fbSelectedFeatures.length === 0 && !fbRecommendVal) {
+    msg.innerText = "Please fill in at least one field.";
+    msg.style.color = "var(--red)";
+    return;
+  }
+
+  msg.innerText = "Sending...";
+  msg.style.color = "var(--green)";
+
+  var session = await supabaseClient.auth.getSession();
+  var userEmail = (session.data && session.data.session) ? session.data.session.user.email : "Unknown";
+  var userNiche = USER_NICHE || "unknown";
+
+  try {
+    var fd = new FormData();
+    fd.append("email", "jamiemahon22@icloud.com");
+    fd.append("_subject", "Creator Radar Feedback - " + userEmail);
+    fd.append("User", userEmail);
+    fd.append("Niche", userNiche);
+    fd.append("Rating", fbStarVal + "/5");
+    fd.append("Favourite Features", fbSelectedFeatures.join(", ") || "None selected");
+    fd.append("What's Missing", missing || "No comment");
+    fd.append("Would Recommend", fbRecommendVal || "Not answered");
+    fd.append("_captcha", "false");
+
+    await fetch("https://formsubmit.co/ajax/jamiemahon22@icloud.com", {
+      method: "POST",
+      body: fd
+    });
+
+    try {
+      await supabaseClient.from("cr_support_tickets").insert([{
+        user_email: userEmail,
+        category: "feedback",
+        section: "Feedback Popup",
+        description: "Rating: " + fbStarVal + "/5 | Features: " + (fbSelectedFeatures.join(", ") || "none") + " | Missing: " + (missing || "none") + " | Recommend: " + (fbRecommendVal || "n/a"),
+        niche: userNiche,
+        status: "new"
+      }]);
+    } catch(e) {}
+
+    trackEvent("feedback_submitted", {rating: fbStarVal, recommend: fbRecommendVal, features: fbSelectedFeatures.join(",")});
+
+    msg.innerText = "Thanks for your feedback!";
+    msg.style.color = "var(--green)";
+    localStorage.setItem("cr_fb_submitted", "1");
+    setTimeout(closeFeedbackPopup, 1500);
+  } catch(e) {
+    msg.innerText = "Error sending. Try the Support button instead.";
+    msg.style.color = "var(--red)";
+  }
 }
 
 checkSession();
