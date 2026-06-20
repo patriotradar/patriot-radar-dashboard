@@ -1142,6 +1142,7 @@ input[type=range]::-webkit-slider-thumb{
       <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" data-tab="platforms" onclick="switchTab('platforms')">Platforms</button>
       <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications')">&#128276; Updates</button>
+      <button class="tab-btn" data-tab="admin" onclick="switchTab('admin')" id="adminTabBtn" style="display:none">&#128274; Admin</button>
       <button class="tab-btn" data-tab="feed" onclick="switchTab('feed')">Live Feed</button>
       <button class="tab-btn" data-tab="analyzer" onclick="switchTab('analyzer')">Analyzer</button>
     </div>
@@ -1173,6 +1174,12 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="tab-platforms" class="tab-content">
       <div id="platformOptimizer"></div>
+    </div>
+
+    <div id="tab-admin" class="tab-content">
+      <div id="adminFeedback"></div>
+      <div id="adminUsers"></div>
+      <div id="adminTickets"></div>
     </div>
 
     <div id="tab-notifications" class="tab-content">
@@ -5645,6 +5652,7 @@ async function showDashboard() {
 
   trackEvent("session_start", {niche: USER_NICHE || "patriotic"});
 
+  checkAdminStatus();
   initNicheSwitcher();
   await loadPerfFromSupabase();
   loadLiveStats();
@@ -6044,6 +6052,119 @@ function renderDailyRecs(results) {
   h += '</div>';
   var el = document.getElementById("dailyRecs");
   if (el) el.innerHTML = h;
+}
+
+// ── ADMIN PANEL ──
+var isAdminUser = false;
+
+async function checkAdminStatus() {
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (u && u.user_metadata && u.user_metadata.role === "admin") {
+      isAdminUser = true;
+      var btn = document.getElementById("adminTabBtn");
+      if (btn) btn.style.display = "";
+      loadAdminPanel();
+    }
+  } catch(e) {}
+}
+
+async function loadAdminPanel() {
+  if (!isAdminUser) return;
+  var h = '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:16px;color:var(--green);margin-bottom:4px">&#128274; Admin Dashboard</h2>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Feedback, support tickets, and user activity</p>';
+  h += '</div>';
+
+  // Feedback section
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:var(--amber);margin-bottom:12px">&#128172; User Feedback</h2>';
+  h += '<div id="adminFeedbackList"><p style="color:var(--muted);font-size:12px">Loading feedback...</p></div>';
+  h += '</div>';
+
+  // Support tickets section
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:var(--blue);margin-bottom:12px">&#9993; Support Tickets</h2>';
+  h += '<div id="adminTicketsList"><p style="color:var(--muted);font-size:12px">Loading tickets...</p></div>';
+  h += '</div>';
+
+  // Users section
+  h += '<div class="card">';
+  h += '<h2 style="font-size:14px;color:var(--purple);margin-bottom:12px">&#128101; Registered Users</h2>';
+  h += '<div id="adminUsersList"><p style="color:var(--muted);font-size:12px">User data available via Supabase dashboard</p></div>';
+  h += '</div>';
+
+  document.getElementById("adminFeedback").innerHTML = h;
+
+  loadAdminFeedback();
+  loadAdminTickets();
+}
+
+async function loadAdminFeedback() {
+  var el = document.getElementById("adminFeedbackList");
+  if (!el) return;
+  try {
+    var res = await supabaseClient.from("cr_support_tickets").select("*").eq("category", "feedback").order("created_at", {ascending: false}).limit(50);
+    if (res.data && res.data.length > 0) {
+      var h = '';
+      for (var i = 0; i < res.data.length; i++) {
+        var fb = res.data[i];
+        var desc = fb.description || "";
+        var parts = desc.split(" | ");
+        var rating = "", features = "", missing = "", recommend = "";
+        for (var p = 0; p < parts.length; p++) {
+          if (parts[p].indexOf("Rating:") === 0) rating = parts[p].replace("Rating: ", "");
+          if (parts[p].indexOf("Features:") === 0) features = parts[p].replace("Features: ", "");
+          if (parts[p].indexOf("Missing:") === 0) missing = parts[p].replace("Missing: ", "");
+          if (parts[p].indexOf("Recommend:") === 0) recommend = parts[p].replace("Recommend: ", "");
+        }
+        h += '<div style="padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+        h += '<span style="font-size:12px;font-weight:700;color:var(--white)">' + (fb.user_email || "Unknown") + '</span>';
+        h += '<span style="font-size:9px;color:var(--muted)">' + (fb.niche || "") + ' | ' + timeAgo(fb.created_at) + '</span>';
+        h += '</div>';
+        if (rating) h += '<div style="font-size:11px;margin-bottom:4px"><span style="color:var(--amber)">Rating:</span> <span style="color:var(--white)">' + rating + '</span></div>';
+        if (features && features !== "none") h += '<div style="font-size:11px;margin-bottom:4px"><span style="color:var(--green)">Fav Features:</span> <span style="color:var(--white)">' + features + '</span></div>';
+        if (missing && missing !== "none") h += '<div style="font-size:11px;margin-bottom:4px"><span style="color:var(--blue)">Missing:</span> <span style="color:var(--white)">' + missing + '</span></div>';
+        if (recommend && recommend !== "n/a") h += '<div style="font-size:11px"><span style="color:var(--purple)">Recommend:</span> <span style="color:var(--white)">' + recommend + '</span></div>';
+        h += '</div>';
+      }
+      el.innerHTML = h;
+    } else {
+      el.innerHTML = '<p style="color:var(--muted);font-size:12px;text-align:center;padding:16px 0">No feedback submissions yet. They\'ll appear here as users fill in the popup form.</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:12px;text-align:center;padding:16px 0">No feedback yet. Make sure the cr_support_tickets table is set up in Supabase.</p>';
+  }
+}
+
+async function loadAdminTickets() {
+  var el = document.getElementById("adminTicketsList");
+  if (!el) return;
+  try {
+    var res = await supabaseClient.from("cr_support_tickets").select("*").neq("category", "feedback").order("created_at", {ascending: false}).limit(50);
+    if (res.data && res.data.length > 0) {
+      var h = '';
+      for (var i = 0; i < res.data.length; i++) {
+        var t = res.data[i];
+        var statusColor = t.status === "resolved" ? "var(--green)" : t.status === "in_progress" ? "var(--amber)" : "var(--red)";
+        h += '<div style="padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">';
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+        h += '<span style="font-size:12px;font-weight:700;color:var(--white)">' + (t.user_email || "Unknown") + '</span>';
+        h += '<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.05);color:' + statusColor + ';font-weight:700;text-transform:uppercase">' + (t.status || "new") + '</span>';
+        h += '</div>';
+        h += '<div style="font-size:11px;color:var(--amber);margin-bottom:4px">' + (t.category || "") + (t.section ? " - " + t.section : "") + '</div>';
+        h += '<div style="font-size:12px;color:var(--white);line-height:1.5">' + (t.description || "") + '</div>';
+        h += '<div style="font-size:9px;color:var(--muted);margin-top:6px">' + timeAgo(t.created_at) + '</div>';
+        h += '</div>';
+      }
+      el.innerHTML = h;
+    } else {
+      el.innerHTML = '<p style="color:var(--muted);font-size:12px;text-align:center;padding:16px 0">No support tickets yet.</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:12px;text-align:center;padding:16px 0">No tickets yet. Make sure the cr_support_tickets table is set up in Supabase.</p>';
+  }
 }
 
 // ── FEEDBACK POPUP ──
