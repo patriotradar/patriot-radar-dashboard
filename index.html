@@ -991,6 +991,35 @@ input[type=range]::-webkit-slider-thumb{
 .plat-topic-btn{padding:8px 14px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--muted);font-size:11px;cursor:pointer;font-weight:700;transition:all .15s}
 .plat-topic-btn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06)}
 
+/* ── NOTIFICATIONS ── */
+.notif-bell{position:relative;width:auto;padding:8px 14px;font-size:14px;margin:0;background:rgba(0,255,136,.06);color:var(--muted);border:1px solid var(--border);border-radius:10px;cursor:pointer;line-height:1}
+.notif-bell:hover{border-color:var(--green);color:var(--green)}
+.notif-badge{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:8px;background:var(--red);color:#fff;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1}
+.notif-badge.hide{display:none}
+.notif-item{padding:14px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;position:relative;transition:border-color .2s}
+.notif-item:hover{border-color:var(--border-glow)}
+.notif-item.unread{border-left:3px solid var(--green)}
+.notif-item .ni-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.notif-item .ni-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.notif-item .ni-title{font-size:13px;font-weight:700;color:var(--white);flex:1}
+.notif-item .ni-time{font-size:9px;color:var(--muted);white-space:nowrap}
+.notif-item .ni-body{font-size:12px;color:var(--muted);line-height:1.6;margin-left:36px}
+.notif-item .ni-tag{display:inline-block;font-size:9px;padding:2px 8px;border-radius:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-right:6px}
+.notif-tag-feature{background:rgba(0,255,136,.1);color:var(--green)}
+.notif-tag-update{background:rgba(77,201,246,.1);color:var(--blue)}
+.notif-tag-tip{background:rgba(251,191,36,.1);color:var(--amber)}
+.notif-tag-alert{background:rgba(255,71,87,.1);color:var(--red)}
+.notif-filter{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.notif-filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--muted);font-size:10px;cursor:pointer;font-weight:700;transition:all .15s}
+.notif-filter-btn.active{border-color:var(--green);color:var(--green);background:rgba(0,255,136,.06)}
+.rec-card{padding:14px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.rec-card:hover{border-color:var(--green);transform:translateY(-1px)}
+.rec-priority{display:inline-block;font-size:9px;padding:2px 8px;border-radius:4px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.rec-high{background:rgba(0,255,136,.12);color:var(--green)}
+.rec-medium{background:rgba(251,191,36,.1);color:var(--amber)}
+.rec-action{font-size:12px;color:var(--white);font-weight:600;margin:6px 0 4px}
+.rec-reason{font-size:11px;color:var(--muted);line-height:1.5}
+
 @media(max-width:400px){
   body{padding:10px}
   .card{padding:16px;border-radius:14px}
@@ -1069,6 +1098,7 @@ input[type=range]::-webkit-slider-thumb{
     <div class="topbar">
       <div class="status"><span class="scanner-dot"></span>LIVE</div>
       <div style="display:flex;gap:6px;align-items:center">
+        <button class="notif-bell" onclick="switchTab('notifications')" title="Notifications">&#128276;<span id="notifBadge" class="notif-badge hide">0</span></button>
         <button class="settings-toggle" onclick="toggleSettings()">&#9881;</button>
         <button class="logout" onclick="logout()">Logout</button>
       </div>
@@ -1111,6 +1141,7 @@ input[type=range]::-webkit-slider-thumb{
       <button class="tab-btn" data-tab="audience" onclick="switchTab('audience')">Audience</button>
       <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" data-tab="platforms" onclick="switchTab('platforms')">Platforms</button>
+      <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications')">&#128276; Updates</button>
       <button class="tab-btn" data-tab="feed" onclick="switchTab('feed')">Live Feed</button>
       <button class="tab-btn" data-tab="analyzer" onclick="switchTab('analyzer')">Analyzer</button>
     </div>
@@ -1144,6 +1175,11 @@ input[type=range]::-webkit-slider-thumb{
       <div id="platformOptimizer"></div>
     </div>
 
+    <div id="tab-notifications" class="tab-content">
+      <div id="notificationsCenter"></div>
+      <div id="dailyRecs"></div>
+    </div>
+
     <div id="tab-feed" class="tab-content">
       <div id="liveFeed"></div>
     </div>
@@ -1173,7 +1209,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v11.1 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v11.2 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -1242,6 +1278,7 @@ input[type=range]::-webkit-slider-thumb{
         <option value="Audience">Audience</option>
         <option value="Products">Products</option>
         <option value="Platforms">Platform Optimizer</option>
+        <option value="Notifications">Updates / Notifications</option>
         <option value="Live Feed">Live Feed</option>
         <option value="Analyzer">Video Analyzer</option>
         <option value="Login/Signup">Login / Signup</option>
@@ -4827,6 +4864,8 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
     document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
     document.getElementById("platformOptimizer").innerHTML = renderPlatformOptimizer(results);
+    renderNotifications();
+    renderDailyRecs(results);
   }
 }
 
@@ -4940,6 +4979,13 @@ var TUTORIAL_STEPS = [
     tab: "platforms",
     text: "Get platform-specific titles, descriptions, hashtags, and format tips for every trending topic. Covers TikTok, Instagram, YouTube, X/Twitter, and LinkedIn. Everything is tap-to-copy so you can post in seconds.",
     tip: "Use the topic selector at the top to switch between your trending keywords. Each platform gives you optimised captions, hashtag sets, and best practices."
+  },
+  {
+    title: "Updates & Recommendations",
+    icon: "&#128276;",
+    tab: "notifications",
+    text: "Stay in the loop on new features, tips, and platform changes. Plus get daily personalised recommendations - actions you should take today based on what's trending in your niche right now.",
+    tip: "Check this tab when you see the red badge on the bell icon. New updates and daily action items appear here."
   },
   {
     title: "Live Feed",
@@ -5469,10 +5515,265 @@ function startMatrix() {
   setInterval(draw, 33);
 }
 
+// ── NOTIFICATIONS SYSTEM ──
+var PLATFORM_NOTIFICATIONS = [
+  {
+    id: "notif-v11.2-notifications",
+    type: "feature",
+    icon: "&#128276;",
+    iconBg: "rgba(0,255,136,.1)",
+    title: "Updates & Recommendations Tab",
+    body: "New tab! Get platform updates, tips, and daily personalised recommendations all in one place. Look for the bell icon in the top bar.",
+    date: "2026-06-20T12:00:00Z"
+  },
+  {
+    id: "notif-v11.1-platforms",
+    type: "feature",
+    icon: "&#127760;",
+    iconBg: "rgba(77,201,246,.1)",
+    title: "Platform Optimizer Launched",
+    body: "Get optimised titles, hooks, captions, and hashtags for TikTok, Instagram, YouTube, X/Twitter, and LinkedIn. Everything is tap-to-copy.",
+    date: "2026-06-19T10:00:00Z"
+  },
+  {
+    id: "notif-v11.1-hashtags",
+    type: "feature",
+    icon: "#",
+    iconBg: "rgba(167,139,250,.1)",
+    title: "Hashtag Recommendations",
+    body: "Every content plan slot now includes colour-coded hashtag sets. Green = keyword match, amber = niche, blue = broad reach, purple = platform-specific.",
+    date: "2026-06-19T10:00:00Z"
+  },
+  {
+    id: "notif-tip-audience",
+    type: "tip",
+    icon: "&#127919;",
+    iconBg: "rgba(251,191,36,.1)",
+    title: "Tip: Log Your Video Performance",
+    body: "Use the Quick Log button to record your views, likes, and shares. After 5-10 logs, the system personalises your Content Plan based on what YOUR audience responds to.",
+    date: "2026-06-18T09:00:00Z"
+  },
+  {
+    id: "notif-tip-timing",
+    type: "tip",
+    icon: "&#9200;",
+    iconBg: "rgba(251,191,36,.1)",
+    title: "Tip: Post When Trends Are Rising",
+    body: "Keywords with a positive Rise % are gaining momentum right now. Post about them fast before they peak. Check the Trends tab for the freshest opportunities.",
+    date: "2026-06-17T09:00:00Z"
+  },
+  {
+    id: "notif-v11-discovery",
+    type: "update",
+    icon: "&#128200;",
+    iconBg: "rgba(77,201,246,.1)",
+    title: "Improved Trend Scanning",
+    body: "The scanner now checks more sources and updates more frequently. You'll see fresher data and more emerging topics in the Discovery tab.",
+    date: "2026-06-16T10:00:00Z"
+  },
+  {
+    id: "notif-welcome",
+    type: "update",
+    icon: "&#128075;",
+    iconBg: "rgba(0,255,136,.1)",
+    title: "Welcome to Creator Radar Beta!",
+    body: "Thanks for joining the beta. Explore your Content Plan, check Trends, and use the Audience section to train the system on your audience. Got feedback? Hit the Support button.",
+    date: "2026-06-01T10:00:00Z"
+  }
+];
+
+function getReadNotifs() {
+  try { return JSON.parse(localStorage.getItem("cr_read_notifs") || "[]"); } catch(e) { return []; }
+}
+function markNotifRead(id) {
+  var read = getReadNotifs();
+  if (read.indexOf(id) === -1) { read.push(id); localStorage.setItem("cr_read_notifs", JSON.stringify(read)); }
+}
+function markAllNotifsRead() {
+  var ids = PLATFORM_NOTIFICATIONS.map(function(n) { return n.id; });
+  localStorage.setItem("cr_read_notifs", JSON.stringify(ids));
+  updateNotifBadge();
+  renderNotifications();
+}
+function updateNotifBadge() {
+  var read = getReadNotifs();
+  var unread = PLATFORM_NOTIFICATIONS.filter(function(n) { return read.indexOf(n.id) === -1; }).length;
+  var badge = document.getElementById("notifBadge");
+  if (badge) {
+    if (unread > 0) { badge.textContent = unread; badge.classList.remove("hide"); }
+    else { badge.classList.add("hide"); }
+  }
+}
+
+var notifFilter = "all";
+function setNotifFilter(f) {
+  notifFilter = f;
+  renderNotifications();
+}
+
+function timeAgo(dateStr) {
+  var diff = Date.now() - new Date(dateStr).getTime();
+  var mins = Math.floor(diff / 60000);
+  if (mins < 60) return mins + "m ago";
+  var hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + "h ago";
+  var days = Math.floor(hrs / 24);
+  if (days < 30) return days + "d ago";
+  return Math.floor(days / 30) + "mo ago";
+}
+
+function renderNotifications() {
+  var read = getReadNotifs();
+  var filtered = PLATFORM_NOTIFICATIONS;
+  if (notifFilter !== "all") {
+    filtered = filtered.filter(function(n) { return n.type === notifFilter; });
+  }
+
+  var h = '<div class="card" style="margin-bottom:16px">';
+  h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">';
+  h += '<h2 style="font-size:16px;color:var(--green);margin:0">&#128276; Updates & Announcements</h2>';
+  var unreadCount = PLATFORM_NOTIFICATIONS.filter(function(n) { return read.indexOf(n.id) === -1; }).length;
+  if (unreadCount > 0) {
+    h += '<button onclick="markAllNotifsRead()" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel2);color:var(--muted);font-size:10px;cursor:pointer;font-weight:600">Mark all read</button>';
+  }
+  h += '</div>';
+
+  h += '<div class="notif-filter">';
+  var filters = [{key:"all",label:"All"},{key:"feature",label:"Features"},{key:"update",label:"Updates"},{key:"tip",label:"Tips"}];
+  for (var fi = 0; fi < filters.length; fi++) {
+    var f = filters[fi];
+    h += '<button class="notif-filter-btn' + (notifFilter === f.key ? ' active' : '') + '" onclick="setNotifFilter(\'' + f.key + '\')">' + f.label + '</button>';
+  }
+  h += '</div>';
+
+  if (filtered.length === 0) {
+    h += '<p style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0">No notifications in this category.</p>';
+  }
+
+  for (var i = 0; i < filtered.length; i++) {
+    var n = filtered[i];
+    var isUnread = read.indexOf(n.id) === -1;
+    var tagClass = n.type === "feature" ? "notif-tag-feature" : n.type === "tip" ? "notif-tag-tip" : n.type === "alert" ? "notif-tag-alert" : "notif-tag-update";
+    var tagLabel = n.type === "feature" ? "New Feature" : n.type === "tip" ? "Pro Tip" : n.type === "alert" ? "Alert" : "Update";
+
+    h += '<div class="notif-item' + (isUnread ? ' unread' : '') + '" onclick="markNotifRead(\'' + n.id + '\');this.classList.remove(\'unread\');updateNotifBadge()">';
+    h += '<div class="ni-head">';
+    h += '<div class="ni-icon" style="background:' + n.iconBg + '">' + n.icon + '</div>';
+    h += '<div style="flex:1">';
+    h += '<div class="ni-title"><span class="ni-tag ' + tagClass + '">' + tagLabel + '</span>' + n.title + '</div>';
+    h += '</div>';
+    h += '<div class="ni-time">' + timeAgo(n.date) + '</div>';
+    h += '</div>';
+    h += '<div class="ni-body">' + n.body + '</div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+
+  var el = document.getElementById("notificationsCenter");
+  if (el) el.innerHTML = h;
+  updateNotifBadge();
+}
+
+// ── DAILY RECOMMENDATIONS ──
+function generateDailyRecs(results) {
+  if (!results || results.length === 0) return [];
+  var recs = [];
+  var niche = titleCase(USER_NICHE || "your niche");
+  var top = results[0];
+
+  recs.push({
+    priority: "high",
+    action: "Post about \"" + (top.keyword || "trending topic") + "\" today",
+    reason: "It's your #1 trending keyword right now with a viral score of " + (top.viral_score || 0) + ". Check your Content Plan for ready-made hooks and hashtags.",
+    tab: "plan"
+  });
+
+  var rising = results.filter(function(r) { return Number(r.rise_percent || 0) > 30; });
+  if (rising.length > 0) {
+    var r = rising[Math.floor(rising.length * 0.3)];
+    recs.push({
+      priority: "high",
+      action: "Jump on \"" + (r.keyword || "") + "\" before it peaks",
+      reason: "This keyword is rising at +" + r.rise_percent + "%. Post within the next few hours for maximum reach. Use the Platform Optimizer for ready-made captions.",
+      tab: "platforms"
+    });
+  }
+
+  var logged = 0;
+  try { var aud = JSON.parse(localStorage.getItem("patriot_audience") || "{}"); logged = Object.keys(aud).length; } catch(e) {}
+  if (logged < 5) {
+    recs.push({
+      priority: "medium",
+      action: "Log your recent video performance (" + logged + "/5 logged)",
+      reason: "The Audience system needs at least 5 performance logs to start personalising your Content Plan. Use Quick Log to record your latest video's views and engagement.",
+      tab: null
+    });
+  }
+
+  if (results.length >= 3) {
+    var third = results[2];
+    recs.push({
+      priority: "medium",
+      action: "Try a different angle on \"" + (third.keyword || "") + "\"",
+      reason: "This is trending but might be less competitive than the top keywords. Use the Video Analyzer to find unique angles nobody else is covering.",
+      tab: "analyzer"
+    });
+  }
+
+  var dayOfWeek = new Date().getDay();
+  if (dayOfWeek === 1) {
+    recs.push({ priority: "medium", action: "Plan your content for the week", reason: "Monday is a great time to map out your posting schedule. Check your Content Plan and save the best hooks for each day.", tab: "plan" });
+  } else if (dayOfWeek === 5) {
+    recs.push({ priority: "medium", action: "Review this week's performance", reason: "End of the week - check your Audience insights to see which topics performed best. Double down on winners next week.", tab: "audience" });
+  }
+
+  var niches = ["fitness","beauty","tech","cooking","fashion","gaming","finance","travel"];
+  var crossNiche = niches.filter(function(n) { return n !== (USER_NICHE || "").toLowerCase(); });
+  if (crossNiche.length > 0) {
+    var pick = crossNiche[dayOfWeek % crossNiche.length];
+    recs.push({
+      priority: "medium",
+      action: "Explore trending topics in " + titleCase(pick),
+      reason: "Cross-niche content can expand your audience. Try the Niche Switcher to scan " + titleCase(pick) + " trends and see if anything connects to " + niche + ".",
+      tab: null
+    });
+  }
+
+  return recs;
+}
+
+function renderDailyRecs(results) {
+  var recs = generateDailyRecs(results);
+  if (recs.length === 0) return;
+
+  var h = '<div class="card">';
+  h += '<h2 style="font-size:16px;color:var(--amber);margin-bottom:4px">&#9889; Today\'s Recommendations</h2>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Personalised actions based on what\'s trending in your niche right now</p>';
+
+  for (var i = 0; i < recs.length; i++) {
+    var r = recs[i];
+    var onclick = r.tab ? ' onclick="switchTab(\'' + r.tab + '\')"' : '';
+    h += '<div class="rec-card"' + onclick + '>';
+    h += '<span class="rec-priority ' + (r.priority === "high" ? "rec-high" : "rec-medium") + '">' + (r.priority === "high" ? "Do This Now" : "Suggested") + '</span>';
+    h += '<div class="rec-action">' + r.action + '</div>';
+    h += '<div class="rec-reason">' + r.reason + '</div>';
+    if (r.tab) {
+      h += '<div style="margin-top:6px;font-size:10px;color:var(--green);font-weight:700">Go to ' + titleCase(r.tab) + ' &#8594;</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '</div>';
+  var el = document.getElementById("dailyRecs");
+  if (el) el.innerHTML = h;
+}
+
 checkSession();
 startMatrix();
 loadBrightness();
 loadActiveTab();
+renderNotifications();
 </script>
 </body>
 </html>
