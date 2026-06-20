@@ -170,6 +170,12 @@ td{padding:10px 8px;border-bottom:1px solid rgba(31,58,45,.3)}
     </div>
 
     <div class="card">
+      <h2>Support Tickets</h2>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:12px">User-submitted support requests from the dashboard</p>
+      <div id="supportTickets"></div>
+    </div>
+
+    <div class="card">
       <h2>Referral Tracking</h2>
       <p style="color:var(--muted);font-size:12px;margin-bottom:12px">Who's inviting friends and how many signups they're driving</p>
       <div id="referralTracking"></div>
@@ -690,6 +696,33 @@ function renderAnalytics() {
     }
   }
   document.getElementById("landingTraffic").innerHTML = ltHTML || '<div class="empty-state">No landing page visits tracked yet</div>';
+
+  // Support Tickets
+  sb.from("cr_support_tickets").select("*").order("created_at", {ascending: false}).then(function(ticketRes) {
+    var tickets = (ticketRes.data || []);
+    var stHTML = "";
+    if (tickets.length === 0) {
+      stHTML = '<div class="empty-state">No support tickets yet</div>';
+    } else {
+      var openCount = tickets.filter(function(t) { return t.status === "open"; }).length;
+      stHTML += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">';
+      stHTML += '<div class="stat-card"><div class="val">' + tickets.length + '</div><div class="lbl">Total Tickets</div></div>';
+      stHTML += '<div class="stat-card"><div class="val" style="color:' + (openCount > 0 ? 'var(--amber)' : 'var(--green)') + '">' + openCount + '</div><div class="lbl">Open</div></div>';
+      stHTML += '</div>';
+      stHTML += '<table><thead><tr><th>User</th><th>Category</th><th>Description</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+      for (var ti = 0; ti < tickets.length; ti++) {
+        var t = tickets[ti];
+        var statusBadge = t.status === "open" ? '<span class="badge badge-amber">Open</span>' : '<span class="badge badge-green">Resolved</span>';
+        var date = new Date(t.created_at).toLocaleString("en-GB", {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+        var desc = (t.description || "").length > 60 ? t.description.substring(0, 60) + "..." : (t.description || "");
+        stHTML += '<tr><td style="font-size:11px;color:var(--muted)">' + (t.user_email || "Unknown") + '</td><td><span class="badge badge-blue">' + (t.category || "other") + '</span></td><td style="font-size:11px">' + desc + '</td><td>' + statusBadge + '</td><td style="font-size:11px;color:var(--muted)">' + date + '</td></tr>';
+      }
+      stHTML += '</tbody></table>';
+    }
+    document.getElementById("supportTickets").innerHTML = stHTML;
+  }).catch(function() {
+    document.getElementById("supportTickets").innerHTML = '<div class="empty-state">Support tickets table not set up yet</div>';
+  });
 
   // Referral Tracking
   sb.from("cr_referrals").select("*").order("created_at", {ascending: false}).then(function(refRes) {
