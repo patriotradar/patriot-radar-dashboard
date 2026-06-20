@@ -1138,7 +1138,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v10.9 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v11.0 &bull; INTELLIGENCE NETWORK ACTIVE</div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -4672,7 +4672,16 @@ async function submitTicket() {
     var r = await fetch("https://formsubmit.co/ajax/jamiemahon22@icloud.com", { method: "POST", body: fd });
     var d = await r.json();
     if (d.success) {
-      trackEvent("feature_use", {feature: "support_ticket", category: category});
+      trackEvent("feature_use", {feature: "support_ticket", category: category, section: section || "General", description: description});
+      try {
+        await supabaseClient.from("cr_support_tickets").insert([{
+          user_email: userEmail,
+          category: category,
+          section: section || "General",
+          description: description,
+          status: "open"
+        }]);
+      } catch(e) {}
       msg.innerHTML = "Ticket sent! We'll get back to you soon."; msg.style.color = "var(--green)";
       setTimeout(function() { closeSupportTicket(); }, 2000);
     } else {
