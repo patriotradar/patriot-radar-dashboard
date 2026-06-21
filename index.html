@@ -4909,7 +4909,11 @@ function renderAIContent(ai, sectionId) {
 
 var aiTrendsLoaded = false;
 async function aiTrendInsights() {
-  if (!GROQ_KEY || !cachedResults || cachedResults.length === 0 || aiTrendsLoaded) return;
+  if (!GROQ_KEY || aiTrendsLoaded) return;
+  if (!cachedResults || cachedResults.length === 0) {
+    setTimeout(function() { aiTrendInsights(); }, 3000);
+    return;
+  }
   var el = document.getElementById("aiTrendInsights");
   if (!el) return;
   aiTrendsLoaded = true;
@@ -4962,7 +4966,7 @@ async function aiTrendInsights() {
 
     h += '</div>';
     el.innerHTML = h;
-  } catch(e) { el.innerHTML = ""; }
+  } catch(e) { el.innerHTML = ""; aiTrendsLoaded = false; }
 }
 
 async function aiContentAngles(results) {
