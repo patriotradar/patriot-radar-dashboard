@@ -1213,6 +1213,7 @@ input[type=range]::-webkit-slider-thumb{
     <div id="tab-trends" class="tab-content">
       <div id="scoringGuide"></div>
       <div id="topOpportunities"></div>
+      <div id="aiTrendInsights"></div>
       <div id="themeAnalysis"></div>
       <div id="intelligenceFeed"></div>
     </div>
@@ -4906,6 +4907,64 @@ function renderAIContent(ai, sectionId) {
   addXP("analyze");
 }
 
+var aiTrendsLoaded = false;
+async function aiTrendInsights() {
+  if (!GROQ_KEY || !cachedResults || cachedResults.length === 0 || aiTrendsLoaded) return;
+  var el = document.getElementById("aiTrendInsights");
+  if (!el) return;
+  aiTrendsLoaded = true;
+
+  var top5 = cachedResults.slice(0, 5);
+  var keywords = top5.map(function(r){return r.keyword});
+  var audienceCtx = getAudienceContext();
+
+  el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Trend Analysis</h2></div><p style="font-size:11px;color:var(--muted)">Analysing trends with AI...</p></div>';
+
+  try {
+    var prompt = "You are a viral content strategist." + audienceCtx + "\n\nAnalyse these 5 trending keywords and for each one provide: a quick take on why it's trending, whether it's worth making content about, and a specific video idea.\n\nKeywords:\n" + keywords.map(function(k,i){
+      var r = top5[i];
+      return (i+1)+". "+k+" (Viral: "+r.viral_score+", Rise: "+r.rise_percent+"%)";
+    }).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"trends\":[{\"keyword\":\"keyword\",\"whyTrending\":\"One sentence on why this is trending right now\",\"worthIt\":true,\"worthReason\":\"Why this is/isn't worth posting about\",\"videoIdea\":\"A specific, ready-to-film video concept\",\"bestTime\":\"Post now / Post today / Can wait\"}]}";
+
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 900})
+    });
+    if (!resp.ok) { el.innerHTML = ""; return; }
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    var aiData = JSON.parse(cleaned);
+    if (!aiData.trends) { el.innerHTML = ""; return; }
+
+    var h = '<div class="card" style="border-color:rgba(167,139,250,.25)">';
+    h += '<div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Trend Analysis</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128202;</div></div>';
+    h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">AI analysis of your top trending keywords - why they\'re trending, whether to post, and specific video ideas.</p>';
+
+    for (var i = 0; i < aiData.trends.length; i++) {
+      var t = aiData.trends[i];
+      var worthColor = t.worthIt ? "var(--green)" : "var(--red)";
+      var worthLabel = t.worthIt ? "WORTH POSTING" : "SKIP THIS ONE";
+      var timeColor = (t.bestTime || "").indexOf("now") !== -1 ? "#ff4757" : (t.bestTime || "").indexOf("today") !== -1 ? "var(--amber)" : "var(--muted)";
+
+      h += '<div style="padding:12px;background:var(--panel2);border:1px solid var(--border);border-left:3px solid ' + worthColor + ';border-radius:10px;margin-bottom:8px">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+      h += '<span style="font-size:13px;font-weight:900;color:var(--white)">' + (t.keyword || keywords[i]) + '</span>';
+      h += '<span style="font-size:9px;font-weight:700;color:' + worthColor + ';padding:2px 8px;background:' + (t.worthIt ? 'rgba(0,255,136,.1)' : 'rgba(255,0,0,.1)') + ';border-radius:6px">' + worthLabel + '</span>';
+      h += '</div>';
+      h += '<div style="font-size:11px;color:var(--muted);margin-bottom:4px"><strong style="color:var(--amber)">Why trending:</strong> ' + (t.whyTrending || "") + '</div>';
+      h += '<div style="font-size:11px;color:var(--muted);margin-bottom:4px"><strong style="color:' + worthColor + '">Verdict:</strong> ' + (t.worthReason || "") + '</div>';
+      h += '<div onclick="navigator.clipboard.writeText(\'' + (t.videoIdea || "").replace(/'/g, "\\'") + '\');this.style.borderColor=\'var(--green)\';var s=this;setTimeout(function(){s.style.borderColor=\'rgba(0,255,136,.12)\'},1000)" style="font-size:11px;color:var(--white);background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);padding:8px;border-radius:8px;margin-bottom:4px;cursor:pointer"><strong style="color:var(--green)">Video idea:</strong> ' + (t.videoIdea || "") + ' <span style="font-size:8px;color:var(--muted);float:right">TAP TO COPY</span></div>';
+      h += '<div style="font-size:10px;color:' + timeColor + ';font-weight:700">Timing: ' + (t.bestTime || "Post when ready") + '</div>';
+      h += '</div>';
+    }
+
+    h += '</div>';
+    el.innerHTML = h;
+  } catch(e) { el.innerHTML = ""; }
+}
+
 async function aiContentAngles(results) {
   if (!GROQ_KEY || !results || results.length === 0) return;
   var el = document.getElementById("aiContentAngles");
@@ -5400,6 +5459,7 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   localStorage.setItem('patriot_active_tab', tab);
   trackEvent("tab_switch", {tab: tab});
+  if (tab === "trends") aiTrendInsights();
 }
 
 function loadActiveTab() {
