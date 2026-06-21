@@ -2693,6 +2693,17 @@ function openPerfModal(keyword) {
   h += '<label>How many views did it get?</label>';
   h += '<input id="perfViews" type="number" placeholder="Enter view count" style="font-size:20px;text-align:center;padding:18px">';
 
+  h += '<div style="margin:10px 0">';
+  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Content Format (helps AI learn what works for you)</label>';
+  h += '<div id="perfFormatPicks" style="display:flex;flex-wrap:wrap;gap:6px">';
+  var formats = ["Yes/No Debate","Opinion/Hot Take","Story/Nostalgia","Educational","Reaction","Tutorial","Comparison","Other"];
+  for (var fi = 0; fi < formats.length; fi++) {
+    h += '<button onclick="selectPerfFormat(this,\'' + formats[fi] + '\')" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:var(--panel2);color:var(--muted);font-size:10px;cursor:pointer;font-weight:600">' + formats[fi] + '</button>';
+  }
+  h += '</div>';
+  h += '<input type="hidden" id="perfFormat" value="">';
+  h += '</div>';
+
   h += '<div style="text-align:center;margin:8px 0"><button class="copy-btn" onclick="document.getElementById(\'perfDetailFields\').style.display=document.getElementById(\'perfDetailFields\').style.display===\'none\'?\'block\':\'none\'" style="margin:0;font-size:10px">+ Add likes, comments, shares (optional)</button></div>';
   h += '<div id="perfDetailFields" style="display:none">';
   h += '<div class="modal-input-grid">';
@@ -2730,6 +2741,15 @@ function closePerfModal() {
   document.getElementById("perfModal").classList.add("hidden");
 }
 
+function selectPerfFormat(btn, format) {
+  var btns = document.getElementById("perfFormatPicks").querySelectorAll("button");
+  for (var i = 0; i < btns.length; i++) { btns[i].style.borderColor = "var(--border)"; btns[i].style.color = "var(--muted)"; btns[i].style.background = "var(--panel2)"; }
+  btn.style.borderColor = "var(--green)";
+  btn.style.color = "var(--green)";
+  btn.style.background = "rgba(0,255,136,.1)";
+  document.getElementById("perfFormat").value = format;
+}
+
 function toggleCustomKw(sel) {
   var custom = document.getElementById("perfCustomKw");
   if (custom) custom.style.display = sel.value === "__custom__" ? "block" : "none";
@@ -2754,7 +2774,9 @@ function submitPerfSimple(keyword) {
   var shares = (document.getElementById("perfShares") || {}).value || "0";
   var followers = (document.getElementById("perfFollowers") || {}).value || "0";
 
-  var entry = { views: views, likes: likes, comments: comments, shares: shares, followers: followers };
+  var format = (document.getElementById("perfFormat") || {}).value || "";
+
+  var entry = { views: views, likes: likes, comments: comments, shares: shares, followers: followers, format: format };
   if (Number(likes) > 0 || Number(comments) > 0 || Number(shares) > 0) {
     entry.score = calcAudienceScore(entry);
   } else {
@@ -4813,6 +4835,31 @@ function getAudienceContext() {
   if (perfTopics.length > 0) {
     ctx += " The creator's best performing topics based on their audience data are: " + perfTopics.slice(0, 5).map(function(t){return titleCase(t)}).join(", ") + ". Prioritise similar topics.";
   }
+  var formatStats = {};
+  for (var fk in perfData) {
+    var entries = perfData[fk];
+    for (var fe = 0; fe < entries.length; fe++) {
+      var fmt = entries[fe].format;
+      if (fmt) {
+        if (!formatStats[fmt]) formatStats[fmt] = {count: 0, totalViews: 0, totalLikes: 0, totalComments: 0};
+        formatStats[fmt].count++;
+        formatStats[fmt].totalViews += Number(entries[fe].views || 0);
+        formatStats[fmt].totalLikes += Number(entries[fe].likes || 0);
+        formatStats[fmt].totalComments += Number(entries[fe].comments || 0);
+      }
+    }
+  }
+  var formatRanking = [];
+  for (var fm in formatStats) {
+    formatRanking.push({format: fm, avg: Math.round(formatStats[fm].totalViews / formatStats[fm].count), count: formatStats[fm].count, comments: formatStats[fm].totalComments});
+  }
+  formatRanking.sort(function(a,b){return b.avg - a.avg});
+  if (formatRanking.length > 0) {
+    ctx += " CONTENT FORMAT PREFERENCE: The creator's best performing format is '" + formatRanking[0].format + "' (averaging " + formatRanking[0].avg + " views across " + formatRanking[0].count + " posts). Prioritise this format in hooks and content suggestions.";
+    if (formatRanking.length > 1) {
+      ctx += " Other formats ranked: " + formatRanking.slice(1, 4).map(function(f){return f.format + " (" + f.avg + " avg views)"}).join(", ") + ".";
+    }
+  }
   return ctx;
 }
 
@@ -6337,6 +6384,44 @@ function renderPersonalIntelligence(results) {
       h += '<div style="margin-bottom:8px">';
       h += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>' + medal + ' ' + titleCase(ts.keyword) + ' <span style="color:var(--muted);font-size:10px">(' + ts.entries + ' posts)</span></span><span style="color:var(--green);font-weight:700">' + ts.avgViews.toLocaleString() + ' avg</span></div>';
       h += '<div style="height:6px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + barWidth.toFixed(0) + '%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:4px"></div></div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  var fmtStats = {};
+  for (var fk = 0; fk < perfKeys.length; fk++) {
+    var fEntries = perfData[perfKeys[fk]];
+    for (var fe = 0; fe < fEntries.length; fe++) {
+      var fmt = fEntries[fe].format;
+      if (fmt) {
+        if (!fmtStats[fmt]) fmtStats[fmt] = {count: 0, views: 0, likes: 0, comments: 0};
+        fmtStats[fmt].count++;
+        fmtStats[fmt].views += Number(fEntries[fe].views || 0);
+        fmtStats[fmt].likes += Number(fEntries[fe].likes || 0);
+        fmtStats[fmt].comments += Number(fEntries[fe].comments || 0);
+      }
+    }
+  }
+  var fmtList = [];
+  for (var fm in fmtStats) fmtList.push({format: fm, avg: Math.round(fmtStats[fm].views / fmtStats[fm].count), count: fmtStats[fm].count, comments: fmtStats[fm].comments, likes: fmtStats[fm].likes});
+  fmtList.sort(function(a,b){return b.avg - a.avg});
+
+  if (fmtList.length > 0) {
+    h += '<div class="pi-card">';
+    h += '<h3>&#127916; Format Performance</h3>';
+    h += '<p style="font-size:11px;color:var(--muted);margin-bottom:10px">Which content formats perform best for YOUR audience. The AI uses this to prioritise your winning format.</p>';
+    var bestFmt = fmtList[0];
+    h += '<div class="pi-insight"><div class="pi-icon">&#127942;</div><div><strong>Your Best Format: ' + bestFmt.format + '</strong><br>Averages ' + bestFmt.avg.toLocaleString() + ' views per post (' + bestFmt.count + ' posts). ';
+    if (fmtList.length > 1) h += 'That\'s <strong>' + (bestFmt.avg / Math.max(1, fmtList[fmtList.length-1].avg)).toFixed(1) + 'x better</strong> than ' + fmtList[fmtList.length-1].format + '.';
+    h += '<br><span style="color:var(--green);font-size:10px">The AI will prioritise ' + bestFmt.format + ' hooks and angles in your recommendations.</span></div></div>';
+    for (var fl = 0; fl < fmtList.length; fl++) {
+      var f = fmtList[fl];
+      var fBar = bestFmt.avg > 0 ? (f.avg / bestFmt.avg * 100) : 0;
+      var fMedal = fl === 0 ? "&#129351;" : fl === 1 ? "&#129352;" : fl === 2 ? "&#129353;" : "&#128313;";
+      h += '<div style="margin-bottom:8px">';
+      h += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>' + fMedal + ' ' + f.format + ' <span style="color:var(--muted);font-size:10px">(' + f.count + ' posts)</span></span><span style="color:var(--green);font-weight:700">' + f.avg.toLocaleString() + ' avg</span></div>';
+      h += '<div style="height:6px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + fBar.toFixed(0) + '%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:4px"></div></div>';
       h += '</div>';
     }
     h += '</div>';
