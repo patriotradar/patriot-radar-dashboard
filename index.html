@@ -3029,12 +3029,17 @@ function renderDailyPlan(results, emerging) {
   var planCSText = planCS > 0 ? ' | Content: ' + planCS + '/100' : '';
   h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + planCSText + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
   h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + hooks[0] + '"</div>';
-  h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:6px">More hooks</button>';
+  h += '<div style="display:flex;gap:6px;margin-bottom:6px"><button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:0;flex:1">More hooks</button>';
+  h += '<button id="ai-btn-plan0" class="copy-btn" onclick="aiEnhanceSection(\'' + pk.kw.replace(/'/g, "\\'") + '\',\'plan0\')" style="margin-top:0;flex:1;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">&#129504; AI Enhance</button></div>';
   h += '<ul class="hooks-list hidden" id="' + hookId + '">';
   for (var hk = 1; hk < hooks.length; hk++) {
     h += '<li onclick="copyHook(this)"><span class="hook-num">' + hk + '</span><span class="hook-text">' + hooks[hk] + '</span><span class="hook-copy">COPY</span></li>';
   }
   h += '</ul>';
+  h += '<ul class="hooks-list hidden" id="ai-hooks-plan0"></ul>';
+  h += '<div id="ai-caption-plan0" style="display:none;font-size:12px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);padding:10px;border-radius:8px;margin-top:6px;line-height:1.5;cursor:pointer" onclick="copyText(\'ai-caption-plan0\')"></div>';
+  h += '<div id="ai-engage-plan0" style="display:none;margin-top:6px"></div>';
+  h += '<div id="ai-hashtags-plan0" style="display:none;margin-top:6px"></div>';
   h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
   h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
   h += renderHashtagBlock(pk.kw, USER_NICHE, null, "plan-hash-0");
@@ -3768,16 +3773,23 @@ function renderPrimary(item) {
   }
   h += '</div>';
 
-  h += '<div class="primary-section-label">Auto-Generated Hooks (tap to copy)</div>';
-  h += '<ul class="hooks-list">';
+  h += '<div style="margin-bottom:12px"><button id="ai-btn-primary" onclick="aiEnhanceSection(\'' + (item.keyword || "").replace(/'/g, "\\'") + '\',\'primary\')" style="width:100%;padding:12px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:10px;color:var(--purple);font-size:12px;font-weight:700;cursor:pointer">&#129504; AI Enhance - Generate unique hooks, caption & ideas</button></div>';
+
+  h += '<div class="primary-section-label">Hooks (tap to copy)</div>';
+  h += '<ul class="hooks-list" id="ai-hooks-primary">';
   for (var i = 0; i < hooks.length; i++) {
     h += '<li onclick="copyHook(this)"><span class="hook-num">' + (i + 1) + '</span><span class="hook-text">' + hooks[i] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
   }
   h += '</ul>';
 
   h += '<div class="primary-section-label">Caption</div>';
+  h += '<div id="ai-caption-primary" style="display:none;font-size:13px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);padding:12px;border-radius:10px;margin-bottom:8px;line-height:1.6;cursor:pointer" onclick="copyText(\'ai-caption-primary\')"></div>';
   h += '<div id="primaryCaption" class="primary-content-box" style="font-size:13px;color:var(--muted)">' + (item.caption || "N/A") + '</div>';
-  h += '<button class="copy-btn" onclick="copyText(\'primaryCaption\')">&#9776; Copy Caption</button>';
+  h += '<button class="copy-btn" onclick="copyText(document.getElementById(\'ai-caption-primary\').style.display!==\'none\'?\'ai-caption-primary\':\'primaryCaption\')">&#9776; Copy Caption</button>';
+
+  h += '<div id="ai-engage-primary" style="display:none;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)"><div style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#129504; AI Engagement Plays</div></div>';
+
+  h += '<div id="ai-hashtags-primary" style="display:none;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)"><div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#129504; AI Hashtags</div></div>';
 
   h += '<div style="margin-top:16px"><button class="log-perf-btn" onclick="openPerfModal(\'' + (item.keyword || "").replace(/'/g, "\\'") + '\')">&#9998; Log Performance</button></div>';
 
@@ -4755,6 +4767,111 @@ async function getAIAnalysis(caption, niche) {
   }
 }
 
+var aiCache = {};
+
+async function aiEnhanceSection(keyword, sectionId) {
+  var btn = document.getElementById("ai-btn-" + sectionId);
+  if (btn) { btn.disabled = true; btn.innerHTML = "&#129504; Generating..."; }
+  var cacheKey = keyword.toLowerCase() + "_" + (USER_NICHE || "general").toLowerCase();
+  if (aiCache[cacheKey]) {
+    renderAIContent(aiCache[cacheKey], sectionId);
+    if (btn) { btn.innerHTML = "&#129504; AI Enhanced"; btn.style.background = "rgba(0,255,136,.1)"; btn.style.borderColor = "rgba(0,255,136,.3)"; btn.style.color = "var(--green)"; }
+    return;
+  }
+  try {
+    var niche = USER_NICHE || "general";
+    var prompt = "You are a viral social media expert. Generate content for a creator in the " + niche + " niche about the topic: " + keyword + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.8, max_tokens: 700})
+    });
+    if (!resp.ok) throw new Error("API error");
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    var result = JSON.parse(cleaned);
+    aiCache[cacheKey] = result;
+    renderAIContent(result, sectionId);
+    if (btn) { btn.innerHTML = "&#129504; AI Enhanced"; btn.style.background = "rgba(0,255,136,.1)"; btn.style.borderColor = "rgba(0,255,136,.3)"; btn.style.color = "var(--green)"; }
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.innerHTML = "&#129504; AI Enhance"; }
+  }
+}
+
+function renderAIContent(ai, sectionId) {
+  var hooksEl = document.getElementById("ai-hooks-" + sectionId);
+  if (hooksEl && ai.hooks) {
+    var h = '';
+    for (var i = 0; i < ai.hooks.length; i++) {
+      h += '<li onclick="copyHook(this)"><span class="hook-num">' + (i + 1) + '</span><span class="hook-text">' + ai.hooks[i] + '</span><span class="hook-copy">TAP TO COPY</span></li>';
+    }
+    hooksEl.innerHTML = h;
+    hooksEl.classList.remove("hidden");
+  }
+  var capEl = document.getElementById("ai-caption-" + sectionId);
+  if (capEl && ai.caption) {
+    capEl.innerHTML = ai.caption;
+    capEl.style.display = "block";
+  }
+  var engEl = document.getElementById("ai-engage-" + sectionId);
+  if (engEl && ai.engagement) {
+    var eh = '';
+    if (ai.engagement.poll) eh += '<div style="padding:6px 8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.12);border-radius:8px;margin-bottom:4px;font-size:11px;color:var(--muted);cursor:pointer" onclick="navigator.clipboard.writeText(this.querySelector(\'.eng-val\').innerText);this.querySelector(\'.eng-lbl\').innerText=\'COPIED!\'"><span class="eng-lbl" style="color:var(--purple);font-weight:700;font-size:9px;text-transform:uppercase">POLL</span><br><span class="eng-val" style="color:var(--white)">' + ai.engagement.poll + '</span></div>';
+    if (ai.engagement.question) eh += '<div style="padding:6px 8px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);border-radius:8px;margin-bottom:4px;font-size:11px;color:var(--muted);cursor:pointer" onclick="navigator.clipboard.writeText(this.querySelector(\'.eng-val\').innerText);this.querySelector(\'.eng-lbl\').innerText=\'COPIED!\'"><span class="eng-lbl" style="color:var(--green);font-weight:700;font-size:9px;text-transform:uppercase">QUESTION</span><br><span class="eng-val" style="color:var(--white)">' + ai.engagement.question + '</span></div>';
+    if (ai.engagement.cta) eh += '<div style="padding:6px 8px;background:rgba(255,165,0,.05);border:1px solid rgba(255,165,0,.12);border-radius:8px;margin-bottom:4px;font-size:11px;color:var(--muted);cursor:pointer" onclick="navigator.clipboard.writeText(this.querySelector(\'.eng-val\').innerText);this.querySelector(\'.eng-lbl\').innerText=\'COPIED!\'"><span class="eng-lbl" style="color:var(--amber);font-weight:700;font-size:9px;text-transform:uppercase">CTA</span><br><span class="eng-val" style="color:var(--white)">' + ai.engagement.cta + '</span></div>';
+    engEl.innerHTML = eh;
+    engEl.style.display = "block";
+  }
+  var hashEl = document.getElementById("ai-hashtags-" + sectionId);
+  if (hashEl && ai.hashtags) {
+    var hh = '<div style="display:flex;flex-wrap:wrap;gap:4px">';
+    for (var j = 0; j < ai.hashtags.length; j++) {
+      var tag = ai.hashtags[j].replace(/^#/, "");
+      hh += '<span onclick="navigator.clipboard.writeText(\'#' + tag + '\');this.style.borderColor=\'var(--green)\';this.innerText=\'Copied!\';var s=this;setTimeout(function(){s.innerText=\'#' + tag + '\';s.style.borderColor=\'var(--border)\'},1000)" style="padding:4px 8px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;font-size:10px;color:var(--green);cursor:pointer">#' + tag + '</span>';
+    }
+    hh += '</div>';
+    hashEl.innerHTML = hh;
+    hashEl.style.display = "block";
+  }
+  addXP("analyze");
+}
+
+async function aiEnhancePlatform(keyword) {
+  var btn = document.getElementById("ai-btn-plat");
+  var resultDiv = document.getElementById("ai-plat-result");
+  if (btn) { btn.disabled = true; btn.innerHTML = "&#129504; Generating captions..."; }
+  try {
+    var niche = USER_NICHE || "general";
+    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for a creator in the " + niche + " niche about: " + keyword + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.8, max_tokens: 600})
+    });
+    if (!resp.ok) throw new Error("API error");
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    var result = JSON.parse(cleaned);
+    var h = '<div style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">&#129504; AI-Generated Captions (tap to copy)</div>';
+    var platforms = [{key:"tiktok",name:"TikTok",icon:"&#9835;"},{key:"instagram",name:"Instagram",icon:"&#128247;"},{key:"youtube",name:"YouTube",icon:"&#9654;"},{key:"twitter",name:"X / Twitter",icon:"&#128038;"}];
+    for (var i = 0; i < platforms.length; i++) {
+      var p = platforms[i];
+      if (result[p.key]) {
+        h += '<div style="margin-bottom:8px"><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:3px">' + p.icon + ' ' + p.name + '</div>';
+        h += '<div onclick="navigator.clipboard.writeText(this.innerText);this.style.borderColor=\'var(--green)\';var s=this;setTimeout(function(){s.style.borderColor=\'rgba(167,139,250,.15)\'},1000)" style="font-size:11px;color:var(--white);background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);padding:10px;border-radius:8px;cursor:pointer;line-height:1.5;white-space:pre-wrap">' + result[p.key].replace(/</g,"&lt;") + '</div></div>';
+      }
+    }
+    resultDiv.innerHTML = h;
+    resultDiv.style.display = "block";
+    if (btn) { btn.innerHTML = "&#129504; AI Generated"; btn.style.background = "rgba(0,255,136,.1)"; btn.style.borderColor = "rgba(0,255,136,.3)"; btn.style.color = "var(--green)"; }
+    addXP("analyze");
+  } catch(e) {
+    if (btn) { btn.disabled = false; btn.innerHTML = "&#129504; AI Generate - Get unique captions for all platforms"; }
+  }
+}
+
 function saveGroqKey() {
   var input = document.getElementById("groqKeyInput");
   var key = (input.value || "").trim();
@@ -5533,7 +5650,9 @@ function renderPlatformOptimizer(results, topicIdx) {
   h += '</div>';
 
   h += '<div style="font-size:16px;font-weight:900;color:var(--white);margin-bottom:4px">' + titleCase(kw) + '</div>';
-  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:16px">Viral Score: ' + topic.viral_score + ' | Rise: ' + formatRise(Number(topic.rise_percent || 0)) + '</div>';
+  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:10px">Viral Score: ' + topic.viral_score + ' | Rise: ' + formatRise(Number(topic.rise_percent || 0)) + '</div>';
+  h += '<button id="ai-btn-plat" onclick="aiEnhancePlatform(\'' + kw.replace(/'/g, "\\'") + '\')" style="width:100%;padding:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:10px;color:var(--purple);font-size:11px;font-weight:700;cursor:pointer;margin-bottom:14px">&#129504; AI Generate - Get unique captions for all platforms</button>';
+  h += '<div id="ai-plat-result" style="display:none;margin-bottom:14px"></div>';
 
   for (var pi = 0; pi < PLATFORMS.length; pi++) {
     var plat = PLATFORMS[pi];
