@@ -712,6 +712,31 @@ button:active{transform:scale(.98)}
 .history-entry .he-date{color:var(--muted)}
 .history-entry .he-score{color:var(--green);font-weight:800}
 
+/* ── AUDIENCE MODEL ── */
+.am-combo{padding:12px;background:var(--panel2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
+.am-combo-path{font-size:13px;font-weight:900;color:var(--white);margin-bottom:6px;line-height:1.4}
+.am-combo-path .am-sep{color:var(--green);margin:0 4px;font-size:11px}
+.am-combo-stats{display:flex;gap:8px;flex-wrap:wrap;font-size:10px}
+.am-combo-stat{padding:3px 8px;border-radius:6px;font-weight:700}
+.am-match{padding:10px 12px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.15);border-radius:10px;margin-bottom:6px}
+.am-match-score{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.am-match-pct{font-size:24px;font-weight:900;line-height:1}
+.am-match-reasons{font-size:10px;color:var(--muted);line-height:1.6}
+.am-match-reasons li{margin-bottom:2px;list-style:none;padding-left:12px;position:relative}
+.am-match-reasons li::before{content:">";position:absolute;left:0;color:var(--green);font-weight:700}
+.am-predict{display:flex;gap:6px;margin-top:6px}
+.am-predict-item{flex:1;text-align:center;padding:6px 4px;background:var(--panel2);border:1px solid var(--border);border-radius:8px}
+.am-predict-label{font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:2px}
+.am-predict-val{font-size:12px;font-weight:900}
+.screenshot-drop{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s}
+.screenshot-drop:hover,.screenshot-drop.dragover{border-color:var(--green);background:rgba(0,255,136,.03)}
+.screenshot-drop img{max-width:100%;max-height:150px;border-radius:8px;margin-top:8px}
+.am-classify-tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;margin:2px}
+.am-classify-tag.topic{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+.am-classify-tag.sub{background:rgba(77,201,246,.1);color:var(--blue);border:1px solid rgba(77,201,246,.2)}
+.am-classify-tag.format{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.am-classify-tag.emotion{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.2)}
+
 /* ── AUDIENCE INSIGHTS ── */
 .audience-card{border-color:var(--border-glow)}
 
@@ -2713,6 +2738,19 @@ function openPerfModal(keyword) {
   h += '<div class="modal-field"><label>New Followers</label><input id="perfFollowers" type="number" placeholder="0"></div>';
   h += '</div></div>';
 
+  h += '<div style="margin:10px 0">';
+  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Caption / Description (helps AI classify your content)</label>';
+  h += '<textarea id="perfCaption" placeholder="Paste your caption or describe what the video was about..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#07100c;color:white;font-size:12px;resize:vertical;min-height:50px;max-height:120px;outline:none;font-family:inherit"></textarea>';
+  h += '</div>';
+
+  h += '<div style="margin:10px 0">';
+  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Screenshot (optional - AI extracts metrics automatically)</label>';
+  h += '<div id="screenshotDrop" class="screenshot-drop" onclick="document.getElementById(\'screenshotInput\').click()" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="event.preventDefault();this.classList.remove(\'dragover\');handleScreenshotDrop(event)">';
+  h += '<div id="screenshotPreview" style="font-size:11px;color:var(--muted)">Tap to upload or drag analytics screenshot<br><span style="font-size:9px;color:var(--green)">AI will extract views, likes, comments etc</span></div>';
+  h += '</div>';
+  h += '<input type="file" id="screenshotInput" accept="image/*" style="display:none" onchange="handleScreenshotSelect(this)">';
+  h += '</div>';
+
   h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px;text-align:center">Views required. Detail optional but helps recommendations.</p>';
 
   var submitKw = kw ? "\\'" + kw.replace(/'/g, "\\\\'") + "\\'" : "null";
@@ -2755,7 +2793,31 @@ function toggleCustomKw(sel) {
   if (custom) custom.style.display = sel.value === "__custom__" ? "block" : "none";
 }
 
-function submitPerfSimple(keyword) {
+var pendingScreenshot = null;
+
+function handleScreenshotSelect(input) {
+  if (input.files && input.files[0]) processScreenshot(input.files[0]);
+}
+
+function handleScreenshotDrop(event) {
+  var files = event.dataTransfer && event.dataTransfer.files;
+  if (files && files[0]) processScreenshot(files[0]);
+}
+
+function processScreenshot(file) {
+  if (!file.type.startsWith("image/")) { alert("Please upload an image file."); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    pendingScreenshot = e.target.result;
+    var preview = document.getElementById("screenshotPreview");
+    if (preview) {
+      preview.innerHTML = '<img src="' + e.target.result + '" alt="Screenshot"><br><span style="font-size:10px;color:var(--green)">Screenshot uploaded - AI will extract metrics on save</span>';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function submitPerfSimple(keyword) {
   if (!keyword) {
     var sel = document.getElementById("perfKeywordSelect");
     if (sel) keyword = sel.value;
@@ -2767,6 +2829,25 @@ function submitPerfSimple(keyword) {
   if (!keyword) { alert("Please select or type a keyword."); return; }
 
   var views = document.getElementById("perfViews").value;
+  var caption = (document.getElementById("perfCaption") || {}).value || "";
+
+  if (pendingScreenshot && (!views || views === "0")) {
+    var submitBtn = document.querySelector(".modal-submit");
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Extracting metrics from screenshot..."; }
+    var extracted = await aiExtractMetricsFromScreenshot(pendingScreenshot);
+    if (extracted) {
+      if (extracted.views) document.getElementById("perfViews").value = extracted.views;
+      if (extracted.likes && document.getElementById("perfLikes")) document.getElementById("perfLikes").value = extracted.likes;
+      if (extracted.comments && document.getElementById("perfComments")) document.getElementById("perfComments").value = extracted.comments;
+      if (extracted.shares && document.getElementById("perfShares")) document.getElementById("perfShares").value = extracted.shares;
+      if (extracted.followers && document.getElementById("perfFollowers")) document.getElementById("perfFollowers").value = extracted.followers;
+      views = String(extracted.views || "0");
+      var detailFields = document.getElementById("perfDetailFields");
+      if (detailFields) detailFields.style.display = "block";
+    }
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Save"; }
+  }
+
   if (!views || views === "0") { alert("Please enter the view count."); return; }
 
   var likes = (document.getElementById("perfLikes") || {}).value || "0";
@@ -2776,7 +2857,7 @@ function submitPerfSimple(keyword) {
 
   var format = (document.getElementById("perfFormat") || {}).value || "";
 
-  var entry = { views: views, likes: likes, comments: comments, shares: shares, followers: followers, format: format };
+  var entry = { views: views, likes: likes, comments: comments, shares: shares, followers: followers, format: format, caption: caption };
   if (Number(likes) > 0 || Number(comments) > 0 || Number(shares) > 0) {
     entry.score = calcAudienceScore(entry);
   } else {
@@ -2796,8 +2877,32 @@ function submitPerfSimple(keyword) {
   addXP("log_perf");
 
   closePerfModal();
+  pendingScreenshot = null;
   loadLiveStats();
-  alert("Logged! " + views + " views for " + titleCase(keyword) + " (+25 XP)");
+
+  aiClassifyPost(keyword, caption, {views: views, likes: likes, comments: comments, shares: shares}).then(function(classification) {
+    if (classification) {
+      var modelEntry = {
+        keyword: keyword,
+        caption: caption,
+        views: Number(views),
+        likes: Number(likes),
+        comments: Number(comments),
+        shares: Number(shares),
+        followers: Number(followers),
+        format: format,
+        topic: classification.topic,
+        subcategory: classification.subcategory,
+        emotionalTrigger: classification.emotionalTrigger,
+        date: entry.date
+      };
+      if (classification.format && !format) modelEntry.format = classification.format;
+      else if (format) modelEntry.format = format;
+      addToAudienceModel(modelEntry);
+    }
+  });
+
+  alert("Logged! " + views + " views for " + titleCase(keyword) + " (+25 XP)\n\nAI is classifying this post in the background to build your audience model.");
 }
 
 function submitPerf(keyword) {
@@ -3843,7 +3948,31 @@ function renderPrimary(item) {
   if (audScore !== null) {
     h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Audience Score</div></div><span class="tag tag-conf-high" style="margin:0;font-size:11px">' + audScore + '/10</span></div>';
   }
+  var primaryMatch = getAudienceMatchScore(item.keyword);
+  if (primaryMatch) {
+    var pmColor = primaryMatch.score >= 70 ? "var(--green)" : primaryMatch.score >= 45 ? "var(--amber)" : "var(--muted)";
+    h += '<div class="primary-metric primary-metric-wide"><div><div class="pm-label">Audience Match</div></div><span class="tag" style="margin:0;font-size:13px;font-weight:900;color:' + pmColor + ';background:rgba(0,255,136,.08);border:1px solid ' + pmColor + '">' + primaryMatch.score + '%</span></div>';
+  }
   h += '</div>';
+
+  if (primaryMatch && primaryMatch.reasons.length > 0) {
+    h += '<div class="am-match" style="margin:10px 0">';
+    h += '<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Audience Match Analysis</div>';
+    h += '<ul class="am-match-reasons">';
+    for (var pri = 0; pri < primaryMatch.reasons.length; pri++) {
+      h += '<li>' + primaryMatch.reasons[pri] + '</li>';
+    }
+    h += '</ul>';
+    h += '<div class="am-predict">';
+    var prComColor = primaryMatch.predictions.comments === "High" ? "var(--green)" : primaryMatch.predictions.comments === "Medium" ? "var(--amber)" : "var(--muted)";
+    var prShColor = primaryMatch.predictions.shares === "High" ? "var(--green)" : primaryMatch.predictions.shares === "Medium" ? "var(--amber)" : "var(--muted)";
+    var prFlColor = primaryMatch.predictions.followers === "High" ? "var(--green)" : primaryMatch.predictions.followers === "Medium" ? "var(--amber)" : "var(--muted)";
+    h += '<div class="am-predict-item"><div class="am-predict-label">Comments</div><div class="am-predict-val" style="color:' + prComColor + '">' + primaryMatch.predictions.comments + '</div></div>';
+    h += '<div class="am-predict-item"><div class="am-predict-label">Shares</div><div class="am-predict-val" style="color:' + prShColor + '">' + primaryMatch.predictions.shares + '</div></div>';
+    h += '<div class="am-predict-item"><div class="am-predict-label">Followers</div><div class="am-predict-val" style="color:' + prFlColor + '">' + primaryMatch.predictions.followers + '</div></div>';
+    h += '</div>';
+    h += '</div>';
+  }
 
   h += '<div style="margin-bottom:12px"><button id="ai-btn-primary" onclick="aiEnhanceSection(\'' + (item.keyword || "").replace(/'/g, "\\'") + '\',\'primary\')" style="width:100%;padding:12px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:10px;color:var(--purple);font-size:12px;font-weight:700;cursor:pointer">&#129504; AI Enhance - Generate unique hooks, caption & ideas</button></div>';
 
@@ -3970,12 +4099,29 @@ function renderOpportunities(items) {
     else if (oppCS >= 60) { oppGrade = "A"; oppGCls = "cs-grade-a"; }
     else if (oppCS >= 40) { oppGrade = "B"; oppGCls = "cs-grade-b"; }
     else { oppGrade = "C"; oppGCls = "cs-grade-c"; }
+    var oppMatch = getAudienceMatchScore(item.keyword);
     h += '<div class="opp-badges">';
     h += '<span class="tag ' + confCls + '">' + conf + '</span>';
     h += '<span class="tag tag-content">' + contentType + '</span>';
     h += '<span class="tag tag-group">' + getGroup(item.keyword) + '</span>';
     if (oppCS > 0) h += '<span class="cs-grade ' + oppGCls + '" style="font-size:8px">' + oppCS + '/100 ' + oppGrade + '</span>';
+    if (oppMatch) {
+      var matchColor = oppMatch.score >= 70 ? "var(--green)" : oppMatch.score >= 45 ? "var(--amber)" : "var(--muted)";
+      h += '<span class="tag" style="background:rgba(0,255,136,.1);color:' + matchColor + ';border:1px solid ' + matchColor + ';font-size:9px;font-weight:900">' + oppMatch.score + '% MATCH</span>';
+    }
     h += '</div>';
+    if (oppMatch && oppMatch.score >= 50 && oppMatch.reasons.length > 0) {
+      h += '<div style="margin-top:4px;padding:6px 8px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.08);border-radius:8px;font-size:9px;color:var(--muted)">';
+      h += '<span style="color:var(--green);font-weight:700">Why: </span>' + oppMatch.reasons[0];
+      h += '<div class="am-predict" style="margin-top:4px">';
+      var pComColor = oppMatch.predictions.comments === "High" ? "var(--green)" : oppMatch.predictions.comments === "Medium" ? "var(--amber)" : "var(--muted)";
+      var pShColor = oppMatch.predictions.shares === "High" ? "var(--green)" : oppMatch.predictions.shares === "Medium" ? "var(--amber)" : "var(--muted)";
+      var pFlColor = oppMatch.predictions.followers === "High" ? "var(--green)" : oppMatch.predictions.followers === "Medium" ? "var(--amber)" : "var(--muted)";
+      h += '<div class="am-predict-item"><div class="am-predict-label">Comments</div><div class="am-predict-val" style="color:' + pComColor + '">' + oppMatch.predictions.comments + '</div></div>';
+      h += '<div class="am-predict-item"><div class="am-predict-label">Shares</div><div class="am-predict-val" style="color:' + pShColor + '">' + oppMatch.predictions.shares + '</div></div>';
+      h += '<div class="am-predict-item"><div class="am-predict-label">Followers</div><div class="am-predict-val" style="color:' + pFlColor + '">' + oppMatch.predictions.followers + '</div></div>';
+      h += '</div></div>';
+    }
     h += '</div></div>';
   }
 
@@ -4863,9 +5009,260 @@ function getAudienceContext() {
   return ctx;
 }
 
+var AUDIENCE_MODEL_KEY = "cr_audience_model";
+
+function loadAudienceModel() {
+  try { return JSON.parse(localStorage.getItem(AUDIENCE_MODEL_KEY) || "[]"); } catch(e) { return []; }
+}
+
+function saveAudienceModel(model) {
+  localStorage.setItem(AUDIENCE_MODEL_KEY, JSON.stringify(model));
+  try {
+    supabaseClient.auth.getSession().then(function(s) {
+      if (s.data.session) supabaseClient.auth.updateUser({ data: { audienceModel: model } });
+    });
+  } catch(e) {}
+}
+
+function addToAudienceModel(entry) {
+  var model = loadAudienceModel();
+  model.push(entry);
+  if (model.length > 500) model = model.slice(-500);
+  saveAudienceModel(model);
+  return model;
+}
+
+async function aiClassifyPost(keyword, caption, metrics) {
+  if (!GROQ_KEY) return null;
+  var niche = USER_NICHE || "general";
+  var prompt = "You are a content classification expert. Classify this social media post into exactly 4 dimensions.\n\nCreator niche: " + niche + "\nKeyword/Topic: " + keyword + "\n" + (caption ? "Caption: " + caption + "\n" : "") + "Metrics: " + metrics.views + " views, " + (metrics.likes || 0) + " likes, " + (metrics.comments || 0) + " comments, " + (metrics.shares || 0) + " shares\n\nClassify into:\n1. TOPIC - The broad topic category (e.g. Remembrance, British Identity, Fitness Tips, Cooking, Gaming, etc)\n2. SUBCATEGORY - The specific sub-topic (e.g. for Remembrance: Schools, Poppy, Veterans, D-Day. For Fitness: HIIT, Yoga, Nutrition)\n3. FORMAT - The content format used (Yes/No Debate, A/B Choice, Open Question, Educational, Storytelling, Current Event, Myth Debunking, Tutorial, Reaction, Hot Take, Listicle)\n4. EMOTIONAL_TRIGGER - The primary emotion it triggers (Pride, Tradition, Identity, Nostalgia, Outrage, Community, Curiosity, Humor, Inspiration, Fear, Surprise)\n\nRespond in this exact JSON format (no markdown):\n{\"topic\":\"Topic Name\",\"subcategory\":\"Subcategory Name\",\"format\":\"Format Name\",\"emotionalTrigger\":\"Emotion Name\"}";
+
+  try {
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.3, max_tokens: 200})
+    });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch(e) { return null; }
+}
+
+async function aiExtractMetricsFromScreenshot(imageBase64) {
+  if (!GROQ_KEY) return null;
+  try {
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({
+        model: "llama-3.2-11b-vision-preview",
+        messages: [{role: "user", content: [
+          {type: "text", text: "Extract the performance metrics from this social media analytics screenshot. Look for: views, likes, comments, shares, followers gained, watch time, completion rate. Return ONLY the numbers you can see.\n\nRespond in this exact JSON format (no markdown):\n{\"views\":0,\"likes\":0,\"comments\":0,\"shares\":0,\"followers\":0,\"watchTime\":\"0:00\",\"completionRate\":0}"},
+          {type: "image_url", image_url: {url: imageBase64}}
+        ]}],
+        temperature: 0.1, max_tokens: 200
+      })
+    });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch(e) { return null; }
+}
+
+function getAudienceModelStats() {
+  var model = loadAudienceModel();
+  if (model.length === 0) return null;
+
+  var combos = {};
+  var topics = {};
+  var subcats = {};
+  var formats = {};
+  var emotions = {};
+  var totalViews = 0;
+  var totalPosts = model.length;
+
+  for (var i = 0; i < model.length; i++) {
+    var m = model[i];
+    var v = Number(m.views || 0);
+    totalViews += v;
+
+    var t = m.topic || "Unknown";
+    var s = m.subcategory || "Unknown";
+    var f = m.format || "Unknown";
+    var e = m.emotionalTrigger || "Unknown";
+
+    if (!topics[t]) topics[t] = {count:0, views:0, likes:0, comments:0, shares:0};
+    topics[t].count++; topics[t].views += v; topics[t].likes += Number(m.likes||0); topics[t].comments += Number(m.comments||0); topics[t].shares += Number(m.shares||0);
+
+    if (!subcats[t+">"+s]) subcats[t+">"+s] = {topic:t, sub:s, count:0, views:0, comments:0};
+    subcats[t+">"+s].count++; subcats[t+">"+s].views += v; subcats[t+">"+s].comments += Number(m.comments||0);
+
+    if (!formats[f]) formats[f] = {count:0, views:0, comments:0};
+    formats[f].count++; formats[f].views += v; formats[f].comments += Number(m.comments||0);
+
+    if (!emotions[e]) emotions[e] = {count:0, views:0, comments:0};
+    emotions[e].count++; emotions[e].views += v; emotions[e].comments += Number(m.comments||0);
+
+    var comboKey = t + " > " + s + " > " + f + " > " + e;
+    if (!combos[comboKey]) combos[comboKey] = {topic:t, sub:s, format:f, emotion:e, count:0, views:0, likes:0, comments:0, shares:0};
+    combos[comboKey].count++; combos[comboKey].views += v; combos[comboKey].likes += Number(m.likes||0); combos[comboKey].comments += Number(m.comments||0); combos[comboKey].shares += Number(m.shares||0);
+  }
+
+  var comboList = [];
+  for (var ck in combos) {
+    var c = combos[ck];
+    c.avgViews = Math.round(c.views / c.count);
+    c.avgComments = (c.comments / c.count).toFixed(1);
+    comboList.push(c);
+  }
+  comboList.sort(function(a,b){return b.avgViews - a.avgViews});
+
+  var topicList = [];
+  for (var tk in topics) { var td = topics[tk]; td.name = tk; td.avgViews = Math.round(td.views / td.count); topicList.push(td); }
+  topicList.sort(function(a,b){return b.avgViews - a.avgViews});
+
+  var formatList = [];
+  for (var fk in formats) { var fd = formats[fk]; fd.name = fk; fd.avgViews = Math.round(fd.views / fd.count); formatList.push(fd); }
+  formatList.sort(function(a,b){return b.avgViews - a.avgViews});
+
+  var emotionList = [];
+  for (var ek in emotions) { var ed = emotions[ek]; ed.name = ek; ed.avgViews = Math.round(ed.views / ed.count); emotionList.push(ed); }
+  emotionList.sort(function(a,b){return b.avgViews - a.avgViews});
+
+  var avgOverall = totalPosts > 0 ? Math.round(totalViews / totalPosts) : 0;
+
+  return {
+    combos: comboList,
+    topics: topicList,
+    formats: formatList,
+    emotions: emotionList,
+    totalPosts: totalPosts,
+    totalViews: totalViews,
+    avgOverall: avgOverall
+  };
+}
+
+function getAudienceMatchScore(keyword) {
+  var stats = getAudienceModelStats();
+  if (!stats || stats.totalPosts < 3) return null;
+
+  var kw = (keyword || "").toLowerCase();
+  var reasons = [];
+  var score = 0;
+  var maxScore = 0;
+  var predictions = {comments: "Low", shares: "Low", followers: "Low"};
+
+  var topTopics = stats.topics.slice(0, 3);
+  for (var i = 0; i < topTopics.length; i++) {
+    maxScore += 30;
+    var topicWords = topTopics[i].name.toLowerCase().split(/[\s\-]+/);
+    for (var w = 0; w < topicWords.length; w++) {
+      if (topicWords[w].length >= 4 && kw.indexOf(topicWords[w]) !== -1) {
+        score += 30 - (i * 8);
+        reasons.push("Matches your top-performing " + topTopics[i].name + " content (" + topTopics[i].avgViews.toLocaleString() + " avg views)");
+        break;
+      }
+    }
+  }
+
+  if (stats.combos.length > 0) {
+    maxScore += 25;
+    var topCombo = stats.combos[0];
+    var comboWords = (topCombo.topic + " " + topCombo.sub).toLowerCase().split(/[\s\-]+/);
+    for (var cw = 0; cw < comboWords.length; cw++) {
+      if (comboWords[cw].length >= 4 && kw.indexOf(comboWords[cw]) !== -1) {
+        score += 25;
+        reasons.push("Matches " + topCombo.topic + " > " + topCombo.sub + " pattern");
+        break;
+      }
+    }
+  }
+
+  if (stats.emotions.length > 0) {
+    maxScore += 20;
+    var topEmo = stats.emotions[0];
+    var emotionKeywords = {
+      "Pride": ["proud","pride","patriot","heritage","honor","honour"],
+      "Nostalgia": ["remember","classic","retro","throwback","old","vintage","childhood"],
+      "Outrage": ["scandal","disgrace","shocking","anger","furious","outrag"],
+      "Curiosity": ["why","how","secret","hidden","unknown","mystery","reveal"],
+      "Community": ["together","united","support","join","our","we"],
+      "Tradition": ["tradition","custom","heritage","ancient","historic"],
+      "Identity": ["identity","who we are","british","english","culture"],
+      "Humor": ["funny","hilarious","joke","meme","laugh"],
+      "Inspiration": ["inspir","motivat","amazing","incredible","achieve"],
+      "Fear": ["danger","threat","warning","risk","crisis"],
+      "Surprise": ["shock","unexpect","twist","reveal","didn't know"]
+    };
+    var emoWords = emotionKeywords[topEmo.name] || [];
+    for (var ew = 0; ew < emoWords.length; ew++) {
+      if (kw.indexOf(emoWords[ew]) !== -1) {
+        score += 20;
+        reasons.push("Uses " + topEmo.name + " trigger - your strongest emotion");
+        break;
+      }
+    }
+  }
+
+  if (stats.formats.length > 0) {
+    maxScore += 15;
+    reasons.push(stats.formats[0].name + " is your highest-performing format");
+    score += 8;
+  }
+
+  maxScore += 10;
+  var niche = (USER_NICHE || "general").toLowerCase();
+  if (kw.indexOf(niche) !== -1 || niche.indexOf(kw.split(" ")[0]) !== -1) {
+    score += 10;
+    reasons.push("Core niche topic");
+  }
+
+  var pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+  pct = Math.min(99, Math.max(10, pct));
+
+  if (pct >= 70) {
+    predictions.comments = "High";
+    predictions.shares = pct >= 85 ? "High" : "Medium";
+    predictions.followers = pct >= 90 ? "High" : "Medium";
+  } else if (pct >= 45) {
+    predictions.comments = "Medium";
+    predictions.shares = "Medium";
+    predictions.followers = "Low";
+  }
+
+  return { score: pct, reasons: reasons, predictions: predictions };
+}
+
+function getEnhancedAudienceContext() {
+  var base = getAudienceContext();
+  var stats = getAudienceModelStats();
+  if (!stats || stats.totalPosts < 3) return base;
+
+  var ctx = base;
+  if (stats.combos.length > 0) {
+    var topCombos = stats.combos.slice(0, 3);
+    ctx += " AUDIENCE MODEL DATA: The creator has logged " + stats.totalPosts + " posts. Their winning content combinations are: ";
+    for (var i = 0; i < topCombos.length; i++) {
+      var c = topCombos[i];
+      ctx += (i+1) + ") " + c.topic + " > " + c.sub + " > " + c.format + " > " + c.emotion + " (avg " + c.avgViews.toLocaleString() + " views, " + c.count + " posts)";
+      if (i < topCombos.length - 1) ctx += ", ";
+    }
+    ctx += ".";
+  }
+  if (stats.emotions.length > 0) {
+    ctx += " Top emotional triggers: " + stats.emotions.slice(0, 3).map(function(e){return e.name + " (" + e.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
+  }
+  return ctx;
+}
+
 async function getAIAnalysis(caption, niche) {
   try {
-    var audienceCtx = getAudienceContext();
+    var audienceCtx = getEnhancedAudienceContext();
     var prompt = "You are a viral content expert. Analyze this social media caption for a creator in the " + niche + " niche." + audienceCtx + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -4896,7 +5293,7 @@ async function aiEnhanceSection(keyword, sectionId) {
   }
   try {
     var niche = USER_NICHE || "general";
-    var audienceCtx = getAudienceContext();
+    var audienceCtx = getEnhancedAudienceContext();
     var prompt = "You are a viral social media expert. Generate content for a creator in the " + niche + " niche about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -4967,7 +5364,7 @@ async function aiTrendInsights() {
 
   var top5 = cachedResults.slice(0, 5);
   var keywords = top5.map(function(r){return r.keyword});
-  var audienceCtx = getAudienceContext();
+  var audienceCtx = getEnhancedAudienceContext();
 
   el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Trend Analysis</h2></div><p style="font-size:11px;color:var(--muted)">Analysing trends with AI...</p></div>';
 
@@ -5007,7 +5404,34 @@ async function aiTrendInsights() {
       h += '<div style="font-size:11px;color:var(--muted);margin-bottom:4px"><strong style="color:var(--amber)">Why trending:</strong> ' + (t.whyTrending || "") + '</div>';
       h += '<div style="font-size:11px;color:var(--muted);margin-bottom:4px"><strong style="color:' + worthColor + '">Verdict:</strong> ' + (t.worthReason || "") + '</div>';
       h += '<div onclick="navigator.clipboard.writeText(\'' + (t.videoIdea || "").replace(/'/g, "\\'") + '\');this.style.borderColor=\'var(--green)\';var s=this;setTimeout(function(){s.style.borderColor=\'rgba(0,255,136,.12)\'},1000)" style="font-size:11px;color:var(--white);background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);padding:8px;border-radius:8px;margin-bottom:4px;cursor:pointer"><strong style="color:var(--green)">Video idea:</strong> ' + (t.videoIdea || "") + ' <span style="font-size:8px;color:var(--muted);float:right">TAP TO COPY</span></div>';
-      h += '<div style="font-size:10px;color:' + timeColor + ';font-weight:700">Timing: ' + (t.bestTime || "Post when ready") + '</div>';
+      h += '<div style="font-size:10px;color:' + timeColor + ';font-weight:700;margin-bottom:6px">Timing: ' + (t.bestTime || "Post when ready") + '</div>';
+
+      var tMatch = getAudienceMatchScore(t.keyword || keywords[i]);
+      if (tMatch) {
+        var tMatchColor = tMatch.score >= 70 ? "var(--green)" : tMatch.score >= 45 ? "var(--amber)" : "var(--muted)";
+        h += '<div class="am-match" style="margin-top:6px">';
+        h += '<div class="am-match-score">';
+        h += '<div class="am-match-pct" style="color:' + tMatchColor + '">' + tMatch.score + '%</div>';
+        h += '<div style="font-size:11px;font-weight:800;color:' + tMatchColor + '">AUDIENCE MATCH</div>';
+        h += '</div>';
+        if (tMatch.reasons.length > 0) {
+          h += '<ul class="am-match-reasons">';
+          for (var ri = 0; ri < Math.min(3, tMatch.reasons.length); ri++) {
+            h += '<li>' + tMatch.reasons[ri] + '</li>';
+          }
+          h += '</ul>';
+        }
+        h += '<div class="am-predict">';
+        var tpComColor = tMatch.predictions.comments === "High" ? "var(--green)" : tMatch.predictions.comments === "Medium" ? "var(--amber)" : "var(--muted)";
+        var tpShColor = tMatch.predictions.shares === "High" ? "var(--green)" : tMatch.predictions.shares === "Medium" ? "var(--amber)" : "var(--muted)";
+        var tpFlColor = tMatch.predictions.followers === "High" ? "var(--green)" : tMatch.predictions.followers === "Medium" ? "var(--amber)" : "var(--muted)";
+        h += '<div class="am-predict-item"><div class="am-predict-label">Comments</div><div class="am-predict-val" style="color:' + tpComColor + '">' + tMatch.predictions.comments + '</div></div>';
+        h += '<div class="am-predict-item"><div class="am-predict-label">Shares</div><div class="am-predict-val" style="color:' + tpShColor + '">' + tMatch.predictions.shares + '</div></div>';
+        h += '<div class="am-predict-item"><div class="am-predict-label">Followers</div><div class="am-predict-val" style="color:' + tpFlColor + '">' + tMatch.predictions.followers + '</div></div>';
+        h += '</div>';
+        h += '</div>';
+      }
+
       h += '</div>';
     }
 
@@ -5026,7 +5450,7 @@ async function aiContentAngles(results) {
     topKeywords.push(results[i].keyword);
   }
 
-  var audienceCtx = getAudienceContext();
+  var audienceCtx = getEnhancedAudienceContext();
   var perfData = loadPerfData();
   var perfSummary = "";
   var perfKeys = Object.keys(perfData);
@@ -5110,7 +5534,7 @@ async function aiValidateKeywords(results, emerging) {
   for (var i = 0; i < Math.min(15, results.length); i++) allKeywords.push(results[i].keyword);
   for (var j = 0; j < Math.min(5, emerging.length); j++) allKeywords.push(emerging[j].keyword);
   try {
-    var audienceCtx = getAudienceContext();
+    var audienceCtx = getEnhancedAudienceContext();
     var prompt = "You are a social media content expert. A creator in the " + (USER_NICHE || "general") + " niche has these trending keywords." + audienceCtx + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -5171,7 +5595,7 @@ async function aiEnhancePlatform(keyword) {
   if (btn) { btn.disabled = true; btn.innerHTML = "&#129504; Generating captions..."; }
   try {
     var niche = USER_NICHE || "general";
-    var audienceCtx = getAudienceContext();
+    var audienceCtx = getEnhancedAudienceContext();
     var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for a creator in the " + niche + " niche about: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -6333,34 +6757,53 @@ function renderPersonalIntelligence(results) {
     h += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">';
     h += '<div style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">&#127919; Recommended For You Today</div>';
 
-    var bestKeywords = topicStats.slice(0, 3).map(function(t) { return t.keyword.toLowerCase(); });
-    var matched = [];
+    var amHasData = loadAudienceModel().length >= 3;
+    var scoredResults = [];
     for (var r = 0; r < results.length; r++) {
       var res = results[r];
       var resKw = (res.keyword || "").toLowerCase();
-      var matchScore = 0;
-      for (var bk = 0; bk < bestKeywords.length; bk++) {
-        if (resKw.indexOf(bestKeywords[bk]) !== -1 || bestKeywords[bk].indexOf(resKw) !== -1) matchScore = 3;
-        var resWords = resKw.split(/[\s\-]+/);
-        var bkWords = bestKeywords[bk].split(/[\s\-]+/);
-        for (var w1 = 0; w1 < resWords.length; w1++) {
-          for (var w2 = 0; w2 < bkWords.length; w2++) {
-            if (resWords[w1].length >= 4 && resWords[w1] === bkWords[w2]) matchScore = Math.max(matchScore, 2);
+      var matchObj = amHasData ? getAudienceMatchScore(res.keyword) : null;
+      var matchScore = matchObj ? matchObj.score : 0;
+
+      if (!matchObj || matchScore < 30) {
+        var bestKeywords = topicStats.slice(0, 3).map(function(t) { return t.keyword.toLowerCase(); });
+        for (var bk = 0; bk < bestKeywords.length; bk++) {
+          if (resKw.indexOf(bestKeywords[bk]) !== -1 || bestKeywords[bk].indexOf(resKw) !== -1) { matchScore = Math.max(matchScore, 40); break; }
+          var resWords = resKw.split(/[\s\-]+/);
+          var bkWords = bestKeywords[bk].split(/[\s\-]+/);
+          for (var w1 = 0; w1 < resWords.length; w1++) {
+            for (var w2 = 0; w2 < bkWords.length; w2++) {
+              if (resWords[w1].length >= 4 && resWords[w1] === bkWords[w2]) matchScore = Math.max(matchScore, 30);
+            }
           }
         }
       }
-      if (matchScore > 0) matched.push({result: res, score: matchScore});
+      if (matchScore > 0) scoredResults.push({result: res, score: matchScore, match: matchObj});
     }
-    matched.sort(function(a,b){return b.score - a.score || Number(b.result.viral_score||0) - Number(a.result.viral_score||0)});
+    scoredResults.sort(function(a,b){return b.score - a.score || Number(b.result.viral_score||0) - Number(a.result.viral_score||0)});
 
-    if (matched.length > 0) {
-      var limit = Math.min(3, matched.length);
+    if (scoredResults.length > 0) {
+      var limit = Math.min(3, scoredResults.length);
       for (var m = 0; m < limit; m++) {
-        var mr = matched[m].result;
+        var mr = scoredResults[m].result;
+        var mMatch = scoredResults[m].match;
+        var mScore = scoredResults[m].score;
         var vs = Number(mr.viral_score || 0);
         var rp = Number(mr.rise_percent || 0);
-        var why = rp > 50 ? "Rising fast - post now!" : vs > 50 ? "High viral potential" : "Matches your best content";
-        h += '<div class="pi-rec"><span class="rec-tag" style="background:rgba(0,255,136,.15);color:var(--green)">MATCH</span><strong>' + titleCase(mr.keyword) + '</strong> - Viral ' + vs.toFixed(0) + ' | Rise ' + formatRise(rp) + '<br><span style="font-size:10px;color:var(--green)">' + why + ' - Similar to your top-performing ' + titleCase(bestTopic.keyword) + ' content</span></div>';
+        var mColor = mScore >= 70 ? "var(--green)" : mScore >= 45 ? "var(--amber)" : "var(--muted)";
+        var why = mMatch && mMatch.reasons.length > 0 ? mMatch.reasons[0] : (rp > 50 ? "Rising fast - post now!" : vs > 50 ? "High viral potential" : "Matches your best content");
+        h += '<div class="pi-rec"><span class="rec-tag" style="background:rgba(0,255,136,.15);color:' + mColor + '">' + mScore + '% MATCH</span><strong>' + titleCase(mr.keyword) + '</strong> - Viral ' + vs.toFixed(0) + ' | Rise ' + formatRise(rp) + '<br><span style="font-size:10px;color:' + mColor + '">' + why + '</span>';
+        if (mMatch) {
+          h += '<div class="am-predict" style="margin-top:4px">';
+          var rcCol = mMatch.predictions.comments === "High" ? "var(--green)" : mMatch.predictions.comments === "Medium" ? "var(--amber)" : "var(--muted)";
+          var rsCol = mMatch.predictions.shares === "High" ? "var(--green)" : mMatch.predictions.shares === "Medium" ? "var(--amber)" : "var(--muted)";
+          var rfCol = mMatch.predictions.followers === "High" ? "var(--green)" : mMatch.predictions.followers === "Medium" ? "var(--amber)" : "var(--muted)";
+          h += '<div class="am-predict-item"><div class="am-predict-label">Comments</div><div class="am-predict-val" style="color:' + rcCol + '">' + mMatch.predictions.comments + '</div></div>';
+          h += '<div class="am-predict-item"><div class="am-predict-label">Shares</div><div class="am-predict-val" style="color:' + rsCol + '">' + mMatch.predictions.shares + '</div></div>';
+          h += '<div class="am-predict-item"><div class="am-predict-label">Followers</div><div class="am-predict-val" style="color:' + rfCol + '">' + mMatch.predictions.followers + '</div></div>';
+          h += '</div>';
+        }
+        h += '</div>';
       }
     } else {
       var topTrending = results.slice(0, 3);
@@ -6425,6 +6868,75 @@ function renderPersonalIntelligence(results) {
       h += '</div>';
     }
     h += '</div>';
+  }
+
+  var amStats = getAudienceModelStats();
+  if (amStats && amStats.totalPosts >= 3) {
+    h += '<div class="pi-card" style="border-color:rgba(167,139,250,.3)">';
+    h += '<h3 style="color:var(--purple)">&#129504; Audience DNA</h3>';
+    h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Multi-layer audience model built from ' + amStats.totalPosts + ' classified posts. The more you log, the smarter this gets.</p>';
+
+    if (amStats.combos.length > 0) {
+      h += '<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Winning Combinations</div>';
+      var showCombos = Math.min(5, amStats.combos.length);
+      for (var ci = 0; ci < showCombos; ci++) {
+        var combo = amStats.combos[ci];
+        var comboMulti = amStats.avgOverall > 0 ? (combo.avgViews / amStats.avgOverall).toFixed(1) : "1.0";
+        h += '<div class="am-combo">';
+        h += '<div class="am-combo-path">';
+        h += '<span class="am-classify-tag topic">' + combo.topic + '</span>';
+        h += '<span class="am-sep">></span>';
+        h += '<span class="am-classify-tag sub">' + combo.sub + '</span>';
+        h += '<span class="am-sep">></span>';
+        h += '<span class="am-classify-tag format">' + combo.format + '</span>';
+        h += '<span class="am-sep">></span>';
+        h += '<span class="am-classify-tag emotion">' + combo.emotion + '</span>';
+        h += '</div>';
+        h += '<div class="am-combo-stats">';
+        h += '<span class="am-combo-stat" style="background:rgba(0,255,136,.1);color:var(--green)">' + combo.avgViews.toLocaleString() + ' avg views</span>';
+        h += '<span class="am-combo-stat" style="background:rgba(167,139,250,.1);color:var(--purple)">' + combo.count + ' posts</span>';
+        h += '<span class="am-combo-stat" style="background:rgba(251,191,36,.1);color:var(--amber)">' + comboMulti + 'x avg</span>';
+        if (Number(combo.avgComments) > 0) h += '<span class="am-combo-stat" style="background:rgba(77,201,246,.1);color:var(--blue)">' + combo.avgComments + ' avg comments</span>';
+        h += '</div>';
+        h += '</div>';
+      }
+    }
+
+    if (amStats.topics.length > 0) {
+      h += '<div style="margin-top:14px;font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Topic Breakdown</div>';
+      for (var ti = 0; ti < Math.min(6, amStats.topics.length); ti++) {
+        var tp = amStats.topics[ti];
+        var tBar = amStats.topics[0].avgViews > 0 ? (tp.avgViews / amStats.topics[0].avgViews * 100) : 0;
+        h += '<div style="margin-bottom:6px">';
+        h += '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span style="color:var(--white)">' + tp.name + ' <span style="color:var(--muted);font-size:9px">(' + tp.count + ')</span></span><span style="color:var(--green);font-weight:700">' + tp.avgViews.toLocaleString() + ' avg</span></div>';
+        h += '<div style="height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + tBar.toFixed(0) + '%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:3px"></div></div>';
+        h += '</div>';
+      }
+    }
+
+    if (amStats.emotions.length > 0) {
+      h += '<div style="margin-top:14px;font-size:11px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Emotional Triggers</div>';
+      h += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      for (var ei = 0; ei < Math.min(6, amStats.emotions.length); ei++) {
+        var em = amStats.emotions[ei];
+        var emPct = amStats.totalViews > 0 ? Math.round(em.views / amStats.totalViews * 100) : 0;
+        h += '<div style="padding:8px 12px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:10px;text-align:center;min-width:80px">';
+        h += '<div style="font-size:13px;font-weight:900;color:var(--amber)">' + em.name + '</div>';
+        h += '<div style="font-size:9px;color:var(--muted)">' + em.avgViews.toLocaleString() + ' avg | ' + emPct + '%</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    h += '</div>';
+  } else {
+    var modelCount = loadAudienceModel().length;
+    if (modelCount > 0 && modelCount < 3) {
+      h += '<div class="pi-card" style="border-color:rgba(167,139,250,.2)">';
+      h += '<h3 style="color:var(--purple)">&#129504; Audience DNA</h3>';
+      h += '<p style="font-size:11px;color:var(--muted)">Building your audience model... ' + modelCount + '/3 posts classified. Log ' + (3 - modelCount) + ' more to unlock multi-layer insights showing your winning Topic > Subcategory > Format > Emotion combinations.</p>';
+      h += '</div>';
+    }
   }
 
   el.innerHTML = h;
