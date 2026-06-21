@@ -666,6 +666,9 @@ button:active{transform:scale(.98)}
   border:1px solid var(--border-glow);
   border-radius:18px;padding:24px;
   width:100%;max-width:420px;
+  max-height:calc(100vh - 40px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
   box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(0,255,136,.08);
   position:relative;
 }
@@ -2738,20 +2741,25 @@ function openPerfModal(keyword) {
   h += '<div class="modal-field"><label>New Followers</label><input id="perfFollowers" type="number" placeholder="0"></div>';
   h += '</div></div>';
 
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:8px;text-align:center">Views required. Detail below is optional but makes AI smarter.</p>';
+
+  h += '<div style="text-align:center;margin:8px 0"><button class="copy-btn" onclick="document.getElementById(\'perfAIFields\').style.display=document.getElementById(\'perfAIFields\').style.display===\'none\'?\'block\':\'none\'" style="margin:0;font-size:10px;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">+ Add caption & screenshot (builds Audience DNA)</button></div>';
+  h += '<div id="perfAIFields" style="display:none">';
+
   h += '<div style="margin:10px 0">';
-  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Caption / Description (helps AI classify your content)</label>';
+  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Caption / Description</label>';
   h += '<textarea id="perfCaption" placeholder="Paste your caption or describe what the video was about..." style="width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#07100c;color:white;font-size:12px;resize:vertical;min-height:50px;max-height:120px;outline:none;font-family:inherit"></textarea>';
   h += '</div>';
 
   h += '<div style="margin:10px 0">';
-  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Screenshot (optional - AI extracts metrics automatically)</label>';
+  h += '<label style="font-size:11px;color:var(--muted);margin-bottom:4px;display:block">Screenshot (AI extracts metrics)</label>';
   h += '<div id="screenshotDrop" class="screenshot-drop" onclick="document.getElementById(\'screenshotInput\').click()" ondragover="event.preventDefault();this.classList.add(\'dragover\')" ondragleave="this.classList.remove(\'dragover\')" ondrop="event.preventDefault();this.classList.remove(\'dragover\');handleScreenshotDrop(event)">';
-  h += '<div id="screenshotPreview" style="font-size:11px;color:var(--muted)">Tap to upload or drag analytics screenshot<br><span style="font-size:9px;color:var(--green)">AI will extract views, likes, comments etc</span></div>';
+  h += '<div id="screenshotPreview" style="font-size:11px;color:var(--muted)">Tap to upload analytics screenshot<br><span style="font-size:9px;color:var(--green)">AI will extract views, likes, comments etc</span></div>';
   h += '</div>';
   h += '<input type="file" id="screenshotInput" accept="image/*" style="display:none" onchange="handleScreenshotSelect(this)">';
   h += '</div>';
 
-  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px;text-align:center">Views required. Detail optional but helps recommendations.</p>';
+  h += '</div>';
 
   var submitKw = kw ? "\\'" + kw.replace(/'/g, "\\\\'") + "\\'" : "null";
   h += '<button class="modal-submit" onclick="submitPerfSimple(' + submitKw + ')">Save</button>';
