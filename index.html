@@ -152,6 +152,62 @@ body{
 .stat strong{display:block;font-size:20px;color:var(--green);margin-bottom:2px}
 .stat span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
 .stat .stat-hint{font-size:9px;color:var(--green);opacity:.6;margin-top:4px;display:block}
+.streak-bar{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:linear-gradient(135deg,rgba(255,165,0,.08),rgba(255,69,0,.08));
+  border:1px solid rgba(255,165,0,.25);border-radius:14px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.streak-bar .streak-flame{font-size:22px;line-height:1}
+.streak-bar .streak-count{font-size:22px;font-weight:900;color:#ff8c00}
+.streak-bar .streak-label{font-size:11px;color:var(--muted)}
+.streak-bar .streak-xp{
+  margin-left:auto;text-align:right;
+}
+.streak-bar .xp-amount{font-size:14px;font-weight:800;color:var(--green)}
+.streak-bar .xp-level{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.streak-bar .xp-bar{
+  width:80px;height:4px;background:rgba(255,255,255,.1);border-radius:4px;margin-top:3px;overflow:hidden;
+}
+.streak-bar .xp-fill{height:100%;background:linear-gradient(90deg,var(--green),#00ff88);border-radius:4px;transition:width .5s ease}
+.streak-days{display:flex;gap:3px;margin:0 8px}
+.streak-dot{
+  width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.08);
+}
+.streak-dot.active{background:#ff8c00;border-color:#ff8c00;box-shadow:0 0 4px rgba(255,140,0,.4)}
+.streak-dot.today{border-color:var(--green);box-shadow:0 0 4px rgba(0,255,136,.3)}
+.pi-card{
+  background:rgba(11,18,15,.92);border:1px solid var(--border);border-radius:14px;
+  padding:16px;margin-bottom:10px;
+}
+.pi-card h3{font-size:14px;margin-bottom:10px;color:#fff}
+.pi-insight{
+  display:flex;align-items:flex-start;gap:10px;padding:10px;
+  background:var(--panel2);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:8px;font-size:12px;color:var(--muted);line-height:1.5;
+}
+.pi-insight .pi-icon{font-size:18px;flex-shrink:0;margin-top:2px}
+.pi-insight strong{color:var(--green)}
+.pi-rec{
+  padding:10px 14px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);
+  border-radius:10px;margin-bottom:6px;font-size:12px;color:var(--muted);line-height:1.5;
+}
+.pi-rec .rec-tag{
+  display:inline-block;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.5px;margin-right:6px;
+}
+.scorecard{
+  background:linear-gradient(135deg,rgba(0,255,136,.04),rgba(167,139,250,.04));
+  border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;
+}
+.scorecard-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.scorecard-stat{
+  background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:12px;text-align:center;
+}
+.scorecard-stat .sc-val{font-size:20px;font-weight:900;color:var(--green)}
+.scorecard-stat .sc-label{font-size:9px;color:var(--muted);text-transform:uppercase;margin-top:2px}
 .stat-detail{
   display:none;grid-column:1/-1;background:rgba(11,18,15,.92);
   border:1px solid var(--border);border-radius:12px;padding:14px;
@@ -1114,6 +1170,8 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
+    <div id="streakBar" class="streak-bar" style="display:none"></div>
+
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button class="log-perf-btn" onclick="openPerfModal('')" style="flex:1;margin:0;padding:12px;font-size:12px">&#9998; QUICK LOG</button>
       <button class="log-perf-btn" onclick="openSupportTicket()" style="flex:1;margin:0;padding:12px;font-size:12px;background:var(--panel2);border:1px solid var(--border)">&#9993; SUPPORT</button>
@@ -1137,6 +1195,7 @@ input[type=range]::-webkit-slider-thumb{
       <button class="tab-btn active" data-tab="plan" onclick="switchTab('plan')">Content Plan</button>
       <button class="tab-btn" data-tab="trends" onclick="switchTab('trends')">Trends</button>
       <button class="tab-btn" data-tab="discovery" onclick="switchTab('discovery')">Discovery</button>
+      <button class="tab-btn" data-tab="mystats" onclick="switchTab('mystats')">My Stats</button>
       <button class="tab-btn" data-tab="audience" onclick="switchTab('audience')">Audience</button>
       <button class="tab-btn" data-tab="platforms" onclick="switchTab('platforms')">Platforms</button>
       <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications')">&#128276; Updates</button>
@@ -1160,6 +1219,12 @@ input[type=range]::-webkit-slider-thumb{
     <div id="tab-discovery" class="tab-content">
       <div id="emergingTopics"></div>
       <div id="creatorInsights"></div>
+    </div>
+
+    <div id="tab-mystats" class="tab-content">
+      <div id="personalIntelligence"></div>
+      <div id="weeklyScorecard"></div>
+      <div id="streakDetails"></div>
     </div>
 
     <div id="tab-audience" class="tab-content">
@@ -2261,7 +2326,13 @@ async function loadPerfFromSupabase() {
         }
         localStorage.setItem(PERF_KEY, JSON.stringify(merged));
         perfDataCache = merged;
-        return;
+      }
+      var cloudStreak = user.user_metadata && user.user_metadata.streak;
+      if (cloudStreak && cloudStreak.xp) {
+        var localStreak = getStreakData();
+        if ((cloudStreak.xp || 0) > (localStreak.xp || 0)) {
+          localStorage.setItem(STREAK_KEY, JSON.stringify(cloudStreak));
+        }
       }
     }
   } catch(e) { console.log("Supabase load skipped:", e); }
@@ -2431,10 +2502,11 @@ function submitPerfSimple(keyword) {
   savePerfData(data);
 
   trackEvent("feature_use", {feature: "quick_log", keyword: keyword, views: views});
+  addXP("log_perf");
 
   closePerfModal();
   loadLiveStats();
-  alert("Logged! " + views + " views for " + titleCase(keyword));
+  alert("Logged! " + views + " views for " + titleCase(keyword) + " (+25 XP)");
 }
 
 function submitPerf(keyword) {
@@ -3402,7 +3474,8 @@ function copyHook(el) {
   var text = el.querySelector(".hook-text").innerText;
   navigator.clipboard.writeText(text);
   var orig = el.querySelector(".hook-copy").innerText;
-  el.querySelector(".hook-copy").innerText = "COPIED!";
+  el.querySelector(".hook-copy").innerText = "COPIED! +10 XP";
+  addXP("share_hook");
   setTimeout(function() { el.querySelector(".hook-copy").innerText = orig; }, 1500);
 }
 
@@ -4221,6 +4294,7 @@ async function runAnalyzer() {
 
   if (!url && !caption) { alert("Paste a TikTok URL or enter a caption to analyse"); return; }
   trackEvent("feature_use", {feature: "video_analyzer"});
+  addXP("analyze");
 
   btn.disabled = true;
   btn.textContent = "ANALYSING...";
@@ -4560,6 +4634,7 @@ async function quickSwitchNiche(newNiche) {
     }
   } catch(e) {}
   trackEvent("niche_change", {niche: USER_NICHE});
+  addXP("niche_scan");
   initNicheSwitcher();
   loadLiveStats();
 }
@@ -4982,6 +5057,327 @@ function renderPlatformOptimizer(results, topicIdx) {
   return h;
 }
 
+/* ═══════════════════════════════════════════
+   STREAK + XP SYSTEM
+   ═══════════════════════════════════════════ */
+var STREAK_KEY = "cr_streak_data";
+var XP_ACTIONS = {login: 10, log_perf: 25, niche_scan: 15, analyze: 20, share_hook: 10};
+var LEVELS = [
+  {name:"Rookie",xp:0},{name:"Explorer",xp:100},{name:"Creator",xp:300},
+  {name:"Strategist",xp:600},{name:"Influencer",xp:1000},{name:"Trendsetter",xp:1500},
+  {name:"Mastermind",xp:2500},{name:"Legend",xp:4000}
+];
+
+function getStreakData() {
+  try { return JSON.parse(localStorage.getItem(STREAK_KEY) || "{}"); } catch(e) { return {}; }
+}
+
+function saveStreakData(d) {
+  localStorage.setItem(STREAK_KEY, JSON.stringify(d));
+  try {
+    supabaseClient.auth.getSession().then(function(s) {
+      if (s.data.session) supabaseClient.auth.updateUser({data:{streak:d}});
+    });
+  } catch(e) {}
+}
+
+function getTodayKey() {
+  var d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+
+function initStreak() {
+  var data = getStreakData();
+  var today = getTodayKey();
+  if (!data.xp) data.xp = 0;
+  if (!data.streak) data.streak = 0;
+  if (!data.loginDays) data.loginDays = [];
+  if (!data.totalLogins) data.totalLogins = 0;
+  if (!data.longestStreak) data.longestStreak = 0;
+
+  var lastLogin = data.loginDays.length > 0 ? data.loginDays[data.loginDays.length - 1] : null;
+  if (lastLogin !== today) {
+    var yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    var yKey = yesterday.getFullYear() + "-" + String(yesterday.getMonth()+1).padStart(2,"0") + "-" + String(yesterday.getDate()).padStart(2,"0");
+    if (lastLogin === yKey) {
+      data.streak++;
+    } else if (lastLogin) {
+      data.streak = 1;
+    } else {
+      data.streak = 1;
+    }
+    data.loginDays.push(today);
+    if (data.loginDays.length > 30) data.loginDays = data.loginDays.slice(-30);
+    data.totalLogins++;
+    data.xp += XP_ACTIONS.login;
+    if (data.streak > data.longestStreak) data.longestStreak = data.streak;
+    saveStreakData(data);
+  }
+
+  renderStreakBar(data);
+}
+
+function addXP(action) {
+  var data = getStreakData();
+  var points = XP_ACTIONS[action] || 10;
+  var today = getTodayKey();
+  if (!data.dailyXP) data.dailyXP = {};
+  if (!data.dailyXP[today]) data.dailyXP[today] = 0;
+  data.dailyXP[today] += points;
+  data.xp = (data.xp || 0) + points;
+  saveStreakData(data);
+  renderStreakBar(data);
+}
+
+function getLevel(xp) {
+  var lvl = LEVELS[0];
+  for (var i = 0; i < LEVELS.length; i++) {
+    if (xp >= LEVELS[i].xp) lvl = LEVELS[i];
+  }
+  var idx = LEVELS.indexOf(lvl);
+  var nextXP = idx < LEVELS.length - 1 ? LEVELS[idx + 1].xp : lvl.xp;
+  var prevXP = lvl.xp;
+  var pct = nextXP > prevXP ? Math.min(100, ((xp - prevXP) / (nextXP - prevXP)) * 100) : 100;
+  return {name: lvl.name, level: idx + 1, xp: xp, nextXP: nextXP, pct: pct};
+}
+
+function renderStreakBar(data) {
+  var bar = document.getElementById("streakBar");
+  if (!bar) return;
+  var lvl = getLevel(data.xp || 0);
+  var streak = data.streak || 0;
+  var h = '';
+  h += '<div class="streak-flame">&#128293;</div>';
+  h += '<div><div class="streak-count">' + streak + '</div><div class="streak-label">' + (streak === 1 ? 'day streak' : 'day streak') + '</div></div>';
+  h += '<div class="streak-days">';
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(); d.setDate(d.getDate() - i);
+    var key = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+    var active = (data.loginDays || []).indexOf(key) !== -1;
+    var isToday = i === 0;
+    h += '<div class="streak-dot' + (active ? ' active' : '') + (isToday ? ' today' : '') + '" title="' + key + '"></div>';
+  }
+  h += '</div>';
+  h += '<div class="streak-xp">';
+  h += '<div class="xp-amount">' + (data.xp || 0) + ' XP</div>';
+  h += '<div class="xp-level">Lv.' + lvl.level + ' ' + lvl.name + '</div>';
+  h += '<div class="xp-bar"><div class="xp-fill" style="width:' + lvl.pct.toFixed(0) + '%"></div></div>';
+  h += '</div>';
+  bar.innerHTML = h;
+  bar.style.display = "flex";
+}
+
+/* ═══════════════════════════════════════════
+   PERSONAL INTELLIGENCE
+   ═══════════════════════════════════════════ */
+function renderPersonalIntelligence(results) {
+  var el = document.getElementById("personalIntelligence");
+  if (!el) return;
+  var perfData = loadPerfData();
+  var perfKeys = Object.keys(perfData);
+  var h = '';
+
+  h += '<div class="pi-card">';
+  h += '<h3>&#129504; Personal Intelligence</h3>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Insights based on YOUR logged performance data. The more you log, the smarter this gets.</p>';
+
+  if (perfKeys.length === 0) {
+    h += '<div class="pi-insight"><div class="pi-icon">&#128200;</div><div>You haven\'t logged any performance data yet. Use the <strong>QUICK LOG</strong> button to track your views, likes, and comments after posting. Once you have data, this section will show you personalised insights about what works for YOUR audience.</div></div>';
+    h += '</div>';
+    el.innerHTML = h;
+    return;
+  }
+
+  var topicStats = [];
+  var totalViews = 0; var totalPosts = 0; var totalLikes = 0; var totalComments = 0;
+  for (var i = 0; i < perfKeys.length; i++) {
+    var kw = perfKeys[i];
+    var entries = perfData[kw];
+    var views = 0; var likes = 0; var comments = 0; var shares = 0;
+    for (var j = 0; j < entries.length; j++) {
+      views += Number(entries[j].views || 0);
+      likes += Number(entries[j].likes || 0);
+      comments += Number(entries[j].comments || 0);
+      shares += Number(entries[j].shares || 0);
+    }
+    var avgViews = Math.round(views / entries.length);
+    var engRate = views > 0 ? ((likes + comments * 3 + shares * 5) / views * 100) : 0;
+    topicStats.push({keyword: kw, entries: entries.length, totalViews: views, avgViews: avgViews, likes: likes, comments: comments, shares: shares, engRate: engRate});
+    totalViews += views; totalPosts += entries.length; totalLikes += likes; totalComments += comments;
+  }
+
+  topicStats.sort(function(a, b) { return b.avgViews - a.avgViews; });
+
+  var bestTopic = topicStats[0];
+  var worstTopic = topicStats.length > 1 ? topicStats[topicStats.length - 1] : null;
+  var avgOverall = totalPosts > 0 ? Math.round(totalViews / totalPosts) : 0;
+
+  h += '<div class="pi-insight"><div class="pi-icon">&#127942;</div><div><strong>Your Best Topic: ' + titleCase(bestTopic.keyword) + '</strong><br>Averages ' + bestTopic.avgViews.toLocaleString() + ' views per post (' + bestTopic.entries + ' posts logged). ';
+  if (worstTopic && bestTopic.avgViews > worstTopic.avgViews * 1.5) {
+    h += 'That\'s <strong>' + (bestTopic.avgViews / Math.max(1, worstTopic.avgViews)).toFixed(1) + 'x better</strong> than your ' + titleCase(worstTopic.keyword) + ' content.';
+  }
+  h += '</div></div>';
+
+  var topicsByEng = topicStats.slice().sort(function(a,b){return b.engRate - a.engRate});
+  if (topicsByEng[0].engRate > 0) {
+    h += '<div class="pi-insight"><div class="pi-icon">&#128172;</div><div><strong>Highest Engagement: ' + titleCase(topicsByEng[0].keyword) + '</strong><br>Engagement rate of ' + topicsByEng[0].engRate.toFixed(1) + '%. This topic gets the most likes, comments and shares relative to views - your audience really connects with this.</div></div>';
+  }
+
+  h += '<div class="pi-insight"><div class="pi-icon">&#128202;</div><div><strong>Your Numbers</strong><br>' + totalPosts + ' posts logged | ' + totalViews.toLocaleString() + ' total views | ' + avgOverall.toLocaleString() + ' avg views/post | ' + totalLikes.toLocaleString() + ' likes | ' + totalComments.toLocaleString() + ' comments</div></div>';
+
+  if (results && results.length > 0 && topicStats.length > 0) {
+    h += '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">';
+    h += '<div style="font-size:12px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">&#127919; Recommended For You Today</div>';
+
+    var bestKeywords = topicStats.slice(0, 3).map(function(t) { return t.keyword.toLowerCase(); });
+    var matched = [];
+    for (var r = 0; r < results.length; r++) {
+      var res = results[r];
+      var resKw = (res.keyword || "").toLowerCase();
+      var matchScore = 0;
+      for (var bk = 0; bk < bestKeywords.length; bk++) {
+        if (resKw.indexOf(bestKeywords[bk]) !== -1 || bestKeywords[bk].indexOf(resKw) !== -1) matchScore = 3;
+        var resWords = resKw.split(/[\s\-]+/);
+        var bkWords = bestKeywords[bk].split(/[\s\-]+/);
+        for (var w1 = 0; w1 < resWords.length; w1++) {
+          for (var w2 = 0; w2 < bkWords.length; w2++) {
+            if (resWords[w1].length >= 4 && resWords[w1] === bkWords[w2]) matchScore = Math.max(matchScore, 2);
+          }
+        }
+      }
+      if (matchScore > 0) matched.push({result: res, score: matchScore});
+    }
+    matched.sort(function(a,b){return b.score - a.score || Number(b.result.viral_score||0) - Number(a.result.viral_score||0)});
+
+    if (matched.length > 0) {
+      var limit = Math.min(3, matched.length);
+      for (var m = 0; m < limit; m++) {
+        var mr = matched[m].result;
+        var vs = Number(mr.viral_score || 0);
+        var rp = Number(mr.rise_percent || 0);
+        var why = rp > 50 ? "Rising fast - post now!" : vs > 50 ? "High viral potential" : "Matches your best content";
+        h += '<div class="pi-rec"><span class="rec-tag" style="background:rgba(0,255,136,.15);color:var(--green)">MATCH</span><strong>' + titleCase(mr.keyword) + '</strong> - Viral ' + vs.toFixed(0) + ' | Rise ' + formatRise(rp) + '<br><span style="font-size:10px;color:var(--green)">' + why + ' - Similar to your top-performing ' + titleCase(bestTopic.keyword) + ' content</span></div>';
+      }
+    } else {
+      var topTrending = results.slice(0, 3);
+      for (var t = 0; t < topTrending.length; t++) {
+        var tr = topTrending[t];
+        h += '<div class="pi-rec"><span class="rec-tag" style="background:rgba(255,165,0,.15);color:#ff8c00">TRENDING</span><strong>' + titleCase(tr.keyword) + '</strong> - Viral ' + Number(tr.viral_score||0).toFixed(0) + ' | Rise ' + formatRise(Number(tr.rise_percent||0)) + '<br><span style="font-size:10px;color:var(--muted)">Top trending in your niche right now</span></div>';
+      }
+    }
+    h += '</div>';
+  }
+
+  h += '</div>';
+
+  if (topicStats.length >= 2) {
+    h += '<div class="pi-card">';
+    h += '<h3>&#128200; Topic Performance Ranking</h3>';
+    for (var tp = 0; tp < Math.min(10, topicStats.length); tp++) {
+      var ts = topicStats[tp];
+      var barWidth = bestTopic.avgViews > 0 ? (ts.avgViews / bestTopic.avgViews * 100) : 0;
+      var medal = tp === 0 ? "&#129351;" : tp === 1 ? "&#129352;" : tp === 2 ? "&#129353;" : "&#128313;";
+      h += '<div style="margin-bottom:8px">';
+      h += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span>' + medal + ' ' + titleCase(ts.keyword) + ' <span style="color:var(--muted);font-size:10px">(' + ts.entries + ' posts)</span></span><span style="color:var(--green);font-weight:700">' + ts.avgViews.toLocaleString() + ' avg</span></div>';
+      h += '<div style="height:6px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + barWidth.toFixed(0) + '%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:4px"></div></div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  el.innerHTML = h;
+}
+
+/* ═══════════════════════════════════════════
+   WEEKLY SCORECARD
+   ═══════════════════════════════════════════ */
+function renderWeeklyScorecard() {
+  var el = document.getElementById("weeklyScorecard");
+  if (!el) return;
+  var perfData = loadPerfData();
+  var streakData = getStreakData();
+  var now = new Date();
+  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  var twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+  var thisWeek = {posts: 0, views: 0, likes: 0, comments: 0, topics: {}};
+  var lastWeek = {posts: 0, views: 0, likes: 0, comments: 0};
+
+  for (var kw in perfData) {
+    var entries = perfData[kw];
+    for (var i = 0; i < entries.length; i++) {
+      var e = entries[i];
+      if (!e.date) continue;
+      var parts = e.date.split("/");
+      if (parts.length !== 3) continue;
+      var entryDate = new Date(parts[2], parts[1] - 1, parts[0]);
+      if (entryDate >= weekAgo) {
+        thisWeek.posts++;
+        thisWeek.views += Number(e.views || 0);
+        thisWeek.likes += Number(e.likes || 0);
+        thisWeek.comments += Number(e.comments || 0);
+        thisWeek.topics[kw] = (thisWeek.topics[kw] || 0) + Number(e.views || 0);
+      } else if (entryDate >= twoWeeksAgo) {
+        lastWeek.posts++;
+        lastWeek.views += Number(e.views || 0);
+        lastWeek.likes += Number(e.likes || 0);
+        lastWeek.comments += Number(e.comments || 0);
+      }
+    }
+  }
+
+  var h = '<div class="scorecard">';
+  h += '<h3 style="font-size:14px;margin-bottom:4px">&#128203; Weekly Scorecard</h3>';
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px">Your last 7 days at a glance</p>';
+
+  var viewChange = lastWeek.views > 0 ? ((thisWeek.views - lastWeek.views) / lastWeek.views * 100) : 0;
+  var postChange = lastWeek.posts > 0 ? ((thisWeek.posts - lastWeek.posts) / lastWeek.posts * 100) : 0;
+
+  h += '<div class="scorecard-grid">';
+  h += '<div class="scorecard-stat"><div class="sc-val">' + thisWeek.posts + '</div><div class="sc-label">Posts Logged</div>' + (postChange !== 0 ? '<div style="font-size:9px;color:' + (postChange > 0 ? 'var(--green)' : 'var(--red)') + '">' + (postChange > 0 ? '+' : '') + postChange.toFixed(0) + '% vs last week</div>' : '') + '</div>';
+  h += '<div class="scorecard-stat"><div class="sc-val">' + thisWeek.views.toLocaleString() + '</div><div class="sc-label">Total Views</div>' + (viewChange !== 0 ? '<div style="font-size:9px;color:' + (viewChange > 0 ? 'var(--green)' : 'var(--red)') + '">' + (viewChange > 0 ? '+' : '') + viewChange.toFixed(0) + '% vs last week</div>' : '') + '</div>';
+  h += '<div class="scorecard-stat"><div class="sc-val">' + thisWeek.likes.toLocaleString() + '</div><div class="sc-label">Likes</div></div>';
+  h += '<div class="scorecard-stat"><div class="sc-val">' + thisWeek.comments.toLocaleString() + '</div><div class="sc-label">Comments</div></div>';
+  h += '</div>';
+
+  var lvl = getLevel(streakData.xp || 0);
+  h += '<div style="display:flex;gap:12px;margin-bottom:12px">';
+  h += '<div style="flex:1;padding:10px;background:rgba(255,140,0,.06);border:1px solid rgba(255,140,0,.2);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:900;color:#ff8c00">' + (streakData.streak || 0) + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Day Streak</div></div>';
+  h += '<div style="flex:1;padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.15);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:900;color:var(--green)">' + (streakData.xp || 0) + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total XP</div></div>';
+  h += '<div style="flex:1;padding:10px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:10px;text-align:center"><div style="font-size:18px;font-weight:900;color:var(--purple)">Lv.' + lvl.level + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">' + lvl.name + '</div></div>';
+  h += '</div>';
+
+  var topicKeys = Object.keys(thisWeek.topics);
+  if (topicKeys.length > 0) {
+    topicKeys.sort(function(a, b) { return thisWeek.topics[b] - thisWeek.topics[a]; });
+    h += '<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">This Week\'s Top Topics</div>';
+    for (var t = 0; t < Math.min(5, topicKeys.length); t++) {
+      h += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:var(--muted)">' + titleCase(topicKeys[t]) + '</span><span style="color:var(--green);font-weight:700">' + thisWeek.topics[topicKeys[t]].toLocaleString() + ' views</span></div>';
+    }
+  }
+
+  if (thisWeek.posts === 0) {
+    h += '<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">No posts logged this week yet. Log your content performance to see your weekly scorecard!</div>';
+  }
+
+  h += '</div>';
+
+  h += '<div class="pi-card">';
+  h += '<h3>&#127919; XP Actions</h3>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:10px">Earn XP to level up your Creator Radar rank</p>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">';
+  h += '<div style="padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;font-size:11px"><span style="color:var(--green);font-weight:700">+10 XP</span> <span style="color:var(--muted)">Daily login</span></div>';
+  h += '<div style="padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;font-size:11px"><span style="color:var(--green);font-weight:700">+25 XP</span> <span style="color:var(--muted)">Log performance</span></div>';
+  h += '<div style="padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;font-size:11px"><span style="color:var(--green);font-weight:700">+15 XP</span> <span style="color:var(--muted)">Scan a niche</span></div>';
+  h += '<div style="padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;font-size:11px"><span style="color:var(--green);font-weight:700">+20 XP</span> <span style="color:var(--muted)">Analyze a video</span></div>';
+  h += '</div>';
+  h += '<div style="margin-top:10px;text-align:center;font-size:10px;color:var(--muted)">Longest Streak: <strong style="color:#ff8c00">' + (streakData.longestStreak || 0) + ' days</strong> | Total Logins: <strong style="color:var(--green)">' + (streakData.totalLogins || 0) + '</strong></div>';
+  h += '</div>';
+
+  el.innerHTML = h;
+}
+
 function renderAllSections(results, emerging, productTrends, creatorInsights) {
   results.sort(function(a, b) { return Number(b.viral_score || 0) - Number(a.viral_score || 0); });
   cachedResults = results;
@@ -5011,6 +5407,8 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     document.getElementById("platformOptimizer").innerHTML = renderPlatformOptimizer(results);
     renderNotifications();
     renderDailyRecs(results);
+    renderPersonalIntelligence(results);
+    renderWeeklyScorecard();
   }
 }
 
@@ -5537,6 +5935,7 @@ async function showDashboard() {
   checkAdminStatus();
   initNicheSwitcher();
   await loadPerfFromSupabase();
+  initStreak();
   loadLiveStats();
   loadReferralCard();
   if (!localStorage.getItem("cr_tutorial_done")) {
@@ -5676,6 +6075,24 @@ function startMatrix() {
 
 // ── NOTIFICATIONS SYSTEM ──
 var PLATFORM_NOTIFICATIONS = [
+  {
+    id: "notif-v11.3-streak-xp",
+    type: "feature",
+    icon: "&#128293;",
+    iconBg: "rgba(255,140,0,.1)",
+    title: "NEW: Streaks, XP & Levels",
+    body: "Keep your daily streak alive! Log in daily to build your streak, earn XP for logging performance, scanning niches, copying hooks, and analyzing videos. Level up from Rookie to Legend. Check your streak bar at the top of the dashboard.",
+    date: "2026-06-21T12:00:00Z"
+  },
+  {
+    id: "notif-v11.3-personal-intel",
+    type: "feature",
+    icon: "&#129504;",
+    iconBg: "rgba(0,255,136,.1)",
+    title: "NEW: Personal Intelligence",
+    body: "Your dashboard now learns from YOUR performance data. Check the new My Stats tab to see which topics perform best for YOU, get personalised trend recommendations matched to your proven content, and track your weekly scorecard. The more you log, the smarter it gets.",
+    date: "2026-06-21T12:00:00Z"
+  },
   {
     id: "notif-v11.2-interactive-stats",
     type: "feature",
