@@ -6392,8 +6392,10 @@ function renderDailyRecs(results) {
 
 // ── ADMIN PANEL ──
 var isAdminUser = false;
+var isAmbassador = false;
 
 var ADMIN_EMAILS = ["jamie.mahon1996@gmail.com"];
+var AMBASSADOR_EMAILS = ["henrynyam06@gmail.com"];
 
 async function checkAdminStatus() {
   try {
@@ -6409,6 +6411,17 @@ async function checkAdminStatus() {
       var btn = document.getElementById("adminTabBtn");
       if (btn) btn.style.display = "";
       loadAdminPanel();
+    }
+    if (!isAdmin && u && u.email) {
+      for (var j = 0; j < AMBASSADOR_EMAILS.length; j++) {
+        if (u.email.toLowerCase() === AMBASSADOR_EMAILS[j]) {
+          isAmbassador = true;
+          var abtn = document.getElementById("adminTabBtn");
+          if (abtn) { abtn.style.display = ""; abtn.innerHTML = "&#127775; Ambassador"; }
+          loadAmbassadorPanel();
+          break;
+        }
+      }
     }
   } catch(e) {}
 }
@@ -6442,6 +6455,131 @@ async function loadAdminPanel() {
 
   loadAdminFeedback();
   loadAdminTickets();
+}
+
+async function loadAmbassadorPanel() {
+  var h = '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:16px;color:#ff8c00;margin-bottom:4px">&#127775; Ambassador Dashboard</h2>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Track your referrals and see platform activity</p>';
+  h += '</div>';
+
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:var(--green);margin-bottom:12px">&#128101; Active Users</h2>';
+  h += '<div id="ambassadorUsersList"><p style="color:var(--muted);font-size:12px">Loading user data...</p></div>';
+  h += '</div>';
+
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:var(--purple);margin-bottom:12px">&#128200; Platform Stats</h2>';
+  h += '<div id="ambassadorStats"><p style="color:var(--muted);font-size:12px">Loading stats...</p></div>';
+  h += '</div>';
+
+  document.getElementById("adminFeedback").innerHTML = h;
+  loadAmbassadorUsers();
+}
+
+async function loadAmbassadorUsers() {
+  var el = document.getElementById("ambassadorUsersList");
+  var statsEl = document.getElementById("ambassadorStats");
+  if (!el) return;
+  try {
+    var res = await supabaseClient.auth.admin.listUsers();
+    if (res && res.data && res.data.users) {
+      var users = res.data.users;
+      renderAmbassadorData(users, el, statsEl);
+      return;
+    }
+  } catch(e) {}
+
+  try {
+    var res2 = await supabaseClient.from("cr_support_tickets").select("user_email,niche,created_at").order("created_at",{ascending:false});
+    if (res2.data) {
+      var emailSet = {};
+      for (var i = 0; i < res2.data.length; i++) {
+        var email = res2.data[i].user_email;
+        if (email && !emailSet[email]) emailSet[email] = {email: email, niche: res2.data[i].niche || "Unknown", lastSeen: res2.data[i].created_at};
+      }
+      var userList = [];
+      for (var e in emailSet) userList.push(emailSet[e]);
+      renderAmbassadorFallback(userList, el, statsEl);
+      return;
+    }
+  } catch(e2) {}
+
+  el.innerHTML = '<p style="color:var(--muted);font-size:12px">Unable to load user data at this time.</p>';
+}
+
+function renderAmbassadorData(users, el, statsEl) {
+  var now = new Date();
+  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  var dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  var totalUsers = users.length;
+  var thisWeek = 0;
+  var today = 0;
+  var niches = {};
+
+  var h = '';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
+
+  for (var i = 0; i < users.length; i++) {
+    var u = users[i];
+    var created = new Date(u.created_at);
+    if (created >= weekAgo) thisWeek++;
+    if (created >= dayAgo) today++;
+    var niche = (u.user_metadata && u.user_metadata.niche) || "Unknown";
+    niches[niche] = (niches[niche] || 0) + 1;
+  }
+
+  h += '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + totalUsers + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total Users</div></div>';
+  h += '<div style="text-align:center;padding:12px;background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:#ff8c00">' + thisWeek + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">This Week</div></div>';
+  h += '<div style="text-align:center;padding:12px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--purple)">' + today + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Today</div></div>';
+  h += '</div>';
+
+  users.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+
+  h += '<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Recent Signups</div>';
+  var limit = Math.min(20, users.length);
+  for (var j = 0; j < limit; j++) {
+    var usr = users[j];
+    var email = usr.email || "Unknown";
+    var masked = email.substring(0, 3) + "***@" + email.split("@")[1];
+    var niche2 = (usr.user_metadata && usr.user_metadata.niche) || "Unknown";
+    var joined = timeAgo(usr.created_at);
+    var lastSign = usr.last_sign_in_at ? timeAgo(usr.last_sign_in_at) : "Never";
+    var isActive = usr.last_sign_in_at && (new Date(usr.last_sign_in_at) >= weekAgo);
+    var statusDot = isActive ? '<span style="color:var(--green)">&#9679;</span>' : '<span style="color:var(--muted)">&#9679;</span>';
+    h += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px">';
+    h += statusDot + ' ';
+    h += '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--white)">' + masked + '</div><div style="font-size:9px;color:var(--muted)">' + titleCase(niche2) + ' | Joined ' + joined + '</div></div>';
+    h += '<div style="text-align:right;font-size:9px;color:var(--muted)">Last active<br><span style="color:' + (isActive ? 'var(--green)' : 'var(--muted)') + ';font-weight:700">' + lastSign + '</span></div>';
+    h += '</div>';
+  }
+  if (users.length > 20) h += '<div style="text-align:center;font-size:10px;color:var(--muted);margin-top:6px">+ ' + (users.length - 20) + ' more users</div>';
+
+  el.innerHTML = h;
+
+  if (statsEl) {
+    var sh = '<div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Popular Niches</div>';
+    var nicheList = [];
+    for (var n in niches) nicheList.push({name: n, count: niches[n]});
+    nicheList.sort(function(a,b){return b.count - a.count});
+    for (var k = 0; k < Math.min(10, nicheList.length); k++) {
+      var pct = (nicheList[k].count / totalUsers * 100).toFixed(0);
+      sh += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:var(--muted)">' + titleCase(nicheList[k].name) + '</span><span style="color:var(--green);font-weight:700">' + nicheList[k].count + ' (' + pct + '%)</span></div>';
+    }
+    statsEl.innerHTML = sh;
+  }
+}
+
+function renderAmbassadorFallback(userList, el, statsEl) {
+  var h = '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px;margin-bottom:14px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + userList.length + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Known Users</div></div>';
+  h += '<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Users</div>';
+  for (var i = 0; i < Math.min(20, userList.length); i++) {
+    var u = userList[i];
+    var email = u.email || "Unknown";
+    var masked = email.substring(0, 3) + "***@" + email.split("@")[1];
+    h += '<div style="padding:6px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px"><span style="color:var(--white);font-weight:700">' + masked + '</span> <span style="color:var(--muted)">| ' + titleCase(u.niche) + '</span></div>';
+  }
+  el.innerHTML = h;
 }
 
 async function loadAdminFeedback() {
