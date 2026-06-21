@@ -4781,7 +4781,10 @@ var GROQ_KEY = atob(_gk.join(""));
 
 async function getAIAnalysis(caption, niche) {
   try {
-    var prompt = "You are a viral content expert. Analyze this social media caption for a creator in the " + niche + " niche. Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 for a related video in the same niche\",\"Idea 2\",\"Idea 3\"]}";
+    var perfData = loadPerfData();
+    var perfTopics = Object.keys(perfData).slice(0, 5);
+    var perfHint = perfTopics.length > 0 ? " The creator's best performing topics are: " + perfTopics.join(", ") + ". Factor this into your suggestions." : "";
+    var prompt = "You are a viral content expert. Analyze this social media caption for a creator in the " + niche + " niche." + perfHint + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
