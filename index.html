@@ -6236,7 +6236,15 @@ async function loadLiveStats() {
     var lastMod = res.headers.get("Last-Modified");
     var data = await res.json();
     var results = Array.isArray(data) ? data : data.results || [];
-    var emerging = Array.isArray(data) ? [] : data.emerging || [];
+    var rawEmerging = Array.isArray(data) ? [] : data.emerging || [];
+    var emerging = rawEmerging.filter(function(e) {
+      var kw = (e.keyword || "");
+      var words = kw.split(/\s+/);
+      if (words.length === 1 && kw.length > 8) return false;
+      if (words.length >= 4 && !/\b(how|why|what|is|are|best|top|new|trending|should|does|can|will|vs)\b/i.test(kw)) return false;
+      if (/casino|loan|crisis|confrontation|deindustrialis|scam|fraud/i.test(kw)) return false;
+      return true;
+    });
     var productTrends = Array.isArray(data) ? [] : data.product_trends || [];
     var creatorInsights = Array.isArray(data) ? [] : data.creator_insights || [];
 
