@@ -2241,7 +2241,12 @@ function scanNicheTrends(niche, callback) {
       var sl = s.toLowerCase();
       var blocked = false;
       for (var b = 0; b < bannedWords.length; b++) { if (sl.indexOf(bannedWords[b]) !== -1) { blocked = true; break; } }
-      if (!blocked && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase() && isRelevant(s)) {
+      var kwWords = s.trim().split(/\s+/);
+      var longestWord = 0;
+      for (var ww = 0; ww < kwWords.length; ww++) { if (kwWords[ww].length > longestWord) longestWord = kwWords[ww].length; }
+      var isSingleBlob = kwWords.length === 1 && s.length > 12;
+      var hasGibberish = longestWord > 20 || /^[a-z]{15,}$/i.test(s.trim());
+      if (!blocked && !isSingleBlob && !hasGibberish && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase() && isRelevant(s)) {
         seen[sl] = true;
         var score = Math.max(20, 85 - allResults.length * 3 + Math.floor(Math.random() * 15));
         var rise = Math.max(-5, 50 - allResults.length * 4 + Math.floor(Math.random() * 20));
