@@ -4733,6 +4733,37 @@ function generateImprovedCaption(text, firstLine, hookResult, ctaResult, engResu
   return improved;
 }
 
+var GROQ_KEY = localStorage.getItem("cr_groq_key") || "";
+
+async function getAIAnalysis(caption, niche) {
+  try {
+    var prompt = "You are a viral content expert. Analyze this social media caption for a creator in the " + niche + " niche. Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 for a related video in the same niche\",\"Idea 2\",\"Idea 3\"]}";
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 600})
+    });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    var content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!content) return null;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch(e) {
+    return null;
+  }
+}
+
+function saveGroqKey() {
+  var input = document.getElementById("groqKeyInput");
+  var key = (input.value || "").trim();
+  if (!key || key.indexOf("gsk_") !== 0) { alert("Please enter a valid Groq API key (starts with gsk_)"); return; }
+  localStorage.setItem("cr_groq_key", key);
+  GROQ_KEY = key;
+  document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
+  alert("AI analysis enabled! Try analyzing a caption now.");
+}
+
 async function fetchTikTokCaption(url) {
   try {
     var oembed = "https://www.tiktok.com/oembed?url=" + encodeURIComponent(url);
@@ -4788,6 +4819,14 @@ async function runAnalyzer() {
   result.author = author;
   saveAnalyzerHistory({ text: result.text, topic: result.topic, grade: result.grade, score: result.totalScore, time: result.timestamp, url: url });
 
+  btn.textContent = "GETTING AI INSIGHTS...";
+  var aiResult = await getAIAnalysis(text, USER_NICHE || "general");
+  if (aiResult) {
+    result.aiAnalysis = aiResult.analysis || "";
+    result.aiImproved = aiResult.improved || "";
+    result.aiIdeas = aiResult.ideas || [];
+  }
+
   var h = '<div class="az-result">';
 
   h += '<div class="az-section" style="border-left:3px solid var(--green)">';
@@ -4829,7 +4868,20 @@ async function runAnalyzer() {
     h += '</div>';
   }
 
-  if (result.improved !== result.text) {
+  if (result.aiAnalysis) {
+    h += '<div class="az-section" style="border-left:3px solid var(--blue)">';
+    h += '<div class="az-section-title">&#129504; AI Analysis</div>';
+    h += '<div style="font-size:12px;color:var(--white);line-height:1.6">' + result.aiAnalysis + '</div>';
+    h += '</div>';
+  }
+
+  if (result.aiImproved) {
+    h += '<div class="az-section" style="border-left:3px solid var(--green)">';
+    h += '<div class="az-section-title">&#9998; AI-Improved Version (tap to copy)</div>';
+    h += '<div id="improvedCaption" onclick="copyText(\'improvedCaption\')" style="font-size:12px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.15);padding:12px;border-radius:10px;cursor:pointer;line-height:1.6;white-space:pre-wrap">' + result.aiImproved.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+    h += '<div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center">Tap the text above to copy the improved version</div>';
+    h += '</div>';
+  } else if (result.improved !== result.text) {
     h += '<div class="az-section" style="border-left:3px solid var(--green)">';
     h += '<div class="az-section-title">&#9998; Improved Version (tap to copy)</div>';
     h += '<div id="improvedCaption" onclick="copyText(\'improvedCaption\')" style="font-size:12px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.15);padding:12px;border-radius:10px;cursor:pointer;line-height:1.6;white-space:pre-wrap">' + result.improved.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
@@ -4837,16 +4889,24 @@ async function runAnalyzer() {
     h += '</div>';
   }
 
-  if (result.alternatives.length > 0) {
+  if (result.aiIdeas && result.aiIdeas.length > 0) {
+    h += '<div class="az-section" style="border-left:3px solid var(--purple)">';
+    h += '<div class="az-section-title">&#128161; AI Content Ideas for Your Niche</div>';
+    for (var ai = 0; ai < result.aiIdeas.length; ai++) {
+      h += '<div class="az-alt" onclick="copyAlt(this)">';
+      h += '<div class="az-alt-hook">' + (ai + 1) + '. ' + result.aiIdeas[ai] + '</div>';
+      h += '<div class="az-alt-copy" style="margin-top:4px">TAP TO COPY</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  } else if (result.alternatives.length > 0) {
     h += '<div class="az-section" style="border-left:3px solid var(--purple)">';
     h += '<div class="az-section-title">&#128161; Content Ideas for Your Niche</div>';
     for (var a = 0; a < Math.min(5, result.alternatives.length); a++) {
       var altIdea = result.alternatives[a].idea;
       h += '<div class="az-alt" onclick="copyAlt(this)">';
       h += '<div class="az-alt-hook">' + (a + 1) + '. ' + altIdea.text + '</div>';
-      h += '<div class="az-alt-meta">';
-      h += '<span style="background:rgba(167,139,250,.15);color:var(--purple);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700">' + altIdea.topic + '</span>';
-      h += '</div>';
+      h += '<div class="az-alt-meta"><span style="background:rgba(167,139,250,.15);color:var(--purple);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700">' + altIdea.topic + '</span></div>';
       h += '<div class="az-alt-copy" style="margin-top:4px">TAP TO COPY</div>';
       h += '</div>';
     }
@@ -4892,7 +4952,22 @@ function loadHistoryAnalysis(idx) {
 function renderVideoAnalyzer() {
   var h = '<div class="card card-glow" style="border-color:var(--purple)">';
   h += '<div class="card-header"><h2 style="color:var(--purple)">Video Analyzer</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128269;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Paste a TikTok URL or caption to reverse-engineer why it went viral and get fresh content ideas using the same formula.</p>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Paste a caption to get AI-powered analysis, specific fixes, an improved version, and content ideas for your niche.</p>';
+
+  var hasKey = !!GROQ_KEY;
+  if (!hasKey) {
+    h += '<div style="padding:10px;background:rgba(255,165,0,.06);border:1px solid rgba(255,165,0,.2);border-radius:10px;margin-bottom:12px">';
+    h += '<div style="font-size:11px;color:var(--amber);font-weight:700;margin-bottom:4px">&#129504; Enable AI Analysis (Free)</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Get AI-powered feedback, improved captions, and niche-specific ideas. Sign up free at groq.com and paste your API key below.</div>';
+    h += '<div style="display:flex;gap:6px"><input id="groqKeyInput" type="password" placeholder="Paste your Groq API key (gsk_...)" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:8px;background:var(--panel2);color:var(--white);font-size:11px">';
+    h += '<button onclick="saveGroqKey()" style="padding:8px 14px;background:var(--green);color:#000;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer">Save</button></div>';
+    h += '</div>';
+  } else {
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:8px">';
+    h += '<span style="color:var(--green);font-size:9px;font-weight:700">&#129504; AI ENABLED</span>';
+    h += '<span style="font-size:9px;color:var(--muted);margin-left:auto;cursor:pointer" onclick="localStorage.removeItem(\'cr_groq_key\');GROQ_KEY=\'\';document.getElementById(\'videoAnalyzer\').innerHTML=renderVideoAnalyzer()">Change Key</span>';
+    h += '</div>';
+  }
 
   h += '<div class="az-input-wrap">';
   h += '<input class="az-input" id="azUrl" type="text" placeholder="Paste TikTok video URL...">';
