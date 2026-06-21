@@ -1206,6 +1206,7 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="tab-plan" class="tab-content active">
       <div id="dailyPlan"></div>
+      <div id="aiContentAngles"></div>
       <div id="primaryTarget"></div>
     </div>
 
@@ -2262,7 +2263,7 @@ function scanNicheTrends(niche, callback) {
       var isSingleBlob = kwWords.length === 1 && s.length > 12;
       var hasGibberish = longestWord > 20 || /^[a-z]{15,}$/i.test(s.trim());
       var tooDisconnected = kwWords.length >= 4 && !(/\b(how|why|what|when|where|who|is|are|do|does|can|should|will|best|top|new|latest|trending)\b/i.test(s));
-      var isMetaSearch = /\b(trending|trending news|trending today|viral|viral tiktok|content ideas|news today|latest news|latest|right now|this week|for beginners|tips and tricks|hacks that work|growth strategy|creator tools|content ideas 2026)\s*$/i.test(sl) || /^(best|top|how to make|how to get)\s/i.test(sl) && /\b(content|views|followers|viral)\b/i.test(sl);
+      var isMetaSearch = /\b(trending|trending news|trending today|viral|viral tiktok|content ideas|news today|latest news|latest|right now|this week|for beginners|tips and tricks|hacks that work|growth strategy|creator tools|content ideas 2026)\s*$/i.test(sl) || /^(what|what is|what are|best|top|how to make|how to get)\s.*\b(trending|content|views|followers|viral|worldwide)\b/i.test(sl);
       var tooSimilarToSeed = false;
       for (var ss = 0; ss < seeds.length; ss++) {
         var seedLow = seeds[ss].toLowerCase();
@@ -4905,6 +4906,91 @@ function renderAIContent(ai, sectionId) {
   addXP("analyze");
 }
 
+async function aiContentAngles(results) {
+  if (!GROQ_KEY || !results || results.length === 0) return;
+  var el = document.getElementById("aiContentAngles");
+  if (!el) return;
+
+  var topKeywords = [];
+  for (var i = 0; i < Math.min(3, results.length); i++) {
+    topKeywords.push(results[i].keyword);
+  }
+
+  var audienceCtx = getAudienceContext();
+  var perfData = loadPerfData();
+  var perfSummary = "";
+  var perfKeys = Object.keys(perfData);
+  if (perfKeys.length > 0) {
+    var topPerf = [];
+    for (var p = 0; p < perfKeys.length; p++) {
+      var entries = perfData[perfKeys[p]];
+      var totalViews = 0;
+      for (var e = 0; e < entries.length; e++) totalViews += Number(entries[e].views || 0);
+      topPerf.push({kw: perfKeys[p], avg: Math.round(totalViews / entries.length)});
+    }
+    topPerf.sort(function(a,b){return b.avg - a.avg});
+    perfSummary = " The creator's performance data shows: " + topPerf.slice(0, 5).map(function(t){return t.kw + " (" + t.avg + " avg views)"}).join(", ") + ".";
+  }
+
+  el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Content Angles</h2></div><p style="font-size:11px;color:var(--muted)">Generating personalised content angles...</p></div>';
+
+  try {
+    var prompt = "You are a viral content strategist." + audienceCtx + perfSummary + "\n\nFor each of these trending keywords, generate 3 different content angles. Each angle should be a specific video/post idea, NOT just the keyword. Score each angle from 1-10 for predicted engagement based on the creator's niche and audience data.\n\nKeywords:\n" + topKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"keywords\":[{\"keyword\":\"the keyword\",\"angles\":[{\"type\":\"Debate\",\"hook\":\"Specific hook/title for this angle (under 80 chars)\",\"why\":\"Why this angle works for this audience\",\"engagement\":8,\"bestFor\":\"comments\"},{\"type\":\"Storytelling\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":7,\"bestFor\":\"shares\"},{\"type\":\"Educational\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":6,\"bestFor\":\"saves\"}],\"recommended\":0}]}";
+
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 1200})
+    });
+    if (!resp.ok) { el.innerHTML = ""; return; }
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    var aiData = JSON.parse(cleaned);
+    if (!aiData.keywords) { el.innerHTML = ""; return; }
+
+    var h = '<div class="card" style="border-color:rgba(167,139,250,.25)">';
+    h += '<div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Content Angles</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#127919;</div></div>';
+    h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">AI-generated content angles ranked by predicted engagement for YOUR audience. Tap any hook to copy it.</p>';
+
+    for (var k = 0; k < aiData.keywords.length; k++) {
+      var kd = aiData.keywords[k];
+      var recIdx = Number(kd.recommended || 0);
+      h += '<div style="margin-bottom:16px;padding-bottom:12px;' + (k < aiData.keywords.length - 1 ? 'border-bottom:1px solid var(--border)' : '') + '">';
+      h += '<div style="font-size:14px;font-weight:900;color:var(--white);text-transform:uppercase;margin-bottom:8px">' + kd.keyword + '</div>';
+
+      for (var a = 0; a < (kd.angles || []).length; a++) {
+        var angle = kd.angles[a];
+        var isRec = a === recIdx;
+        var engScore = Number(angle.engagement || 5);
+        var engColor = engScore >= 8 ? "var(--green)" : engScore >= 6 ? "var(--amber)" : "var(--muted)";
+        var typeColors = {"Debate":"rgba(255,69,0,.15)","Storytelling":"rgba(0,255,136,.1)","Educational":"rgba(77,201,246,.1)","Emotional":"rgba(255,165,0,.1)","Identity":"rgba(167,139,250,.1)","Nostalgia":"rgba(255,215,0,.1)","Controversial":"rgba(255,69,0,.15)","How-To":"rgba(77,201,246,.1)","Opinion":"rgba(167,139,250,.1)"};
+        var typeBg = typeColors[angle.type] || "rgba(255,255,255,.05)";
+
+        h += '<div onclick="navigator.clipboard.writeText(\'' + (angle.hook || "").replace(/'/g, "\\'") + '\');this.style.borderColor=\'var(--green)\';var s=this;setTimeout(function(){s.style.borderColor=\'' + (isRec ? 'var(--green)' : 'var(--border)') + '\'},1000)" style="padding:10px 12px;background:' + (isRec ? 'rgba(0,255,136,.04)' : 'var(--panel2)') + ';border:1px solid ' + (isRec ? 'var(--green)' : 'var(--border)') + ';border-radius:10px;margin-bottom:6px;cursor:pointer">';
+
+        h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+        h += '<div style="display:flex;align-items:center;gap:6px">';
+        h += '<span style="padding:2px 8px;background:' + typeBg + ';border-radius:6px;font-size:9px;font-weight:700;color:var(--white);text-transform:uppercase">' + (angle.type || "General") + '</span>';
+        if (isRec) h += '<span style="padding:2px 8px;background:rgba(0,255,136,.15);border-radius:6px;font-size:8px;font-weight:800;color:var(--green)">BEST FOR YOU</span>';
+        h += '</div>';
+        h += '<div style="text-align:right"><span style="font-size:14px;font-weight:900;color:' + engColor + '">' + engScore + '</span><span style="font-size:9px;color:var(--muted)">/10</span></div>';
+        h += '</div>';
+
+        h += '<div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:3px;line-height:1.4">"' + (angle.hook || "") + '"</div>';
+        h += '<div style="font-size:10px;color:var(--muted);line-height:1.4">' + (angle.why || "") + '</div>';
+        if (angle.bestFor) h += '<div style="font-size:9px;color:' + engColor + ';margin-top:3px;font-weight:700">Best for: ' + angle.bestFor + '</div>';
+        h += '<div style="font-size:8px;color:var(--muted);margin-top:2px;text-align:right">TAP TO COPY</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    h += '</div>';
+    el.innerHTML = h;
+  } catch(e) { el.innerHTML = ""; }
+}
+
 async function aiValidateKeywords(results, emerging) {
   if (!GROQ_KEY || results.length === 0) return;
   var perfData = loadPerfData();
@@ -6315,6 +6401,7 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     renderDailyRecs(results);
     renderPersonalIntelligence(results);
     renderWeeklyScorecard();
+    aiContentAngles(results);
   }
 }
 
