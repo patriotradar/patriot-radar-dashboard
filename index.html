@@ -4230,7 +4230,19 @@ function detectTopic(text) {
     { words: ["parliament", "government", "politics", "labour", "conservative", "reform", "mp ", "minister"], label: "Politics" },
     { words: ["school", "education", "teach", "curriculum", "children", "young", "generation"], label: "Education" },
     { words: ["nhs", "hospital", "healthcare", "doctor", "nurse"], label: "NHS/Healthcare" },
-    { words: ["police", "crime", "law", "justice", "court", "prison", "sentence"], label: "Law & Order" }
+    { words: ["police", "crime", "law", "justice", "court", "prison", "sentence"], label: "Law & Order" },
+    { words: ["music", "song", "album", "artist", "singer", "rapper", "beat", "lyrics", "melody", "musician", "concert", "studio"], label: "Music" },
+    { words: ["workout", "gym", "exercise", "fitness", "muscle", "cardio", "gains", "lift", "squat", "bench"], label: "Fitness" },
+    { words: ["recipe", "cook", "bake", "kitchen", "meal", "ingredient", "food", "dish", "dinner", "breakfast"], label: "Cooking" },
+    { words: ["skincare", "makeup", "beauty", "glow", "moisturize", "routine", "serum", "foundation", "contour"], label: "Beauty" },
+    { words: ["outfit", "fashion", "style", "wear", "trend", "clothing", "dress", "streetwear", "wardrobe"], label: "Fashion" },
+    { words: ["iphone", "android", "laptop", "gadget", "software", "app", "review", "specs", "tech", "device"], label: "Tech" },
+    { words: ["game", "gaming", "playstation", "xbox", "pc", "fps", "rpg", "esports", "stream", "twitch"], label: "Gaming" },
+    { words: ["travel", "trip", "destination", "flight", "hotel", "beach", "backpack", "explore", "adventure"], label: "Travel" },
+    { words: ["invest", "stock", "crypto", "bitcoin", "money", "budget", "savings", "income", "finance", "wealth"], label: "Finance" },
+    { words: ["camera", "photo", "lens", "portrait", "landscape", "editing", "lightroom", "composition", "shoot"], label: "Photography" },
+    { words: ["watch", "smartwatch", "wearable", "apple watch", "galaxy watch", "garmin", "fitbit"], label: "Smartwatch" },
+    { words: ["yoga", "pilates", "meditation", "mindful", "stretch", "wellness", "mental health", "self care"], label: "Wellness" }
   ];
   for (var i = 0; i < topics.length; i++) {
     for (var j = 0; j < topics[i].words.length; j++) {
@@ -4404,7 +4416,93 @@ var IDEA_POOL = [
   { text: "Do people still hold doors open for each other where you live?", topic: "Manners/Respect", emotions: ["Nostalgia", "Concern"], format: "opinion", debate: 1 }
 ];
 
+var NICHE_IDEA_TEMPLATES = {
+  "fitness": [
+    {text:"What's better for fat loss: cardio or weights? Comment below",topic:"Training",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"The exercise most people do wrong at the gym",topic:"Form",format:"opinion",emotions:["Concern"],debate:1},
+    {text:"My 30-day transformation doing this one routine",topic:"Results",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Morning workout vs evening workout - which gets better results?",topic:"Schedule",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"3 exercises that changed my body completely",topic:"Training",format:"opinion",emotions:["Inspiration"],debate:0},
+    {text:"The biggest gym mistake beginners make",topic:"Form",format:"opinion",emotions:["Concern"],debate:1}
+  ],
+  "beauty": [
+    {text:"The skincare step most people skip that makes the biggest difference",topic:"Skincare",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Budget dupe vs luxury original - can you tell which is which?",topic:"Products",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"My morning routine that transformed my skin in 2 weeks",topic:"Routine",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"The makeup trick that makes everyone look instantly better",topic:"Makeup",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Products I regret buying vs products I'll repurchase forever",topic:"Products",format:"abc",emotions:["Honesty"],debate:1},
+    {text:"GRWM using only products under 10 quid - the results are amazing",topic:"Budget",format:"story",emotions:["Curiosity"],debate:0}
+  ],
+  "cooking": [
+    {text:"The one ingredient that transforms any dish instantly",topic:"Tips",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"5-minute meal that tastes like it took an hour",topic:"Quick Meals",format:"story",emotions:["Curiosity"],debate:0},
+    {text:"Homemade vs shop bought - can you taste the difference?",topic:"Comparison",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"The cooking mistake that's ruining your food and you don't even know it",topic:"Tips",format:"opinion",emotions:["Concern"],debate:0},
+    {text:"This recipe went viral for a reason - try it tonight",topic:"Trending",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"What's the most underrated cuisine? Drop your answer below",topic:"Discussion",format:"opinion",emotions:["Curiosity"],debate:1}
+  ],
+  "fashion": [
+    {text:"How to make a cheap outfit look expensive - styling tips",topic:"Styling",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"The fashion trend everyone's wearing vs the one nobody should",topic:"Trends",format:"abc",emotions:["Honesty"],debate:1},
+    {text:"Building a capsule wardrobe with just 10 pieces",topic:"Wardrobe",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"What's the one piece of clothing everyone should own?",topic:"Essentials",format:"opinion",emotions:["Curiosity"],debate:1},
+    {text:"Outfit ideas that work for any body type",topic:"Styling",format:"opinion",emotions:["Inspiration"],debate:0},
+    {text:"Fast fashion vs thrifting - which side are you on?",topic:"Discussion",format:"abc",emotions:["Concern"],debate:1}
+  ],
+  "tech": [
+    {text:"The tech product I use every single day that nobody talks about",topic:"Hidden Gems",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Is this gadget actually worth the hype? Honest review",topic:"Reviews",format:"story",emotions:["Honesty"],debate:1},
+    {text:"Budget setup vs premium setup - real world comparison",topic:"Comparison",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"3 settings you need to change on your phone right now",topic:"Tips",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"The tech upgrade that was actually worth the money",topic:"Reviews",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"iPhone vs Android in 2026 - the honest truth",topic:"Comparison",format:"abc",emotions:["Honesty"],debate:1}
+  ],
+  "gaming": [
+    {text:"The game that nobody is playing but absolutely should be",topic:"Recommendations",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Settings the pros use that most players don't know about",topic:"Tips",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Is this game pay to win? My honest verdict after 100 hours",topic:"Reviews",format:"story",emotions:["Honesty"],debate:1},
+    {text:"Console vs PC in 2026 - which is actually better?",topic:"Comparison",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"The clip that made me uninstall the game (then reinstall it)",topic:"Moments",format:"story",emotions:["Humour"],debate:0},
+    {text:"Unpopular gaming opinion that I'll stand by - fight me",topic:"Discussion",format:"opinion",emotions:["Honesty"],debate:1}
+  ],
+  "music": [
+    {text:"The artist everyone's sleeping on right now - give them a listen",topic:"Discovery",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"This song changed the way I think about music",topic:"Impact",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Most underrated album of 2026 - what's yours?",topic:"Discussion",format:"opinion",emotions:["Curiosity"],debate:1},
+    {text:"The production technique behind this viral sound",topic:"Behind the Scenes",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Old school vs new school - which era had better music?",topic:"Comparison",format:"abc",emotions:["Nostalgia"],debate:1},
+    {text:"3 songs that will change your entire playlist",topic:"Recommendations",format:"opinion",emotions:["Curiosity"],debate:0}
+  ],
+  "travel": [
+    {text:"The destination that exceeded every expectation I had",topic:"Recommendations",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Travel hack that saved me hundreds on my last trip",topic:"Tips",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Tourist trap vs hidden gem - the real comparison",topic:"Comparison",format:"abc",emotions:["Honesty"],debate:1},
+    {text:"The one thing I always pack that most people forget",topic:"Tips",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Budget travel vs luxury travel - which gives more memories?",topic:"Discussion",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"This place needs to be on your bucket list - trust me",topic:"Recommendations",format:"story",emotions:["Inspiration"],debate:0}
+  ],
+  "finance": [
+    {text:"The money habit I started at 25 that changed everything",topic:"Habits",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"3 things I stopped buying that saved me thousands",topic:"Savings",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Investing vs saving - which builds wealth faster?",topic:"Strategy",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"The financial mistake I see everyone making",topic:"Mistakes",format:"opinion",emotions:["Concern"],debate:0},
+    {text:"How I track my spending - simple system anyone can use",topic:"Tools",format:"story",emotions:["Curiosity"],debate:0},
+    {text:"Is renting actually smarter than buying in 2026?",topic:"Discussion",format:"abc",emotions:["Curiosity"],debate:1}
+  ],
+  "health": [
+    {text:"The one habit that improved my energy levels completely",topic:"Habits",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Health myths most people still believe - let's clear this up",topic:"Myths",format:"opinion",emotions:["Concern"],debate:0},
+    {text:"Morning routine vs evening routine - which matters more for health?",topic:"Routines",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"The simple change that improved my sleep quality overnight",topic:"Sleep",format:"story",emotions:["Curiosity"],debate:0},
+    {text:"3 things I cut from my diet and the difference was massive",topic:"Nutrition",format:"opinion",emotions:["Inspiration"],debate:0},
+    {text:"What's the most overlooked health tip? Share yours below",topic:"Discussion",format:"opinion",emotions:["Curiosity"],debate:1}
+  ]
+};
+
 function generateAlternatives(text, topic, emotions, format) {
+  if (!isPatrioticNiche(USER_NICHE)) {
+    return generateNicheAlternatives(text, topic, emotions, format);
+  }
   var t = text.toLowerCase();
   var origEmotionLabels = [];
   for (var i = 0; i < emotions.length; i++) origEmotionLabels.push(emotions[i].label);
@@ -4421,54 +4519,38 @@ function generateAlternatives(text, topic, emotions, format) {
   var scored = [];
   for (var i = 0; i < IDEA_POOL.length; i++) {
     var idea = IDEA_POOL[i];
-
     if (idea.topic === topic) continue;
-
     var origWords = t.split(/\s+/);
     var overlap = 0;
     for (var w = 0; w < origWords.length; w++) {
       if (origWords[w].length > 4 && idea.text.toLowerCase().indexOf(origWords[w]) !== -1) overlap++;
     }
     if (overlap >= 3) continue;
-
     var emotionMatch = 0;
     for (var e = 0; e < origEmotionLabels.length; e++) {
       for (var ie = 0; ie < idea.emotions.length; ie++) {
         if (origEmotionLabels[e] === idea.emotions[ie]) { emotionMatch++; break; }
       }
     }
-
-    var emotionScore = 0;
-    if (origEmotionLabels.length > 0) {
-      emotionScore = (emotionMatch / origEmotionLabels.length) * 50;
-    }
-
+    var emotionScore = origEmotionLabels.length > 0 ? (emotionMatch / origEmotionLabels.length) * 50 : 0;
     var formatScore = (idea.format === origFormat) ? 20 : 5;
-
     var debateDiff = Math.abs(idea.debate - origDebate);
     var debateScore = (3 - debateDiff) * 5;
-
     var psychScore = emotionScore + formatScore + debateScore;
-
     var formula = origEmotionLabels.slice().sort().join("+");
     var ideaFormula = idea.emotions.slice().sort().join("+");
     if (formula === ideaFormula) psychScore += 10;
-
     scored.push({ idea: idea, psychScore: psychScore, emotionMatch: emotionMatch, formatMatch: (idea.format === origFormat) ? 1 : 0, formula: ideaFormula });
   }
-
   scored.sort(function(a, b) { return b.psychScore - a.psychScore; });
-
   var picks = [];
   var usedTopics = {};
-
   for (var j = 0; j < scored.length && picks.length < 7; j++) {
     var s = scored[j];
     if (usedTopics[s.idea.topic]) continue;
     picks.push(s);
     usedTopics[s.idea.topic] = true;
   }
-
   if (picks.length < 5) {
     for (var k = 0; k < scored.length && picks.length < 5; k++) {
       var exists = false;
@@ -4476,7 +4558,31 @@ function generateAlternatives(text, topic, emotions, format) {
       if (!exists) picks.push(scored[k]);
     }
   }
+  return picks;
+}
 
+function generateNicheAlternatives(text, topic, emotions, format) {
+  var nicheLower = (USER_NICHE || "").toLowerCase();
+  var resolved = NICHE_ALIASES[nicheLower] || nicheLower;
+  var nicheIdeas = NICHE_IDEA_TEMPLATES[resolved] || [];
+  var genericIdeas = [
+    {text:"The one tip that changed everything for me in " + titleCase(USER_NICHE),topic:"Tips",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Beginners vs experts - the difference is this one thing",topic:"Skills",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"3 mistakes I made when I started - save yourself the hassle",topic:"Mistakes",format:"opinion",emotions:["Honesty"],debate:0},
+    {text:"What I wish I knew before getting into " + titleCase(USER_NICHE),topic:"Advice",format:"story",emotions:["Curiosity"],debate:0},
+    {text:"Rate your experience with " + titleCase(USER_NICHE) + " from 1-10. Go!",topic:"Discussion",format:"opinion",emotions:["Curiosity"],debate:1},
+    {text:"The trend in " + titleCase(USER_NICHE) + " that everyone needs to know about",topic:"Trends",format:"opinion",emotions:["Curiosity"],debate:0},
+    {text:"Unpopular opinion about " + titleCase(USER_NICHE) + " - let me know if you agree",topic:"Discussion",format:"opinion",emotions:["Honesty"],debate:1}
+  ];
+  var allIdeas = nicheIdeas.concat(genericIdeas);
+  var picks = [];
+  var usedTopics = {};
+  for (var i = 0; i < allIdeas.length && picks.length < 7; i++) {
+    var idea = allIdeas[i];
+    if (idea.topic === topic || usedTopics[idea.topic]) continue;
+    usedTopics[idea.topic] = true;
+    picks.push({idea: idea, psychScore: 80 - i * 5, emotionMatch: 1, formatMatch: 1, formula: idea.emotions.join("+")});
+  }
   return picks;
 }
 
@@ -4593,7 +4699,7 @@ async function runAnalyzer() {
   if (isPatrioticNiche(USER_NICHE)) {
     h += '<div class="az-detail"><span class="az-detail-label">British Relevance</span><span class="az-detail-value" style="color:' + result.british.color + '">' + result.british.label + ' (' + result.british.score + '/25)</span></div>';
   }
-  h += '<div class="az-detail"><span class="az-detail-label">Debate Potential</span><span class="az-detail-value" style="color:' + result.debate.color + '">' + result.debate.label + ' (' + result.debate.score + '/25)</span></div>';
+  h += '<div class="az-detail"><span class="az-detail-label">' + (isPatrioticNiche(USER_NICHE) ? 'Debate Potential' : 'Engagement Potential') + '</span><span class="az-detail-value" style="color:' + result.debate.color + '">' + result.debate.label + ' (' + result.debate.score + '/25)</span></div>';
   h += '</div>';
 
   h += '<div class="cs-wrap">';
@@ -4607,7 +4713,7 @@ async function runAnalyzer() {
     h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (result.british.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + result.british.score + '</span></div>';
   }
   h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (result.emotionScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + result.emotionScore + '</span></div>';
-  h += '<div class="cs-dim"><span class="cs-dim-label">Debate</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (result.debate.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + result.debate.score + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">' + (isPatrioticNiche(USER_NICHE) ? 'Debate' : 'Engage') + '</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (result.debate.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + result.debate.score + '</span></div>';
   h += '</div></div>';
 
   h += '<div class="az-section" style="border-left:3px solid var(--amber)">';
