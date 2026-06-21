@@ -567,7 +567,6 @@ button:active{transform:scale(.98)}
   transition:width .6s ease;
 }
 
-.feed-product{font-size:10px;color:var(--green2)}
 .feed-question{font-size:11px;color:var(--muted);font-style:italic;margin-top:3px}
 
 /* ── THEME ANALYSIS ── */
@@ -720,23 +719,6 @@ input[type=range]::-webkit-slider-thumb{
   letter-spacing:1px;font-weight:800;
   text-transform:uppercase;
 }
-
-/* ── PRODUCT CARDS ── */
-.product-list{margin-top:6px}
-.product-item{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 10px;margin-bottom:4px;
-  background:var(--panel);border:1px solid var(--border);
-  border-radius:10px;font-size:12px;
-}
-.product-icon{
-  width:24px;height:24px;border-radius:6px;
-  background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;flex-shrink:0;
-}
-.product-name{flex:1;font-weight:600}
-.product-type{font-size:9px;color:var(--muted);text-transform:uppercase}
 
 /* ── LIVE FEED ── */
 .feed-log{
@@ -1156,7 +1138,6 @@ input[type=range]::-webkit-slider-thumb{
       <button class="tab-btn" data-tab="trends" onclick="switchTab('trends')">Trends</button>
       <button class="tab-btn" data-tab="discovery" onclick="switchTab('discovery')">Discovery</button>
       <button class="tab-btn" data-tab="audience" onclick="switchTab('audience')">Audience</button>
-      <button class="tab-btn" data-tab="products" onclick="switchTab('products')">Products</button>
       <button class="tab-btn" data-tab="platforms" onclick="switchTab('platforms')">Platforms</button>
       <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications')">&#128276; Updates</button>
       <button class="tab-btn" data-tab="admin" onclick="switchTab('admin')" id="adminTabBtn" style="display:none">&#128274; Admin</button>
@@ -1183,10 +1164,6 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="tab-audience" class="tab-content">
       <div id="audienceInsights"></div>
-    </div>
-
-    <div id="tab-products" class="tab-content">
-      <div id="productHub"></div>
     </div>
 
     <div id="tab-platforms" class="tab-content">
@@ -1723,50 +1700,6 @@ var GENERIC_PHRASE_HOOKS = [
   "{kw} - what's your experience with this?"
 ];
 
-var NICHE_PRODUCT_TYPES = {
-  "fitness": ["resistance bands","protein powder","yoga mat","fitness tracker","workout gloves","foam roller"],
-  "cooking": ["air fryer","knife set","cast iron skillet","spice rack","meal prep containers","cookbook"],
-  "finance": ["finance book","budgeting planner","stock market course","crypto wallet","financial planner","investing guide"],
-  "fashion": ["sunglasses","sneakers","watch","handbag","jewellery set","fashion accessories"],
-  "beauty": ["skincare set","makeup brushes","face mask","moisturizer","beauty blender","hair tools"],
-  "travel": ["travel backpack","packing cubes","neck pillow","portable charger","travel adapter","luggage set"],
-  "gaming": ["gaming headset","controller","mouse pad","gaming chair","LED lights","gaming keyboard"],
-  "parenting": ["baby monitor","activity book","learning toys","sippy cups","stroller accessories","parenting book"],
-  "health": ["supplements","water bottle","sleep tracker","massage gun","essential oils","health journal"],
-  "tech": ["wireless earbuds","phone case","USB hub","smart plug","webcam","portable speaker"],
-  "ai movie": ["ai video generator subscription","gpu for ai rendering","filmmaking course","ai animation tool","green screen kit","cinematic lighting kit"],
-  "ai video": ["ai video tool subscription","video editing software","camera stabilizer","ring light","ai course","content creator kit"],
-  "ai content": ["ai writing tool","content planner","social media scheduler","mic for creators","ai course","productivity app"],
-  "motivation": ["journal","self help book","planner","motivational poster","productivity app","morning routine kit"],
-  "comedy": ["ring light","microphone","green screen","camera tripod","editing software","sound effects pack"],
-  "cars": ["dash cam","car cleaning kit","performance parts","car accessories","diagnostic tool","detailing kit"],
-  "anime": ["manga volume","anime figurine","poster set","cosplay accessories","art supplies","streaming subscription"],
-  "photography": ["camera lens","tripod","memory card","editing software","camera bag","lighting kit"],
-  "astrology": ["tarot deck","astrology book","birth chart reading","crystal set","zodiac jewellery","moon calendar"],
-  "smartwatch": ["smartwatch","watch band","screen protector","charging dock","watch face app","fitness tracker"],
-  "default": ["trending product","bestseller","top pick","must have","essential kit","starter pack"]
-};
-
-function getGenericProducts(keyword, niche) {
-  var n = (niche || "").toLowerCase();
-  var types = NICHE_PRODUCT_TYPES[n] || NICHE_PRODUCT_TYPES["default"];
-  for (var key in NICHE_PRODUCT_TYPES) {
-    if (n.indexOf(key) !== -1) { types = NICHE_PRODUCT_TYPES[key]; break; }
-  }
-  var prods = [];
-  for (var i = 0; i < Math.min(4, types.length); i++) {
-    prods.push({
-      name: titleCase(types[i]) + " - " + titleCase(niche || "trending"),
-      price: (9.99 + Math.floor(i * 7.5)).toFixed(2),
-      commission: (0.99 + i * 0.5).toFixed(2),
-      type: titleCase(types[i].split(" ").pop()),
-      sold: ["120","85","200","340","NEW","55"][i] || "NEW",
-      matchScore: 75 - i * 5
-    });
-  }
-  return prods;
-}
-
 var NICHE_SEEDS = {
   "football": [
     "football transfer news today","premier league trending","champions league latest",
@@ -2049,10 +1982,6 @@ function scanNicheTrends(niche, callback) {
     if (done === seeds.length) {
       allResults.sort(function(a, b) { return b.viral_score - a.viral_score; });
       allResults = allResults.slice(0, 20);
-      for (var i = 0; i < allResults.length; i++) {
-        var prods = getGenericProducts(allResults[i].keyword, niche);
-        if (prods.length > 0) allResults[i].product = prods[0].name;
-      }
       callback(allResults);
     }
   }
@@ -2228,161 +2157,6 @@ var HOOK_TEMPLATES = {
     "Should {kw} matter more to British people? Yes or No?"
   ]
 };
-
-var PRODUCT_MAP = {
-  "england": [
-    {name: "Union Jack Lion Hoodie - St Georges Design", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "ENGLAND Flag St George's Flag 5ft x 3ft (Pack of 2)", price: "9.99", commission: "0.50", type: "Flag", sold: "NEW"},
-    {name: "England Wearable Flag + Bucket Hat Set", price: "9.99", commission: "0.49", type: "Fan Gear", sold: "620"}
-  ],
-  "union jack": [
-    {name: "Union Jack Lion Hoodie - St Georges Design", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"},
-    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"}
-  ],
-  "union jack flag": [
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"},
-    {name: "VIROSA St George Cross Flag Bunting 10m", price: "9.99", commission: "1.25", type: "Bunting", sold: "NEW"}
-  ],
-  "british flag": [
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"},
-    {name: "ENGLAND Flag St George's Flag 5ft x 3ft (Pack of 2)", price: "9.99", commission: "0.50", type: "Flag", sold: "NEW"},
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"}
-  ],
-  "st george": [
-    {name: "VIROSA St George Cross Flag Bunting 10m", price: "9.99", commission: "1.25", type: "Bunting", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "ENGLAND Flag St George's Flag 5ft x 3ft (Pack of 2)", price: "9.99", commission: "0.50", type: "Flag", sold: "NEW"},
-    {name: "England Wearable Flag + Bucket Hat Set", price: "9.99", commission: "0.49", type: "Fan Gear", sold: "620"}
-  ],
-  "remembrance": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "England Wearable Flag + Bucket Hat Set", price: "9.99", commission: "0.49", type: "Fan Gear", sold: "620"}
-  ],
-  "veterans": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"},
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"}
-  ],
-  "britain": [
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"},
-    {name: "The Transport for London Puzzle Book", price: "23.35", commission: "2.34", type: "Book", sold: "NEW"}
-  ],
-  "british army": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag 90x150cm Large", price: "6.99", commission: "1.75", type: "Flag", sold: "NEW"}
-  ],
-  "raf": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"}
-  ],
-  "churchill": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "The Transport for London Puzzle Book", price: "23.35", commission: "2.34", type: "Book", sold: "NEW"},
-    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"}
-  ],
-  "london": [
-    {name: "The Transport for London Puzzle Book", price: "23.35", commission: "2.34", type: "Book", sold: "NEW"},
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "Great Britain Flags 5ft x 3ft", price: "9.99", commission: "1.00", type: "Flag", sold: "14"},
-    {name: "Men's England Patriotic Graphic Hoodie", price: "10.43", commission: "0.83", type: "Hoodie", sold: "NEW"}
-  ],
-  "armed forces": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "VIROSA St George Cross Flag Bunting 10m", price: "9.99", commission: "1.25", type: "Bunting", sold: "NEW"}
-  ],
-  "patriotism": [
-    {name: "Union Jack Lion Hoodie", price: "19.99", commission: "2.50", type: "Hoodie", sold: "NEW"},
-    {name: "If This Flag Offends You I'll Help You Pack Hoodie", price: "19.78", commission: "1.98", type: "Hoodie", sold: "NEW"},
-    {name: "England Flag St George's Cross T-Shirt", price: "14.99", commission: "1.50", type: "T-Shirt", sold: "NEW"},
-    {name: "200pc England Baking Set - Come On England", price: "20.00", commission: "2.50", type: "Party", sold: "NEW"}
-  ]
-};
-
-var PRODUCT_KEYWORDS = {
-  "union jack lion hoodie": ["union jack","england","britain","british army","st george","patriotism","british flag","armed forces","veterans","remembrance","raf","churchill"],
-  "england flag t-shirt": ["england","st george","british flag","union jack flag","patriotism","britain","national identity"],
-  "england flag pack": ["england","st george","british flag","union jack flag","union jack"],
-  "england wearable flag hat": ["england","st george","british flag","union jack flag"],
-  "great britain flags": ["union jack","britain","british flag","union jack flag","british army","raf","armed forces"],
-  "england flag large": ["england","union jack","union jack flag","british flag","st george"],
-  "patriotic hoodie": ["patriotism","england","britain","union jack","british army","armed forces","veterans"],
-  "flag offends hoodie": ["patriotism","england","britain","british army","immigration","national identity"],
-  "st george bunting": ["st george","england","british flag","union jack flag"],
-  "england baking set": ["england","st george"],
-  "london puzzle book": ["london","britain","churchill"]
-};
-
-function scoreProduct(productName, keyword) {
-  var kw = (keyword || "").toLowerCase();
-  var pn = (productName || "").toLowerCase();
-  var score = 50;
-  if (pn.indexOf(kw) !== -1) score += 30;
-  for (var pk in PRODUCT_KEYWORDS) {
-    if (pn.toLowerCase().indexOf(pk.split(" ")[0]) !== -1) {
-      var matches = PRODUCT_KEYWORDS[pk];
-      for (var i = 0; i < matches.length; i++) {
-        if (matches[i] === kw) { score += 25; break; }
-        if (kw.indexOf(matches[i]) !== -1 || matches[i].indexOf(kw) !== -1) { score += 15; break; }
-      }
-    }
-  }
-  var group = getGroupKey(keyword);
-  if (pn.indexOf("hoodie") !== -1 && (group === "military" || group === "national_identity")) score += 10;
-  if (pn.indexOf("flag") !== -1 && (group === "national_identity" || kw.indexOf("flag") !== -1)) score += 15;
-  if (pn.indexOf("flag") !== -1 && kw.indexOf("remembrance") !== -1) score += 5;
-  return Math.min(99, score);
-}
-
-function getProducts(keyword) {
-  if (!isPatrioticNiche(USER_NICHE)) {
-    return getGenericProducts(keyword, USER_NICHE);
-  }
-  var kw = (keyword || "").toLowerCase();
-  var directMatch = PRODUCT_MAP[kw];
-  var prods = directMatch || PRODUCT_MAP["england"] || [];
-  var scored = [];
-  for (var i = 0; i < prods.length; i++) {
-    var p = JSON.parse(JSON.stringify(prods[i]));
-    p.matchScore = scoreProduct(p.name, keyword);
-    scored.push(p);
-  }
-  if (!directMatch) {
-    for (var key in PRODUCT_MAP) {
-      if (key !== kw) {
-        var extras = PRODUCT_MAP[key];
-        for (var j = 0; j < extras.length; j++) {
-          var ep = JSON.parse(JSON.stringify(extras[j]));
-          ep.matchScore = scoreProduct(ep.name, keyword);
-          if (ep.matchScore >= 65) {
-            var exists = false;
-            for (var s = 0; s < scored.length; s++) { if (scored[s].name === ep.name) { exists = true; break; } }
-            if (!exists) scored.push(ep);
-          }
-        }
-      }
-    }
-  }
-  scored.sort(function(a, b) { return b.matchScore - a.matchScore; });
-  return scored.slice(0, 4);
-}
 
 var HISTORY_KEY = "patriot_radar_history";
 
@@ -2915,8 +2689,6 @@ function renderDailyPlan(results, emerging) {
   // --- SLOT 1: Top trending scanner keyword ---
   var pk = topPick;
   var sl = slots[0];
-  var prods = getProducts(pk.kw);
-  var topProd = prods[0];
   var hooks = generateHooks(pk.kw);
   var hookId = "plan-hook-0";
   var viewInfo = pk.views > 0 ? pk.views.toLocaleString() + " avg views" : pk.relViews > 0 ? "Similar: " + pk.relViews.toLocaleString() + " views" : "New topic";
@@ -2950,7 +2722,6 @@ function renderDailyPlan(results, emerging) {
   var planCSText = planCS > 0 ? ' | Content: ' + planCS + '/100' : '';
   h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + planCSText + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
   h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + hooks[0] + '"</div>';
-  h += '<div style="font-size:10px;color:var(--green2)">Pin: ' + topProd.name + ' (Earn &#163;' + topProd.commission + ')</div>';
   h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:6px">More hooks</button>';
   h += '<ul class="hooks-list hidden" id="' + hookId + '">';
   for (var hk = 1; hk < hooks.length; hk++) {
@@ -2967,7 +2738,7 @@ function renderDailyPlan(results, emerging) {
   if (useNichePlan) {
     var nicheSlotPicks = [
       { slot: slots[1], pk: picks[1], idx: 1, angle: "ENGAGEMENT ANGLE", angleDesc: "Different trend, drive comments and shares", angleColor: "var(--amber)" },
-      { slot: slots[2], pk: picks[2], idx: 2, angle: "PRODUCT TIE-IN", angleDesc: "Lower competition topic, pin a product", angleColor: "var(--blue)" }
+      { slot: slots[2], pk: picks[2], idx: 2, angle: "FRESH ANGLE", angleDesc: "Lower competition topic, high growth potential", angleColor: "var(--blue)" }
     ];
 
     for (var ns = 0; ns < nicheSlotPicks.length; ns++) {
@@ -2976,8 +2747,6 @@ function renderDailyPlan(results, emerging) {
       var nsl = nsp.slot;
       var nHooks = generateHooks(npk.kw);
       var nHookId = "plan-hook-" + nsp.idx;
-      var nProds = getProducts(npk.kw);
-      var nProd = nProds[0];
       var nRise = Number(npk.item.rise_percent || 0);
       var nViewInfo = npk.views > 0 ? npk.views.toLocaleString() + " avg views" : npk.relViews > 0 ? "Similar: " + npk.relViews.toLocaleString() + " views" : "New topic";
       var nFreshInfo = npk.days === 0 ? "Posted today" : npk.days < 999 ? npk.days + "d ago" : "Never posted";
@@ -2993,9 +2762,6 @@ function renderDailyPlan(results, emerging) {
       var nCSText = nCS > 0 ? ' | Content: ' + nCS + '/100' : '';
       h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + npk.item.viral_score + ' | Rise: ' + formatRise(nRise) + nCSText + ' | ' + nViewInfo + ' | ' + nFreshInfo + '</div>';
       h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + nHooks[0] + '"</div>';
-      if (nsp.idx === 2 && nProd) {
-        h += '<div style="font-size:10px;color:var(--green2)">Pin: ' + nProd.name + ' (Earn &#163;' + nProd.commission + ')</div>';
-      }
       h += '<button class="copy-btn" onclick="toggleHooks(\'' + nHookId + '\')" style="margin-top:6px">More hooks</button>';
       h += '<ul class="hooks-list hidden" id="' + nHookId + '">';
       for (var nhk = 1; nhk < nHooks.length; nhk++) {
@@ -3683,21 +3449,6 @@ function renderPrimary(item) {
   }
   h += '</div>';
 
-  h += '<div class="primary-section-label">TikTok Shop Products (sorted by commission)</div>';
-  h += '<div class="product-list">';
-  var prods = getProducts(item.keyword);
-  for (var pi = 0; pi < prods.length; pi++) {
-    var p = prods[pi];
-    var matchCol = p.matchScore >= 80 ? "var(--green)" : p.matchScore >= 65 ? "var(--amber)" : "var(--muted)";
-    h += '<div class="product-item">';
-    h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:' + matchCol + ';font-size:9px;font-weight:900">' + (p.matchScore || 0) + '</div>';
-    h += '<div style="flex:1;min-width:0"><div class="product-name">' + p.name + '</div>';
-    h += '<div style="font-size:9px;color:var(--muted);margin-top:2px">&#163;' + p.price + ' | Earn &#163;' + p.commission + ' | ' + (p.sold !== "NEW" ? p.sold + ' sold' : 'New listing') + '</div></div>';
-    h += '<div class="product-type">' + p.type + '</div>';
-    h += '</div>';
-  }
-  h += '</div>';
-
   h += '<div class="primary-section-label">Auto-Generated Hooks (tap to copy)</div>';
   h += '<ul class="hooks-list">';
   for (var i = 0; i < hooks.length; i++) {
@@ -3922,10 +3673,6 @@ function renderFeed(items) {
     h += renderSparkline(history);
     h += '</div>';
 
-    var feedProds = getProducts(item.keyword);
-    var topP = feedProds[0];
-    h += '<div class="feed-product">Top Product (' + (topP.matchScore||0) + ' match): ' + topP.name + ' | Earn &#163;' + (topP.commission||'?') + '</div>';
-
     var feedAud = getKeywordAudienceScore(item.keyword);
     if (feedAud !== null) {
       h += '<div style="margin-top:4px;font-size:10px">Audience Score: <b class="rise-positive">' + feedAud + '/10</b></div>';
@@ -4025,63 +3772,6 @@ function renderEmerging(items) {
   return h;
 }
 
-function renderProductHub(results, productTrends) {
-  var h = '<div class="card card-glow" style="border-color:var(--green2)">';
-  h += '<div class="card-header"><h2>Product Trends</h2><div class="section-icon" style="color:var(--green2)">&#9733;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Live product category trends from Google. Search for these product types on TikTok Shop to find what\'s selling.</p>';
-
-  if (productTrends && productTrends.length > 0) {
-    for (var p = 0; p < productTrends.length; p++) {
-      var pt = productTrends[p];
-      var vs = Number(pt.viral_score || 0);
-      var rp = Number(pt.rise_percent || 0);
-      var cl = classifyTrend(vs, rp);
-      var tc = trendTagClass(cl);
-      var urgency = rp > 60 ? "SEARCH NOW" : rp > 20 ? "HOT" : rp > 0 ? "RISING" : "STEADY";
-      var urgCol = rp > 60 ? "#ff4757" : rp > 20 ? "var(--amber)" : rp > 0 ? "var(--green)" : "var(--muted)";
-
-      h += '<div class="product-item" style="padding:14px;margin-bottom:8px">';
-      h += '<div class="product-icon" style="background:rgba(0,255,136,.15);color:' + urgCol + ';font-size:8px;font-weight:900;width:36px;height:36px;text-align:center;line-height:1.2;padding-top:6px">' + urgency + '</div>';
-      h += '<div style="flex:1;min-width:0">';
-      h += '<div class="product-name" style="font-size:14px">' + titleCase(pt.keyword) + '</div>';
-      h += '<div style="font-size:10px;color:var(--muted);margin-top:3px">Viral: <b class="rise-positive">' + vs.toFixed(1) + '</b> | Rise: <b>' + formatRise(rp) + '</b> | 24hr: <b>' + pt.latest_score + '</b></div>';
-
-      var prodGroup = getGroup(pt.keyword);
-      var perfData = loadPerfData();
-      var bestMatch = 0;
-      var bestMatchKw = "";
-      for (var ak in perfData) {
-        if (perfData[ak].length > 0) {
-          var akGroup = getGroup(ak);
-          var kwLow = pt.keyword.toLowerCase();
-          if (ak === kwLow || akGroup === prodGroup || kwLow.indexOf(ak) !== -1 || ak.indexOf(kwLow) !== -1) {
-            var av = 0;
-            for (var ai = 0; ai < perfData[ak].length; ai++) av += Number(perfData[ak][ai].views || 0);
-            av = Math.round(av / perfData[ak].length);
-            if (av > bestMatch) { bestMatch = av; bestMatchKw = ak; }
-          }
-        }
-      }
-
-      if (bestMatch > 0) {
-        var matchLevel = bestMatch >= 3000 ? "HIGH MATCH" : bestMatch >= 1000 ? "GOOD MATCH" : "LOW MATCH";
-        var matchCol2 = bestMatch >= 3000 ? "var(--green)" : bestMatch >= 1000 ? "var(--amber)" : "var(--muted)";
-        h += '<div style="font-size:9px;margin-top:3px;color:' + matchCol2 + '">Audience: <b>' + matchLevel + '</b> - Your ' + titleCase(bestMatchKw) + ' content averages ' + bestMatch.toLocaleString() + ' views</div>';
-      }
-
-      h += '<div style="font-size:9px;color:var(--green2);margin-top:3px">Search TikTok Shop for: <b>"' + titleCase(pt.keyword) + '"</b></div>';
-      h += '</div>';
-      h += '<span class="tag ' + tc + '">' + cl + '</span>';
-      h += '</div>';
-    }
-  } else {
-    h += '<p style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0">Product trend data loading... Check back after the next scan cycle.</p>';
-  }
-
-  h += '</div>';
-  return h;
-}
-
 function renderLiveFeed(results, emerging) {
   var entries = [];
   var now = new Date();
@@ -4117,11 +3807,6 @@ function renderLiveFeed(results, emerging) {
 
       entries.push({time: time2, icon: "green", label: "intel", labelText: "DISCOVERY", msg: "<b>" + titleCase(em.keyword) + "</b> detected on " + platText + " | Viral " + Number(em.viral_score || 0).toFixed(1)});
     }
-  }
-
-  var prods = getProducts(results[0] ? results[0].keyword : "england");
-  if (prods.length > 0) {
-    entries.push({time: pad(now.getHours()) + ":" + pad(Math.max(0, baseMin - 3)), icon: "amber", label: "product", labelText: "PRODUCT", msg: "Top product: <b>" + prods[0].name + "</b> | Earn &#163;" + prods[0].commission + " per sale"});
   }
 
   entries.sort(function(a, b) { return b.time > a.time ? 1 : -1; });
@@ -5321,7 +5006,6 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     document.getElementById("topOpportunities").innerHTML = renderOpportunities(results);
     document.getElementById("themeAnalysis").innerHTML = renderThemes(results);
     document.getElementById("intelligenceFeed").innerHTML = renderFeed(results);
-    document.getElementById("productHub").innerHTML = renderProductHub(results, productTrends);
     document.getElementById("liveFeed").innerHTML = renderLiveFeed(results, emerging);
     document.getElementById("videoAnalyzer").innerHTML = renderVideoAnalyzer();
     document.getElementById("platformOptimizer").innerHTML = renderPlatformOptimizer(results);
