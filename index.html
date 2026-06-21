@@ -1986,6 +1986,21 @@ var GENERIC_PHRASE_HOOKS = [
 ];
 
 var NICHE_SEEDS = {
+  "patriot": [
+    "british patriotism trending","england trending today","union jack trending",
+    "british military news today","remembrance day uk","british culture trending",
+    "british history viral","st george trending","english flag news",
+    "british army latest","british pride content","uk patriotic content ideas",
+    "british traditions trending","support our troops uk","great britain trending",
+    "british values debate","english heritage trending","british veterans news"
+  ],
+  "patriotic": [
+    "british patriotism trending","england trending today","union jack trending",
+    "british military news today","remembrance day uk","british culture trending",
+    "british history viral","st george trending","english flag news",
+    "british army latest","british pride content","uk patriotic content ideas",
+    "british traditions trending","support our troops uk","great britain trending"
+  ],
   "football": [
     "football transfer news today","premier league trending","champions league latest",
     "la liga news today","saudi pro league transfer","mls highlights today",
@@ -6303,46 +6318,17 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
 
 async function loadLiveStats() {
   trackEvent("load_trends", {niche: USER_NICHE || "general"});
-  if (!isPatrioticNiche(USER_NICHE)) {
-    document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE) + " trends...";
-    scanNicheTrends(USER_NICHE, function(results) {
-      var emerging = [];
-      if (results.length > 5) {
-        for (var i = 5; i < Math.min(10, results.length); i++) {
-          emerging.push({ keyword: results[i].keyword, source: "Google Suggest", description: "Trending in " + titleCase(USER_NICHE) });
-        }
+  document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE || "general") + " trends...";
+  scanNicheTrends(USER_NICHE || "general", function(results) {
+    var emerging = [];
+    if (results.length > 5) {
+      for (var i = 5; i < Math.min(10, results.length); i++) {
+        emerging.push({ keyword: results[i].keyword, source: "Google Suggest", description: "Trending in " + titleCase(USER_NICHE || "general") });
       }
-      renderAllSections(results, emerging, [], []);
-      aiValidateKeywords(results, emerging);
-    });
-    return;
-  }
-  try {
-    var res = await fetch("results.json?cache=" + Date.now());
-    var lastMod = res.headers.get("Last-Modified");
-    var data = await res.json();
-    var results = Array.isArray(data) ? data : data.results || [];
-    var rawEmerging = Array.isArray(data) ? [] : data.emerging || [];
-    var emerging = rawEmerging.filter(function(e) {
-      var kw = (e.keyword || "");
-      var words = kw.split(/\s+/);
-      if (words.length === 1 && kw.length > 8) return false;
-      if (words.length >= 4 && !/\b(how|why|what|is|are|best|top|new|trending|should|does|can|will|vs)\b/i.test(kw)) return false;
-      if (/casino|loan|crisis|confrontation|deindustrialis|scam|fraud/i.test(kw)) return false;
-      return true;
-    });
-    var productTrends = Array.isArray(data) ? [] : data.product_trends || [];
-    var creatorInsights = Array.isArray(data) ? [] : data.creator_insights || [];
-
-    if (data.last_updated) {
-      document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(data.last_updated);
-    } else if (lastMod) {
-      document.getElementById("lastUpdated").textContent = "Last Updated: " + formatTimestamp(lastMod);
     }
-
-    renderAllSections(results, emerging, productTrends, creatorInsights);
+    renderAllSections(results, emerging, [], []);
     aiValidateKeywords(results, emerging);
-  } catch (err) { console.error("Load error:", err); }
+  });
 }
 
 async function checkSession() {
