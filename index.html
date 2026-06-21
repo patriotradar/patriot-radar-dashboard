@@ -2246,7 +2246,12 @@ function scanNicheTrends(niche, callback) {
       for (var ww = 0; ww < kwWords.length; ww++) { if (kwWords[ww].length > longestWord) longestWord = kwWords[ww].length; }
       var isSingleBlob = kwWords.length === 1 && s.length > 12;
       var hasGibberish = longestWord > 20 || /^[a-z]{15,}$/i.test(s.trim());
-      if (!blocked && !isSingleBlob && !hasGibberish && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase() && isRelevant(s)) {
+      var tooDisconnected = kwWords.length >= 4 && !(/\b(how|why|what|when|where|who|is|are|do|does|can|should|will|best|top|new|latest|trending)\b/i.test(s));
+      var hasNicheWord = false;
+      for (var nw = 0; nw < nicheWords.length; nw++) {
+        if (nicheWords[nw].length >= 3 && sl.indexOf(nicheWords[nw].toLowerCase()) !== -1) { hasNicheWord = true; break; }
+      }
+      if (!blocked && !isSingleBlob && !hasGibberish && !tooDisconnected && s.length > 8 && s.length < 80 && !seen[sl] && sl !== seed.toLowerCase() && isRelevant(s)) {
         seen[sl] = true;
         var score = Math.max(20, 85 - allResults.length * 3 + Math.floor(Math.random() * 15));
         var rise = Math.max(-5, 50 - allResults.length * 4 + Math.floor(Math.random() * 20));
