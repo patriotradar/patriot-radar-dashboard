@@ -4596,9 +4596,17 @@ function analyzeVideo(caption) {
   var british = detectBritishRelevance(text);
   var debate = detectDebatePotential(text);
 
-  var emotionScore = Math.min(25, emotions.length * 8 + 4);
-  var freshScore = 18;
-  var totalScore = freshScore + british.score + emotionScore + debate.score;
+  var lines = text.split(/\n+/).filter(function(l){return l.trim().length>0});
+  var firstLine = lines[0] || text;
+  var words = text.split(/\s+/).length;
+
+  var hookScore = analyzeHook(firstLine);
+  var ctaScore = analyzeCTA(text);
+  var structureScore = analyzeStructure(text, words, lines);
+  var engagementScore = analyzeEngagement(text);
+  var hashtagScore = analyzeHashtags(text);
+
+  var totalScore = Math.round((hookScore.score + ctaScore.score + structureScore.score + engagementScore.score + hashtagScore.score) / 5);
 
   var grade, gradeCls;
   if (totalScore >= 80) { grade = "S"; gradeCls = "cs-grade-s"; }
@@ -4606,23 +4614,123 @@ function analyzeVideo(caption) {
   else if (totalScore >= 40) { grade = "B"; gradeCls = "cs-grade-b"; }
   else { grade = "C"; gradeCls = "cs-grade-c"; }
 
+  var improvements = [];
+  if (hookScore.score < 70) improvements = improvements.concat(hookScore.fixes);
+  if (ctaScore.score < 70) improvements = improvements.concat(ctaScore.fixes);
+  if (structureScore.score < 70) improvements = improvements.concat(structureScore.fixes);
+  if (engagementScore.score < 70) improvements = improvements.concat(engagementScore.fixes);
+  if (hashtagScore.score < 70) improvements = improvements.concat(hashtagScore.fixes);
+
+  var improved = generateImprovedCaption(text, firstLine, hookScore, ctaScore, engagementScore);
+
   var alternatives = generateAlternatives(text, topic, emotions, format);
 
   return {
-    text: text,
-    format: format,
-    emotions: emotions,
-    topic: topic,
-    british: british,
-    debate: debate,
-    freshScore: freshScore,
-    emotionScore: emotionScore,
-    totalScore: totalScore,
-    grade: grade,
-    gradeCls: gradeCls,
-    alternatives: alternatives,
-    timestamp: new Date().toLocaleString()
+    text: text, format: format, emotions: emotions, topic: topic,
+    british: british, debate: debate,
+    hookScore: hookScore, ctaScore: ctaScore, structureScore: structureScore,
+    engagementScore: engagementScore, hashtagScore: hashtagScore,
+    totalScore: totalScore, grade: grade, gradeCls: gradeCls,
+    improvements: improvements, improved: improved,
+    alternatives: alternatives, timestamp: new Date().toLocaleString()
   };
+}
+
+function analyzeHook(firstLine) {
+  var s = 30;
+  var fixes = [];
+  var fl = firstLine.toLowerCase();
+  var hookPatterns = ["stop","wait","this","here's","don't","never","why","how","what","who","the","i","you","3 ","5 ","7 ","10 ","pov","breaking","unpopular","hot take","truth"];
+  for (var i = 0; i < hookPatterns.length; i++) {
+    if (fl.indexOf(hookPatterns[i]) === 0 || fl.indexOf(hookPatterns[i]) !== -1) { s += 10; break; }
+  }
+  if (firstLine.length <= 60) { s += 15; } else if (firstLine.length <= 100) { s += 8; } else { fixes.push("Shorten your hook to under 60 characters - shorter hooks get 2x more watch-through"); }
+  if (/[!?]/.test(firstLine)) s += 10;
+  if (/\b(you|your|you're)\b/i.test(firstLine)) { s += 10; } else { fixes.push("Use 'you' or 'your' in the hook - it makes it feel personal"); }
+  if (/\b(secret|hack|mistake|truth|nobody|never|always|stop|wait)\b/i.test(firstLine)) s += 15;
+  if (/\d/.test(firstLine)) s += 5;
+  if (s < 50) fixes.push("Start with a pattern interrupt: 'Stop doing X', 'The truth about X', or 'I tried X for 30 days'");
+  return { score: Math.min(100, s), label: s >= 70 ? "Strong" : s >= 40 ? "Needs Work" : "Weak", fixes: fixes };
+}
+
+function analyzeCTA(text) {
+  var s = 20;
+  var fixes = [];
+  var t = text.toLowerCase();
+  var ctaWords = ["follow","subscribe","like","comment","share","save","tag","drop","tell me","let me know","link in bio","check out","tap","click","dm me","reply"];
+  var found = 0;
+  for (var i = 0; i < ctaWords.length; i++) {
+    if (t.indexOf(ctaWords[i]) !== -1) { found++; s += 20; }
+  }
+  if (found === 0) fixes.push("Add a clear call-to-action: 'Follow for more', 'Comment your answer', 'Save this for later'");
+  if (found >= 2) s += 10;
+  if (/comment|drop|tell me|let me know|what do you think|your (thoughts|take|opinion|experience)/i.test(t)) { s += 15; } else { fixes.push("Ask a specific question to drive comments - 'What's your experience with this?'"); }
+  return { score: Math.min(100, s), label: s >= 70 ? "Strong" : s >= 40 ? "Needs Work" : "Missing", fixes: fixes };
+}
+
+function analyzeStructure(text, wordCount, lines) {
+  var s = 40;
+  var fixes = [];
+  if (wordCount >= 15 && wordCount <= 150) { s += 20; } else if (wordCount < 15) { s += 5; fixes.push("Your caption is very short. Add more context - 15-150 words performs best"); } else { fixes.push("Caption is quite long. Consider trimming to 150 words max for better readability"); }
+  if (lines.length >= 3) { s += 15; } else { fixes.push("Break your caption into multiple lines with spacing - it's much easier to read on mobile"); }
+  if (/\b(1\.|2\.|3\.|step|first|second|tip)\b/i.test(text) || /[•\-\*]\s/.test(text)) { s += 15; }
+  if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}]/u.test(text)) s += 10;
+  return { score: Math.min(100, s), label: s >= 70 ? "Good" : s >= 40 ? "Needs Work" : "Poor", fixes: fixes };
+}
+
+function analyzeEngagement(text) {
+  var s = 20;
+  var fixes = [];
+  var t = text.toLowerCase();
+  if (/\?/.test(text)) { s += 20; } else { fixes.push("Add a question to your caption - posts with questions get 50% more comments"); }
+  if (/agree|disagree|yes or no|which|pick one|rate|would you|have you|do you|are you/i.test(t)) s += 20;
+  if (/controversial|unpopular|hot take|nobody|truth|secret|mistake|wrong/i.test(t)) { s += 15; }
+  if (/save this|bookmark|come back|pin this/i.test(t)) { s += 10; } else { fixes.push("Add 'Save this for later' - it boosts saves which the algorithm loves"); }
+  if (/tag|send this to|share with/i.test(t)) s += 10;
+  if (s < 50) fixes.push("Add engagement triggers: ask a question, use 'agree or disagree?', or invite people to share their experience");
+  return { score: Math.min(100, s), label: s >= 70 ? "High" : s >= 40 ? "Moderate" : "Low", fixes: fixes };
+}
+
+function analyzeHashtags(text) {
+  var hashtags = text.match(/#\w+/g) || [];
+  var s = 40;
+  var fixes = [];
+  if (hashtags.length >= 3 && hashtags.length <= 10) { s += 30; }
+  else if (hashtags.length === 0) { s += 0; fixes.push("Add 3-8 relevant hashtags to increase discoverability"); }
+  else if (hashtags.length < 3) { s += 15; fixes.push("Add a few more hashtags - 3-8 is the sweet spot for reach"); }
+  else if (hashtags.length > 15) { fixes.push("Too many hashtags can look spammy. Trim to 5-10 targeted ones"); }
+  else { s += 20; }
+  var generic = ["#fyp","#foryou","#viral","#trending","#foryoupage"];
+  var genericCount = 0;
+  for (var i = 0; i < hashtags.length; i++) {
+    if (generic.indexOf(hashtags[i].toLowerCase()) !== -1) genericCount++;
+  }
+  if (genericCount > 2) { fixes.push("Replace generic hashtags (#fyp, #viral) with niche-specific ones - they perform better"); }
+  else { s += 15; }
+  if (hashtags.length > 0) s += 15;
+  return { score: Math.min(100, s), label: s >= 70 ? "Good" : s >= 40 ? "Needs Work" : "Missing", fixes: fixes };
+}
+
+function generateImprovedCaption(text, firstLine, hookResult, ctaResult, engResult) {
+  var improved = text;
+  if (hookResult.score < 60) {
+    var topic = detectTopic(text);
+    var words = firstLine.split(/\s+/).slice(0, 4).join(" ");
+    var betterHook = "Stop scrolling - " + words + " is about to change everything";
+    improved = betterHook + "\n\n" + improved;
+  }
+  if (ctaResult.score < 50 && improved.indexOf("Follow") === -1 && improved.indexOf("follow") === -1) {
+    improved += "\n\nFollow for more content like this!";
+  }
+  if (engResult.score < 50 && !/\?/.test(improved)) {
+    improved += "\n\nWhat do you think? Drop your answer below!";
+  }
+  var hashtags = improved.match(/#\w+/g) || [];
+  if (hashtags.length === 0) {
+    var niche = (USER_NICHE || "general").toLowerCase();
+    improved += "\n\n#" + niche.replace(/\s+/g,"") + " #trending #viral #contentcreator";
+  }
+  return improved;
 }
 
 async function fetchTikTokCaption(url) {
@@ -4683,109 +4791,67 @@ async function runAnalyzer() {
   var h = '<div class="az-result">';
 
   h += '<div class="az-section" style="border-left:3px solid var(--green)">';
-  h += '<div class="az-section-title">Video Analysis</div>';
-  h += '<div style="font-size:14px;font-weight:800;color:var(--white);margin-bottom:10px;line-height:1.4">"' + result.text + '"</div>';
+  h += '<div class="az-section-title">Content Analysis</div>';
+  h += '<div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px;line-height:1.5;background:var(--panel2);padding:10px;border-radius:8px">"' + result.text.replace(/\n/g, '<br>') + '"</div>';
   if (author) h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">By: @' + author + '</div>';
-
-  h += '<div class="az-detail"><span class="az-detail-label">Topic</span><span class="az-detail-value">' + result.topic + '</span></div>';
-  h += '<div class="az-detail"><span class="az-detail-label">Format</span><span class="az-detail-value" style="color:' + result.format.color + '">' + result.format.format + '</span></div>';
-  h += '<div class="az-detail"><span class="az-detail-label">Emotions</span><span class="az-detail-value">';
-  if (result.emotions.length > 0) {
-    for (var i = 0; i < result.emotions.length; i++) {
-      h += '<span style="color:' + result.emotions[i].color + ';margin-left:' + (i > 0 ? '6' : '0') + 'px">' + result.emotions[i].label + '</span>';
-    }
-  } else { h += '<span style="color:var(--muted)">Neutral</span>'; }
-  h += '</span></div>';
-  if (isPatrioticNiche(USER_NICHE)) {
-    h += '<div class="az-detail"><span class="az-detail-label">British Relevance</span><span class="az-detail-value" style="color:' + result.british.color + '">' + result.british.label + ' (' + result.british.score + '/25)</span></div>';
-  }
-  h += '<div class="az-detail"><span class="az-detail-label">' + (isPatrioticNiche(USER_NICHE) ? 'Debate Potential' : 'Engagement Potential') + '</span><span class="az-detail-value" style="color:' + result.debate.color + '">' + result.debate.label + ' (' + result.debate.score + '/25)</span></div>';
   h += '</div>';
 
   h += '<div class="cs-wrap">';
   h += '<div class="cs-header">';
-  h += '<div><span class="cs-label">Content Score</span><br><span class="cs-total">' + result.totalScore + '</span><span style="font-size:12px;color:var(--muted)">/100</span></div>';
+  h += '<div><span class="cs-label">Viral Readiness Score</span><br><span class="cs-total">' + result.totalScore + '</span><span style="font-size:12px;color:var(--muted)">/100</span></div>';
   h += '<span class="cs-grade ' + result.gradeCls + '">Grade ' + result.grade + '</span>';
   h += '</div>';
   h += '<div class="cs-bars">';
-  h += '<div class="cs-dim"><span class="cs-dim-label">Fresh</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-fresh" style="width:' + (result.freshScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--green)">' + result.freshScore + '</span></div>';
-  if (isPatrioticNiche(USER_NICHE)) {
-    h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (result.british.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + result.british.score + '</span></div>';
+  var dims = [
+    {label:"Hook",score:result.hookScore.score,lbl:result.hookScore.label,col:"var(--green)"},
+    {label:"CTA",score:result.ctaScore.score,lbl:result.ctaScore.label,col:"var(--amber)"},
+    {label:"Structure",score:result.structureScore.score,lbl:result.structureScore.label,col:"var(--blue)"},
+    {label:"Engagement",score:result.engagementScore.score,lbl:result.engagementScore.label,col:"var(--purple)"},
+    {label:"Hashtags",score:result.hashtagScore.score,lbl:result.hashtagScore.label,col:"var(--green2)"}
+  ];
+  for (var di = 0; di < dims.length; di++) {
+    var dm = dims[di];
+    h += '<div class="cs-dim"><span class="cs-dim-label">' + dm.label + '</span><div class="cs-dim-bar"><div style="height:100%;width:' + dm.score + '%;background:' + dm.col + ';border-radius:3px;transition:width .5s"></div></div><span class="cs-dim-val" style="color:' + dm.col + '">' + dm.score + '</span></div>';
   }
-  h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (result.emotionScore * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + result.emotionScore + '</span></div>';
-  h += '<div class="cs-dim"><span class="cs-dim-label">' + (isPatrioticNiche(USER_NICHE) ? 'Debate' : 'Engage') + '</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (result.debate.score * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + result.debate.score + '</span></div>';
   h += '</div></div>';
 
-  h += '<div class="az-section" style="border-left:3px solid var(--amber)">';
-  h += '<div class="az-section-title">Why This Works</div>';
-  var whyPoints = [];
-  if (result.format.format.indexOf("Yes/No") !== -1 || result.format.format.indexOf("Debate") !== -1) whyPoints.push("Simple yes/no format drives massive comment engagement - people can answer in one word");
-  if (result.format.format.indexOf("Opinion") !== -1) whyPoints.push("Opinion format makes viewers feel their voice matters, boosting comments");
-  if (result.format.format.indexOf("Nostalgia") !== -1 || result.format.format.indexOf("Story") !== -1) whyPoints.push("Nostalgia/story format creates emotional connection and sharing");
-  for (var e = 0; e < result.emotions.length; e++) {
-    if (result.emotions[e].label === "Pride") whyPoints.push(isPatrioticNiche(USER_NICHE) ? "Taps into national pride - people share to show identity" : "Taps into community pride - people share to show who they are");
-    if (result.emotions[e].label === "Anger") whyPoints.push("Anger is TikTok's strongest engagement driver - people comment to vent");
-    if (result.emotions[e].label === "Nostalgia") whyPoints.push("Nostalgia creates instant emotional connection and sharing");
-    if (result.emotions[e].label === "Concern") whyPoints.push(isPatrioticNiche(USER_NICHE) ? "Concern about national issues drives passionate debate in comments" : "Concern drives passionate debate and comment engagement");
-    if (result.emotions[e].label === "Respect") whyPoints.push("Honour/respect content gets shared widely as a form of tribute");
-  }
-  if (isPatrioticNiche(USER_NICHE) && result.british.score >= 14) whyPoints.push("Strong British relevance targets a specific, passionate audience");
-  if (result.debate.score >= 14) whyPoints.push("High debate potential means the comments section becomes a conversation");
-  if (whyPoints.length === 0) whyPoints.push("General audience appeal with broad reach potential");
-  for (var w = 0; w < Math.min(4, whyPoints.length); w++) {
-    h += '<div style="font-size:11px;color:var(--white);padding:4px 0;border-bottom:1px solid rgba(26,48,40,.3)">- ' + whyPoints[w] + '</div>';
-  }
-  h += '</div>';
-
-  var origFormula = [];
-  for (var ef = 0; ef < result.emotions.length; ef++) origFormula.push(result.emotions[ef].label);
-  var formulaStr = origFormula.length > 0 ? origFormula.join(" + ") : "General";
-
-  h += '<div class="az-section" style="border-left:3px solid var(--green)">';
-  h += '<div class="az-section-title">Fresh Ideas - Same Psychology, Different Topics</div>';
-  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:6px">Psychology formula: <b style="color:var(--amber)">' + formulaStr + '</b></div>';
-  h += '<div style="font-size:9px;color:var(--muted);margin-bottom:6px">Every suggestion is from a DIFFERENT topic category. Same emotional triggers, fresh angles.</div>';
-
-  var catPath = [result.topic];
-  for (var cp = 0; cp < result.alternatives.length; cp++) catPath.push(result.alternatives[cp].idea.topic);
-  h += '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px;padding:8px;background:rgba(0,255,136,.03);border-radius:8px;border:1px solid rgba(0,255,136,.1)">';
-  h += '<span style="font-size:8px;color:var(--muted);width:100%;margin-bottom:2px">CATEGORY ROTATION:</span>';
-  for (var cpi = 0; cpi < catPath.length; cpi++) {
-    if (cpi > 0) h += '<span style="font-size:9px;color:var(--green-dim)">&#8594;</span>';
-    h += '<span style="font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;' + (cpi === 0 ? 'background:rgba(167,139,250,.15);color:var(--purple)' : 'background:rgba(0,255,136,.08);color:var(--green)') + '">' + catPath[cpi] + '</span>';
-  }
-  h += '</div>';
-
-  for (var a = 0; a < result.alternatives.length; a++) {
-    var altPick = result.alternatives[a];
-    var altIdea = altPick.idea;
-    var matchPct = Math.min(98, Math.round(altPick.psychScore * 1.15));
-    var matchColor = matchPct >= 80 ? "var(--green)" : matchPct >= 60 ? "var(--amber)" : "var(--muted)";
-    var matchLabel = matchPct >= 80 ? "STRONG MATCH" : matchPct >= 60 ? "GOOD MATCH" : "PARTIAL";
-    var stars = matchPct >= 90 ? "5" : matchPct >= 75 ? "4" : matchPct >= 60 ? "3" : matchPct >= 40 ? "2" : "1";
-    var starStr = "";
-    for (var si = 0; si < 5; si++) starStr += si < Number(stars) ? "&#9733;" : "&#9734;";
-
-    h += '<div class="az-alt" onclick="copyAlt(this)">';
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
-    h += '<span style="font-size:9px;font-weight:700;color:' + matchColor + '">' + matchLabel + '</span>';
-    h += '<span style="font-size:12px;color:' + matchColor + ';letter-spacing:1px">' + starStr + '</span>';
-    h += '</div>';
-    h += '<div class="az-alt-hook">' + (a + 1) + '. ' + altIdea.text + '</div>';
-    h += '<div class="az-alt-meta">';
-    h += '<span style="background:rgba(167,139,250,.15);color:var(--purple);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;margin-right:6px">' + altIdea.topic + '</span>';
-    h += '<span style="background:rgba(0,255,136,.08);color:var(--green);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;margin-right:6px">' + (altIdea.format === "yesno" ? "Yes/No" : altIdea.format === "abc" ? "A/B/C" : altIdea.format === "opinion" ? "Opinion" : "Story") + '</span>';
-    for (var ae = 0; ae < altIdea.emotions.length; ae++) {
-      h += '<span style="font-size:9px;color:var(--amber);margin-right:4px">' + altIdea.emotions[ae] + '</span>';
+  if (result.improvements.length > 0) {
+    h += '<div class="az-section" style="border-left:3px solid var(--amber)">';
+    h += '<div class="az-section-title">&#9888; What to Fix (Specific Actions)</div>';
+    for (var fi = 0; fi < result.improvements.length; fi++) {
+      h += '<div style="padding:8px 10px;background:rgba(255,165,0,.05);border:1px solid rgba(255,165,0,.12);border-radius:8px;margin-bottom:6px;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--amber);font-weight:700;font-size:9px;text-transform:uppercase">FIX ' + (fi+1) + '</span><br>' + result.improvements[fi] + '</div>';
     }
     h += '</div>';
-    h += '<div style="margin-top:4px;display:flex;justify-content:space-between;align-items:center">';
-    h += '<div class="az-alt-copy">TAP TO COPY</div>';
-    h += '<span style="font-size:9px;color:var(--muted)">Psychology match: <b style="color:' + matchColor + '">' + matchPct + '%</b></span>';
-    h += '</div>';
+  } else {
+    h += '<div class="az-section" style="border-left:3px solid var(--green)">';
+    h += '<div class="az-section-title">&#10003; Great Content!</div>';
+    h += '<div style="font-size:12px;color:var(--green)">Your caption hits all the key marks - strong hook, good CTA, engagement triggers present. Keep doing this!</div>';
     h += '</div>';
   }
-  h += '</div>';
+
+  if (result.improved !== result.text) {
+    h += '<div class="az-section" style="border-left:3px solid var(--green)">';
+    h += '<div class="az-section-title">&#9998; Improved Version (tap to copy)</div>';
+    h += '<div id="improvedCaption" onclick="copyText(\'improvedCaption\')" style="font-size:12px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.15);padding:12px;border-radius:10px;cursor:pointer;line-height:1.6;white-space:pre-wrap">' + result.improved.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+    h += '<div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center">Tap the text above to copy</div>';
+    h += '</div>';
+  }
+
+  if (result.alternatives.length > 0) {
+    h += '<div class="az-section" style="border-left:3px solid var(--purple)">';
+    h += '<div class="az-section-title">&#128161; Content Ideas for Your Niche</div>';
+    for (var a = 0; a < Math.min(5, result.alternatives.length); a++) {
+      var altIdea = result.alternatives[a].idea;
+      h += '<div class="az-alt" onclick="copyAlt(this)">';
+      h += '<div class="az-alt-hook">' + (a + 1) + '. ' + altIdea.text + '</div>';
+      h += '<div class="az-alt-meta">';
+      h += '<span style="background:rgba(167,139,250,.15);color:var(--purple);padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700">' + altIdea.topic + '</span>';
+      h += '</div>';
+      h += '<div class="az-alt-copy" style="margin-top:4px">TAP TO COPY</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
 
   h += '</div>';
   resultDiv.innerHTML = h;
