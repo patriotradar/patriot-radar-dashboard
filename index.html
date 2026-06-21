@@ -6041,6 +6041,7 @@ async function showDashboard() {
   } catch(e) {}
 
   trackEvent("session_start", {niche: USER_NICHE || "general"});
+  trackUserActivity();
 
   checkAdminStatus();
   initNicheSwitcher();
@@ -6567,6 +6568,21 @@ async function loadAdminPanel() {
   loadAdminTickets();
 }
 
+async function trackUserActivity() {
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (!u || !u.email) return;
+    var now = new Date().toISOString();
+    var niche = (u.user_metadata && u.user_metadata.niche) || "general";
+    var existing = await supabaseClient.from("cr_support_tickets").select("id").eq("user_email", u.email).eq("category", "user_activity").limit(1);
+    if (existing.data && existing.data.length > 0) {
+      await supabaseClient.from("cr_support_tickets").update({description: "last_active:" + now, niche: niche, status: "active"}).eq("id", existing.data[0].id);
+    } else {
+      await supabaseClient.from("cr_support_tickets").insert({user_email: u.email, category: "user_activity", subject: "User Activity Tracking", description: "last_active:" + now, niche: niche, status: "active"});
+    }
+  } catch(e) {}
+}
+
 async function loadAmbassadorPanel() {
   var h = '<div class="card" style="margin-bottom:16px">';
   h += '<h2 style="font-size:16px;color:#ff8c00;margin-bottom:4px">&#127775; Ambassador Dashboard</h2>';
@@ -6591,105 +6607,71 @@ async function loadAmbassadorUsers() {
   var el = document.getElementById("ambassadorUsersList");
   var statsEl = document.getElementById("ambassadorStats");
   if (!el) return;
+
   try {
-    var res = await supabaseClient.auth.admin.listUsers();
-    if (res && res.data && res.data.users) {
-      var users = res.data.users;
-      renderAmbassadorData(users, el, statsEl);
+    var res = await supabaseClient.from("cr_support_tickets").select("user_email,niche,description,created_at").eq("category", "user_activity").order("created_at",{ascending:false});
+    if (res.data && res.data.length > 0) {
+      var now = new Date();
+      var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      var dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      var totalUsers = res.data.length;
+      var activeThisWeek = 0;
+      var activeToday = 0;
+      var niches = {};
+
+      var users = [];
+      for (var i = 0; i < res.data.length; i++) {
+        var r = res.data[i];
+        var lastActive = null;
+        if (r.description && r.description.indexOf("last_active:") === 0) {
+          lastActive = new Date(r.description.replace("last_active:", ""));
+        }
+        var niche = r.niche || "Unknown";
+        niches[niche] = (niches[niche] || 0) + 1;
+        var isActiveWeek = lastActive && lastActive >= weekAgo;
+        var isActiveToday = lastActive && lastActive >= dayAgo;
+        if (isActiveWeek) activeThisWeek++;
+        if (isActiveToday) activeToday++;
+        users.push({email: r.user_email, niche: niche, joined: r.created_at, lastActive: lastActive, isActiveWeek: isActiveWeek});
+      }
+
+      var h = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
+      h += '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + totalUsers + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total Users</div></div>';
+      h += '<div style="text-align:center;padding:12px;background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:#ff8c00">' + activeThisWeek + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Active This Week</div></div>';
+      h += '<div style="text-align:center;padding:12px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--purple)">' + activeToday + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Active Today</div></div>';
+      h += '</div>';
+
+      h += '<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">All Users</div>';
+      for (var j = 0; j < users.length; j++) {
+        var u = users[j];
+        var email = u.email || "Unknown";
+        var masked = email.substring(0, 3) + "***@" + email.split("@")[1];
+        var statusDot = u.isActiveWeek ? '<span style="color:var(--green)">&#9679;</span>' : '<span style="color:var(--muted)">&#9679;</span>';
+        var lastText = u.lastActive ? timeAgo(u.lastActive.toISOString()) : "Unknown";
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px">';
+        h += statusDot + ' ';
+        h += '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--white)">' + masked + '</div><div style="font-size:9px;color:var(--muted)">' + titleCase(u.niche) + '</div></div>';
+        h += '<div style="text-align:right;font-size:9px;color:' + (u.isActiveWeek ? 'var(--green)' : 'var(--muted)') + ';font-weight:700">' + lastText + '</div>';
+        h += '</div>';
+      }
+      el.innerHTML = h;
+
+      if (statsEl) {
+        var sh = '<div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Popular Niches</div>';
+        var nicheList = [];
+        for (var n in niches) nicheList.push({name: n, count: niches[n]});
+        nicheList.sort(function(a,b){return b.count - a.count});
+        for (var k = 0; k < Math.min(10, nicheList.length); k++) {
+          var pct = (nicheList[k].count / totalUsers * 100).toFixed(0);
+          sh += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:var(--muted)">' + titleCase(nicheList[k].name) + '</span><span style="color:var(--green);font-weight:700">' + nicheList[k].count + ' (' + pct + '%)</span></div>';
+        }
+        statsEl.innerHTML = sh;
+      }
       return;
     }
   } catch(e) {}
 
-  try {
-    var res2 = await supabaseClient.from("cr_support_tickets").select("user_email,niche,created_at").order("created_at",{ascending:false});
-    if (res2.data) {
-      var emailSet = {};
-      for (var i = 0; i < res2.data.length; i++) {
-        var email = res2.data[i].user_email;
-        if (email && !emailSet[email]) emailSet[email] = {email: email, niche: res2.data[i].niche || "Unknown", lastSeen: res2.data[i].created_at};
-      }
-      var userList = [];
-      for (var e in emailSet) userList.push(emailSet[e]);
-      renderAmbassadorFallback(userList, el, statsEl);
-      return;
-    }
-  } catch(e2) {}
-
-  el.innerHTML = '<p style="color:var(--muted);font-size:12px">Unable to load user data at this time.</p>';
-}
-
-function renderAmbassadorData(users, el, statsEl) {
-  var now = new Date();
-  var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  var dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  var totalUsers = users.length;
-  var thisWeek = 0;
-  var today = 0;
-  var niches = {};
-
-  var h = '';
-  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
-
-  for (var i = 0; i < users.length; i++) {
-    var u = users[i];
-    var created = new Date(u.created_at);
-    if (created >= weekAgo) thisWeek++;
-    if (created >= dayAgo) today++;
-    var niche = (u.user_metadata && u.user_metadata.niche) || "Unknown";
-    niches[niche] = (niches[niche] || 0) + 1;
-  }
-
-  h += '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + totalUsers + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total Users</div></div>';
-  h += '<div style="text-align:center;padding:12px;background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:#ff8c00">' + thisWeek + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">This Week</div></div>';
-  h += '<div style="text-align:center;padding:12px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--purple)">' + today + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Today</div></div>';
-  h += '</div>';
-
-  users.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
-
-  h += '<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Recent Signups</div>';
-  var limit = Math.min(20, users.length);
-  for (var j = 0; j < limit; j++) {
-    var usr = users[j];
-    var email = usr.email || "Unknown";
-    var masked = email.substring(0, 3) + "***@" + email.split("@")[1];
-    var niche2 = (usr.user_metadata && usr.user_metadata.niche) || "Unknown";
-    var joined = timeAgo(usr.created_at);
-    var lastSign = usr.last_sign_in_at ? timeAgo(usr.last_sign_in_at) : "Never";
-    var isActive = usr.last_sign_in_at && (new Date(usr.last_sign_in_at) >= weekAgo);
-    var statusDot = isActive ? '<span style="color:var(--green)">&#9679;</span>' : '<span style="color:var(--muted)">&#9679;</span>';
-    h += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px">';
-    h += statusDot + ' ';
-    h += '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--white)">' + masked + '</div><div style="font-size:9px;color:var(--muted)">' + titleCase(niche2) + ' | Joined ' + joined + '</div></div>';
-    h += '<div style="text-align:right;font-size:9px;color:var(--muted)">Last active<br><span style="color:' + (isActive ? 'var(--green)' : 'var(--muted)') + ';font-weight:700">' + lastSign + '</span></div>';
-    h += '</div>';
-  }
-  if (users.length > 20) h += '<div style="text-align:center;font-size:10px;color:var(--muted);margin-top:6px">+ ' + (users.length - 20) + ' more users</div>';
-
-  el.innerHTML = h;
-
-  if (statsEl) {
-    var sh = '<div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Popular Niches</div>';
-    var nicheList = [];
-    for (var n in niches) nicheList.push({name: n, count: niches[n]});
-    nicheList.sort(function(a,b){return b.count - a.count});
-    for (var k = 0; k < Math.min(10, nicheList.length); k++) {
-      var pct = (nicheList[k].count / totalUsers * 100).toFixed(0);
-      sh += '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid rgba(255,255,255,.03)"><span style="color:var(--muted)">' + titleCase(nicheList[k].name) + '</span><span style="color:var(--green);font-weight:700">' + nicheList[k].count + ' (' + pct + '%)</span></div>';
-    }
-    statsEl.innerHTML = sh;
-  }
-}
-
-function renderAmbassadorFallback(userList, el, statsEl) {
-  var h = '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px;margin-bottom:14px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + userList.length + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Known Users</div></div>';
-  h += '<div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Users</div>';
-  for (var i = 0; i < Math.min(20, userList.length); i++) {
-    var u = userList[i];
-    var email = u.email || "Unknown";
-    var masked = email.substring(0, 3) + "***@" + email.split("@")[1];
-    h += '<div style="padding:6px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px"><span style="color:var(--white);font-weight:700">' + masked + '</span> <span style="color:var(--muted)">| ' + titleCase(u.niche) + '</span></div>';
-  }
-  el.innerHTML = h;
+  el.innerHTML = '<p style="color:var(--muted);font-size:12px">No user data yet. Users will appear here as they log in.</p>';
 }
 
 async function loadAdminFeedback() {
