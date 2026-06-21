@@ -7602,6 +7602,20 @@ function showSignupView() {
   document.getElementById("signupView").style.display = "block";
 }
 
+var DASH_REF_CODE = (function() {
+  try { return new URLSearchParams(window.location.search).get("ref") || ""; }
+  catch(e) { return ""; }
+})();
+
+async function recordReferral(userId, email) {
+  if (!DASH_REF_CODE || !userId) return;
+  try {
+    var existing = await supabaseClient.from("cr_referrals").select("id").eq("referred_id", userId).limit(1);
+    if (existing.data && existing.data.length > 0) return;
+    await supabaseClient.from("cr_referrals").insert([{referrer_code: DASH_REF_CODE, referred_id: userId, referred_email: email}]);
+  } catch(e) {}
+}
+
 async function betaSignup() {
   var em = document.getElementById("signupEmail").value.trim();
   var pw = document.getElementById("signupPassword").value;
@@ -7613,18 +7627,22 @@ async function betaSignup() {
   if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) { msg.innerText = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.style.color = "var(--red)"; return; }
   if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
-  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString(), niche: niche || "general"}}});
+  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null}}});
   if (r.error) { var emsg = r.error.message; if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.innerText = emsg; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
   } else if (r.data && r.data.session) {
+    var userId = r.data.session.user ? r.data.session.user.id : null;
+    recordReferral(userId, em);
     msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)";
-    trackEvent("signup", {niche: niche || "general", source: "dashboard"});
+    trackEvent("signup", {niche: niche || "general", source: "dashboard", ref: DASH_REF_CODE || "none"});
     setTimeout(function() { showDashboard(); }, 1000);
   } else {
+    var userId = (r.data && r.data.user) ? r.data.user.id : null;
+    recordReferral(userId, em);
     var lr = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
-    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "general", source: "dashboard"}); showLoginView(); }
-    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "general", source: "dashboard"}); setTimeout(function() { showDashboard(); }, 1000); }
+    if (lr.error) { msg.innerText = "Account created! Log in to get started."; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "general", source: "dashboard", ref: DASH_REF_CODE || "none"}); showLoginView(); }
+    else { msg.innerText = "Welcome to Creator Radar!"; msg.style.color = "var(--green)"; trackEvent("signup", {niche: niche || "general", source: "dashboard", ref: DASH_REF_CODE || "none"}); setTimeout(function() { showDashboard(); }, 1000); }
   }
 }
 
@@ -8089,16 +8107,24 @@ async function loadAdminPanel() {
   h += '<div id="adminTicketsList"><p style="color:var(--muted);font-size:12px">Loading tickets...</p></div>';
   h += '</div>';
 
+  // Referrals section
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:#ff8c00;margin-bottom:12px">&#127873; All Referrals</h2>';
+  h += '<div id="adminReferralsList"><p style="color:var(--muted);font-size:12px">Loading referrals...</p></div>';
+  h += '</div>';
+
   // Users section
   h += '<div class="card">';
-  h += '<h2 style="font-size:14px;color:var(--purple);margin-bottom:12px">&#128101; Registered Users</h2>';
-  h += '<div id="adminUsersList"><p style="color:var(--muted);font-size:12px">User data available via Supabase dashboard</p></div>';
+  h += '<h2 style="font-size:14px;color:var(--purple);margin-bottom:12px">&#128101; Active Users</h2>';
+  h += '<div id="adminUsersList"><p style="color:var(--muted);font-size:12px">Loading user data...</p></div>';
   h += '</div>';
 
   document.getElementById("adminFeedback").innerHTML = h;
 
   loadAdminFeedback();
   loadAdminTickets();
+  loadAdminReferrals();
+  loadAdminUsers();
 }
 
 async function trackUserActivity() {
@@ -8123,6 +8149,11 @@ async function loadAmbassadorPanel() {
   h += '</div>';
 
   h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:#ff8c00;margin-bottom:12px">&#127873; My Referrals</h2>';
+  h += '<div id="ambassadorReferrals"><p style="color:var(--muted);font-size:12px">Loading referrals...</p></div>';
+  h += '</div>';
+
+  h += '<div class="card" style="margin-bottom:16px">';
   h += '<h2 style="font-size:14px;color:var(--green);margin-bottom:12px">&#128101; Active Users</h2>';
   h += '<div id="ambassadorUsersList"><p style="color:var(--muted);font-size:12px">Loading user data...</p></div>';
   h += '</div>';
@@ -8133,7 +8164,41 @@ async function loadAmbassadorPanel() {
   h += '</div>';
 
   document.getElementById("adminFeedback").innerHTML = h;
+  loadAmbassadorReferrals();
   loadAmbassadorUsers();
+}
+
+async function loadAmbassadorReferrals() {
+  var el = document.getElementById("ambassadorReferrals");
+  if (!el) return;
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (!u) return;
+    var myCode = getUserRefCode(u.id);
+    var res = await supabaseClient.from("cr_referrals").select("referred_email,created_at").eq("referrer_code", myCode).order("created_at", {ascending: false});
+    if (res.data && res.data.length > 0) {
+      var h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">';
+      h += '<div style="text-align:center;padding:12px;background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:#ff8c00">' + res.data.length + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total Referrals</div></div>';
+      h += '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + (res.data.length * REFERRAL_BONUS_DAYS) + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Bonus Days Earned</div></div>';
+      h += '</div>';
+      h += '<div style="font-size:11px;font-weight:700;color:#ff8c00;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Referred Users</div>';
+      for (var i = 0; i < res.data.length; i++) {
+        var ref = res.data[i];
+        var email = ref.referred_email || "Unknown";
+        var masked = email.substring(0, 3) + "***@" + email.split("@")[1];
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px">';
+        h += '<span style="color:#ff8c00">&#127873;</span> ';
+        h += '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--white)">' + masked + '</div></div>';
+        h += '<div style="text-align:right;font-size:9px;color:var(--muted);font-weight:700">' + timeAgo(ref.created_at) + '</div>';
+        h += '</div>';
+      }
+      el.innerHTML = h;
+    } else {
+      el.innerHTML = '<p style="color:var(--muted);font-size:12px">No referrals yet. Share your link below to start earning bonus days!</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:12px">Could not load referrals.</p>';
+  }
 }
 
 async function loadAmbassadorUsers() {
@@ -8271,6 +8336,79 @@ async function loadAdminTickets() {
     }
   } catch(e) {
     el.innerHTML = '<p style="color:var(--muted);font-size:12px;text-align:center;padding:16px 0">No tickets yet. Make sure the cr_support_tickets table is set up in Supabase.</p>';
+  }
+}
+
+async function loadAdminReferrals() {
+  var el = document.getElementById("adminReferralsList");
+  if (!el) return;
+  try {
+    var res = await supabaseClient.from("cr_referrals").select("referrer_code,referred_email,created_at").order("created_at", {ascending: false});
+    if (res.data && res.data.length > 0) {
+      var h = '<div style="text-align:center;padding:12px;background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.15);border-radius:10px;margin-bottom:14px"><div style="font-size:22px;font-weight:900;color:#ff8c00">' + res.data.length + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total Referrals</div></div>';
+      for (var i = 0; i < res.data.length; i++) {
+        var ref = res.data[i];
+        var email = ref.referred_email || "Unknown";
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px">';
+        h += '<span style="color:#ff8c00">&#127873;</span> ';
+        h += '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--white)">' + email + '</div><div style="font-size:9px;color:var(--muted)">via ' + ref.referrer_code + '</div></div>';
+        h += '<div style="text-align:right;font-size:9px;color:var(--muted);font-weight:700">' + timeAgo(ref.created_at) + '</div>';
+        h += '</div>';
+      }
+      el.innerHTML = h;
+    } else {
+      el.innerHTML = '<p style="color:var(--muted);font-size:12px">No referrals yet.</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:12px">Could not load referrals.</p>';
+  }
+}
+
+async function loadAdminUsers() {
+  var el = document.getElementById("adminUsersList");
+  if (!el) return;
+  try {
+    var res = await supabaseClient.from("cr_support_tickets").select("user_email,niche,description,created_at").eq("category", "user_activity").order("created_at", {ascending: false});
+    if (res.data && res.data.length > 0) {
+      var now = new Date();
+      var weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      var dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      var totalUsers = res.data.length;
+      var activeThisWeek = 0;
+      var activeToday = 0;
+      var h = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">';
+      for (var i = 0; i < res.data.length; i++) {
+        var r = res.data[i];
+        var lastActive = null;
+        if (r.description && r.description.indexOf("last_active:") === 0) lastActive = new Date(r.description.replace("last_active:", ""));
+        if (lastActive && lastActive >= weekAgo) activeThisWeek++;
+        if (lastActive && lastActive >= dayAgo) activeToday++;
+      }
+      h += '<div style="text-align:center;padding:12px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--green)">' + totalUsers + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Total</div></div>';
+      h += '<div style="text-align:center;padding:12px;background:rgba(255,140,0,.05);border:1px solid rgba(255,140,0,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:#ff8c00">' + activeThisWeek + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">This Week</div></div>';
+      h += '<div style="text-align:center;padding:12px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.15);border-radius:10px"><div style="font-size:22px;font-weight:900;color:var(--purple)">' + activeToday + '</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase">Today</div></div>';
+      h += '</div>';
+      for (var j = 0; j < res.data.length; j++) {
+        var u = res.data[j];
+        var email = u.user_email || "Unknown";
+        var niche = u.niche || "Unknown";
+        var lastActive = null;
+        if (u.description && u.description.indexOf("last_active:") === 0) lastActive = new Date(u.description.replace("last_active:", ""));
+        var isActive = lastActive && lastActive >= weekAgo;
+        var statusDot = isActive ? '<span style="color:var(--green)">&#9679;</span>' : '<span style="color:var(--muted)">&#9679;</span>';
+        var lastText = lastActive ? timeAgo(lastActive.toISOString()) : "Unknown";
+        h += '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--panel2);border:1px solid var(--border);border-radius:8px;margin-bottom:4px;font-size:11px">';
+        h += statusDot + ' ';
+        h += '<div style="flex:1;min-width:0"><div style="font-weight:700;color:var(--white)">' + email + '</div><div style="font-size:9px;color:var(--muted)">' + titleCase(niche) + '</div></div>';
+        h += '<div style="text-align:right;font-size:9px;color:' + (isActive ? 'var(--green)' : 'var(--muted)') + ';font-weight:700">' + lastText + '</div>';
+        h += '</div>';
+      }
+      el.innerHTML = h;
+    } else {
+      el.innerHTML = '<p style="color:var(--muted);font-size:12px">No users yet.</p>';
+    }
+  } catch(e) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:12px">Could not load user data.</p>';
   }
 }
 
