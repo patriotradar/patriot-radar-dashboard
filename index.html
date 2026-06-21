@@ -2767,19 +2767,28 @@ function renderDailyPlan(results, emerging) {
   var freshInfo = pk.days === 0 ? "Posted today" : pk.days < 999 ? pk.days + "d ago" : "Never posted";
 
   var riseVal = Number(pk.item.rise_percent || 0);
-  var urgency, urgColor, urgMsg;
+  var vs = Number(pk.item.viral_score || 0);
+  var urgency, urgColor, urgMsg, urgWindow, urgPhase;
   if (riseVal > 60) {
     urgency = "POST NOW"; urgColor = "#ff4757";
     urgMsg = "Spiking fast - post within 2 hours for maximum reach";
+    urgWindow = "2-4 hours before peak";
+    urgPhase = "EARLY SPIKE - You're ahead of the curve. Most creators won't cover this for another 6-12 hours.";
   } else if (riseVal > 25) {
     urgency = "POST TODAY"; urgColor = "var(--amber)";
     urgMsg = "Strong trend with room to grow - take your time for quality";
+    urgWindow = "6-12 hours of growth left";
+    urgPhase = "RISING - The trend is building momentum. You have time to create quality content and still be early.";
   } else if (riseVal > 0) {
     urgency = "POST TODAY"; urgColor = "var(--green)";
     urgMsg = "Steady upward trend - good window today";
+    urgWindow = "12-24 hours at current pace";
+    urgPhase = "BUILDING - Slow and steady rise. Good for well-researched content that adds real value.";
   } else {
     urgency = "SCHEDULE"; urgColor = "var(--blue)";
     urgMsg = "No rush - prepare quality content for when it picks up";
+    urgWindow = "No time pressure";
+    urgPhase = "STABLE - Not spiking yet. Perfect time to prepare content and be ready when it does.";
   }
 
   h += '<div style="padding:14px;margin-bottom:10px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;border-left:3px solid ' + sl.color + '">';
@@ -2790,6 +2799,12 @@ function renderDailyPlan(results, emerging) {
   h += '<div style="font-size:10px;color:var(--green);margin-bottom:4px;font-weight:700">TRENDING TOPIC</div>';
   h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(pk.kw) + '</div>';
   h += '<div style="font-size:9px;color:' + urgColor + ';margin-bottom:4px;font-weight:700">' + urgMsg + '</div>';
+  h += '<div style="padding:8px 10px;background:rgba(0,0,0,.25);border-radius:8px;margin-bottom:6px">';
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700">Trend Window</span><span style="font-size:9px;color:' + urgColor + ';font-weight:700">' + urgWindow + '</span></div>';
+  var trendPct = Math.min(100, Math.max(5, riseVal > 0 ? riseVal * 1.2 : 5));
+  h += '<div style="height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:' + trendPct.toFixed(0) + '%;background:' + urgColor + ';border-radius:4px"></div></div>';
+  h += '<div style="font-size:9px;color:var(--muted)">' + urgPhase + '</div>';
+  h += '</div>';
   var planCS = Number(pk.item.content_score || 0);
   var planCSText = planCS > 0 ? ' | Content: ' + planCS + '/100' : '';
   h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + planCSText + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
@@ -2803,6 +2818,16 @@ function renderDailyPlan(results, emerging) {
   h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
   h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
   h += renderHashtagBlock(pk.kw, USER_NICHE, null, "plan-hash-0");
+  h += '</div>';
+  var eng = generateEngagementTactics(pk.kw);
+  h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
+  h += '<div style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#128172; Engagement Plays</div>';
+  for (var ei = 0; ei < eng.length; ei++) {
+    h += '<div onclick="copyText(this.querySelector(\'.eng-text\').id)" style="padding:6px 8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.12);border-radius:8px;margin-bottom:4px;cursor:pointer;font-size:11px;color:var(--muted)">';
+    h += '<span style="color:var(--purple);font-weight:700;font-size:9px;text-transform:uppercase">' + eng[ei].type + '</span><br>';
+    h += '<span class="eng-text" id="eng-' + ei + '" style="color:var(--white)">' + eng[ei].text + '</span>';
+    h += '</div>';
+  }
   h += '</div>';
   h += '</div>';
 
@@ -3382,7 +3407,6 @@ function recommendContent(item) {
   if (!isPatrioticNiche(USER_NICHE)) {
     if (rp > 30 && vs > 40) return "Trending Take";
     if (vs > 60) return "Hot Topic";
-    if (item.product) return "Product Review";
     if (rp > 15) return "Timely Post";
     return "Engagement Post";
   }
@@ -4823,6 +4847,91 @@ var PLATFORMS = [
   { key: "linkedin", name: "LinkedIn", icon: "in", color: "#0A66C2", bg: "rgba(10,102,194,.08)", border: "rgba(10,102,194,.2)" }
 ];
 
+function generateEngagementTactics(keyword) {
+  var kw = titleCase(keyword);
+  var polls = [
+    "Do you agree with " + kw + "? Yes or No?",
+    kw + " - overrated or underrated? Comment below",
+    "Rate " + kw + " from 1-10. Go!",
+    "Which side are you on with " + kw + "? Team A or Team B?",
+    kw + " - hot take or common sense? Let me know"
+  ];
+  var questions = [
+    "What's your experience with " + kw + "? I want to hear your story",
+    "If you could change one thing about " + kw + ", what would it be?",
+    "Have you tried " + kw + " yet? Drop your thoughts below",
+    "What's the one thing about " + kw + " that nobody talks about?",
+    "Honest question - does " + kw + " actually work? Comment your experience"
+  ];
+  var commentBait = [
+    "Comment '" + kw.split(" ")[0].toUpperCase() + "' and I'll send you my full breakdown",
+    "Tag someone who needs to know about " + kw,
+    "Drop a fire emoji if you agree with this take on " + kw,
+    "Comment your biggest question about " + kw + " and I'll answer it",
+    "Save this and come back to tell me if " + kw + " worked for you"
+  ];
+  var storyIdeas = [
+    "Share a before/after story about " + kw + " to build trust with your audience",
+    "Film a reaction video discovering something new about " + kw,
+    "Do a 'day in the life' featuring " + kw + " in your routine",
+    "Create a myth vs reality breakdown about " + kw
+  ];
+  var seed = 0;
+  for (var i = 0; i < kw.length; i++) seed += kw.charCodeAt(i);
+  var tactics = [
+    {type: "Poll", text: polls[seed % polls.length]},
+    {type: "Question", text: questions[(seed + 1) % questions.length]},
+    {type: "Comment Bait", text: commentBait[(seed + 2) % commentBait.length]},
+    {type: "Content Idea", text: storyIdeas[(seed + 3) % storyIdeas.length]}
+  ];
+  return tactics;
+}
+
+var CAPTION_STYLES = {
+  tiktok: [
+    function(kw,n){return kw+" is blowing up and nobody's talking about it. Here's what I found out..."},
+    function(kw,n){return "I spent 3 hours researching "+kw+" so you don't have to. The results shocked me."},
+    function(kw,n){return "POV: you just found out about "+kw+" and now you can't stop thinking about it"},
+    function(kw,n){return "Everyone's sleeping on "+kw+" right now. I'm not. Here's why."},
+    function(kw,n){return "If you're into "+n.toLowerCase()+" and you haven't heard about "+kw+" yet... watch this."},
+    function(kw,n){return "3 things about "+kw+" that will change how you think about "+n.toLowerCase()},
+    function(kw,n){return "The truth about "+kw+" that no one wants to talk about"},
+    function(kw,n){return "I asked my followers about "+kw+" and the responses were wild. Here's what they said."}
+  ],
+  instagram: [
+    function(kw,n){return kw+" is having a moment right now.\n\nHere's the breakdown:\n\n1. It's trending across every platform\n2. The engagement on this topic is insane\n3. Most creators haven't caught on yet\n\nThe early movers always win. Are you in or are you watching?\n\nDrop a comment with your take."},
+    function(kw,n){return "I need to talk about "+kw+".\n\nI've been seeing it everywhere this week and here's what I think is really going on.\n\nSwipe for the full breakdown.\n\nSave this so you don't forget."},
+    function(kw,n){return "Hot take: "+kw+" is going to be the biggest "+n.toLowerCase()+" topic this month.\n\nHere's my evidence:\n\nThe search volume has exploded. Creators are starting to post about it. But most are doing it wrong.\n\nHere's how to actually stand out with this topic.\n\nShare with a friend who needs to see this."},
+    function(kw,n){return "Real talk about "+kw+".\n\nI see a lot of creators jumping on trends without understanding them. Here's what you actually need to know before posting about this.\n\nBookmark this for later."},
+    function(kw,n){return "5 reasons why "+kw+" matters for "+n.toLowerCase()+" creators right now:\n\n1. The algorithm loves fresh trending content\n2. Your audience is already searching for it\n3. The competition hasn't caught up yet\n4. It connects to what people care about\n5. Early content on trending topics gets pushed harder\n\nWhich reason surprised you? Comment below."}
+  ],
+  youtube: [
+    function(kw,n){return kw+" is trending and I need to break this down for you. In this video I cover everything you need to know, why it matters for "+n.toLowerCase()+" creators, and exactly how to use it in your content strategy."},
+    function(kw,n){return "I spent the last few days diving deep into "+kw+" and what I found was fascinating. If you're a "+n.toLowerCase()+" creator, this could change your entire approach."},
+    function(kw,n){return kw+" explained in under 10 minutes. Everything you need to know, no fluff, no filler. Let's get into it."},
+    function(kw,n){return "Why is everyone suddenly talking about "+kw+"? I did the research so you don't have to. Here's the full breakdown."}
+  ],
+  twitter: [
+    function(kw,n){return kw+" is trending and most people are getting it wrong.\n\nHere's what's actually happening (thread):"},
+    function(kw,n){return "Hot take: "+kw+" is about to change everything for "+n.toLowerCase()+" creators.\n\nLet me explain why."},
+    function(kw,n){return "Everyone's talking about "+kw+" today.\n\nBut they're missing the bigger picture.\n\nHere's what I think:"},
+    function(kw,n){return "Unpopular opinion: "+kw+" matters way more than people think.\n\nHere's my take:"}
+  ],
+  linkedin: [
+    function(kw,n){return "I've been watching "+kw+" closely this week.\n\nHere's what most "+n.toLowerCase()+" professionals are missing:\n\nThe trend isn't just noise. There's a real shift happening and the people who pay attention now will be ahead of the curve.\n\nHere's my analysis and what I think it means going forward."},
+    function(kw,n){return "Let's talk about "+kw+".\n\nI see a lot of surface-level takes on this topic. But when you dig deeper, there's a much more interesting story.\n\nHere's what I've found after looking at the data:"},
+    function(kw,n){return "The conversation around "+kw+" is evolving fast.\n\nAs someone in the "+n.toLowerCase()+" space, here's my professional take on what this means and why you should be paying attention.\n\nI'd love to hear from others in the industry."}
+  ]
+};
+
+function pickCaption(platform, kw, niche) {
+  var styles = CAPTION_STYLES[platform] || CAPTION_STYLES.tiktok;
+  var seed = 0;
+  for (var i = 0; i < kw.length; i++) seed += kw.charCodeAt(i);
+  var idx = seed % styles.length;
+  return styles[idx](kw, niche);
+}
+
 function generatePlatformOptimization(keyword, niche, platform) {
   var kw = titleCase(keyword);
   var kwLower = (keyword || "").toLowerCase();
@@ -4832,13 +4941,14 @@ function generatePlatformOptimization(keyword, niche, platform) {
     nicheTitle = "Trending";
   }
   var opt = {};
+  var caption = pickCaption(platform, kw, nicheTitle);
 
   if (platform === "tiktok") {
     opt.format = "Short-form video (15-60 seconds)";
     opt.bestLength = "30-45 seconds for maximum completion rate";
     opt.title = kw + " - What You NEED to Know";
     opt.hook = "Wait for it... " + kw + " just changed everything";
-    opt.caption = kw + " is blowing up right now. Here's why every " + nicheTitle.toLowerCase() + " creator needs to know about this.";
+    opt.caption = caption;
     opt.cta = "Follow for more " + nicheTitle.toLowerCase() + " updates you won't find anywhere else";
     opt.tips = [
       "Use trending sounds - check the TikTok Creative Center for current audio trends",
@@ -4847,13 +4957,13 @@ function generatePlatformOptimization(keyword, niche, platform) {
       "Post during peak hours: 7-9 AM, 12-3 PM, or 7-11 PM",
       "Use 3-5 targeted hashtags (not generic ones like #fyp)"
     ];
-    opt.description = kw + " is trending right now and here's what nobody is telling you...\n\nDrop a comment if you agree!\n\nFollow @[yourhandle] for daily " + nicheTitle.toLowerCase() + " insights";
+    opt.description = caption + "\n\nDrop a comment if you agree!\n\nFollow @[yourhandle] for daily " + nicheTitle.toLowerCase() + " insights";
   } else if (platform === "instagram") {
     opt.format = "Reels (primary) + Carousel post (secondary)";
     opt.bestLength = "Reels: 15-30 seconds | Carousel: 7-10 slides";
     opt.title = kw + " | " + nicheTitle + " Trends 2026";
     opt.hook = "Stop scrolling - " + kw + " is about to change the game";
-    opt.caption = "Everyone's talking about " + kw + " and here's why it matters for " + nicheTitle.toLowerCase() + " creators right now.\n\nHere's what you need to know:\n\n1. It's trending across all platforms\n2. Early movers are seeing huge engagement\n3. There's still room to stand out\n\nSave this for later and share with a creator friend who needs to see this.\n\nWhat's your take? Drop it below.";
+    opt.caption = caption;
     opt.cta = "Save this post + Follow @[yourhandle] for daily " + nicheTitle.toLowerCase() + " trends";
     opt.tips = [
       "Use 15-20 hashtags: mix of broad (1M+), mid-tier (100K-1M), and niche (under 100K)",
@@ -4862,13 +4972,13 @@ function generatePlatformOptimization(keyword, niche, platform) {
       "Best posting times: 11 AM-1 PM and 7-9 PM in your audience's timezone",
       "Use the Collab feature to double your reach with another creator"
     ];
-    opt.description = kw + " | " + nicheTitle + " Trends\n\nWhat you need to know about " + kw + " right now:\n\nThe full breakdown is in the post.\n\nSave + Share + Follow for daily " + nicheTitle.toLowerCase() + " content";
+    opt.description = caption;
   } else if (platform === "youtube") {
     opt.format = "Shorts (15-60s) + Long-form (8-15 min)";
     opt.bestLength = "Shorts: 30-45 seconds | Long-form: 10-12 minutes";
     opt.title = kw + " - Everything You Need to Know in 2026";
     opt.hook = "If you're in " + nicheTitle.toLowerCase() + " and you don't know about " + kw + ", you're already behind";
-    opt.caption = kw + " Explained | " + nicheTitle + " Deep Dive";
+    opt.caption = caption;
     opt.cta = "Subscribe and hit the bell for weekly " + nicheTitle.toLowerCase() + " breakdowns";
     opt.tips = [
       "Front-load your keyword in the title for YouTube SEO",
@@ -4877,14 +4987,14 @@ function generatePlatformOptimization(keyword, niche, platform) {
       "Create a custom thumbnail with bold text and high contrast",
       "Pin a comment with a question to drive engagement"
     ];
-    opt.description = kw + " - Full Breakdown for " + nicheTitle + " Creators\n\nIn this video, I break down everything you need to know about " + kw + " and why it matters for " + nicheTitle.toLowerCase() + " creators in 2026.\n\nTimestamps:\n0:00 - Introduction\n0:30 - What is " + kw + "?\n2:00 - Why it's trending\n5:00 - How to use it\n8:00 - Key takeaways\n\nTags: " + kwLower + ", " + nicheTitle.toLowerCase() + " trends, " + kwLower + " 2026, " + nicheTitle.toLowerCase() + " tips";
+    opt.description = caption + "\n\nTimestamps:\n0:00 - Introduction\n0:30 - What is " + kw + "?\n2:00 - Why it's trending\n5:00 - How to use it\n8:00 - Key takeaways\n\nTags: " + kwLower + ", " + nicheTitle.toLowerCase() + " trends, " + kwLower + " 2026, " + nicheTitle.toLowerCase() + " tips";
     opt.seoTags = [kwLower, kwLower + " 2026", kwLower + " explained", nicheTitle.toLowerCase() + " trends", nicheTitle.toLowerCase() + " " + kwLower, kwLower + " for creators", kwLower + " tips", nicheTitle.toLowerCase() + " content ideas"];
   } else if (platform === "twitter") {
     opt.format = "Thread (5-8 tweets) or Single hot take";
     opt.bestLength = "Thread: 5-8 tweets | Single: under 280 chars";
     opt.title = "Thread: " + kw;
     opt.hook = kw + " is trending and most people are getting it wrong.";
-    opt.caption = kw + " just changed the game for " + nicheTitle.toLowerCase() + " creators.\n\nHere's what nobody's talking about:";
+    opt.caption = caption;
     opt.cta = "Repost this if you agree. Follow me for daily " + nicheTitle.toLowerCase() + " takes.";
     opt.tips = [
       "Lead with a controversial or surprising take to stop the scroll",
@@ -4893,13 +5003,13 @@ function generatePlatformOptimization(keyword, niche, platform) {
       "Post threads between 8-10 AM or 5-7 PM for maximum visibility",
       "End every thread with a clear CTA: follow, repost, or reply"
     ];
-    opt.description = "1/ " + kw + " is blowing up right now.\n\nBut most " + nicheTitle.toLowerCase() + " creators are missing the real story.\n\nHere's what you need to know (thread):\n\n2/ [Key insight 1 about " + kw + "]\n\n3/ [Key insight 2 about " + kw + "]\n\n4/ [What this means for creators]\n\n5/ [Your unique take]\n\n6/ If this helped, repost the first tweet and follow @[handle] for more " + nicheTitle.toLowerCase() + " breakdowns.";
+    opt.description = caption + "\n\n2/ [Key insight 1 about " + kw + "]\n\n3/ [Key insight 2]\n\n4/ [What this means for creators]\n\n5/ If this helped, repost and follow @[handle] for more " + nicheTitle.toLowerCase() + " breakdowns.";
   } else if (platform === "linkedin") {
     opt.format = "Text post with image or document carousel";
     opt.bestLength = "1,300 characters (shows 'See more' link)";
     opt.title = "What " + kw + " Means for " + nicheTitle + " Professionals";
     opt.hook = "I've been watching " + kw + " closely, and here's what I think most people are missing:";
-    opt.caption = "The conversation around " + kw + " is evolving fast.\n\nHere's my professional take on what it means for " + nicheTitle.toLowerCase() + ":";
+    opt.caption = caption;
     opt.cta = "What's your perspective on " + kw + "? I'd love to hear from other " + nicheTitle.toLowerCase() + " professionals in the comments.";
     opt.tips = [
       "Write in first person with a professional but authentic voice",
@@ -4908,7 +5018,7 @@ function generatePlatformOptimization(keyword, niche, platform) {
       "Tag relevant people or companies to expand reach",
       "Use 3-5 hashtags at the bottom of the post, not inline"
     ];
-    opt.description = "I've been following " + kw + " closely and here's what I've noticed:\n\nMost " + nicheTitle.toLowerCase() + " professionals are either ignoring it or overreacting.\n\nHere's the balanced take:\n\n1. [Professional insight about " + kw + "]\n2. [Industry impact]\n3. [Actionable advice]\n\nThe professionals who adapt early to trends like " + kw + " are the ones who build lasting authority.\n\nWhat's your take? Drop it in the comments.\n\n#" + nicheTitle.toLowerCase().replace(/\s+/g,"") + " #" + kwLower.replace(/\s+/g,"") + " #trends2026 #contentcreator #professionaldevelopment";
+    opt.description = caption + "\n\nWhat's your take? Drop it in the comments.\n\n#" + nicheTitle.toLowerCase().replace(/\s+/g,"") + " #" + kwLower.replace(/\s+/g,"") + " #trends2026 #contentcreator";
   }
 
   return opt;
