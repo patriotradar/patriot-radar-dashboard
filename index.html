@@ -2943,7 +2943,8 @@ async function submitPerfSimple(keyword) {
         topic: classification.topic,
         subcategory: classification.subcategory,
         emotionalTrigger: classification.emotionalTrigger,
-        date: entry.date
+        date: entry.date,
+        niche: (USER_NICHE || "general").toLowerCase()
       };
       if (classification.format && !format) modelEntry.format = classification.format;
       else if (format) modelEntry.format = format;
@@ -4034,7 +4035,7 @@ function renderPrimary(item) {
 
   h += '<div class="primary-section-label">Caption</div>';
   h += '<div id="ai-caption-primary" style="display:none;font-size:13px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);padding:12px;border-radius:10px;margin-bottom:8px;line-height:1.6;cursor:pointer" onclick="copyText(\'ai-caption-primary\')"></div>';
-  h += '<div id="primaryCaption" class="primary-content-box" style="font-size:13px;color:var(--muted)">' + (item.caption || "N/A") + '</div>';
+  h += '<div id="primaryCaption" class="primary-content-box" style="font-size:13px;color:var(--muted)">' + (item.caption || "Tap AI Enhance above to generate a ready-to-post caption") + '</div>';
   h += '<button class="copy-btn" onclick="copyText(document.getElementById(\'ai-caption-primary\').style.display!==\'none\'?\'ai-caption-primary\':\'primaryCaption\')">&#9776; Copy Caption</button>';
 
   h += '<div id="ai-engage-primary" style="display:none;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)"><div style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#129504; AI Engagement Plays</div></div>';
@@ -4415,7 +4416,7 @@ async function fetchBreakingNews() {
   var seen = {};
   for (var q = 0; q < Math.min(2, queries.length); q++) {
     try {
-      var rssUrl = "https://news.google.com/rss/search?q=" + encodeURIComponent(queries[q]) + "&hl=en-GB&gl=GB&ceid=GB:en";
+      var rssUrl = "https://news.google.com/rss/search?q=" + encodeURIComponent(queries[q]) + "&hl=en&gl=GB";
       var proxyUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
       var resp = await fetch(proxyUrl);
       if (!resp.ok) continue;
@@ -5524,14 +5525,24 @@ function getEnhancedAudienceContext() {
   var stats = getAudienceModelStats();
   if (!stats || stats.totalPosts < 3) return base;
 
+  var currentNiche = (USER_NICHE || "general").toLowerCase();
+  var modelNiches = {};
+  var model = loadAudienceModel();
+  for (var mi = 0; mi < model.length; mi++) {
+    var mn = (model[mi].niche || "").toLowerCase();
+    if (mn) modelNiches[mn] = (modelNiches[mn] || 0) + 1;
+  }
+  var primaryModelNiche = "";
+  var maxCount = 0;
+  for (var mnk in modelNiches) { if (modelNiches[mnk] > maxCount) { maxCount = modelNiches[mnk]; primaryModelNiche = mnk; } }
+
+  var isMatchingNiche = !primaryModelNiche || currentNiche === primaryModelNiche || currentNiche.indexOf(primaryModelNiche) !== -1 || primaryModelNiche.indexOf(currentNiche) !== -1;
+
   var ctx = base;
   ctx += " AUDIENCE PSYCHOLOGY PROFILE (" + stats.totalPosts + " posts analysed):";
 
   if (stats.drivers && stats.drivers.length > 0) {
     ctx += " Core Audience Drivers (WHY they engage): " + stats.drivers.slice(0, 4).map(function(d){return d.name + " (" + d.avgViews.toLocaleString() + " avg views, " + d.count + " posts)"}).join(", ") + ".";
-  }
-  if (stats.driverCombos && stats.driverCombos.length > 0) {
-    ctx += " Winning Psychology Combos: " + stats.driverCombos.slice(0, 3).map(function(dc){return dc.driver + " + " + dc.emotion + " (" + dc.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
   }
   if (stats.emotions.length > 0) {
     ctx += " Top Emotional Triggers: " + stats.emotions.slice(0, 3).map(function(e){return e.name + " (" + e.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
@@ -5539,16 +5550,25 @@ function getEnhancedAudienceContext() {
   if (stats.formats.length > 0) {
     ctx += " Best Formats: " + stats.formats.slice(0, 3).map(function(f){return f.name + " (" + f.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
   }
-  if (stats.combos.length > 0) {
-    var topCombos = stats.combos.slice(0, 3);
-    ctx += " Full Winning Patterns: ";
-    for (var i = 0; i < topCombos.length; i++) {
-      var c = topCombos[i];
-      ctx += (i+1) + ") " + (c.driver || "") + " > " + c.topic + " > " + c.format + " > " + c.emotion + " (" + c.avgViews.toLocaleString() + " avg views)";
-      if (i < topCombos.length - 1) ctx += ", ";
+
+  if (isMatchingNiche) {
+    if (stats.driverCombos && stats.driverCombos.length > 0) {
+      ctx += " Winning Psychology Combos: " + stats.driverCombos.slice(0, 3).map(function(dc){return dc.driver + " + " + dc.emotion + " (" + dc.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
     }
-    ctx += ".";
+    if (stats.combos.length > 0) {
+      var topCombos = stats.combos.slice(0, 3);
+      ctx += " Full Winning Patterns: ";
+      for (var i = 0; i < topCombos.length; i++) {
+        var c = topCombos[i];
+        ctx += (i+1) + ") " + (c.driver || "") + " > " + c.topic + " > " + c.format + " > " + c.emotion + " (" + c.avgViews.toLocaleString() + " avg views)";
+        if (i < topCombos.length - 1) ctx += ", ";
+      }
+      ctx += ".";
+    }
+  } else {
+    ctx += " NOTE: The audience data above is from the creator's " + primaryModelNiche + " content. The current niche is " + currentNiche + ". Use ONLY the emotional triggers and formats (e.g. Debate, Storytelling) to inform the content style. Do NOT mix topics or references from " + primaryModelNiche + " into " + currentNiche + " content. Keep all content 100% relevant to " + currentNiche + ".";
   }
+
   ctx += " IMPORTANT: Recommend NEW topics that match this audience's psychological profile. Do NOT repeat the same topics - find fresh angles that trigger the same audience drivers and emotions.";
   if (stats.recentTopics) {
     var recentList = [];
@@ -6500,7 +6520,7 @@ var PLATFORMS = [
 
 function extractShortTopic(keyword) {
   var kw = keyword.toLowerCase();
-  var remove = ["why are there","why is","why do","why does","why did","what is","what are","what does","how to","how do","how does","how is","is there","are there","can you","should you","do you","does the","will the","has the","have the","trending","latest","news today","news","today","2026","2025"];
+  var remove = ["why are there","why is","why do","why does","why did","what is","what are","what does","how to","how do","how does","how is","is the","is there","is it","is a","are there","are the","can you","should you","should the","do you","do the","does the","will the","has the","have the","did the","trending","latest","news today","news","today","2026","2025"];
   var short = kw;
   for (var i = 0; i < remove.length; i++) {
     short = short.replace(new RegExp("^" + remove[i] + "\\s*", "i"), "").replace(new RegExp("\\s*" + remove[i] + "$", "i"), "");
