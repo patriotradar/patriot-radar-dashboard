@@ -6280,6 +6280,11 @@ function generateHashtags(keyword, niche, platform) {
     addTag(nicheClean + "content");
   }
 
+  var currentYear = new Date().getFullYear().toString();
+  var nicheTag = nicheClean && nicheClean !== "general" && nicheClean !== "patriotic" && nicheClean !== "patriot" ? nicheClean : "";
+  if (nicheTag) addTag(nicheTag + currentYear);
+  if (words.length > 0 && words[0].length >= 4) addTag(words[0] + currentYear);
+  addTag("trending" + currentYear);
   addTag("trending");
   addTag("viral");
   addTag("contentcreator");
@@ -6288,6 +6293,9 @@ function generateHashtags(keyword, niche, platform) {
   if (platform) {
     var pBoost = PLATFORM_HASHTAG_BOOSTS[platform] || [];
     for (var b = 0; b < pBoost.length; b++) addTag(pBoost[b]);
+    if (platform === "tiktok") addTag("tiktokviral" + currentYear);
+    if (platform === "youtube") addTag("youtubeshorts" + currentYear);
+    if (platform === "instagram") addTag("reels" + currentYear);
   }
 
   var limits = { tiktok: 8, instagram: 20, youtube: 15, twitter: 5, linkedin: 6 };
