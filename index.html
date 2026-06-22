@@ -7782,6 +7782,7 @@ async function getTrialDaysLeft() {
     var u = (await supabaseClient.auth.getUser()).data.user;
     if (!u) return 0;
     if (u.user_metadata && (u.user_metadata.paid || u.user_metadata.role === "admin")) return -1;
+    if (u.email) { for (var ae = 0; ae < ADMIN_EMAILS.length; ae++) { if (u.email.toLowerCase() === ADMIN_EMAILS[ae]) return -1; } }
     var bonusDays = 0;
     try {
       var myCode = getUserRefCode(u.id);
