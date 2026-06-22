@@ -3247,7 +3247,7 @@ function renderDailyPlan(results, emerging) {
   }
 
   function getFreshSlotIdea(emotions, excludeCats, seed) {
-    var ideaScored = [];
+    var allTopics = {};
     for (var i = 0; i < IDEA_POOL.length; i++) {
       var idea = IDEA_POOL[i];
       var skip = false;
@@ -3255,27 +3255,16 @@ function renderDailyPlan(results, emerging) {
         if (idea.topic === excludeCats[ec]) { skip = true; break; }
       }
       if (skip) continue;
-
-      var emotionMatch = 0;
-      for (var e = 0; e < emotions.length; e++) {
-        for (var ie = 0; ie < idea.emotions.length; ie++) {
-          if (emotions[e] === idea.emotions[ie]) { emotionMatch++; break; }
-        }
-      }
-      var emotionScore = emotions.length > 0 ? (emotionMatch / emotions.length) * 50 : 0;
-      var debateScore = idea.debate >= 2 ? 15 : 5;
-      ideaScored.push({ idea: idea, pScore: emotionScore + debateScore, emotionMatch: emotionMatch });
+      if (!allTopics[idea.topic]) allTopics[idea.topic] = [];
+      allTopics[idea.topic].push(idea);
     }
-    ideaScored.sort(function(a, b) { return b.pScore - a.pScore; });
-
-    var topTier = [];
-    for (var t = 0; t < ideaScored.length && topTier.length < 20; t++) {
-      if (ideaScored[t].pScore >= 30) topTier.push(ideaScored[t]);
-    }
-    if (topTier.length === 0) topTier = ideaScored.slice(0, 10);
-
-    var pick = topTier[seed % topTier.length];
-    return pick;
+    var topicKeys = Object.keys(allTopics);
+    if (topicKeys.length === 0) return null;
+    var chosenTopic = topicKeys[seed % topicKeys.length];
+    var topicIdeas = allTopics[chosenTopic];
+    var bestIdea = topicIdeas[seed % topicIdeas.length];
+    var subcat = pickSubcategory(chosenTopic, seed);
+    return { idea: bestIdea, pScore: 50, emotionMatch: 1, subcat: subcat };
   }
 
   var topPick = picks[0];
@@ -3286,29 +3275,30 @@ function renderDailyPlan(results, emerging) {
   var useNichePlan = (!isPatrioticNiche(USER_NICHE) && picks.length >= 3);
 
   if (!useNichePlan) {
-    var relatedCats = [];
     var topKwLower = topPick.kw.toLowerCase();
+    var slot1RelatedCats = [];
     if (topKwLower.indexOf("veteran") !== -1 || topKwLower.indexOf("armed") !== -1 || topKwLower.indexOf("army") !== -1 || topKwLower.indexOf("raf") !== -1 || topKwLower.indexOf("navy") !== -1) {
-      relatedCats = ["Military/Defence", "Remembrance", "National Symbols"];
+      slot1RelatedCats = ["Military/Defence", "Remembrance"];
     } else if (topKwLower.indexOf("remembr") !== -1 || topKwLower.indexOf("poppy") !== -1 || topKwLower.indexOf("cenotaph") !== -1) {
-      relatedCats = ["Remembrance", "Military/Defence", "National Symbols"];
-    } else if (topKwLower.indexOf("flag") !== -1 || topKwLower.indexOf("jack") !== -1 || topKwLower.indexOf("george") !== -1 || topKwLower.indexOf("english") !== -1) {
-      relatedCats = ["National Symbols", "Culture/Identity", "Military/Defence"];
-    } else if (topKwLower.indexOf("church") !== -1 || topKwLower.indexOf("dunkirk") !== -1 || topKwLower.indexOf("d-day") !== -1 || topKwLower.indexOf("battle") !== -1) {
-      relatedCats = ["History", "Military/Defence", "Remembrance"];
-    } else if (topKwLower.indexOf("king") !== -1 || topKwLower.indexOf("royal") !== -1 || topKwLower.indexOf("monarch") !== -1) {
-      relatedCats = ["Royal Family", "Culture/Identity"];
-    } else if (topKwLower.indexOf("immigra") !== -1 || topKwLower.indexOf("border") !== -1 || topKwLower.indexOf("boat") !== -1) {
-      relatedCats = ["Immigration", "Politics"];
+      slot1RelatedCats = ["Remembrance", "Military/Defence"];
+    } else if (topKwLower.indexOf("flag") !== -1 || topKwLower.indexOf("jack") !== -1 || topKwLower.indexOf("george") !== -1) {
+      slot1RelatedCats = ["National Symbols"];
+    } else if (topKwLower.indexOf("church") !== -1 || topKwLower.indexOf("dunkirk") !== -1 || topKwLower.indexOf("d-day") !== -1) {
+      slot1RelatedCats = ["History"];
+    } else if (topKwLower.indexOf("king") !== -1 || topKwLower.indexOf("royal") !== -1) {
+      slot1RelatedCats = ["Royal Family"];
+    } else if (topKwLower.indexOf("immigra") !== -1 || topKwLower.indexOf("border") !== -1) {
+      slot1RelatedCats = ["Immigration", "Politics"];
     } else {
-      relatedCats = ["Culture/Identity", "National Symbols"];
+      slot1RelatedCats = ["Culture/Identity"];
     }
 
     var dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-    freshPick2 = getFreshSlotIdea(topEmotions, relatedCats, dayOfYear);
-    var excludeForSlot3 = relatedCats.slice();
+    var hourSeed = new Date().getHours();
+    freshPick2 = getFreshSlotIdea(topEmotions, slot1RelatedCats, dayOfYear + hourSeed);
+    var excludeForSlot3 = slot1RelatedCats.slice();
     if (freshPick2) excludeForSlot3.push(freshPick2.idea.topic);
-    freshPick3 = getFreshSlotIdea(topEmotions, excludeForSlot3, dayOfYear + 7);
+    freshPick3 = getFreshSlotIdea(topEmotions, excludeForSlot3, dayOfYear + hourSeed + 13);
   }
 
   var h = '<div class="card card-glow" style="border-color:var(--green)">';
@@ -3321,6 +3311,31 @@ function renderDailyPlan(results, emerging) {
   var hookId = "plan-hook-0";
   var viewInfo = pk.views > 0 ? pk.views.toLocaleString() + " avg views" : pk.relViews > 0 ? "Similar: " + pk.relViews.toLocaleString() + " views" : "New topic";
   var freshInfo = pk.days === 0 ? "Posted today" : pk.days < 999 ? pk.days + "d ago" : "Never posted";
+
+  var slot1Subcat = "";
+  var slot1DayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  var slot1KwClean = cleanDisplayKeyword(pk.kw);
+  var slot1KwLower = pk.kw.toLowerCase();
+  var KEYWORD_SUBTOPICS = {
+    "patriot": ["National Pride", "English Spirit", "British Values", "Heritage & Honour", "Proud to Be British", "United Kingdom Spirit", "British Backbone", "Born & Bred British"],
+    "military": ["Armed Forces Heroes", "Veterans Pride", "Military Heritage", "Troops Support", "Defence Legacy", "Forces Families", "Soldier Stories", "Regiment History"],
+    "tradition": ["British Traditions", "Old School Values", "Time-Honoured Customs", "Heritage Keeping", "Cultural Roots", "Classic Britain", "Traditional Ways", "Keeping Standards"],
+    "community": ["Neighbourhood Spirit", "Village Heart", "Local Bonds", "Street Community", "Helping Hands", "Community Backbone", "People Power", "Together Stronger"],
+    "culture": ["British Way of Life", "Cultural Identity", "National Character", "British Spirit", "Island Mentality", "British Backbone", "Our Way of Life", "What Makes Us British"],
+    "history": ["Glorious Past", "British Legends", "War Heroes", "Empire Legacy", "Historical Greatness", "Britain's Finest Hour", "Forgotten Heroes", "Living History"],
+    "flag": ["Flying the Flag", "St George's Pride", "Union Jack Spirit", "Flag Flying", "Colours of Britain", "National Colours", "Proud Flag Flyers", "Red White & Blue"],
+    "royal": ["Crown & Country", "Royal Heritage", "Monarchy Matters", "Royal Legacy", "Palace Watch", "Crown Jewels", "Royal Britain", "The Firm"]
+  };
+  var slot1SubKey = "patriot";
+  if (slot1KwLower.indexOf("militar") !== -1 || slot1KwLower.indexOf("army") !== -1 || slot1KwLower.indexOf("raf") !== -1 || slot1KwLower.indexOf("navy") !== -1 || slot1KwLower.indexOf("veteran") !== -1 || slot1KwLower.indexOf("troop") !== -1 || slot1KwLower.indexOf("force") !== -1) slot1SubKey = "military";
+  else if (slot1KwLower.indexOf("tradition") !== -1 || slot1KwLower.indexOf("sunday") !== -1 || slot1KwLower.indexOf("bonfire") !== -1 || slot1KwLower.indexOf("harvest") !== -1) slot1SubKey = "tradition";
+  else if (slot1KwLower.indexOf("communit") !== -1 || slot1KwLower.indexOf("neighbour") !== -1 || slot1KwLower.indexOf("village") !== -1 || slot1KwLower.indexOf("town") !== -1) slot1SubKey = "community";
+  else if (slot1KwLower.indexOf("culture") !== -1 || slot1KwLower.indexOf("identit") !== -1 || slot1KwLower.indexOf("british way") !== -1) slot1SubKey = "culture";
+  else if (slot1KwLower.indexOf("histor") !== -1 || slot1KwLower.indexOf("churchill") !== -1 || slot1KwLower.indexOf("dunkirk") !== -1 || slot1KwLower.indexOf("d-day") !== -1 || slot1KwLower.indexOf("battle") !== -1 || slot1KwLower.indexOf("blitz") !== -1) slot1SubKey = "history";
+  else if (slot1KwLower.indexOf("flag") !== -1 || slot1KwLower.indexOf("jack") !== -1 || slot1KwLower.indexOf("george") !== -1) slot1SubKey = "flag";
+  else if (slot1KwLower.indexOf("king") !== -1 || slot1KwLower.indexOf("royal") !== -1 || slot1KwLower.indexOf("monarch") !== -1 || slot1KwLower.indexOf("queen") !== -1) slot1SubKey = "royal";
+  var slot1Subs = KEYWORD_SUBTOPICS[slot1SubKey];
+  slot1Subcat = slot1Subs[slot1DayOfYear % slot1Subs.length];
 
   var riseVal = Number(pk.item.rise_percent || 0);
   var vs = Number(pk.item.viral_score || 0);
@@ -3352,8 +3367,9 @@ function renderDailyPlan(results, emerging) {
   h += '<span style="font-size:11px;font-weight:900;color:' + sl.color + ';text-transform:uppercase;letter-spacing:1px">' + sl.label + ' - ' + sl.time + '</span>';
   h += '<span class="tag" style="background:rgba(0,0,0,.3);color:' + urgColor + ';border:1px solid ' + urgColor + '">' + urgency + '</span>';
   h += '</div>';
-  h += '<div style="font-size:10px;color:var(--green);margin-bottom:4px;font-weight:700">TRENDING TOPIC</div>';
-  h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + cleanDisplayKeyword(pk.kw) + '</div>';
+  h += '<div style="font-size:10px;color:var(--green);margin-bottom:4px;font-weight:700">TRENDING SUB-TOPIC</div>';
+  h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + slot1Subcat + '</div>';
+  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">From trending: ' + cleanDisplayKeyword(pk.kw) + '</div>';
   h += '<div style="font-size:9px;color:' + urgColor + ';margin-bottom:4px;font-weight:700">' + urgMsg + '</div>';
   h += '<div style="padding:8px 10px;background:rgba(0,0,0,.25);border-radius:8px;margin-bottom:6px">';
   h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700">Trend Window</span><span style="font-size:9px;color:' + urgColor + ';font-weight:700">' + urgWindow + '</span></div>';
@@ -3456,8 +3472,10 @@ function renderDailyPlan(results, emerging) {
       h += '<span style="font-size:11px;font-weight:900;color:' + fSlot.color + ';text-transform:uppercase;letter-spacing:1px">' + fSlot.label + ' - ' + fSlot.time + '</span>';
       h += '<span class="tag" style="background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)">FRESH ANGLE</span>';
       h += '</div>';
-      h += '<div style="font-size:10px;color:var(--purple);margin-bottom:4px;font-weight:700">DIFFERENT TOPIC, SAME PSYCHOLOGY</div>';
-      h += '<div style="font-size:15px;font-weight:900;margin-bottom:4px;color:var(--white)">' + fIdea.topic.toUpperCase() + '</div>';
+      var fSubcat = fsl.pick.subcat || fIdea.topic;
+      h += '<div style="font-size:10px;color:var(--purple);margin-bottom:4px;font-weight:700">SUB-CATEGORY ANGLE</div>';
+      h += '<div style="font-size:15px;font-weight:900;margin-bottom:4px;color:var(--white)">' + fSubcat.toUpperCase() + '</div>';
+      h += '<div style="font-size:10px;color:var(--muted);margin-bottom:2px">Category: ' + fIdea.topic + '</div>';
       h += '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">';
       for (var fe = 0; fe < fIdea.emotions.length; fe++) {
         h += '<span style="font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(251,191,36,.08);color:var(--amber);font-weight:700">' + fIdea.emotions[fe] + '</span>';
@@ -3468,7 +3486,7 @@ function renderDailyPlan(results, emerging) {
       h += '<div style="font-weight:700;margin-bottom:4px">"' + fIdea.text + '"</div>';
       h += '<span style="font-size:8px;color:var(--muted);margin-left:auto">TAP TO COPY</span>';
       h += '</div>';
-      var fIdeaKw = fIdea.topic.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+      var fIdeaKw = fSubcat.toLowerCase().replace(/[^a-z0-9\s]/g, "");
       h += '<div style="display:flex;gap:6px;margin-bottom:6px;margin-top:6px">';
       h += '<button id="ai-btn-plan' + fsl.idx + '" class="copy-btn" onclick="aiEnhanceSection(\'' + fIdeaKw.replace(/'/g, "\\'") + '\',\'plan' + fsl.idx + '\')" style="margin-top:0;flex:1;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">&#129504; AI Enhance</button>';
       h += '</div>';
@@ -3480,11 +3498,11 @@ function renderDailyPlan(results, emerging) {
       h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
       h += renderHashtagBlock(fIdeaKw, USER_NICHE, null, "plan-hash-" + fsl.idx);
       h += '</div>';
-      h += '<div style="font-size:9px;color:var(--muted)">Matched from trending: <b style="color:var(--green)">' + cleanDisplayKeyword(topPick.kw) + '</b> (' + topEmotions.join(" + ") + ')</div>';
+      h += '<div style="font-size:9px;color:var(--muted)">Sub-category of: <b style="color:var(--green)">' + fIdea.topic + '</b> | Based on audience learning</div>';
       h += '</div>';
     }
 
-    h += '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Slot 1 = trending topic | Slots 2-3 = fresh angles from different categories using the same psychology</p>';
+    h += '<p style="font-size:9px;color:var(--muted);text-align:center;margin-top:4px">Slot 1 = trending sub-topic | Slots 2-3 = AI-picked sub-categories based on audience learning | Rotates daily</p>';
   }
   h += '</div>';
   return h;
@@ -4791,6 +4809,65 @@ function detectDebatePotential(text) {
   if (score >= 14) return { score: score, label: "Strong", color: "var(--amber)" };
   if (score >= 8) return { score: score, label: "Moderate", color: "var(--green)" };
   return { score: score, label: "Low", color: "var(--muted)" };
+}
+
+var TOPIC_SUBCATEGORIES = {
+  "Community": ["Neighbourhood Watch", "Street Parties", "Village Fetes", "Youth Clubs", "Community Gardens", "Local Heroes", "Helping Neighbours", "Parish Councils"],
+  "Traditions": ["Bonfire Night", "Sunday Roasts", "Harvest Festival", "Boxing Day", "Morris Dancing", "Afternoon Tea", "Conker Season", "May Day"],
+  "Local Pride": ["High Street Revival", "Local Markets", "Regional Identity", "Local Football Clubs", "County Pride", "Seaside Towns", "Market Towns", "Town Centres"],
+  "National Symbols": ["St George's Cross", "Union Jack Pride", "Rule Britannia", "Three Lions", "Proms Night", "National Anthem", "English Rose", "Red Phone Box"],
+  "Education": ["School Standards", "History Curriculum", "Grammar Schools", "British Values", "School Discipline", "STEM Skills", "Teacher Respect", "School Dinners"],
+  "History": ["Churchill's Legacy", "D-Day Heroes", "Dunkirk Spirit", "Battle of Britain", "Blitz Survivors", "Tudor England", "Victorian Era", "Industrial Revolution"],
+  "NHS/Healthcare": ["NHS Heroes", "A&E Crisis", "GP Access", "Mental Health", "NHS Funding", "Care Workers", "Ambulance Response", "Covid Legacy"],
+  "Law & Order": ["Knife Crime", "Police Funding", "Prison Reform", "County Lines", "Anti-Social Behaviour", "Victim Support", "Sentencing Reform", "Street Safety"],
+  "Sports": ["Premier League Fans", "Cricket Heritage", "Rugby Spirit", "Olympic Legacy", "Grassroots Sport", "FA Cup Magic", "Boxing Legends", "Horse Racing"],
+  "Economy/Work": ["Cost of Living", "Housing Ladder", "Small Business", "Zero Hours", "Made in Britain", "Apprenticeships", "Pension Crisis", "Wage Inequality"],
+  "Food/Lifestyle": ["Full English Fry-Up", "Fish & Chips", "Sunday Roast", "Cornish Pasties", "Chippy Tea", "Cream Tea Debate", "Pie & Mash", "British Baking"],
+  "Royal Family": ["King Charles III", "Prince William", "Royal Traditions", "Buckingham Palace", "Royal Charities", "Commonwealth Role", "Coronation Legacy", "Royal Heritage"],
+  "Politics": ["Free Speech Debate", "Working Class Voice", "Council Tax", "Party Politics", "Parliamentary Reform", "Government Trust", "Red Wall Politics", "Sovereignty"],
+  "Immigration": ["Border Control", "Channel Crossings", "Integration Debate", "Points System", "Asylum Policy", "Local Impact", "Cultural Change", "Legal Migration"],
+  "Culture/Identity": ["British Humour", "Stiff Upper Lip", "Queuing Culture", "Class System", "British Grit", "Pub Culture", "British Accent", "National Character"],
+  "Military/Defence": ["Armed Forces Day", "Veterans Support", "Defence Spending", "National Service", "Military Families", "SAS Heritage", "RAF Legacy", "Navy Tradition"],
+  "Remembrance": ["Poppy Appeal", "Cenotaph", "War Memorials", "Veteran Stories", "Fallen Heroes", "Two Minutes Silence", "Armed Forces Day", "D-Day Legacy"],
+  "Family/Generations": ["Parenting Debate", "Grandparent Power", "Family Values", "Screen Time", "Childhood Memories", "Family Traditions", "Discipline Debate", "Generation Gap"],
+  "Countryside": ["Green Belt", "Village Life", "Farming Heritage", "Country Walks", "National Parks", "Rural Housing", "Country Pubs", "Wildlife"],
+  "Media": ["BBC Debate", "Press Freedom", "TV Licence", "Social Media Impact", "Journalism Standards", "Fake News", "Local Newspapers", "British Comedy"],
+  "Faith/Church": ["Church Bells", "Christian Heritage", "Christmas Spirit", "Cathedral Towns", "Sunday Worship", "Parish Life", "Religious Freedom", "Carol Services"],
+  "Housing": ["Council Housing", "First-Time Buyers", "Social Housing", "Property Crisis", "Right to Buy", "Rent Crisis", "Homelessness", "New Build Debate"],
+  "Inventions": ["British Innovation", "Engineering Pride", "Scientific Legacy", "Tech Pioneers", "Medical Breakthroughs", "Industrial Heritage", "Space Programme", "Modern Inventors"],
+  "Music/Entertainment": ["British Rock", "Britpop Legacy", "Festival Culture", "Pub Music", "Grime & UK Rap", "West End Shows", "Music Legends", "Radio Heritage"],
+  "Manners/Respect": ["Please & Thank You", "Door Holding", "Queuing Etiquette", "Respect for Elders", "Common Courtesy", "Table Manners", "Pub Etiquette", "Polite Society"]
+};
+
+function pickSubcategory(topic, seed) {
+  var subs = TOPIC_SUBCATEGORIES[topic];
+  if (!subs || subs.length === 0) return topic;
+  var am = null;
+  try { am = loadAudienceModel(); } catch(e) {}
+  if (am && am.length > 0) {
+    var subScores = [];
+    for (var s = 0; s < subs.length; s++) {
+      var subLow = subs[s].toLowerCase();
+      var score = 0;
+      for (var a = 0; a < am.length; a++) {
+        var entry = am[a];
+        var kwLow = (entry.keyword || "").toLowerCase();
+        var subWords = subLow.split(/[\s\/&]+/);
+        for (var w = 0; w < subWords.length; w++) {
+          if (subWords[w].length > 3 && kwLow.indexOf(subWords[w]) !== -1) score += 2;
+        }
+        if (entry.subcategory && entry.subcategory.toLowerCase().indexOf(subLow) !== -1) score += 5;
+        if (entry.topic && entry.topic.toLowerCase() === topic.toLowerCase()) score += 1;
+      }
+      subScores.push({ sub: subs[s], score: score, idx: s });
+    }
+    subScores.sort(function(a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return ((a.idx + seed) % subs.length) - ((b.idx + seed) % subs.length);
+    });
+    return subScores[seed % Math.min(3, subScores.length)].sub;
+  }
+  return subs[seed % subs.length];
 }
 
 var IDEA_POOL = [
