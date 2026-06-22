@@ -2097,16 +2097,40 @@ var NICHE_SEEDS = {
     "british patriotism trending","england trending today","union jack trending",
     "british military news today","remembrance day uk","british culture trending",
     "british history viral","st george trending","english flag news",
-    "british army latest","british pride content","uk patriotic content ideas",
+    "british army latest","british pride content",
     "british traditions trending","support our troops uk","great britain trending",
-    "british values debate","english heritage trending","british veterans news"
+    "british values debate","english heritage trending","british veterans news",
+    "royal navy history","raf news today","british special forces",
+    "d-day anniversary uk","dunkirk spirit","falklands war remembrance",
+    "british monarchy news","king charles latest","royal family uk",
+    "english village life","british countryside","uk pub culture",
+    "british inventors famous","british manufacturing","made in britain",
+    "english football fans","british olympic heroes","team gb",
+    "british empire debate","commonwealth today","uk borders immigration",
+    "rule britannia","last night of the proms","trooping the colour",
+    "poppy appeal uk","armed forces day","help for heroes uk",
+    "english civil war","battle of britain","winston churchill legacy",
+    "brexit impact today","british sovereignty","uk independence",
+    "british working class","northern england pride","english identity"
   ],
   "patriotic": [
     "british patriotism trending","england trending today","union jack trending",
     "british military news today","remembrance day uk","british culture trending",
     "british history viral","st george trending","english flag news",
-    "british army latest","british pride content","uk patriotic content ideas",
-    "british traditions trending","support our troops uk","great britain trending"
+    "british army latest","british pride content",
+    "british traditions trending","support our troops uk","great britain trending",
+    "royal navy history","raf news today","british special forces",
+    "d-day anniversary uk","dunkirk spirit","falklands war remembrance",
+    "british monarchy news","king charles latest","royal family uk",
+    "english village life","british countryside","uk pub culture",
+    "british inventors famous","british manufacturing","made in britain",
+    "english football fans","british olympic heroes","team gb",
+    "british empire debate","commonwealth today","uk borders immigration",
+    "rule britannia","last night of the proms","trooping the colour",
+    "poppy appeal uk","armed forces day","help for heroes uk",
+    "english civil war","battle of britain","winston churchill legacy",
+    "brexit impact today","british sovereignty","uk independence",
+    "british working class","northern england pride","english identity"
   ],
   "football": [
     "football transfer news today","premier league trending","champions league latest",
@@ -2339,6 +2363,36 @@ function scanNicheTrends(niche, callback) {
       n + " review trending",
       n + " ideas for tiktok reels"
     ];
+  }
+
+  var audienceSeeds = [];
+  try {
+    var am = loadAudienceModel();
+    if (am && am.length > 0) {
+      var amTopics = {};
+      for (var ai = 0; ai < am.length; ai++) {
+        var entry = am[ai];
+        if (entry.subcategory && entry.subcategory !== "General") {
+          var subKey = entry.subcategory.toLowerCase();
+          if (!amTopics[subKey]) amTopics[subKey] = 0;
+          amTopics[subKey]++;
+        }
+        if (entry.topic && entry.topic !== "General") {
+          var topKey = entry.topic.toLowerCase();
+          if (!amTopics[topKey]) amTopics[topKey] = 0;
+          amTopics[topKey]++;
+        }
+      }
+      var sortedTopics = Object.keys(amTopics).sort(function(a, b) { return amTopics[b] - amTopics[a]; });
+      for (var st = 0; st < Math.min(8, sortedTopics.length); st++) {
+        var t = sortedTopics[st];
+        audienceSeeds.push(t + " trending");
+        audienceSeeds.push(t + " uk latest");
+      }
+    }
+  } catch(e) {}
+  if (audienceSeeds.length > 0) {
+    seeds = seeds.concat(audienceSeeds);
   }
 
   var nicheWords = resolved.split(/\s+/);
@@ -3366,12 +3420,17 @@ function renderDailyPlan(results, emerging) {
       var nCSText = nCS > 0 ? ' | Content: ' + nCS + '/100' : '';
       h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + npk.item.viral_score + ' | Rise: ' + formatRise(nRise) + nCSText + ' | ' + nViewInfo + ' | ' + nFreshInfo + '</div>';
       h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + nHooks[0] + '"</div>';
-      h += '<button class="copy-btn" onclick="toggleHooks(\'' + nHookId + '\')" style="margin-top:6px">More hooks</button>';
+      h += '<div style="display:flex;gap:6px;margin-bottom:6px"><button class="copy-btn" onclick="toggleHooks(\'' + nHookId + '\')" style="margin-top:0;flex:1">More hooks</button>';
+      h += '<button id="ai-btn-plan' + nsp.idx + '" class="copy-btn" onclick="aiEnhanceSection(\'' + npk.kw.replace(/'/g, "\\'") + '\',\'plan' + nsp.idx + '\')" style="margin-top:0;flex:1;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">&#129504; AI Enhance</button></div>';
       h += '<ul class="hooks-list hidden" id="' + nHookId + '">';
       for (var nhk = 1; nhk < nHooks.length; nhk++) {
         h += '<li onclick="copyHook(this)"><span class="hook-num">' + nhk + '</span><span class="hook-text">' + nHooks[nhk] + '</span><span class="hook-copy">COPY</span></li>';
       }
       h += '</ul>';
+      h += '<ul class="hooks-list hidden" id="ai-hooks-plan' + nsp.idx + '"></ul>';
+      h += '<div id="ai-caption-plan' + nsp.idx + '" style="display:none;font-size:12px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);padding:10px;border-radius:8px;margin-top:6px;line-height:1.5;cursor:pointer" onclick="copyText(\'ai-caption-plan' + nsp.idx + '\')"></div>';
+      h += '<div id="ai-engage-plan' + nsp.idx + '" style="display:none;margin-top:6px"></div>';
+      h += '<div id="ai-hashtags-plan' + nsp.idx + '" style="display:none;margin-top:6px"></div>';
       h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
       h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
       h += renderHashtagBlock(npk.kw, USER_NICHE, null, "plan-hash-" + nsp.idx);
@@ -3409,7 +3468,19 @@ function renderDailyPlan(results, emerging) {
       h += '<div style="font-weight:700;margin-bottom:4px">"' + fIdea.text + '"</div>';
       h += '<span style="font-size:8px;color:var(--muted);margin-left:auto">TAP TO COPY</span>';
       h += '</div>';
-      h += '<div style="font-size:9px;color:var(--muted)">Matched from trending: <b style="color:var(--green)">' + titleCase(topPick.kw) + '</b> (' + topEmotions.join(" + ") + ')</div>';
+      var fIdeaKw = fIdea.topic.toLowerCase().replace(/[^a-z0-9\s]/g, "");
+      h += '<div style="display:flex;gap:6px;margin-bottom:6px;margin-top:6px">';
+      h += '<button id="ai-btn-plan' + fsl.idx + '" class="copy-btn" onclick="aiEnhanceSection(\'' + fIdeaKw.replace(/'/g, "\\'") + '\',\'plan' + fsl.idx + '\')" style="margin-top:0;flex:1;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">&#129504; AI Enhance</button>';
+      h += '</div>';
+      h += '<ul class="hooks-list hidden" id="ai-hooks-plan' + fsl.idx + '"></ul>';
+      h += '<div id="ai-caption-plan' + fsl.idx + '" style="display:none;font-size:12px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);padding:10px;border-radius:8px;margin-top:6px;line-height:1.5;cursor:pointer" onclick="copyText(\'ai-caption-plan' + fsl.idx + '\')"></div>';
+      h += '<div id="ai-engage-plan' + fsl.idx + '" style="display:none;margin-top:6px"></div>';
+      h += '<div id="ai-hashtags-plan' + fsl.idx + '" style="display:none;margin-top:6px"></div>';
+      h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">';
+      h += '<div style="font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hashtags</div>';
+      h += renderHashtagBlock(fIdeaKw, USER_NICHE, null, "plan-hash-" + fsl.idx);
+      h += '</div>';
+      h += '<div style="font-size:9px;color:var(--muted)">Matched from trending: <b style="color:var(--green)">' + cleanDisplayKeyword(topPick.kw) + '</b> (' + topEmotions.join(" + ") + ')</div>';
       h += '</div>';
     }
 
