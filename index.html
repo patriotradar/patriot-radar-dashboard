@@ -2660,6 +2660,13 @@ async function loadPerfFromSupabase() {
           localStorage.setItem(STREAK_KEY, JSON.stringify(cloudStreak));
         }
       }
+      var cloudAM = user.user_metadata && user.user_metadata.audienceModel;
+      if (cloudAM && Array.isArray(cloudAM) && cloudAM.length > 0) {
+        var localAM = loadAudienceModel();
+        if (cloudAM.length >= localAM.length) {
+          localStorage.setItem(AUDIENCE_MODEL_KEY, JSON.stringify(cloudAM));
+        }
+      }
     }
   } catch(e) { console.log("Supabase load skipped:", e); }
 }
@@ -4155,7 +4162,7 @@ function renderOpportunities(items) {
     h += '<span>24hr: <b>' + Number(item.latest_score || 0) + '</b></span>';
     h += '<span>Vitality: <b class="rise-positive">' + vit + '</b></span>';
     h += '</div>';
-    h += '<div class="opp-product">' + (item.product || "N/A") + '</div>';
+    if (item.product) h += '<div class="opp-product">' + item.product + '</div>';
     var oppCS = Number(item.content_score || 0);
     var oppGrade, oppGCls;
     if (oppCS >= 80) { oppGrade = "S"; oppGCls = "cs-grade-s"; }
