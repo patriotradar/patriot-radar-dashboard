@@ -2839,24 +2839,28 @@ async function submitPerfSimple(keyword) {
   var views = document.getElementById("perfViews").value;
   var caption = (document.getElementById("perfCaption") || {}).value || "";
 
-  if (pendingScreenshot && (!views || views === "0")) {
+  var hasScreenshot = !!pendingScreenshot;
+  if (hasScreenshot && (!views || views === "0")) {
     var submitBtn = document.querySelector(".modal-submit");
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Extracting metrics from screenshot..."; }
-    var extracted = await aiExtractMetricsFromScreenshot(pendingScreenshot);
-    if (extracted) {
-      if (extracted.views) document.getElementById("perfViews").value = extracted.views;
-      if (extracted.likes && document.getElementById("perfLikes")) document.getElementById("perfLikes").value = extracted.likes;
-      if (extracted.comments && document.getElementById("perfComments")) document.getElementById("perfComments").value = extracted.comments;
-      if (extracted.shares && document.getElementById("perfShares")) document.getElementById("perfShares").value = extracted.shares;
-      if (extracted.followers && document.getElementById("perfFollowers")) document.getElementById("perfFollowers").value = extracted.followers;
-      views = String(extracted.views || "0");
-      var detailFields = document.getElementById("perfDetailFields");
-      if (detailFields) detailFields.style.display = "block";
-    }
+    try {
+      var extracted = await aiExtractMetricsFromScreenshot(pendingScreenshot);
+      if (extracted) {
+        if (extracted.views) document.getElementById("perfViews").value = extracted.views;
+        if (extracted.likes && document.getElementById("perfLikes")) document.getElementById("perfLikes").value = extracted.likes;
+        if (extracted.comments && document.getElementById("perfComments")) document.getElementById("perfComments").value = extracted.comments;
+        if (extracted.shares && document.getElementById("perfShares")) document.getElementById("perfShares").value = extracted.shares;
+        if (extracted.followers && document.getElementById("perfFollowers")) document.getElementById("perfFollowers").value = extracted.followers;
+        views = String(extracted.views || "0");
+        var detailFields = document.getElementById("perfDetailFields");
+        if (detailFields) detailFields.style.display = "block";
+      }
+    } catch(e) {}
     if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Save"; }
   }
 
-  if (!views || views === "0") { alert("Please enter the view count."); return; }
+  if ((!views || views === "0") && !hasScreenshot) { alert("Please enter the view count."); return; }
+  if (!views) views = "0";
 
   var likes = (document.getElementById("perfLikes") || {}).value || "0";
   var comments = (document.getElementById("perfComments") || {}).value || "0";
