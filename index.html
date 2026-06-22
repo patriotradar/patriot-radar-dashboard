@@ -7589,7 +7589,7 @@ var TUTORIAL_STEPS = [
   {
     title: "Audience Learning",
     icon: "&#127919;",
-    tab: "audience",
+    tab: "mystats",
     text: "This is where the magic happens. Every time you log a video's performance (views, likes, comments, shares), the system learns what YOUR specific audience responds to. Over time it builds your Audience Score (0-10) per topic, ranks your best-performing keywords, and personalises your Content Plan based on real data - not guesswork.",
     tip: "Log at least once a day. After 5-10 logs, you'll see your personalised rankings and the system starts recommending topics based on what actually works for you."
   },
@@ -7615,18 +7615,18 @@ var TUTORIAL_STEPS = [
     tip: "Check this tab when you see the red badge on the bell icon. New updates and daily action items appear here."
   },
   {
-    title: "Live Feed",
+    title: "Live Feed & News",
     icon: "&#9889;",
-    tab: "feed",
-    text: "A real-time stream of everything the scanner picks up. See which keywords are rising, falling, or spiking right now.",
+    tab: "discovery",
+    text: "A real-time stream of everything the scanner picks up plus breaking news in your niche. See which keywords are rising, falling, or spiking right now.",
     tip: "Great for spotting sudden spikes - if something jumps, post about it fast."
   },
   {
-    title: "Video Analyzer",
+    title: "Tools",
     icon: "&#129504;",
-    tab: "analyzer",
-    text: "Paste any trending topic and get alternative content angles from completely different categories. Each suggestion uses the same psychological triggers but applied to a fresh topic.",
-    tip: "Use this when you want to post about something trending but from a unique angle nobody else is covering."
+    tab: "platforms",
+    text: "Platform-specific captions, hashtags, and the Video Analyzer. Get optimised content for TikTok, Instagram, YouTube, X/Twitter and LinkedIn. The Analyzer gives you alternative content angles from different categories.",
+    tip: "Use the topic selector to switch between trending keywords. Each platform gives you optimised captions and best practices."
   },
   {
     title: "Quick Log",
@@ -8443,7 +8443,7 @@ function generateDailyRecs(results) {
       priority: "medium",
       action: "Try a different angle on \"" + (third.keyword || "") + "\"",
       reason: "This is trending but might be less competitive than the top keywords. Use the Video Analyzer to find unique angles nobody else is covering.",
-      tab: "analyzer"
+      tab: "platforms"
     });
   }
 
@@ -8451,7 +8451,7 @@ function generateDailyRecs(results) {
   if (dayOfWeek === 1) {
     recs.push({ priority: "medium", action: "Plan your content for the week", reason: "Monday is a great time to map out your posting schedule. Check your Content Plan and save the best hooks for each day.", tab: "plan" });
   } else if (dayOfWeek === 5) {
-    recs.push({ priority: "medium", action: "Review this week's performance", reason: "End of the week - check your Audience insights to see which topics performed best. Double down on winners next week.", tab: "audience" });
+    recs.push({ priority: "medium", action: "Review this week's performance", reason: "End of the week - check your My Stats to see which topics performed best. Double down on winners next week.", tab: "mystats" });
   }
 
   var niches = ["fitness","beauty","tech","cooking","fashion","gaming","finance","travel"];
