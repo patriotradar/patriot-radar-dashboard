@@ -6502,8 +6502,6 @@ function generateHashtags(keyword, niche, platform) {
   addTag("trending" + currentYear);
   addTag("trending");
   addTag("viral");
-  addTag("contentcreator");
-  addTag("creatorradar");
 
   if (platform) {
     var pBoost = PLATFORM_HASHTAG_BOOSTS[platform] || [];
@@ -6565,9 +6563,13 @@ var PLATFORMS = [
 function extractShortTopic(keyword) {
   var kw = keyword.toLowerCase();
   var remove = ["why are there","why is","why do","why does","why did","what is","what are","what does","how to","how do","how does","how is","is the","is there","is it","is a","are there","are the","can you","should you","should the","do you","do the","does the","will the","has the","have the","did the","trending","latest","news today","news","today","2026","2025"];
+  var formatWords = ["edit","edits","compilation","compilations","montage","tiktok","shorts","reels","video","videos","clip","clips","content","content ideas","ideas","tutorial","tutorials","challenge","meme","memes"];
   var short = kw;
   for (var i = 0; i < remove.length; i++) {
     short = short.replace(new RegExp("^" + remove[i] + "\\s*", "i"), "").replace(new RegExp("\\s*" + remove[i] + "$", "i"), "");
+  }
+  for (var f = 0; f < formatWords.length; f++) {
+    short = short.replace(new RegExp("\\s+" + formatWords[f] + "\\s*$", "i"), "").replace(new RegExp("^" + formatWords[f] + "\\s+", "i"), "");
   }
   short = short.replace(/\?+$/, "").trim();
   if (short.length < 3) short = kw;
