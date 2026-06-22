@@ -2899,6 +2899,7 @@ async function submitPerfSimple(keyword) {
         shares: Number(shares),
         followers: Number(followers),
         format: format,
+        audienceDriver: classification.audienceDriver || "Unknown",
         topic: classification.topic,
         subcategory: classification.subcategory,
         emotionalTrigger: classification.emotionalTrigger,
@@ -5043,7 +5044,7 @@ function addToAudienceModel(entry) {
 async function aiClassifyPost(keyword, caption, metrics) {
   if (!GROQ_KEY) return null;
   var niche = USER_NICHE || "general";
-  var prompt = "You are a content classification expert. Classify this social media post into exactly 4 dimensions.\n\nCreator niche: " + niche + "\nKeyword/Topic: " + keyword + "\n" + (caption ? "Caption: " + caption + "\n" : "") + "Metrics: " + metrics.views + " views, " + (metrics.likes || 0) + " likes, " + (metrics.comments || 0) + " comments, " + (metrics.shares || 0) + " shares\n\nClassify into:\n1. TOPIC - The broad topic category (e.g. Remembrance, British Identity, Fitness Tips, Cooking, Gaming, etc)\n2. SUBCATEGORY - The specific sub-topic (e.g. for Remembrance: Schools, Poppy, Veterans, D-Day. For Fitness: HIIT, Yoga, Nutrition)\n3. FORMAT - The content format used (Yes/No Debate, A/B Choice, Open Question, Educational, Storytelling, Current Event, Myth Debunking, Tutorial, Reaction, Hot Take, Listicle)\n4. EMOTIONAL_TRIGGER - The primary emotion it triggers (Pride, Tradition, Identity, Nostalgia, Outrage, Community, Curiosity, Humor, Inspiration, Fear, Surprise)\n\nRespond in this exact JSON format (no markdown):\n{\"topic\":\"Topic Name\",\"subcategory\":\"Subcategory Name\",\"format\":\"Format Name\",\"emotionalTrigger\":\"Emotion Name\"}";
+  var prompt = "You are an audience psychology expert. Classify this social media post into exactly 5 dimensions. The goal is to understand WHY the audience engages, not just WHAT the content is about.\n\nCreator niche: " + niche + "\nKeyword/Topic: " + keyword + "\n" + (caption ? "Caption: " + caption + "\n" : "") + "Metrics: " + metrics.views + " views, " + (metrics.likes || 0) + " likes, " + (metrics.comments || 0) + " comments, " + (metrics.shares || 0) + " shares\n\nClassify into:\n1. AUDIENCE_DRIVER - The deep psychological motivation that makes this content resonate. What fundamental human need does it tap into? Examples: Identity, Pride, Tradition, Community, Duty, Aspiration, Belonging, Curiosity, Self-improvement, Escapism, Justice, Nostalgia, Achievement, Security, Rebellion, Status. Pick the PRIMARY driver.\n2. TOPIC - The broad topic category (e.g. Remembrance, British Identity, Fitness Tips, Cooking, Tech Reviews)\n3. SUBCATEGORY - The specific sub-topic (e.g. for Remembrance: Schools, Poppy, Veterans. For Fitness: HIIT, Yoga, Nutrition)\n4. FORMAT - The content format used (Yes/No Debate, A/B Choice, Open Question, Educational, Storytelling, Current Event, Myth Busting, Tutorial, Reaction, Hot Take, Listicle)\n5. EMOTIONAL_TRIGGER - The primary emotion it triggers in the viewer (Pride, Nostalgia, Outrage, Curiosity, Community, Identity, Humor, Inspiration, Fear, Surprise, Duty, Empathy)\n\nRespond in this exact JSON format (no markdown):\n{\"audienceDriver\":\"Driver Name\",\"topic\":\"Topic Name\",\"subcategory\":\"Subcategory Name\",\"format\":\"Format Name\",\"emotionalTrigger\":\"Emotion Name\"}";
 
   try {
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -5091,18 +5092,35 @@ function getAudienceModelStats() {
   var subcats = {};
   var formats = {};
   var emotions = {};
+  var drivers = {};
+  var driverCombos = {};
   var totalViews = 0;
   var totalPosts = model.length;
+  var now = Date.now();
+  var twoWeeks = 14 * 24 * 60 * 60 * 1000;
+  var recentTopics = {};
 
   for (var i = 0; i < model.length; i++) {
     var m = model[i];
     var v = Number(m.views || 0);
     totalViews += v;
 
+    var d = m.audienceDriver || "Unknown";
     var t = m.topic || "Unknown";
     var s = m.subcategory || "Unknown";
     var f = m.format || "Unknown";
     var e = m.emotionalTrigger || "Unknown";
+    var postDate = m.date ? new Date(m.date).getTime() : 0;
+    var isRecent = postDate && (now - postDate) < twoWeeks;
+
+    if (isRecent) recentTopics[t] = (recentTopics[t] || 0) + 1;
+
+    if (!drivers[d]) drivers[d] = {count:0, views:0, comments:0, shares:0};
+    drivers[d].count++; drivers[d].views += v; drivers[d].comments += Number(m.comments||0); drivers[d].shares += Number(m.shares||0);
+
+    var dcKey = d + " + " + e;
+    if (!driverCombos[dcKey]) driverCombos[dcKey] = {driver:d, emotion:e, count:0, views:0, comments:0};
+    driverCombos[dcKey].count++; driverCombos[dcKey].views += v; driverCombos[dcKey].comments += Number(m.comments||0);
 
     if (!topics[t]) topics[t] = {count:0, views:0, likes:0, comments:0, shares:0};
     topics[t].count++; topics[t].views += v; topics[t].likes += Number(m.likes||0); topics[t].comments += Number(m.comments||0); topics[t].shares += Number(m.shares||0);
@@ -5116,8 +5134,8 @@ function getAudienceModelStats() {
     if (!emotions[e]) emotions[e] = {count:0, views:0, comments:0};
     emotions[e].count++; emotions[e].views += v; emotions[e].comments += Number(m.comments||0);
 
-    var comboKey = t + " > " + s + " > " + f + " > " + e;
-    if (!combos[comboKey]) combos[comboKey] = {topic:t, sub:s, format:f, emotion:e, count:0, views:0, likes:0, comments:0, shares:0};
+    var comboKey = d + " > " + t + " > " + f + " > " + e;
+    if (!combos[comboKey]) combos[comboKey] = {driver:d, topic:t, sub:s, format:f, emotion:e, count:0, views:0, likes:0, comments:0, shares:0};
     combos[comboKey].count++; combos[comboKey].views += v; combos[comboKey].likes += Number(m.likes||0); combos[comboKey].comments += Number(m.comments||0); combos[comboKey].shares += Number(m.shares||0);
   }
 
@@ -5129,6 +5147,14 @@ function getAudienceModelStats() {
     comboList.push(c);
   }
   comboList.sort(function(a,b){return b.avgViews - a.avgViews});
+
+  var driverList = [];
+  for (var dk in drivers) { var dd = drivers[dk]; dd.name = dk; dd.avgViews = Math.round(dd.views / dd.count); driverList.push(dd); }
+  driverList.sort(function(a,b){return b.avgViews - a.avgViews});
+
+  var driverComboList = [];
+  for (var dck in driverCombos) { var dc = driverCombos[dck]; dc.avgViews = Math.round(dc.views / dc.count); driverComboList.push(dc); }
+  driverComboList.sort(function(a,b){return b.avgViews - a.avgViews});
 
   var topicList = [];
   for (var tk in topics) { var td = topics[tk]; td.name = tk; td.avgViews = Math.round(td.views / td.count); topicList.push(td); }
@@ -5146,92 +5172,188 @@ function getAudienceModelStats() {
 
   return {
     combos: comboList,
+    drivers: driverList,
+    driverCombos: driverComboList,
     topics: topicList,
     formats: formatList,
     emotions: emotionList,
+    recentTopics: recentTopics,
     totalPosts: totalPosts,
     totalViews: totalViews,
     avgOverall: avgOverall
   };
 }
 
-function getAudienceMatchScore(keyword) {
+async function aiClassifyTrend(keyword) {
+  if (!GROQ_KEY) return null;
+  var niche = USER_NICHE || "general";
+  var prompt = "You are an audience psychology expert. A trending topic has been found: \"" + keyword + "\"\nCreator niche: " + niche + "\n\nClassify this trend into psychological dimensions so we can match it against a creator's audience profile.\n\n1. AUDIENCE_DRIVERS - What deep psychological motivations could this topic tap into? Pick 1-3 from: Identity, Pride, Tradition, Community, Duty, Aspiration, Belonging, Curiosity, Self-improvement, Escapism, Justice, Nostalgia, Achievement, Security, Rebellion, Status\n2. EMOTIONS - What emotions could this trigger? Pick 1-3 from: Pride, Nostalgia, Outrage, Curiosity, Community, Identity, Humor, Inspiration, Fear, Surprise, Duty, Empathy\n3. TOPIC - Broad category\n4. SUBCATEGORY - Specific sub-topic\n5. FORMAT_POTENTIAL - Best content formats for this trend. Pick 1-2 from: Yes/No Debate, A/B Choice, Educational, Storytelling, Current Event, Myth Busting, Tutorial, Reaction, Hot Take, Listicle\n\nRespond in this exact JSON format (no markdown):\n{\"audienceDrivers\":[\"Driver1\",\"Driver2\"],\"emotions\":[\"Emotion1\",\"Emotion2\"],\"topic\":\"Topic\",\"subcategory\":\"Subcategory\",\"formatPotential\":[\"Format1\",\"Format2\"]}";
+  try {
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.3, max_tokens: 250})
+    });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch(e) { return null; }
+}
+
+var trendClassifyCache = {};
+
+function getAudienceMatchScore(keyword, trendClassification) {
   var stats = getAudienceModelStats();
   if (!stats || stats.totalPosts < 3) return null;
 
-  var kw = (keyword || "").toLowerCase();
   var reasons = [];
   var score = 0;
-  var maxScore = 0;
+  var maxScore = 100;
   var predictions = {comments: "Low", shares: "Low", followers: "Low"};
 
-  var topTopics = stats.topics.slice(0, 3);
-  for (var i = 0; i < topTopics.length; i++) {
-    maxScore += 30;
-    var topicWords = topTopics[i].name.toLowerCase().split(/[\s\-]+/);
-    for (var w = 0; w < topicWords.length; w++) {
-      if (topicWords[w].length >= 4 && kw.indexOf(topicWords[w]) !== -1) {
-        score += 30 - (i * 8);
-        reasons.push("Matches your top-performing " + topTopics[i].name + " content (" + topTopics[i].avgViews.toLocaleString() + " avg views)");
-        break;
+  if (trendClassification) {
+    var tDrivers = trendClassification.audienceDrivers || [];
+    var tEmotions = trendClassification.emotions || [];
+    var tTopic = trendClassification.topic || "";
+    var tFormats = trendClassification.formatPotential || [];
+
+    var topDrivers = stats.drivers.slice(0, 3);
+    for (var di = 0; di < topDrivers.length; di++) {
+      var driverName = topDrivers[di].name;
+      for (var td = 0; td < tDrivers.length; td++) {
+        if (tDrivers[td].toLowerCase() === driverName.toLowerCase()) {
+          var driverScore = di === 0 ? 35 : di === 1 ? 25 : 18;
+          score += driverScore;
+          reasons.push("Taps into " + driverName + " - your #" + (di+1) + " audience driver (" + topDrivers[di].avgViews.toLocaleString() + " avg views)");
+          break;
+        }
       }
     }
-  }
 
-  if (stats.combos.length > 0) {
-    maxScore += 25;
-    var topCombo = stats.combos[0];
-    var comboWords = (topCombo.topic + " " + topCombo.sub).toLowerCase().split(/[\s\-]+/);
-    for (var cw = 0; cw < comboWords.length; cw++) {
-      if (comboWords[cw].length >= 4 && kw.indexOf(comboWords[cw]) !== -1) {
-        score += 25;
-        reasons.push("Matches " + topCombo.topic + " > " + topCombo.sub + " pattern");
-        break;
+    if (stats.driverCombos && stats.driverCombos.length > 0) {
+      var topDC = stats.driverCombos.slice(0, 3);
+      for (var dci = 0; dci < topDC.length; dci++) {
+        var dc = topDC[dci];
+        var driverMatch = false, emotionMatch = false;
+        for (var x = 0; x < tDrivers.length; x++) { if (tDrivers[x].toLowerCase() === dc.driver.toLowerCase()) driverMatch = true; }
+        for (var y = 0; y < tEmotions.length; y++) { if (tEmotions[y].toLowerCase() === dc.emotion.toLowerCase()) emotionMatch = true; }
+        if (driverMatch && emotionMatch) {
+          score += 15;
+          reasons.push("Matches winning " + dc.driver + " + " + dc.emotion + " psychology pattern");
+          break;
+        }
       }
     }
-  }
 
-  if (stats.emotions.length > 0) {
-    maxScore += 20;
-    var topEmo = stats.emotions[0];
+    var topEmotions = stats.emotions.slice(0, 3);
+    for (var ei = 0; ei < topEmotions.length; ei++) {
+      var emoName = topEmotions[ei].name;
+      for (var te = 0; te < tEmotions.length; te++) {
+        if (tEmotions[te].toLowerCase() === emoName.toLowerCase()) {
+          score += ei === 0 ? 15 : 10;
+          reasons.push("Triggers " + emoName + " - your #" + (ei+1) + " emotional trigger");
+          break;
+        }
+      }
+    }
+
+    var topFormats = stats.formats.slice(0, 2);
+    for (var fi = 0; fi < topFormats.length; fi++) {
+      for (var tf = 0; tf < tFormats.length; tf++) {
+        if (tFormats[tf].toLowerCase() === topFormats[fi].name.toLowerCase()) {
+          score += 10;
+          reasons.push(topFormats[fi].name + " format works well for your audience");
+          break;
+        }
+      }
+    }
+  } else {
+    var kw = (keyword || "").toLowerCase();
+    var driverKeywords = {
+      "Identity": ["identity","who we are","culture","british","english","national","flag","heritage"],
+      "Pride": ["proud","pride","patriot","honour","honor","glory","best","greatest"],
+      "Tradition": ["tradition","custom","heritage","ancient","historic","ceremony","royal"],
+      "Community": ["together","united","support","local","neighbourhood","village","town"],
+      "Duty": ["duty","serve","sacrifice","veteran","military","armed forces","memorial"],
+      "Aspiration": ["dream","goal","ambition","success","achieve","build","grow"],
+      "Curiosity": ["why","how","secret","hidden","unknown","mystery","reveal","discover"],
+      "Nostalgia": ["remember","classic","retro","throwback","vintage","childhood","old days"],
+      "Justice": ["justice","fair","rights","fight","stand up","wrong","scandal"],
+      "Security": ["safe","protect","threat","danger","defend","guard","secure"],
+      "Self-improvement": ["improve","better","learn","skill","growth","transform","level up"],
+      "Rebellion": ["rebel","against","fight","resist","challenge","break","disrupt"]
+    };
+
+    var topDrivers2 = stats.drivers.slice(0, 3);
+    for (var di2 = 0; di2 < topDrivers2.length; di2++) {
+      var dName = topDrivers2[di2].name;
+      var dWords = driverKeywords[dName] || [];
+      for (var dw = 0; dw < dWords.length; dw++) {
+        if (kw.indexOf(dWords[dw]) !== -1) {
+          score += di2 === 0 ? 30 : 20;
+          reasons.push("Taps into " + dName + " - your #" + (di2+1) + " audience driver");
+          break;
+        }
+      }
+    }
+
     var emotionKeywords = {
       "Pride": ["proud","pride","patriot","heritage","honor","honour"],
       "Nostalgia": ["remember","classic","retro","throwback","old","vintage","childhood"],
       "Outrage": ["scandal","disgrace","shocking","anger","furious","outrag"],
       "Curiosity": ["why","how","secret","hidden","unknown","mystery","reveal"],
       "Community": ["together","united","support","join","our","we"],
-      "Tradition": ["tradition","custom","heritage","ancient","historic"],
       "Identity": ["identity","who we are","british","english","culture"],
       "Humor": ["funny","hilarious","joke","meme","laugh"],
       "Inspiration": ["inspir","motivat","amazing","incredible","achieve"],
       "Fear": ["danger","threat","warning","risk","crisis"],
-      "Surprise": ["shock","unexpect","twist","reveal","didn't know"]
+      "Surprise": ["shock","unexpect","twist","reveal","didn't know"],
+      "Duty": ["duty","serve","sacrifice","honour","honor","remember"],
+      "Empathy": ["feel","heart","touch","care","struggle","overcome"]
     };
-    var emoWords = emotionKeywords[topEmo.name] || [];
-    for (var ew = 0; ew < emoWords.length; ew++) {
-      if (kw.indexOf(emoWords[ew]) !== -1) {
-        score += 20;
-        reasons.push("Uses " + topEmo.name + " trigger - your strongest emotion");
-        break;
+    var topEmos = stats.emotions.slice(0, 2);
+    for (var ei2 = 0; ei2 < topEmos.length; ei2++) {
+      var eWords = emotionKeywords[topEmos[ei2].name] || [];
+      for (var ew2 = 0; ew2 < eWords.length; ew2++) {
+        if (kw.indexOf(eWords[ew2]) !== -1) {
+          score += 15;
+          reasons.push("Triggers " + topEmos[ei2].name + " - your top emotion");
+          break;
+        }
+      }
+    }
+
+    if (stats.formats.length > 0) {
+      score += 5;
+      reasons.push("Try " + stats.formats[0].name + " format - your best performer");
+    }
+  }
+
+  if (stats.recentTopics) {
+    var topTopics = stats.topics.slice(0, 3);
+    for (var rti = 0; rti < topTopics.length; rti++) {
+      var topicName = topTopics[rti].name;
+      var recentCount = stats.recentTopics[topicName] || 0;
+      if (recentCount >= 3) {
+        var kw2 = (keyword || "").toLowerCase();
+        var topicLower = topicName.toLowerCase();
+        var topicWords = topicLower.split(/[\s\-]+/);
+        var isRepeatTopic = false;
+        for (var tw = 0; tw < topicWords.length; tw++) {
+          if (topicWords[tw].length >= 4 && kw2.indexOf(topicWords[tw]) !== -1) { isRepeatTopic = true; break; }
+        }
+        if (isRepeatTopic) {
+          var freshPenalty = Math.min(15, recentCount * 5);
+          score = Math.max(0, score - freshPenalty);
+          reasons.push("Freshness: you've posted " + recentCount + " " + topicName + " videos recently - try a fresh angle");
+        }
       }
     }
   }
 
-  if (stats.formats.length > 0) {
-    maxScore += 15;
-    reasons.push(stats.formats[0].name + " is your highest-performing format");
-    score += 8;
-  }
-
-  maxScore += 10;
-  var niche = (USER_NICHE || "general").toLowerCase();
-  if (kw.indexOf(niche) !== -1 || niche.indexOf(kw.split(" ")[0]) !== -1) {
-    score += 10;
-    reasons.push("Core niche topic");
-  }
-
-  var pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
-  pct = Math.min(99, Math.max(10, pct));
+  var pct = Math.min(99, Math.max(10, score));
 
   if (pct >= 70) {
     predictions.comments = "High";
@@ -5252,18 +5374,35 @@ function getEnhancedAudienceContext() {
   if (!stats || stats.totalPosts < 3) return base;
 
   var ctx = base;
+  ctx += " AUDIENCE PSYCHOLOGY PROFILE (" + stats.totalPosts + " posts analysed):";
+
+  if (stats.drivers && stats.drivers.length > 0) {
+    ctx += " Core Audience Drivers (WHY they engage): " + stats.drivers.slice(0, 4).map(function(d){return d.name + " (" + d.avgViews.toLocaleString() + " avg views, " + d.count + " posts)"}).join(", ") + ".";
+  }
+  if (stats.driverCombos && stats.driverCombos.length > 0) {
+    ctx += " Winning Psychology Combos: " + stats.driverCombos.slice(0, 3).map(function(dc){return dc.driver + " + " + dc.emotion + " (" + dc.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
+  }
+  if (stats.emotions.length > 0) {
+    ctx += " Top Emotional Triggers: " + stats.emotions.slice(0, 3).map(function(e){return e.name + " (" + e.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
+  }
+  if (stats.formats.length > 0) {
+    ctx += " Best Formats: " + stats.formats.slice(0, 3).map(function(f){return f.name + " (" + f.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
+  }
   if (stats.combos.length > 0) {
     var topCombos = stats.combos.slice(0, 3);
-    ctx += " AUDIENCE MODEL DATA: The creator has logged " + stats.totalPosts + " posts. Their winning content combinations are: ";
+    ctx += " Full Winning Patterns: ";
     for (var i = 0; i < topCombos.length; i++) {
       var c = topCombos[i];
-      ctx += (i+1) + ") " + c.topic + " > " + c.sub + " > " + c.format + " > " + c.emotion + " (avg " + c.avgViews.toLocaleString() + " views, " + c.count + " posts)";
+      ctx += (i+1) + ") " + (c.driver || "") + " > " + c.topic + " > " + c.format + " > " + c.emotion + " (" + c.avgViews.toLocaleString() + " avg views)";
       if (i < topCombos.length - 1) ctx += ", ";
     }
     ctx += ".";
   }
-  if (stats.emotions.length > 0) {
-    ctx += " Top emotional triggers: " + stats.emotions.slice(0, 3).map(function(e){return e.name + " (" + e.avgViews.toLocaleString() + " avg)"}).join(", ") + ".";
+  ctx += " IMPORTANT: Recommend NEW topics that match this audience's psychological profile. Do NOT repeat the same topics - find fresh angles that trigger the same audience drivers and emotions.";
+  if (stats.recentTopics) {
+    var recentList = [];
+    for (var rt in stats.recentTopics) { if (stats.recentTopics[rt] >= 2) recentList.push(rt + " (" + stats.recentTopics[rt] + "x)"); }
+    if (recentList.length > 0) ctx += " Recently covered topics (avoid repeating): " + recentList.join(", ") + ".";
   }
   return ctx;
 }
@@ -5998,6 +6137,7 @@ async function quickSwitchNiche(newNiche) {
   } catch(e) {}
   trackEvent("niche_change", {niche: USER_NICHE});
   addXP("niche_scan");
+  if (FINANCIAL_NICHES.indexOf(USER_NICHE) !== -1) showFinancialDisclaimer();
   initNicheSwitcher();
   loadLiveStats();
 }
@@ -6026,13 +6166,26 @@ function selectNicheQuick(n) {
   confirmNichePrompt();
 }
 
+var FINANCIAL_NICHES = ["crypto","cryptocurrency","bitcoin","finance","investing","trading","stocks","forex"];
+
 function confirmNichePrompt() {
   var input = document.getElementById("nichePromptInput");
   var niche = (input.value || "").trim().toLowerCase();
   if (!niche) { input.style.borderColor = "var(--red)"; input.placeholder = "Please type a niche first!"; return; }
   document.getElementById("nichePromptPopup").style.display = "none";
+  if (FINANCIAL_NICHES.indexOf(niche) !== -1) showFinancialDisclaimer();
   quickSwitchNiche(niche);
   trackEvent("niche_prompt_set", {niche: niche});
+}
+
+function showFinancialDisclaimer() {
+  var existing = document.getElementById("financialDisclaimer");
+  if (existing) return;
+  var d = document.createElement("div");
+  d.id = "financialDisclaimer";
+  d.style.cssText = "position:fixed;bottom:0;left:0;right:0;z-index:9990;background:rgba(255,170,0,.12);border-top:1px solid rgba(255,170,0,.3);padding:10px 16px;text-align:center;font-size:11px;color:#ffaa00;line-height:1.5";
+  d.innerHTML = 'Creator Radar is a content discovery tool only. We do not provide financial, investment, or trading advice. Always do your own research. <button onclick="this.parentElement.remove()" style="margin-left:8px;padding:2px 10px;border:1px solid rgba(255,170,0,.3);border-radius:6px;background:transparent;color:#ffaa00;font-size:10px;cursor:pointer;font-weight:700">OK</button>';
+  document.body.appendChild(d);
 }
 
 function skipNichePrompt() {
@@ -6882,19 +7035,56 @@ function renderPersonalIntelligence(results) {
   if (amStats && amStats.totalPosts >= 3) {
     h += '<div class="pi-card" style="border-color:rgba(167,139,250,.3)">';
     h += '<h3 style="color:var(--purple)">&#129504; Audience DNA</h3>';
-    h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Multi-layer audience model built from ' + amStats.totalPosts + ' classified posts. The more you log, the smarter this gets.</p>';
+    h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Psychological audience profile built from ' + amStats.totalPosts + ' classified posts. This drives what trends get recommended to you.</p>';
+
+    if (amStats.drivers && amStats.drivers.length > 0) {
+      h += '<div style="font-size:11px;font-weight:800;color:#ff8c00;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Audience Drivers (Why They Engage)</div>';
+      h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">';
+      for (var dri = 0; dri < Math.min(6, amStats.drivers.length); dri++) {
+        var dr = amStats.drivers[dri];
+        var drPct = amStats.totalPosts > 0 ? Math.round(dr.count / amStats.totalPosts * 100) : 0;
+        var drBg = dri === 0 ? "rgba(255,140,0,.12)" : "rgba(255,140,0,.06)";
+        var drBorder = dri === 0 ? "rgba(255,140,0,.4)" : "rgba(255,140,0,.15)";
+        h += '<div style="padding:10px 14px;background:' + drBg + ';border:1px solid ' + drBorder + ';border-radius:10px;text-align:center;min-width:90px">';
+        h += '<div style="font-size:14px;font-weight:900;color:#ff8c00">' + dr.name + '</div>';
+        h += '<div style="font-size:9px;color:var(--muted);margin-top:2px">' + dr.avgViews.toLocaleString() + ' avg | ' + drPct + '%</div>';
+        if (dri === 0) h += '<div style="font-size:8px;color:#ff8c00;font-weight:700;margin-top:2px">PRIMARY DRIVER</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    if (amStats.driverCombos && amStats.driverCombos.length > 0) {
+      h += '<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Winning Psychology Patterns</div>';
+      var showDC = Math.min(4, amStats.driverCombos.length);
+      for (var dci = 0; dci < showDC; dci++) {
+        var dcItem = amStats.driverCombos[dci];
+        h += '<div class="am-combo">';
+        h += '<div class="am-combo-path">';
+        h += '<span class="am-classify-tag" style="background:rgba(255,140,0,.15);color:#ff8c00;border-color:rgba(255,140,0,.3)">' + dcItem.driver + '</span>';
+        h += '<span class="am-sep">+</span>';
+        h += '<span class="am-classify-tag emotion">' + dcItem.emotion + '</span>';
+        h += '</div>';
+        h += '<div class="am-combo-stats">';
+        h += '<span class="am-combo-stat" style="background:rgba(0,255,136,.1);color:var(--green)">' + dcItem.avgViews.toLocaleString() + ' avg views</span>';
+        h += '<span class="am-combo-stat" style="background:rgba(167,139,250,.1);color:var(--purple)">' + dcItem.count + ' posts</span>';
+        h += '</div></div>';
+      }
+    }
 
     if (amStats.combos.length > 0) {
-      h += '<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Winning Combinations</div>';
+      h += '<div style="margin-top:14px;font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Full Content Patterns</div>';
       var showCombos = Math.min(5, amStats.combos.length);
       for (var ci = 0; ci < showCombos; ci++) {
         var combo = amStats.combos[ci];
         var comboMulti = amStats.avgOverall > 0 ? (combo.avgViews / amStats.avgOverall).toFixed(1) : "1.0";
         h += '<div class="am-combo">';
         h += '<div class="am-combo-path">';
+        if (combo.driver && combo.driver !== "Unknown") {
+          h += '<span class="am-classify-tag" style="background:rgba(255,140,0,.15);color:#ff8c00;border-color:rgba(255,140,0,.3)">' + combo.driver + '</span>';
+          h += '<span class="am-sep">></span>';
+        }
         h += '<span class="am-classify-tag topic">' + combo.topic + '</span>';
-        h += '<span class="am-sep">></span>';
-        h += '<span class="am-classify-tag sub">' + combo.sub + '</span>';
         h += '<span class="am-sep">></span>';
         h += '<span class="am-classify-tag format">' + combo.format + '</span>';
         h += '<span class="am-sep">></span>';
@@ -6915,8 +7105,10 @@ function renderPersonalIntelligence(results) {
       for (var ti = 0; ti < Math.min(6, amStats.topics.length); ti++) {
         var tp = amStats.topics[ti];
         var tBar = amStats.topics[0].avgViews > 0 ? (tp.avgViews / amStats.topics[0].avgViews * 100) : 0;
+        var freshCount = amStats.recentTopics[tp.name] || 0;
+        var freshTag = freshCount >= 3 ? ' <span style="font-size:8px;color:var(--amber);font-weight:700">[RECENTLY COVERED x' + freshCount + ']</span>' : '';
         h += '<div style="margin-bottom:6px">';
-        h += '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span style="color:var(--white)">' + tp.name + ' <span style="color:var(--muted);font-size:9px">(' + tp.count + ')</span></span><span style="color:var(--green);font-weight:700">' + tp.avgViews.toLocaleString() + ' avg</span></div>';
+        h += '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px"><span style="color:var(--white)">' + tp.name + ' <span style="color:var(--muted);font-size:9px">(' + tp.count + ')</span>' + freshTag + '</span><span style="color:var(--green);font-weight:700">' + tp.avgViews.toLocaleString() + ' avg</span></div>';
         h += '<div style="height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden"><div style="height:100%;width:' + tBar.toFixed(0) + '%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:3px"></div></div>';
         h += '</div>';
       }
@@ -6942,7 +7134,7 @@ function renderPersonalIntelligence(results) {
     if (modelCount > 0 && modelCount < 3) {
       h += '<div class="pi-card" style="border-color:rgba(167,139,250,.2)">';
       h += '<h3 style="color:var(--purple)">&#129504; Audience DNA</h3>';
-      h += '<p style="font-size:11px;color:var(--muted)">Building your audience model... ' + modelCount + '/3 posts classified. Log ' + (3 - modelCount) + ' more to unlock multi-layer insights showing your winning Topic > Subcategory > Format > Emotion combinations.</p>';
+      h += '<p style="font-size:11px;color:var(--muted)">Building your audience model... ' + modelCount + '/3 posts classified. Log ' + (3 - modelCount) + ' more to unlock psychological audience profiling showing your winning Driver > Topic > Format > Emotion patterns.</p>';
       h += '</div>';
     }
   }
@@ -7575,6 +7767,7 @@ async function showDashboard() {
 
   trackEvent("session_start", {niche: USER_NICHE || "general"});
   trackUserActivity();
+  if (FINANCIAL_NICHES.indexOf((USER_NICHE || "").toLowerCase()) !== -1) showFinancialDisclaimer();
 
   checkAdminStatus();
   initNicheSwitcher();
