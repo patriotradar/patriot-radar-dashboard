@@ -1277,6 +1277,7 @@ input[type=range]::-webkit-slider-thumb{
     </div>
 
     <div id="tab-feed" class="tab-content">
+      <div id="breakingNewsContainer"></div>
       <div id="liveFeed"></div>
     </div>
 
@@ -4383,6 +4384,84 @@ function renderEmerging(items) {
   return h;
 }
 
+var cachedBreakingNews = [];
+
+async function fetchBreakingNews() {
+  var niche = (USER_NICHE || "general").toLowerCase();
+  var queries = [];
+  if (niche === "patriotic" || niche === "patriot" || niche === "uk politics") {
+    queries = ["UK politics", "UK news today", "British news", "UK government"];
+  } else if (niche === "crypto" || niche === "cryptocurrency" || niche === "bitcoin") {
+    queries = ["cryptocurrency news", "bitcoin news", "crypto market", "blockchain news"];
+  } else if (niche === "finance" || niche === "investing") {
+    queries = ["finance news", "stock market news", "investing news", "economy news"];
+  } else if (niche === "tech" || niche === "technology") {
+    queries = ["tech news today", "technology news", "AI news", "startup news"];
+  } else if (niche === "gaming") {
+    queries = ["gaming news", "video game news", "esports news"];
+  } else if (niche === "fitness" || niche === "health") {
+    queries = ["fitness news", "health news", "wellness trending"];
+  } else {
+    queries = [niche + " news", niche + " trending today", niche + " latest"];
+  }
+  var allNews = [];
+  var seen = {};
+  for (var q = 0; q < Math.min(2, queries.length); q++) {
+    try {
+      var rssUrl = "https://news.google.com/rss/search?q=" + encodeURIComponent(queries[q]) + "&hl=en-GB&gl=GB&ceid=GB:en";
+      var proxyUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
+      var resp = await fetch(proxyUrl);
+      if (!resp.ok) continue;
+      var data = await resp.json();
+      if (data.items) {
+        for (var i = 0; i < Math.min(5, data.items.length); i++) {
+          var item = data.items[i];
+          var title = (item.title || "").replace(/ - .*$/, "").trim();
+          if (!title || seen[title.toLowerCase()]) continue;
+          seen[title.toLowerCase()] = true;
+          var pubDate = item.pubDate ? new Date(item.pubDate) : new Date();
+          var hoursAgo = Math.round((Date.now() - pubDate.getTime()) / 3600000);
+          allNews.push({title: title, source: (item.title || "").match(/ - (.+)$/) ? RegExp.$1 : "News", link: item.link, hoursAgo: hoursAgo, pubDate: pubDate});
+        }
+      }
+    } catch(e) {}
+  }
+  allNews.sort(function(a,b){return a.hoursAgo - b.hoursAgo});
+  cachedBreakingNews = allNews.slice(0, 8);
+  return cachedBreakingNews;
+}
+
+function renderBreakingNews(newsItems) {
+  if (!newsItems || newsItems.length === 0) return "";
+  var h = '<div class="card" style="margin-bottom:16px;border:1px solid rgba(255,0,80,.25)">';
+  h += '<div class="card-header"><h2 style="color:#ff0050">Breaking News</h2><div class="section-icon" style="color:#ff0050">&#128680;</div></div>';
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:10px">Real-time news in your niche. Tap a story to find content angles.</p>';
+  for (var i = 0; i < newsItems.length; i++) {
+    var n = newsItems[i];
+    var timeLabel = n.hoursAgo <= 0 ? "Just now" : n.hoursAgo === 1 ? "1 hour ago" : n.hoursAgo < 24 ? n.hoursAgo + " hours ago" : Math.floor(n.hoursAgo/24) + "d ago";
+    var freshTag = n.hoursAgo <= 3 ? ' <span style="font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(255,0,80,.15);color:#ff0050;font-weight:700;vertical-align:middle">FRESH</span>' : "";
+    h += '<div style="padding:10px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:pointer" onclick="useNewsAsSeed(\'' + n.title.replace(/'/g, "\\'") + '\')">';
+    h += '<div style="font-size:12px;font-weight:700;color:var(--white);line-height:1.4">' + n.title + freshTag + '</div>';
+    h += '<div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:9px;color:var(--muted)">' + n.source + '</span><span style="font-size:9px;color:' + (n.hoursAgo <= 3 ? '#ff0050' : 'var(--muted)') + ';font-weight:700">' + timeLabel + '</span></div>';
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function useNewsAsSeed(headline) {
+  var words = headline.toLowerCase().split(/[\s\-:,]+/).filter(function(w){return w.length >= 4});
+  var searchTerm = words.slice(0, 4).join(" ");
+  var input = document.getElementById("nicheInput");
+  if (input) {
+    input.value = searchTerm;
+    input.scrollIntoView({behavior:"smooth"});
+    input.focus();
+    input.style.borderColor = "var(--green)";
+    setTimeout(function(){input.style.borderColor = "";}, 2000);
+  }
+}
+
 function renderLiveFeed(results, emerging) {
   var entries = [];
   var now = new Date();
@@ -7364,6 +7443,10 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
 async function loadLiveStats() {
   trackEvent("load_trends", {niche: USER_NICHE || "general"});
   document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE || "general") + " trends...";
+  fetchBreakingNews().then(function(news) {
+    var newsContainer = document.getElementById("breakingNewsContainer");
+    if (newsContainer) newsContainer.innerHTML = renderBreakingNews(news);
+  });
   scanNicheTrends(USER_NICHE || "general", function(results) {
     var emerging = [];
     if (results.length > 5) {
