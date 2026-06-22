@@ -3299,7 +3299,7 @@ function renderDailyPlan(results, emerging) {
   h += '<span class="tag" style="background:rgba(0,0,0,.3);color:' + urgColor + ';border:1px solid ' + urgColor + '">' + urgency + '</span>';
   h += '</div>';
   h += '<div style="font-size:10px;color:var(--green);margin-bottom:4px;font-weight:700">TRENDING TOPIC</div>';
-  h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(pk.kw) + '</div>';
+  h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + cleanDisplayKeyword(pk.kw) + '</div>';
   h += '<div style="font-size:9px;color:' + urgColor + ';margin-bottom:4px;font-weight:700">' + urgMsg + '</div>';
   h += '<div style="padding:8px 10px;background:rgba(0,0,0,.25);border-radius:8px;margin-bottom:6px">';
   h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700">Trend Window</span><span style="font-size:9px;color:' + urgColor + ';font-weight:700">' + urgWindow + '</span></div>';
@@ -3361,7 +3361,7 @@ function renderDailyPlan(results, emerging) {
       h += '<span class="tag" style="background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.3)">' + nsp.angle + '</span>';
       h += '</div>';
       h += '<div style="font-size:10px;color:var(--purple);margin-bottom:4px;font-weight:700">' + nsp.angleDesc.toUpperCase() + '</div>';
-      h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + titleCase(npk.kw) + '</div>';
+      h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + cleanDisplayKeyword(npk.kw) + '</div>';
       var nCS = Number(npk.item.content_score || 0);
       var nCSText = nCS > 0 ? ' | Content: ' + nCS + '/100' : '';
       h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + npk.item.viral_score + ' | Rise: ' + formatRise(nRise) + nCSText + ' | ' + nViewInfo + ' | ' + nFreshInfo + '</div>';
@@ -3854,7 +3854,7 @@ function generateHooks(keyword) {
   var kwLower = (keyword || "").toLowerCase();
   var kw = titleCase(keyword || "");
   var words = kw.trim().split(/\s+/);
-  var displayKw = words.length >= 5 || isQuestionKeyword(keyword) ? extractShortTopic(keyword) : kw;
+  var displayKw = words.length >= 5 || isQuestionKeyword(keyword) ? extractShortTopic(keyword) : cleanDisplayKeyword(kw);
 
   if (isPatrioticNiche(USER_NICHE)) {
     if (KEYWORD_SPECIFIC_HOOKS[kwLower]) return KEYWORD_SPECIFIC_HOOKS[kwLower];
@@ -4018,7 +4018,7 @@ function renderPrimary(item) {
   var vit = calcVitality(item);
   var tc = trendTagClass(cl);
   var vs = Number(item.viral_score || 0);
-  var kw = titleCase(item.keyword || "");
+  var kw = cleanDisplayKeyword(item.keyword || "");
   var conf = calcConfidence(item);
   var confCls = confTagClass(conf);
   var contentType = recommendContent(item);
@@ -4210,7 +4210,7 @@ function renderOpportunities(items) {
     h += '<div class="opp-rank">' + (i + 1) + '</div>';
     h += '<div class="opp-info">';
     h += '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">';
-    h += '<span class="opp-keyword">' + titleCase(item.keyword || "") + '</span>';
+    h += '<span class="opp-keyword">' + cleanDisplayKeyword(item.keyword || "") + '</span>';
     h += '<span class="tag ' + tc + '">' + cl + '</span>';
     h += '</div>';
     h += '<div class="opp-stats">';
@@ -4322,7 +4322,7 @@ function renderFeed(items) {
 
     h += '<div class="feed-item">';
     h += '<div class="feed-header">';
-    h += '<span class="feed-keyword">' + titleCase(item.keyword || "") + '</span>';
+    h += '<span class="feed-keyword">' + cleanDisplayKeyword(item.keyword || "") + '</span>';
     h += '<span class="tag ' + tc + '">' + cl + '</span>';
     h += '</div>';
 
@@ -4541,13 +4541,13 @@ function renderLiveFeed(results, emerging) {
     var time = pad(now.getHours()) + ":" + mins;
 
     if (cl === "Viral Breakout") {
-      entries.push({time: time, icon: "red", label: "alert", labelText: "ALERT", msg: "<b>" + titleCase(r.keyword) + "</b> is a Viral Breakout! Rise " + formatRise(rp) + " | Viral " + vs.toFixed(1)});
+      entries.push({time: time, icon: "red", label: "alert", labelText: "ALERT", msg: "<b>" + cleanDisplayKeyword(r.keyword) + "</b> is a Viral Breakout! Rise " + formatRise(rp) + " | Viral " + vs.toFixed(1)});
     } else if (rp > 20) {
-      entries.push({time: time, icon: "green", label: "opp", labelText: "OPPORTUNITY", msg: "<b>" + titleCase(r.keyword) + "</b> surging " + formatRise(rp) + " | Viral " + vs.toFixed(1)});
+      entries.push({time: time, icon: "green", label: "opp", labelText: "OPPORTUNITY", msg: "<b>" + cleanDisplayKeyword(r.keyword) + "</b> surging " + formatRise(rp) + " | Viral " + vs.toFixed(1)});
     } else if (rp > 0) {
-      entries.push({time: time, icon: "blue", label: "update", labelText: "UPDATE", msg: "<b>" + titleCase(r.keyword) + "</b> rising steadily " + formatRise(rp)});
+      entries.push({time: time, icon: "blue", label: "update", labelText: "UPDATE", msg: "<b>" + cleanDisplayKeyword(r.keyword) + "</b> rising steadily " + formatRise(rp)});
     } else {
-      entries.push({time: time, icon: "amber", label: "intel", labelText: "INTEL", msg: "<b>" + titleCase(r.keyword) + "</b> declining " + formatRise(rp) + " - monitor"});
+      entries.push({time: time, icon: "amber", label: "intel", labelText: "INTEL", msg: "<b>" + cleanDisplayKeyword(r.keyword) + "</b> declining " + formatRise(rp) + " - monitor"});
     }
   }
 
@@ -6456,7 +6456,7 @@ var PLATFORM_HASHTAG_BOOSTS = {
 var STOP_WORDS = ["the","and","for","are","but","not","you","all","can","had","her","was","one","our","out","has","his","how","its","may","new","now","old","see","way","who","did","get","let","say","she","too","use","what","when","where","which","why","will","with","would","about","after","been","being","both","came","come","could","does","each","even","from","give","going","good","great","have","here","into","just","keep","know","last","like","long","look","made","make","many","more","most","much","must","name","need","next","only","over","part","same","some","still","such","sure","take","tell","than","that","them","then","there","these","they","thing","this","time","very","want","well","went","were","what","will","with","work","year","your","also","back","been","before","between","called","come","could","down","first","find","from","going","head","high","home","house","just","last","left","life","little","long","made","make","mean","might","most","much","never","next","nothing","once","only","other","over","people","place","point","right","same","should","show","side","since","small","something","state","still","those","three","through","turn","under","upon","used","using","went","were","while","world","years","young","every","above","along","always","another","around","away","because","become","before","began","begin","being","below","best","better","between","beyond","change","clear","close","different","during","each","early","either","enough","ever","everything","found","given","gone","half","hard","having","help","hold","however","important","kind","large","later","line","live","man","move","number","off","often","open","order","own","part","person","play","point","power","put","quite","read","real","second","set","several","shall","short","since","small","start","state","stop","story","system","tell","though","thought","times","together","took","turn","under","until","want","water","whole","without","woman","word","work","write"];
 
 function generateHashtags(keyword, niche, platform) {
-  var kw = (keyword || "").toLowerCase().trim();
+  var kw = cleanDisplayKeyword(keyword || "").toLowerCase().trim();
   var nl = (niche || "").toLowerCase().trim();
   var resolved = NICHE_ALIASES[nl] || nl;
   var words = kw.split(/[\s\-\/,]+/).filter(function(w) { return w.length > 2 && STOP_WORDS.indexOf(w) === -1; });
@@ -6560,16 +6560,26 @@ var PLATFORMS = [
   { key: "linkedin", name: "LinkedIn", icon: "in", color: "#0A66C2", bg: "rgba(10,102,194,.08)", border: "rgba(10,102,194,.2)" }
 ];
 
+var FORMAT_WORDS = ["edit","edits","compilation","compilations","montage","montages","tiktok","shorts","reels","video","videos","clip","clips","content","content ideas","ideas","tutorial","tutorials","challenge","challenges","meme","memes","trend","trends","aesthetic","aesthetics","inspo","inspiration","vlog","vlogs","reaction","reactions","review","reviews","unboxing","haul","asmr","pov","fyp","foryoupage","foryou","viral"];
+
+function cleanDisplayKeyword(keyword) {
+  var short = keyword.toLowerCase().trim();
+  for (var f = 0; f < FORMAT_WORDS.length; f++) {
+    short = short.replace(new RegExp("\\s+" + FORMAT_WORDS[f] + "\\s*$", "i"), "").replace(new RegExp("^" + FORMAT_WORDS[f] + "\\s+", "i"), "");
+  }
+  short = short.replace(/\?+$/, "").trim();
+  return short.length >= 3 ? titleCase(short) : titleCase(keyword);
+}
+
 function extractShortTopic(keyword) {
   var kw = keyword.toLowerCase();
   var remove = ["why are there","why is","why do","why does","why did","what is","what are","what does","how to","how do","how does","how is","is the","is there","is it","is a","are there","are the","can you","should you","should the","do you","do the","does the","will the","has the","have the","did the","trending","latest","news today","news","today","2026","2025"];
-  var formatWords = ["edit","edits","compilation","compilations","montage","tiktok","shorts","reels","video","videos","clip","clips","content","content ideas","ideas","tutorial","tutorials","challenge","meme","memes"];
   var short = kw;
   for (var i = 0; i < remove.length; i++) {
     short = short.replace(new RegExp("^" + remove[i] + "\\s*", "i"), "").replace(new RegExp("\\s*" + remove[i] + "$", "i"), "");
   }
-  for (var f = 0; f < formatWords.length; f++) {
-    short = short.replace(new RegExp("\\s+" + formatWords[f] + "\\s*$", "i"), "").replace(new RegExp("^" + formatWords[f] + "\\s+", "i"), "");
+  for (var f = 0; f < FORMAT_WORDS.length; f++) {
+    short = short.replace(new RegExp("\\s+" + FORMAT_WORDS[f] + "\\s*$", "i"), "").replace(new RegExp("^" + FORMAT_WORDS[f] + "\\s+", "i"), "");
   }
   short = short.replace(/\?+$/, "").trim();
   if (short.length < 3) short = kw;
@@ -6869,11 +6879,11 @@ function renderPlatformOptimizer(results, topicIdx) {
 
   h += '<div class="plat-topic-select">';
   for (var t = 0; t < topN; t++) {
-    h += '<button class="plat-topic-btn' + (t === idx ? ' active' : '') + '" onclick="selectPlatTopic(' + t + ')">' + titleCase(results[t].keyword) + '</button>';
+    h += '<button class="plat-topic-btn' + (t === idx ? ' active' : '') + '" onclick="selectPlatTopic(' + t + ')">' + cleanDisplayKeyword(results[t].keyword) + '</button>';
   }
   h += '</div>';
 
-  h += '<div style="font-size:16px;font-weight:900;color:var(--white);margin-bottom:4px">' + titleCase(kw) + '</div>';
+  h += '<div style="font-size:16px;font-weight:900;color:var(--white);margin-bottom:4px">' + cleanDisplayKeyword(kw) + '</div>';
   h += '<div style="font-size:10px;color:var(--muted);margin-bottom:10px">Viral Score: ' + topic.viral_score + ' | Rise: ' + formatRise(Number(topic.rise_percent || 0)) + '</div>';
   h += '<button id="ai-btn-plat" onclick="aiEnhancePlatform(\'' + kw.replace(/'/g, "\\'") + '\')" style="width:100%;padding:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:10px;color:var(--purple);font-size:11px;font-weight:700;cursor:pointer;margin-bottom:14px">&#129504; AI Generate - Get unique captions for all platforms</button>';
   h += '<div id="ai-plat-result" style="display:none;margin-bottom:14px"></div>';
@@ -6949,7 +6959,7 @@ function renderPlatformOptimizer(results, topicIdx) {
 
   h += '<div class="card" style="margin-top:12px">';
   h += '<div class="card-header"><h2>Hashtag Generator</h2><div class="section-icon">&#127991;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Full hashtag sets for ' + titleCase(kw) + ' across all platforms. Tap individual tags or copy all at once.</p>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Full hashtag sets for ' + cleanDisplayKeyword(kw) + ' across all platforms. Tap individual tags or copy all at once.</p>';
   h += '<div style="display:grid;gap:12px">';
   for (var hp = 0; hp < PLATFORMS.length; hp++) {
     var hplat = PLATFORMS[hp];
