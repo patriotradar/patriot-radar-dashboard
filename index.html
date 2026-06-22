@@ -4104,8 +4104,29 @@ function toggleScoringGuide() {
   }
 }
 
+function dedupKeywords(items, maxCount) {
+  var result = [];
+  for (var i = 0; i < items.length && result.length < maxCount; i++) {
+    var isDupe = false;
+    var kwA = (items[i].keyword || "").toLowerCase().split(/[\s\-]+/).filter(function(w){return w.length >= 4});
+    for (var j = 0; j < result.length; j++) {
+      var kwB = (result[j].keyword || "").toLowerCase().split(/[\s\-]+/).filter(function(w){return w.length >= 4});
+      if (kwA.length === 0 || kwB.length === 0) continue;
+      var overlap = 0;
+      for (var a = 0; a < kwA.length; a++) {
+        for (var b = 0; b < kwB.length; b++) {
+          if (kwA[a] === kwB[b] || kwA[a].indexOf(kwB[b]) !== -1 || kwB[b].indexOf(kwA[a]) !== -1) { overlap++; break; }
+        }
+      }
+      if (overlap >= Math.min(kwA.length, kwB.length) * 0.5) { isDupe = true; break; }
+    }
+    if (!isDupe) result.push(items[i]);
+  }
+  return result;
+}
+
 function renderOpportunities(items) {
-  var top5 = items.slice(0, 5);
+  var top5 = dedupKeywords(items, 5);
   var h = '<div class="card">';
   h += '<div class="card-header"><h2>Top 5 Opportunities</h2><div class="section-icon">&#9733;</div></div>';
 
@@ -6995,12 +7016,34 @@ function renderPersonalIntelligence(results) {
     }
     scoredResults.sort(function(a,b){return b.score - a.score || Number(b.result.viral_score||0) - Number(a.result.viral_score||0)});
 
-    if (scoredResults.length > 0) {
-      var limit = Math.min(3, scoredResults.length);
+    function kwSimilar(a, b) {
+      var wa = a.toLowerCase().split(/[\s\-]+/).filter(function(w){return w.length >= 4});
+      var wb = b.toLowerCase().split(/[\s\-]+/).filter(function(w){return w.length >= 4});
+      if (wa.length === 0 || wb.length === 0) return false;
+      var overlap = 0;
+      for (var i = 0; i < wa.length; i++) {
+        for (var j = 0; j < wb.length; j++) {
+          if (wa[i] === wb[j] || wa[i].indexOf(wb[j]) !== -1 || wb[j].indexOf(wa[i]) !== -1) { overlap++; break; }
+        }
+      }
+      return overlap >= Math.min(wa.length, wb.length) * 0.5;
+    }
+
+    var diverseResults = [];
+    for (var dr = 0; dr < scoredResults.length && diverseResults.length < 5; dr++) {
+      var isDupe = false;
+      for (var ex = 0; ex < diverseResults.length; ex++) {
+        if (kwSimilar(scoredResults[dr].result.keyword, diverseResults[ex].result.keyword)) { isDupe = true; break; }
+      }
+      if (!isDupe) diverseResults.push(scoredResults[dr]);
+    }
+
+    if (diverseResults.length > 0) {
+      var limit = Math.min(3, diverseResults.length);
       for (var m = 0; m < limit; m++) {
-        var mr = scoredResults[m].result;
-        var mMatch = scoredResults[m].match;
-        var mScore = scoredResults[m].score;
+        var mr = diverseResults[m].result;
+        var mMatch = diverseResults[m].match;
+        var mScore = diverseResults[m].score;
         var vs = Number(mr.viral_score || 0);
         var rp = Number(mr.rise_percent || 0);
         var mColor = mScore >= 70 ? "var(--green)" : mScore >= 45 ? "var(--amber)" : "var(--muted)";
