@@ -1142,31 +1142,7 @@ input[type=range]::-webkit-slider-thumb{
       <label>Your Email</label>
       <input id="signupEmail" type="email" placeholder="your@email.com">
       <label>Your Niche</label>
-      <select id="signupNiche" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:14px;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2300ff88%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer">
-        <option value="">Select your niche...</option>
-        <option value="patriotic">Patriotic</option>
-        <option value="football">Football</option>
-        <option value="cooking">Cooking</option>
-        <option value="fitness">Fitness</option>
-        <option value="beauty">Beauty</option>
-        <option value="fashion">Fashion</option>
-        <option value="tech">Tech</option>
-        <option value="gaming">Gaming</option>
-        <option value="music">Music</option>
-        <option value="travel">Travel</option>
-        <option value="business">Business</option>
-        <option value="crypto">Crypto</option>
-        <option value="health">Health</option>
-        <option value="comedy">Comedy</option>
-        <option value="education">Education</option>
-        <option value="photography">Photography</option>
-        <option value="diy">DIY</option>
-        <option value="pets">Pets</option>
-        <option value="parenting">Parenting</option>
-        <option value="sports">Sports</option>
-        <option value="cars">Cars</option>
-        <option value="motivation">Motivation</option>
-      </select>
+      <input id="signupNiche" type="text" list="nicheList" placeholder="Type any niche (e.g. Gardening, Sneakers, True Crime...)" autocomplete="off" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:14px">
       <label>Create a Password</label>
       <input id="signupPassword" type="password" placeholder="e.g. MyPass1!">
       <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('betaConsent');cb.checked=!cb.checked;">
@@ -1237,31 +1213,9 @@ input[type=range]::-webkit-slider-thumb{
         <span id="currentNicheLabel" style="font-size:13px;color:var(--green);font-weight:900;text-transform:uppercase"></span>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <select id="nicheInput" onchange="changeNiche()" style="flex:1;min-width:120px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--white);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2300ff88%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center;padding-right:30px">
-          <option value="">Switch niche...</option>
-          <option value="patriotic">Patriotic</option>
-          <option value="football">Football</option>
-          <option value="cooking">Cooking</option>
-          <option value="fitness">Fitness</option>
-          <option value="beauty">Beauty</option>
-          <option value="fashion">Fashion</option>
-          <option value="tech">Tech</option>
-          <option value="gaming">Gaming</option>
-          <option value="music">Music</option>
-          <option value="travel">Travel</option>
-          <option value="business">Business</option>
-          <option value="crypto">Crypto</option>
-          <option value="health">Health</option>
-          <option value="comedy">Comedy</option>
-          <option value="education">Education</option>
-          <option value="photography">Photography</option>
-          <option value="diy">DIY</option>
-          <option value="pets">Pets</option>
-          <option value="parenting">Parenting</option>
-          <option value="sports">Sports</option>
-          <option value="cars">Cars</option>
-          <option value="motivation">Motivation</option>
-        </select>
+        <input id="nicheInput" type="text" list="nicheList" placeholder="Type any niche..." autocomplete="off" style="flex:1;min-width:120px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--white);outline:none"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();changeNiche()}"
+        >
         <button onclick="changeNiche()" style="padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;font-size:11px;font-weight:900;cursor:pointer;white-space:nowrap">SCAN</button>
       </div>
     </div>
@@ -1431,38 +1385,61 @@ input[type=range]::-webkit-slider-thumb{
         <p style="font-size:13px;color:var(--muted);line-height:1.5">Pick a niche so we can show you relevant trends, hooks, hashtags and content ideas tailored to YOUR audience. Without one, you'll only see generic results.</p>
       </div>
       <div style="margin-bottom:16px">
-        <label style="font-size:12px;color:var(--muted);margin-bottom:6px;display:block">Select your niche</label>
-        <select id="nichePromptInput" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:#fff;font-size:14px;box-sizing:border-box;-webkit-appearance:none;appearance:none;background-image:url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2300ff88%22%20stroke-width%3D%223%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;cursor:pointer">
-          <option value="">Choose a niche...</option>
-          <option value="patriotic">Patriotic</option>
-          <option value="football">Football</option>
-          <option value="cooking">Cooking</option>
-          <option value="fitness">Fitness</option>
-          <option value="beauty">Beauty</option>
-          <option value="fashion">Fashion</option>
-          <option value="tech">Tech</option>
-          <option value="gaming">Gaming</option>
-          <option value="music">Music</option>
-          <option value="travel">Travel</option>
-          <option value="business">Business</option>
-          <option value="crypto">Crypto</option>
-          <option value="health">Health</option>
-          <option value="comedy">Comedy</option>
-          <option value="education">Education</option>
-          <option value="photography">Photography</option>
-          <option value="diy">DIY</option>
-          <option value="pets">Pets</option>
-          <option value="parenting">Parenting</option>
-          <option value="sports">Sports</option>
-          <option value="cars">Cars</option>
-          <option value="motivation">Motivation</option>
-        </select>
+        <label style="font-size:12px;color:var(--muted);margin-bottom:6px;display:block">Type your niche</label>
+        <input id="nichePromptInput" type="text" list="nicheList" placeholder="Type any niche (e.g. Knitting, Anime, Sneakers...)" autocomplete="off" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:#fff;font-size:14px;box-sizing:border-box"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();confirmNichePrompt()}"
+        >
       </div>
       <button onclick="confirmNichePrompt()" style="width:100%;padding:14px;background:var(--green);color:#000;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px">Set My Niche</button>
       <button onclick="skipNichePrompt()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer">Skip for now (show generic results)</button>
     </div>
   </div>
 </div>
+
+<datalist id="nicheList">
+  <option value="Patriotic"><option value="Football"><option value="Cooking"><option value="Fitness">
+  <option value="Beauty"><option value="Fashion"><option value="Tech"><option value="Gaming">
+  <option value="Music"><option value="Travel"><option value="Business"><option value="Crypto">
+  <option value="Health"><option value="Comedy"><option value="Education"><option value="Photography">
+  <option value="DIY"><option value="Pets"><option value="Parenting"><option value="Sports">
+  <option value="Cars"><option value="Motivation"><option value="Finance"><option value="AI">
+  <option value="Anime"><option value="Astrology"><option value="Art"><option value="Books">
+  <option value="Crafts"><option value="Dance"><option value="Film"><option value="Gardening">
+  <option value="History"><option value="Interior Design"><option value="Jewelry"><option value="Knitting">
+  <option value="Languages"><option value="Mental Health"><option value="Outdoors"><option value="Politics">
+  <option value="Real Estate"><option value="Science"><option value="Skincare"><option value="Sneakers">
+  <option value="Streetwear"><option value="Tattoos"><option value="True Crime"><option value="Vegan">
+  <option value="Vinyl"><option value="Woodworking"><option value="Yoga"><option value="Fishing">
+  <option value="Hiking"><option value="Camping"><option value="Cycling"><option value="Running">
+  <option value="Boxing"><option value="MMA"><option value="Wrestling"><option value="Basketball">
+  <option value="Cricket"><option value="Rugby"><option value="Tennis"><option value="Golf">
+  <option value="Surfing"><option value="Skateboarding"><option value="Snowboarding"><option value="Gym">
+  <option value="Bodybuilding"><option value="Crossfit"><option value="Meditation"><option value="Spirituality">
+  <option value="Tarot"><option value="Crystals"><option value="Witchcraft"><option value="Plant Care">
+  <option value="Aquariums"><option value="Birds"><option value="Dogs"><option value="Cats">
+  <option value="Horse Riding"><option value="Baking"><option value="BBQ"><option value="Coffee">
+  <option value="Wine"><option value="Cocktails"><option value="Beer Brewing"><option value="Meal Prep">
+  <option value="Keto"><option value="Carnivore"><option value="Thrifting"><option value="Vintage">
+  <option value="Reselling"><option value="Dropshipping"><option value="Investing"><option value="Forex">
+  <option value="Day Trading"><option value="Stocks"><option value="Property"><option value="Side Hustles">
+  <option value="Freelancing"><option value="Productivity"><option value="Self Improvement">
+  <option value="Relationships"><option value="Dating"><option value="Weddings"><option value="Pregnancy">
+  <option value="Homeschooling"><option value="Student Life"><option value="Nursing"><option value="Teacher Life">
+  <option value="3D Printing"><option value="Drones"><option value="Smart Home"><option value="Robotics">
+  <option value="Cybersecurity"><option value="Web Development"><option value="App Development">
+  <option value="Graphic Design"><option value="Music Production"><option value="Podcasting">
+  <option value="Streaming"><option value="Cosplay"><option value="Board Games"><option value="Chess">
+  <option value="Lego"><option value="Miniatures"><option value="Model Trains"><option value="RC Cars">
+  <option value="Automotive"><option value="Motorcycles"><option value="Trucks"><option value="Classic Cars">
+  <option value="Formula 1"><option value="Watches"><option value="Luxury"><option value="Minimalism">
+  <option value="Tiny House"><option value="Van Life"><option value="Digital Nomad"><option value="Backpacking">
+  <option value="Solo Travel"><option value="Theme Parks"><option value="Disney"><option value="Marvel">
+  <option value="Star Wars"><option value="Horror"><option value="Sci-Fi"><option value="Fantasy">
+  <option value="Stand Up Comedy"><option value="Improv"><option value="Magic Tricks"><option value="Makeup">
+  <option value="Nails"><option value="Hair"><option value="Fragrance"><option value="Supplements">
+  <option value="Weight Loss"><option value="Calisthenics"><option value="Pilates"><option value="Rock Climbing">
+  <option value="Martial Arts"><option value="Archery"><option value="Paintball"><option value="Airsoft">
+</datalist>
 
 <div id="feedbackPopup" style="display:none;position:fixed;inset:0;z-index:9997;background:rgba(0,0,0,.88);overflow-y:auto;-webkit-overflow-scrolling:touch">
   <div style="max-width:460px;margin:0 auto;padding:20px;min-height:100vh;display:flex;align-items:center">
@@ -2458,33 +2435,61 @@ function scanNicheTrends(niche, callback) {
     });
   }
 
-  function checkDone() {
-    done++;
-    if (done === seeds.length) {
-      allResults.sort(function(a, b) { return b.viral_score - a.viral_score; });
-      allResults = allResults.slice(0, 20);
-      callback(allResults);
-    }
+  var callbackFired = false;
+  function fireCallback() {
+    if (callbackFired) return;
+    callbackFired = true;
+    allResults.sort(function(a, b) { return b.viral_score - a.viral_score; });
+    allResults = allResults.slice(0, 20);
+    callback(allResults);
   }
 
-  seeds.forEach(function(seed, si) {
+  function checkDone() {
+    done++;
+    if (done === seeds.length) fireCallback();
+  }
+
+  var scanTimeout = setTimeout(function() {
+    if (!callbackFired && allResults.length > 0) fireCallback();
+  }, 8000);
+
+  var earlyTimeout = setTimeout(function() {
+    if (!callbackFired && allResults.length >= 5) fireCallback();
+  }, 4000);
+
+  var maxConcurrent = 6;
+  var seedQueue = seeds.slice();
+  var running = 0;
+
+  function fetchNext() {
+    if (seedQueue.length === 0 || callbackFired) return;
+    var seed = seedQueue.shift();
+    running++;
     var url = "https://suggestqueries.google.com/complete/search?client=firefox&q=" + encodeURIComponent(seed) + "&hl=en&gl=" + USER_REGION;
     fetch(url).then(function(r) { return r.json(); }).then(function(d) {
       processSuggestions(d[1] || [], seed);
+      running--;
       checkDone();
+      fetchNext();
     }).catch(function() {
       var script = document.createElement("script");
       var cbName = "niche_cb_" + Math.random().toString(36).substr(2, 8);
       window[cbName] = function(d) {
         processSuggestions(d[1] || [], seed);
         delete window[cbName];
+        running--;
         checkDone();
+        fetchNext();
       };
       script.src = "https://suggestqueries.google.com/complete/search?client=chrome&q=" + encodeURIComponent(seed) + "&hl=en&gl=" + USER_REGION + "&callback=" + cbName;
-      script.onerror = function() { delete window[cbName]; checkDone(); };
+      script.onerror = function() { delete window[cbName]; running--; checkDone(); fetchNext(); };
       document.body.appendChild(script);
     });
-  });
+  }
+
+  for (var qi = 0; qi < Math.min(maxConcurrent, seedQueue.length); qi++) {
+    fetchNext();
+  }
 }
 
 var KEYWORD_GROUPS = {
@@ -6479,23 +6484,14 @@ function changeNiche() {
   var newNiche = (input.value || "").trim();
   if (!newNiche) return;
   input.value = "";
+  input.placeholder = "Type any niche...";
   quickSwitchNiche(newNiche);
 }
 
 function setNicheDropdown(niche) {
-  var sel = document.getElementById("nicheInput");
-  if (!sel) return;
-  var found = false;
-  for (var i = 0; i < sel.options.length; i++) {
-    if (sel.options[i].value === niche.toLowerCase()) { sel.selectedIndex = i; found = true; break; }
-  }
-  if (!found) {
-    var opt = document.createElement("option");
-    opt.value = niche.toLowerCase();
-    opt.textContent = titleCase(niche);
-    sel.appendChild(opt);
-    sel.value = niche.toLowerCase();
-  }
+  var input = document.getElementById("nicheInput");
+  if (!input) return;
+  input.placeholder = titleCase(niche) + " (type to change)";
 }
 
 async function quickSwitchNiche(newNiche) {
@@ -7672,19 +7668,49 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
 }
 
 async function loadLiveStats() {
-  trackEvent("load_trends", {niche: USER_NICHE || "general"});
-  document.getElementById("lastUpdated").textContent = "Scanning " + titleCase(USER_NICHE || "general") + " trends...";
+  var niche = USER_NICHE || "general";
+  trackEvent("load_trends", {niche: niche});
+
+  var kwEl = document.getElementById("keywordsAnalysed");
+  var oppEl = document.getElementById("opportunitiesFound");
+  var viralEl = document.getElementById("viralCount");
+  var updEl = document.getElementById("lastUpdated");
+
+  var cacheKey = "cr_scan_cache_" + niche.toLowerCase();
+  var cached = null;
+  try { cached = JSON.parse(localStorage.getItem(cacheKey)); } catch(e) {}
+  if (cached && cached.results && cached.results.length > 0) {
+    var cacheAge = Date.now() - (cached.ts || 0);
+    var emerging = [];
+    if (cached.results.length > 5) {
+      for (var ci = 5; ci < Math.min(10, cached.results.length); ci++) {
+        emerging.push({ keyword: cached.results[ci].keyword, source: "Google Suggest", description: "Trending in " + titleCase(niche) });
+      }
+    }
+    renderAllSections(cached.results, emerging, [], []);
+    if (cacheAge < 300000) {
+      updEl.textContent = "Last Updated: " + formatTimestamp(new Date(cached.ts).toISOString());
+      return;
+    }
+  }
+
+  kwEl.innerHTML = '<span style="animation:pulse 1.5s infinite;display:inline-block">...</span>';
+  oppEl.innerHTML = '<span style="animation:pulse 1.5s infinite;display:inline-block">...</span>';
+  viralEl.innerHTML = '<span style="animation:pulse 1.5s infinite;display:inline-block">...</span>';
+  updEl.textContent = "Scanning " + titleCase(niche) + " trends...";
+
   fetchBreakingNews().then(function(news) {
     var newsContainer = document.getElementById("breakingNewsContainer");
     if (newsContainer) newsContainer.innerHTML = renderBreakingNews(news);
   });
-  scanNicheTrends(USER_NICHE || "general", function(results) {
+  scanNicheTrends(niche, function(results) {
     var emerging = [];
     if (results.length > 5) {
       for (var i = 5; i < Math.min(10, results.length); i++) {
-        emerging.push({ keyword: results[i].keyword, source: "Google Suggest", description: "Trending in " + titleCase(USER_NICHE || "general") });
+        emerging.push({ keyword: results[i].keyword, source: "Google Suggest", description: "Trending in " + titleCase(niche) });
       }
     }
+    try { localStorage.setItem(cacheKey, JSON.stringify({results: results, ts: Date.now()})); } catch(e) {}
     renderAllSections(results, emerging, [], []);
     aiValidateKeywords(results, emerging);
   });
