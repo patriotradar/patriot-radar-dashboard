@@ -6444,6 +6444,83 @@ async function runPrePostOptimizer() {
   btn.textContent = "OPTIMISE FOR MY AUDIENCE";
 }
 
+var pendingVideoFrame = null;
+
+function handleVideoUpload(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var preview = document.getElementById("azUploadPreview");
+
+  if (file.type.startsWith("image/")) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      pendingVideoFrame = e.target.result;
+      preview.style.display = "block";
+      preview.innerHTML = '<img src="' + e.target.result + '" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border)"><br><span style="font-size:10px;color:var(--green);font-weight:600">Screenshot ready for analysis</span>';
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
+
+  if (file.type.startsWith("video/")) {
+    preview.style.display = "block";
+    preview.innerHTML = '<div style="padding:10px;color:var(--muted);font-size:11px;animation:pulse 1.5s infinite">Extracting frame from video...</div>';
+    var video = document.createElement("video");
+    video.preload = "metadata";
+    video.muted = true;
+    video.playsInline = true;
+    var objUrl = URL.createObjectURL(file);
+    video.src = objUrl;
+    video.onloadeddata = function() {
+      video.currentTime = Math.min(2, video.duration * 0.15);
+    };
+    video.onseeked = function() {
+      var canvas = document.createElement("canvas");
+      var scale = Math.min(1, 800 / Math.max(video.videoWidth, video.videoHeight));
+      canvas.width = video.videoWidth * scale;
+      canvas.height = video.videoHeight * scale;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      pendingVideoFrame = canvas.toDataURL("image/jpeg", 0.8);
+      preview.innerHTML = '<img src="' + pendingVideoFrame + '" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid var(--border)"><br><span style="font-size:10px;color:var(--green);font-weight:600">Video frame extracted - ready for analysis</span>';
+      URL.revokeObjectURL(objUrl);
+    };
+    video.onerror = function() {
+      preview.innerHTML = '<span style="font-size:10px;color:#ff4757">Could not read video. Try uploading a screenshot instead.</span>';
+      URL.revokeObjectURL(objUrl);
+    };
+    return;
+  }
+
+  alert("Please upload a video or image file.");
+}
+
+async function analyzeVideoFrame(imageBase64, captionText) {
+  if (!GROQ_KEY) return null;
+  var niche = USER_NICHE || "general";
+  var audienceCtx = getEnhancedAudienceContext();
+  var textPart = captionText ? "\n\nThe creator's draft caption/script for this content: \"" + captionText + "\"" : "";
+  try {
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({
+        model: "llama-3.2-11b-vision-preview",
+        messages: [{role: "user", content: [
+          {type: "text", text: "You are a content strategist for a " + titleCase(niche) + " creator." + audienceCtx + textPart + "\n\nAnalyse this video frame/thumbnail. Respond in this exact JSON format (no markdown):\n{\"visualScore\": 75, \"thumbnailAnalysis\": \"What works and doesn't work visually\", \"textOverlayFeedback\": \"Analysis of any text/titles visible in the frame\", \"emotionalImpact\": \"What emotion this visual triggers and whether it matches the niche\", \"scrollStopPower\": \"High/Medium/Low - would this make someone stop scrolling?\", \"improvements\": [\"Specific visual improvement 1\", \"Improvement 2\", \"Improvement 3\"], \"thumbnailIdeas\": [\"Better thumbnail concept 1\", \"Concept 2\"]}"},
+          {type: "image_url", image_url: {url: imageBase64}}
+        ]}],
+        temperature: 0.5, max_tokens: 800
+      })
+    });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    var content = data.choices[0].message.content;
+    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    return JSON.parse(cleaned);
+  } catch(e) { return null; }
+}
+
 async function runAnalyzer() {
   var urlInput = document.getElementById("azUrl");
   var captionInput = document.getElementById("azCaption");
@@ -6453,16 +6530,84 @@ async function runAnalyzer() {
   var url = (urlInput.value || "").trim();
   var caption = (captionInput.value || "").trim();
 
-  if (!url && !caption) { alert("Paste a caption or video URL to analyse"); return; }
+  if (!url && !caption && !pendingVideoFrame) { alert("Paste a caption, upload a video, or paste a URL to analyse"); return; }
   trackEvent("feature_use", {feature: "video_analyzer"});
   addXP("analyze");
 
   btn.disabled = true;
   btn.textContent = "ANALYSING...";
-  resultDiv.innerHTML = '<div class="az-loading"><div class="az-loading-dot">Scanning video data...</div></div>';
+  resultDiv.innerHTML = '<div class="az-loading"><div class="az-loading-dot">Scanning content...</div></div>';
 
   var text = caption;
   var author = "";
+  var videoFrameResult = null;
+  var usedVideoFrame = pendingVideoFrame;
+
+  if (pendingVideoFrame && !caption && !url) {
+    btn.textContent = "ANALYSING VISUAL...";
+    videoFrameResult = await analyzeVideoFrame(pendingVideoFrame, "");
+    pendingVideoFrame = null;
+    var previewEl = document.getElementById("azUploadPreview");
+    if (previewEl) { previewEl.style.display = "none"; previewEl.innerHTML = ""; }
+    if (videoFrameResult) {
+      var vfh = '<div class="az-result">';
+      var vsColor = videoFrameResult.visualScore >= 70 ? "var(--green)" : videoFrameResult.visualScore >= 45 ? "var(--amber)" : "#ff4757";
+      var stopColor = (videoFrameResult.scrollStopPower || "").indexOf("High") !== -1 ? "var(--green)" : (videoFrameResult.scrollStopPower || "").indexOf("Medium") !== -1 ? "var(--amber)" : "#ff4757";
+
+      vfh += '<div class="az-section" style="border-left:3px solid var(--purple)">';
+      vfh += '<div class="az-section-title">&#127909; Visual Content Analysis</div>';
+      vfh += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+      vfh += '<div><span style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700">Visual Score</span><br><span style="font-size:24px;font-weight:900;color:' + vsColor + '">' + (videoFrameResult.visualScore || 0) + '</span><span style="font-size:10px;color:var(--muted)">/100</span></div>';
+      vfh += '<span style="font-size:10px;font-weight:700;color:' + stopColor + ';padding:4px 10px;background:rgba(0,0,0,.3);border:1px solid ' + stopColor + ';border-radius:6px">Scroll-Stop: ' + (videoFrameResult.scrollStopPower || "?") + '</span>';
+      vfh += '</div>';
+      vfh += '</div>';
+
+      if (videoFrameResult.thumbnailAnalysis) {
+        vfh += '<div class="az-section" style="border-left:3px solid var(--green)">';
+        vfh += '<div class="az-section-title">&#128247; Thumbnail Analysis</div>';
+        vfh += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + videoFrameResult.thumbnailAnalysis + '</div>';
+        vfh += '</div>';
+      }
+      if (videoFrameResult.emotionalImpact) {
+        vfh += '<div class="az-section" style="border-left:3px solid var(--amber)">';
+        vfh += '<div class="az-section-title">&#128150; Emotional Impact</div>';
+        vfh += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + videoFrameResult.emotionalImpact + '</div>';
+        vfh += '</div>';
+      }
+      if (videoFrameResult.textOverlayFeedback) {
+        vfh += '<div class="az-section" style="border-left:3px solid var(--blue)">';
+        vfh += '<div class="az-section-title">&#128172; Text Overlay Feedback</div>';
+        vfh += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + videoFrameResult.textOverlayFeedback + '</div>';
+        vfh += '</div>';
+      }
+      if (videoFrameResult.improvements && videoFrameResult.improvements.length > 0) {
+        vfh += '<div class="az-section" style="border-left:3px solid var(--amber)">';
+        vfh += '<div class="az-section-title">&#9888; Visual Improvements</div>';
+        for (var vi = 0; vi < videoFrameResult.improvements.length; vi++) {
+          vfh += '<div style="padding:6px 10px;background:rgba(255,165,0,.05);border:1px solid rgba(255,165,0,.12);border-radius:8px;margin-bottom:4px;font-size:11px;color:var(--white);line-height:1.4"><span style="color:var(--amber);font-weight:700;font-size:9px">TIP ' + (vi + 1) + '</span> ' + videoFrameResult.improvements[vi] + '</div>';
+        }
+        vfh += '</div>';
+      }
+      if (videoFrameResult.thumbnailIdeas && videoFrameResult.thumbnailIdeas.length > 0) {
+        vfh += '<div class="az-section" style="border-left:3px solid var(--purple)">';
+        vfh += '<div class="az-section-title">&#128161; Better Thumbnail Ideas</div>';
+        for (var ti = 0; ti < videoFrameResult.thumbnailIdeas.length; ti++) {
+          vfh += '<div style="padding:6px 10px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.12);border-radius:8px;margin-bottom:4px;font-size:11px;color:var(--white);line-height:1.4"><span style="color:var(--purple);font-weight:700;font-size:9px">' + (ti + 1) + '</span> ' + videoFrameResult.thumbnailIdeas[ti] + '</div>';
+        }
+        vfh += '</div>';
+      }
+      vfh += '</div>';
+      resultDiv.innerHTML = vfh;
+      btn.disabled = false;
+      btn.textContent = "ANALYSE";
+      return;
+    } else {
+      resultDiv.innerHTML = '<div class="az-section" style="border-color:#ff4757"><p style="font-size:12px;color:#ff4757">Could not analyse the visual. Try uploading a clearer image or paste a caption instead.</p></div>';
+      btn.disabled = false;
+      btn.textContent = "ANALYSE";
+      return;
+    }
+  }
 
   if (url && !caption) {
     var tiktokData = await fetchTikTokCaption(url);
@@ -6495,6 +6640,14 @@ async function runAnalyzer() {
     result.aiAnalysis = aiResult.analysis || "";
     result.aiImproved = aiResult.improved || "";
     result.aiIdeas = aiResult.ideas || [];
+  }
+
+  if (usedVideoFrame) {
+    btn.textContent = "ANALYSING VISUAL...";
+    videoFrameResult = await analyzeVideoFrame(usedVideoFrame, text);
+    pendingVideoFrame = null;
+    var previewEl2 = document.getElementById("azUploadPreview");
+    if (previewEl2) { previewEl2.style.display = "none"; previewEl2.innerHTML = ""; }
   }
 
   var h = '<div class="az-result">';
@@ -6583,6 +6736,25 @@ async function runAnalyzer() {
     h += '</div>';
   }
 
+  if (videoFrameResult) {
+    var vsColor2 = (videoFrameResult.visualScore || 0) >= 70 ? "var(--green)" : (videoFrameResult.visualScore || 0) >= 45 ? "var(--amber)" : "#ff4757";
+    var stopColor2 = (videoFrameResult.scrollStopPower || "").indexOf("High") !== -1 ? "var(--green)" : (videoFrameResult.scrollStopPower || "").indexOf("Medium") !== -1 ? "var(--amber)" : "#ff4757";
+    h += '<div class="az-section" style="border-left:3px solid var(--purple)">';
+    h += '<div class="az-section-title">&#127909; Visual Analysis</div>';
+    h += '<div style="display:flex;gap:10px;align-items:center;margin-bottom:8px">';
+    h += '<span style="font-size:20px;font-weight:900;color:' + vsColor2 + '">' + (videoFrameResult.visualScore || 0) + '/100</span>';
+    h += '<span style="font-size:10px;font-weight:700;color:' + stopColor2 + ';padding:3px 8px;background:rgba(0,0,0,.3);border:1px solid ' + stopColor2 + ';border-radius:6px">Scroll-Stop: ' + (videoFrameResult.scrollStopPower || "?") + '</span>';
+    h += '</div>';
+    if (videoFrameResult.thumbnailAnalysis) h += '<div style="font-size:11px;color:var(--white);line-height:1.5;margin-bottom:6px">' + videoFrameResult.thumbnailAnalysis + '</div>';
+    if (videoFrameResult.emotionalImpact) h += '<div style="font-size:10px;color:var(--amber);line-height:1.4;margin-bottom:6px">Emotional impact: ' + videoFrameResult.emotionalImpact + '</div>';
+    if (videoFrameResult.improvements && videoFrameResult.improvements.length > 0) {
+      for (var vii = 0; vii < videoFrameResult.improvements.length; vii++) {
+        h += '<div style="padding:4px 8px;font-size:10px;color:var(--white);line-height:1.4"><span style="color:var(--amber)">&#8226;</span> ' + videoFrameResult.improvements[vii] + '</div>';
+      }
+    }
+    h += '</div>';
+  }
+
   h += '</div>';
   resultDiv.innerHTML = h;
   btn.disabled = false;
@@ -6663,7 +6835,16 @@ function renderVideoAnalyzer() {
   h += '</div>';
 
   h += '<textarea class="az-textarea" id="azCaption" placeholder="Paste your video caption, hook, or script here..." style="margin-bottom:6px"></textarea>';
-  h += '<div class="az-or">or paste a video URL to extract the caption</div>';
+  h += '<div class="az-or">or upload a video/thumbnail for visual analysis</div>';
+  h += '<div style="margin-bottom:8px">';
+  h += '<label for="azVideoUpload" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:2px dashed rgba(167,139,250,.3);border-radius:10px;cursor:pointer;background:rgba(167,139,250,.03);transition:all .2s">';
+  h += '<span style="font-size:20px">&#127909;</span>';
+  h += '<span style="font-size:12px;color:var(--purple);font-weight:600">Upload Video or Screenshot</span>';
+  h += '</label>';
+  h += '<input type="file" id="azVideoUpload" accept="video/*,image/*" style="display:none" onchange="handleVideoUpload(this)">';
+  h += '<div id="azUploadPreview" style="display:none;margin-top:6px;text-align:center"></div>';
+  h += '</div>';
+  h += '<div class="az-or">or paste a video URL</div>';
   h += '<div class="az-input-wrap">';
   h += '<input class="az-input" id="azUrl" type="text" placeholder="Paste video URL (TikTok supported)...">';
   h += '</div>';
@@ -6869,18 +7050,27 @@ var voiceActive = false;
 
 function initVoiceInput() {
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return;
   var btn = document.getElementById("aiVoiceBtn");
-  if (btn) btn.style.display = "block";
+  if (!btn) return;
+  if (SpeechRecognition) {
+    btn.style.display = "block";
+  } else {
+    btn.style.display = "block";
+    btn.title = "Voice not supported - tap to type instead";
+  }
 }
 
 function toggleVoiceInput() {
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return;
+  if (!SpeechRecognition) {
+    var input = document.getElementById("aiChatInput");
+    if (input) { input.focus(); }
+    return;
+  }
 
   var btn = document.getElementById("aiVoiceBtn");
   if (voiceActive && voiceRecognition) {
-    voiceRecognition.stop();
+    try { voiceRecognition.stop(); } catch(e) {}
     voiceActive = false;
     btn.style.background = "rgba(167,139,250,.1)";
     btn.style.borderColor = "rgba(167,139,250,.3)";
@@ -6888,37 +7078,51 @@ function toggleVoiceInput() {
     return;
   }
 
-  voiceRecognition = new SpeechRecognition();
-  voiceRecognition.lang = "en-GB";
-  voiceRecognition.interimResults = true;
-  voiceRecognition.continuous = false;
-  voiceActive = true;
-  btn.style.background = "rgba(255,71,87,.2)";
-  btn.style.borderColor = "#ff4757";
-  btn.innerHTML = "&#9899;";
+  try {
+    voiceRecognition = new SpeechRecognition();
+    voiceRecognition.lang = "en-GB";
+    voiceRecognition.interimResults = false;
+    voiceRecognition.continuous = false;
+    voiceActive = true;
+    btn.style.background = "rgba(255,71,87,.2)";
+    btn.style.borderColor = "#ff4757";
+    btn.innerHTML = "&#9899; Listening...";
 
-  var input = document.getElementById("aiChatInput");
-  voiceRecognition.onresult = function(event) {
-    var transcript = "";
-    for (var i = 0; i < event.results.length; i++) {
-      transcript += event.results[i][0].transcript;
-    }
-    input.value = transcript;
-  };
-  voiceRecognition.onend = function() {
+    var input = document.getElementById("aiChatInput");
+    voiceRecognition.onresult = function(event) {
+      var transcript = "";
+      for (var i = 0; i < event.results.length; i++) {
+        transcript += event.results[i][0].transcript;
+      }
+      input.value = transcript;
+    };
+    voiceRecognition.onend = function() {
+      voiceActive = false;
+      btn.style.background = "rgba(167,139,250,.1)";
+      btn.style.borderColor = "rgba(167,139,250,.3)";
+      btn.innerHTML = "&#127908;";
+      if (input.value.trim()) sendAiChat();
+    };
+    voiceRecognition.onerror = function(event) {
+      voiceActive = false;
+      btn.style.background = "rgba(167,139,250,.1)";
+      btn.style.borderColor = "rgba(167,139,250,.3)";
+      if (event.error === "not-allowed") {
+        btn.innerHTML = "&#128263;";
+        setTimeout(function() { btn.innerHTML = "&#127908;"; }, 3000);
+      } else {
+        btn.innerHTML = "&#127908;";
+      }
+    };
+    voiceRecognition.start();
+  } catch(e) {
     voiceActive = false;
     btn.style.background = "rgba(167,139,250,.1)";
     btn.style.borderColor = "rgba(167,139,250,.3)";
     btn.innerHTML = "&#127908;";
-    if (input.value.trim()) sendAiChat();
-  };
-  voiceRecognition.onerror = function() {
-    voiceActive = false;
-    btn.style.background = "rgba(167,139,250,.1)";
-    btn.style.borderColor = "rgba(167,139,250,.3)";
-    btn.innerHTML = "&#127908;";
-  };
-  voiceRecognition.start();
+    var input2 = document.getElementById("aiChatInput");
+    if (input2) input2.focus();
+  }
 }
 
 function loadActiveTab() {
