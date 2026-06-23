@@ -1282,11 +1282,11 @@ input[type=range]::-webkit-slider-thumb{
       <div class="card" style="border-color:rgba(167,139,250,.25)">
         <div class="card-header"><h2 style="color:var(--purple)">&#129504; Ask Your AI</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128172;</div></div>
         <p style="font-size:11px;color:var(--muted);margin-bottom:14px">Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.</p>
-        <div id="aiChatMessages" style="max-height:50vh;overflow-y:auto;margin-bottom:12px;padding:4px;-webkit-overflow-scrolling:touch"></div>
-        <div style="display:flex;gap:6px">
-          <textarea id="aiChatInput" rows="1" placeholder="Ask anything..." autocomplete="off" style="flex:1;min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:16px;outline:none;-webkit-appearance:none;touch-action:manipulation;resize:none;line-height:1.3;max-height:80px;font-family:inherit" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat()}" oninput="this.style.height='auto';this.style.height=Math.min(80,this.scrollHeight)+'px'" onclick="this.focus()"></textarea>
-          <button id="aiVoiceBtn" onclick="toggleVoiceInput()" style="padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-size:16px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;display:none" title="Voice input">&#127908;</button>
-          <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation">Send</button>
+        <div id="aiChatMessages" style="max-height:50vh;overflow-y:auto;margin-bottom:12px;padding:4px"></div>
+        <div style="display:flex;gap:6px;position:relative;z-index:5">
+          <textarea id="aiChatInput" rows="2" placeholder="Ask anything..." autocomplete="off" inputmode="text" enterkeyhint="send" style="flex:1;min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:16px;outline:none;-webkit-appearance:none;resize:none;line-height:1.4;height:48px;max-height:80px;font-family:inherit;box-sizing:border-box" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat()}"></textarea>
+          <button id="aiVoiceBtn" onclick="toggleVoiceInput()" style="padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-size:16px;cursor:pointer;display:none" title="Voice input">&#127908;</button>
+          <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer">Send</button>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
           <button onclick="quickAiChat('What content should I post today and why?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>
@@ -6342,7 +6342,10 @@ async function runPrePostOptimizer() {
     trendCtx = "\nCurrently trending in " + niche + ": " + cachedResults.slice(0, 5).map(function(r){return r.keyword}).join(", ");
   }
 
-  var prompt = "You are a viral content optimisation AI for a " + titleCase(niche) + " content creator." + audienceCtx + perfSummary + trendCtx + "\n\nThe creator wants to post this content:\n\"" + draft + "\"\n\nOptimise this for THEIR specific audience. Respond in this exact JSON format (no markdown):\n{\n\"audienceFit\": 85,\n\"audienceFitReason\": \"One sentence explaining why this content fits or doesn't fit their audience based on their data\",\n\"optimisedTitle\": \"The best title/hook for this video based on what works for their audience\",\n\"optimisedDescription\": \"Full optimised caption/description (2-3 lines, include CTA)\",\n\"hashtags\": [\"hashtag1\", \"hashtag2\", \"hashtag3\", \"hashtag4\", \"hashtag5\", \"hashtag6\", \"hashtag7\", \"hashtag8\"],\n\"emotionalAngle\": \"The emotional trigger to lean into based on their audience data\",\n\"formatSuggestion\": \"The best format type for this content based on what works for them\",\n\"hookAlternatives\": [\"Alternative hook 1\", \"Alternative hook 2\", \"Alternative hook 3\"],\n\"bestPostTime\": \"When to post this based on general engagement patterns\",\n\"predictedEngagement\": \"High/Medium/Low with one sentence why\",\n\"tweaks\": [\"Specific tweak 1 to improve performance\", \"Specific tweak 2\", \"Specific tweak 3\"]\n}";
+  var confidenceLevel = totalLogs >= 10 ? "high" : totalLogs >= 3 ? "moderate" : "low";
+  var confidenceNote = confidenceLevel === "high" ? "Based on strong data (" + totalLogs + " posts)." : confidenceLevel === "moderate" ? "Based on limited data (" + totalLogs + " posts). Log more videos for better accuracy." : "Very limited data. Recommendations are general best practices until you log more videos.";
+
+  var prompt = "You are a viral content optimisation AI for a " + titleCase(niche) + " content creator." + audienceCtx + perfSummary + trendCtx + "\n\nThe creator wants to post this content:\n\"" + draft + "\"\n\nData confidence: " + confidenceLevel + " (" + totalLogs + " posts logged). " + (confidenceLevel === "low" ? "Since data is limited, be honest that recommendations are based on general best practices rather than personalised data. Avoid making claims about 'your audience' when you don't have enough data to know." : "") + "\n\nOptimise this for THEIR specific audience. Respond in this exact JSON format (no markdown):\n{\n\"audienceFit\": 85,\n\"audienceFitFactors\": [\"Factor 1 that drove the score, e.g. 'Matches your top-performing emotional trigger: Pride'\", \"Factor 2, e.g. 'Uses your highest-engagement format: Yes/No Debate'\", \"Factor 3, e.g. 'Topic aligns with 3 of your top 5 keywords'\"],\n\"audienceFitReason\": \"One sentence summary of why this fits or doesn't fit their audience\",\n\"optimisedTitle\": \"The best title/hook for this video based on what works for their audience\",\n\"optimisedDescription\": \"Full optimised caption/description (2-3 lines, include CTA)\",\n\"hashtags\": [\"hashtag1\", \"hashtag2\", \"hashtag3\", \"hashtag4\", \"hashtag5\", \"hashtag6\", \"hashtag7\", \"hashtag8\"],\n\"emotionalAngle\": \"The emotional trigger to lean into based on their audience data\",\n\"formatSuggestion\": \"The best format type for this content based on what works for them\",\n\"hookAlternatives\": [\"Alternative hook 1\", \"Alternative hook 2\", \"Alternative hook 3\"],\n\"bestPostTime\": \"When to post this based on general engagement patterns\",\n\"audiencePatternMatch\": \"Strong/Moderate/Weak - explain how well this content aligns with the creator's proven audience preferences and historical performance patterns. Focus on what the data shows, not on predicting results.\",\n\"tweaks\": [\"Specific tweak 1 to improve performance\", \"Specific tweak 2\", \"Specific tweak 3\"]\n}";
 
   try {
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -6358,23 +6361,42 @@ async function runPrePostOptimizer() {
 
     var fitColor = result.audienceFit >= 70 ? "var(--green)" : result.audienceFit >= 45 ? "var(--amber)" : "#ff4757";
     var fitLabel = result.audienceFit >= 70 ? "STRONG FIT" : result.audienceFit >= 45 ? "DECENT FIT" : "WEAK FIT";
-    var engColor = (result.predictedEngagement || "").indexOf("High") !== -1 ? "var(--green)" : (result.predictedEngagement || "").indexOf("Medium") !== -1 ? "var(--amber)" : "#ff4757";
+    var patternMatch = result.audiencePatternMatch || result.predictedEngagement || "";
+    var patternLevel = patternMatch.indexOf("Strong") !== -1 ? "Strong" : patternMatch.indexOf("Moderate") !== -1 ? "Moderate" : "Weak";
+    var patternColor = patternLevel === "Strong" ? "var(--green)" : patternLevel === "Moderate" ? "var(--amber)" : "#ff4757";
 
     var h = '';
     h += '<div style="margin-top:14px;padding:14px;background:rgba(10,18,14,.6);border:1px solid ' + fitColor + ';border-radius:14px">';
 
-    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
     h += '<div><span style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700">Audience Fit</span><br><span style="font-size:28px;font-weight:900;color:' + fitColor + '">' + result.audienceFit + '%</span></div>';
-    h += '<span style="font-size:10px;font-weight:700;color:' + fitColor + ';padding:4px 10px;background:rgba(0,0,0,.3);border:1px solid ' + fitColor + ';border-radius:6px">' + fitLabel + '</span>';
+    h += '<div style="text-align:right"><span style="font-size:10px;font-weight:700;color:' + fitColor + ';padding:4px 10px;background:rgba(0,0,0,.3);border:1px solid ' + fitColor + ';border-radius:6px;display:block;margin-bottom:4px">' + fitLabel + '</span>';
+    h += '<span style="font-size:8px;color:var(--muted)">' + confidenceNote + '</span></div>';
     h += '</div>';
+
+    if (result.audienceFitFactors && result.audienceFitFactors.length > 0) {
+      h += '<div style="margin-bottom:8px;padding:8px 10px;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px">';
+      h += '<div style="font-size:8px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:4px">What drove this score</div>';
+      for (var fi = 0; fi < result.audienceFitFactors.length; fi++) {
+        h += '<div style="font-size:10px;color:var(--white);line-height:1.5;padding:2px 0"><span style="color:' + fitColor + ';margin-right:4px">&#8226;</span>' + result.audienceFitFactors[fi] + '</div>';
+      }
+      h += '</div>';
+    }
     h += '<div style="font-size:11px;color:var(--white);margin-bottom:12px;line-height:1.5">' + (result.audienceFitReason || "") + '</div>';
 
     h += '<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">';
     if (result.emotionalAngle) h += '<span style="font-size:9px;padding:3px 8px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--purple);border-radius:6px;font-weight:700">Emotion: ' + result.emotionalAngle + '</span>';
     if (result.formatSuggestion) h += '<span style="font-size:9px;padding:3px 8px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);border-radius:6px;font-weight:700">Format: ' + result.formatSuggestion + '</span>';
-    h += '<span style="font-size:9px;padding:3px 8px;background:rgba(0,0,0,.3);border:1px solid var(--border);color:' + engColor + ';border-radius:6px;font-weight:700">Engagement: ' + (result.predictedEngagement || "").split(" ")[0] + '</span>';
+    h += '<span style="font-size:9px;padding:3px 8px;background:rgba(0,0,0,.3);border:1px solid var(--border);color:' + patternColor + ';border-radius:6px;font-weight:700">Pattern Match: ' + patternLevel + '</span>';
     if (result.bestPostTime) h += '<span style="font-size:9px;padding:3px 8px;background:rgba(77,201,246,.08);border:1px solid rgba(77,201,246,.2);color:#4dc9f6;border-radius:6px;font-weight:700">Post: ' + result.bestPostTime + '</span>';
     h += '</div>';
+
+    if (patternMatch.indexOf(" - ") !== -1) {
+      h += '<div style="margin-bottom:12px;padding:8px 10px;background:rgba(0,0,0,.15);border:1px solid ' + patternColor + ';border-radius:8px">';
+      h += '<div style="font-size:8px;color:' + patternColor + ';text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:3px">Audience Pattern Match</div>';
+      h += '<div style="font-size:10px;color:var(--white);line-height:1.4">' + patternMatch.split(" - ").slice(1).join(" - ") + '</div>';
+      h += '</div>';
+    }
 
     h += '<div style="margin-bottom:12px;padding:12px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);border-radius:10px">';
     h += '<div style="font-size:9px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Optimised Title / Hook</div>';
@@ -6431,7 +6453,7 @@ async function runAnalyzer() {
   var url = (urlInput.value || "").trim();
   var caption = (captionInput.value || "").trim();
 
-  if (!url && !caption) { alert("Paste a TikTok URL or enter a caption to analyse"); return; }
+  if (!url && !caption) { alert("Paste a caption or video URL to analyse"); return; }
   trackEvent("feature_use", {feature: "video_analyzer"});
   addXP("analyze");
 
@@ -6448,7 +6470,7 @@ async function runAnalyzer() {
       text = tiktokData.title;
       author = tiktokData.author;
     } else {
-      resultDiv.innerHTML = '<div class="az-section" style="border-color:var(--red)"><p style="font-size:12px;color:var(--red)">Could not fetch video data. TikTok may be blocking the request. Try pasting the video caption directly instead.</p></div>';
+      resultDiv.innerHTML = '<div class="az-section" style="border-color:var(--red)"><p style="font-size:12px;color:var(--red)">Could not fetch video data from that URL. Try pasting the caption directly instead.</p></div>';
       btn.disabled = false;
       btn.textContent = "ANALYSE";
       return;
@@ -6605,10 +6627,20 @@ function renderVideoAnalyzer() {
   h += '<div class="card-header"><h2 style="color:var(--green)">Pre-Post Optimizer</h2><div class="section-icon" style="background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.3);color:var(--green)">&#128640;</div></div>';
   h += '<p style="font-size:11px;color:var(--muted);margin-bottom:10px">Paste your draft caption or video idea BEFORE you post. The AI will optimise it for YOUR audience using your performance data.</p>';
 
-  if (hasAudienceData) {
+  var perfDataForConf = loadPerfData();
+  var totalLogsConf = 0;
+  for (var ck in perfDataForConf) { totalLogsConf += perfDataForConf[ck].length; }
+  var confLevel = totalLogsConf >= 10 ? "high" : totalLogsConf >= 3 ? "moderate" : "low";
+
+  if (confLevel === "high") {
     h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:8px">';
     h += '<span style="color:var(--green);font-size:9px;font-weight:700">&#129504; PERSONALISED TO YOUR AUDIENCE</span>';
-    h += '<span style="font-size:9px;color:var(--muted);margin-left:auto">' + stats.totalPosts + ' posts analysed</span>';
+    h += '<span style="font-size:9px;color:var(--muted);margin-left:auto">' + totalLogsConf + ' posts analysed | High confidence</span>';
+    h += '</div>';
+  } else if (confLevel === "moderate") {
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:8px">';
+    h += '<span style="color:var(--green);font-size:9px;font-weight:700">&#129504; PERSONALISED TO YOUR AUDIENCE</span>';
+    h += '<span style="font-size:9px;color:var(--amber);margin-left:auto">' + totalLogsConf + ' posts | Moderate confidence - log more for better accuracy</span>';
     h += '</div>';
   } else {
     h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:rgba(251,191,36,.04);border:1px solid rgba(251,191,36,.12);border-radius:8px">';
@@ -6630,11 +6662,11 @@ function renderVideoAnalyzer() {
   h += '<span style="font-size:9px;color:var(--muted);margin-left:auto">Works for any niche automatically</span>';
   h += '</div>';
 
+  h += '<textarea class="az-textarea" id="azCaption" placeholder="Paste your video caption, hook, or script here..." style="margin-bottom:6px"></textarea>';
+  h += '<div class="az-or">or paste a video URL to extract the caption</div>';
   h += '<div class="az-input-wrap">';
-  h += '<input class="az-input" id="azUrl" type="text" placeholder="Paste TikTok video URL...">';
+  h += '<input class="az-input" id="azUrl" type="text" placeholder="Paste video URL (TikTok supported)...">';
   h += '</div>';
-  h += '<div class="az-or">or paste the caption directly</div>';
-  h += '<textarea class="az-textarea" id="azCaption" placeholder="Paste the video caption/hook here..."></textarea>';
   h += '<button class="az-btn" id="azBtn" onclick="runAnalyzer()">ANALYSE</button>';
 
   h += '<div id="azResult"></div>';
