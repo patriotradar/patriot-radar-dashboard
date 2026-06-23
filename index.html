@@ -1282,10 +1282,11 @@ input[type=range]::-webkit-slider-thumb{
       <div class="card" style="border-color:rgba(167,139,250,.25)">
         <div class="card-header"><h2 style="color:var(--purple)">&#129504; Ask Your AI</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128172;</div></div>
         <p style="font-size:11px;color:var(--muted);margin-bottom:14px">Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.</p>
-        <div id="aiChatMessages" style="max-height:55vh;overflow-y:auto;margin-bottom:12px;padding:4px"></div>
+        <div id="aiChatMessages" style="max-height:50vh;overflow-y:auto;margin-bottom:12px;padding:4px;-webkit-overflow-scrolling:touch"></div>
         <div style="display:flex;gap:6px">
-          <input id="aiChatInput" type="text" placeholder="Ask anything about your content strategy..." autocomplete="off" style="flex:1;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:13px;outline:none" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiChat()}">
-          <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer">Send</button>
+          <input id="aiChatInput" type="text" placeholder="Ask anything..." autocomplete="off" style="flex:1;min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:16px;outline:none;-webkit-appearance:none;touch-action:manipulation" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiChat()}" onfocus="setTimeout(function(){document.getElementById('aiChatInput').scrollIntoView({behavior:'smooth',block:'center'})},300)">
+          <button id="aiVoiceBtn" onclick="toggleVoiceInput()" style="padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-size:16px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation;display:none" title="Voice input">&#127908;</button>
+          <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;-webkit-appearance:none;touch-action:manipulation">Send</button>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
           <button onclick="quickAiChat('What content should I post today and why?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>
@@ -6689,6 +6690,63 @@ async function sendAiChat() {
   msgContainer.scrollTop = msgContainer.scrollHeight;
 }
 
+var voiceRecognition = null;
+var voiceActive = false;
+
+function initVoiceInput() {
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return;
+  var btn = document.getElementById("aiVoiceBtn");
+  if (btn) btn.style.display = "block";
+}
+
+function toggleVoiceInput() {
+  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return;
+
+  var btn = document.getElementById("aiVoiceBtn");
+  if (voiceActive && voiceRecognition) {
+    voiceRecognition.stop();
+    voiceActive = false;
+    btn.style.background = "rgba(167,139,250,.1)";
+    btn.style.borderColor = "rgba(167,139,250,.3)";
+    btn.innerHTML = "&#127908;";
+    return;
+  }
+
+  voiceRecognition = new SpeechRecognition();
+  voiceRecognition.lang = "en-GB";
+  voiceRecognition.interimResults = true;
+  voiceRecognition.continuous = false;
+  voiceActive = true;
+  btn.style.background = "rgba(255,71,87,.2)";
+  btn.style.borderColor = "#ff4757";
+  btn.innerHTML = "&#9899;";
+
+  var input = document.getElementById("aiChatInput");
+  voiceRecognition.onresult = function(event) {
+    var transcript = "";
+    for (var i = 0; i < event.results.length; i++) {
+      transcript += event.results[i][0].transcript;
+    }
+    input.value = transcript;
+  };
+  voiceRecognition.onend = function() {
+    voiceActive = false;
+    btn.style.background = "rgba(167,139,250,.1)";
+    btn.style.borderColor = "rgba(167,139,250,.3)";
+    btn.innerHTML = "&#127908;";
+    if (input.value.trim()) sendAiChat();
+  };
+  voiceRecognition.onerror = function() {
+    voiceActive = false;
+    btn.style.background = "rgba(167,139,250,.1)";
+    btn.style.borderColor = "rgba(167,139,250,.3)";
+    btn.innerHTML = "&#127908;";
+  };
+  voiceRecognition.start();
+}
+
 function loadActiveTab() {
   var saved = localStorage.getItem('patriot_active_tab');
   if (saved && document.getElementById('tab-' + saved)) {
@@ -8514,6 +8572,7 @@ async function showDashboard() {
 
   checkAdminStatus();
   initNicheSwitcher();
+  initVoiceInput();
   await loadPerfFromSupabase();
   initStreak();
   loadLiveStats();
