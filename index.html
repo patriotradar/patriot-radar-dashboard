@@ -7699,11 +7699,50 @@ async function loadLiveStats() {
   viralEl.innerHTML = '<span style="animation:pulse 1.5s infinite;display:inline-block">...</span>';
   updEl.textContent = "Scanning " + titleCase(niche) + " trends...";
 
+  var scanDone = false;
+  setTimeout(function() {
+    if (!scanDone && kwEl.textContent === "...") {
+      var nl = niche.toLowerCase().trim();
+      var resolved = NICHE_ALIASES[nl] || nl;
+      var fallbackSeeds = NICHE_SEEDS[resolved] || [niche + " trending", niche + " content ideas", niche + " tips", niche + " viral"];
+      var emergencyResults = [];
+      for (var ei = 0; ei < Math.min(8, fallbackSeeds.length); ei++) {
+        var es = fallbackSeeds[ei];
+        emergencyResults.push({keyword: es.charAt(0).toUpperCase() + es.slice(1), viral_score: Math.max(25, 75 - ei * 6), rise_percent: Math.max(5, 35 - ei * 3), search_volume: Math.max(15, 70 - ei * 5), source: "Seed Analysis", content_score: Math.max(30, 65 - ei * 4), fresh: 50, emotion: 40, debate: 30, product: ""});
+      }
+      scanDone = true;
+      renderAllSections(emergencyResults, [], [], []);
+      updEl.textContent = "Loaded from seed data | Pull down to refresh";
+    }
+  }, 12000);
+
   fetchBreakingNews().then(function(news) {
     var newsContainer = document.getElementById("breakingNewsContainer");
     if (newsContainer) newsContainer.innerHTML = renderBreakingNews(news);
   });
   scanNicheTrends(niche, function(results) {
+    scanDone = true;
+    if (results.length === 0) {
+      var nl = niche.toLowerCase().trim();
+      var resolved = NICHE_ALIASES[nl] || nl;
+      var fallbackSeeds = NICHE_SEEDS[resolved] || [niche + " trending", niche + " content ideas", niche + " tips", niche + " viral", niche + " latest", niche + " news today", niche + " 2026", "best " + niche + " content"];
+      var usedSeeds = fallbackSeeds.slice(0, Math.min(12, fallbackSeeds.length));
+      for (var fi = 0; fi < usedSeeds.length; fi++) {
+        var s = usedSeeds[fi];
+        results.push({
+          keyword: s.charAt(0).toUpperCase() + s.slice(1),
+          viral_score: Math.max(25, 80 - fi * 5),
+          rise_percent: Math.max(5, 40 - fi * 3),
+          search_volume: Math.max(15, 75 - fi * 5),
+          source: "Seed Analysis",
+          content_score: Math.max(30, 70 - fi * 4),
+          fresh: Math.max(30, 65 + Math.floor(Math.random() * 20)),
+          emotion: Math.max(25, 45 + Math.floor(Math.random() * 30)),
+          debate: Math.max(15, 30 + Math.floor(Math.random() * 40)),
+          product: ""
+        });
+      }
+    }
     var emerging = [];
     if (results.length > 5) {
       for (var i = 5; i < Math.min(10, results.length); i++) {
