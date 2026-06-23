@@ -859,6 +859,14 @@ input[type=range]::-webkit-slider-thumb{
 .feed-msg{flex:1;color:var(--white)}
 .feed-msg b{color:var(--green)}
 
+/* ── AI CHAT ── */
+.ai-chat-msg{padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:12px;line-height:1.5;max-width:92%;word-wrap:break-word}
+.ai-chat-user{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);color:var(--white);margin-left:auto}
+.ai-chat-ai{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.15);color:var(--white)}
+.ai-chat-ai b{color:var(--purple)}
+.ai-chat-ai strong{color:var(--green)}
+.ai-chat-thinking{padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:11px;color:var(--muted);background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.1);animation:pulse 1.5s infinite}
+
 /* ── TABS ── */
 .tab-bar{
   display:grid;
@@ -1226,6 +1234,7 @@ input[type=range]::-webkit-slider-thumb{
       <button class="tab-btn" data-tab="discovery" onclick="switchTab('discovery')">Discover</button>
       <button class="tab-btn" data-tab="mystats" onclick="switchTab('mystats')">My Stats</button>
       <button class="tab-btn" data-tab="platforms" onclick="switchTab('platforms')">Tools</button>
+      <button class="tab-btn" data-tab="aichat" onclick="switchTab('aichat')">Ask AI</button>
       <button class="tab-btn" data-tab="notifications" onclick="switchTab('notifications')">Updates</button>
       <button class="tab-btn" data-tab="admin" onclick="switchTab('admin')" id="adminTabBtn" style="display:none">Admin</button>
     </div>
@@ -1267,6 +1276,26 @@ input[type=range]::-webkit-slider-thumb{
       <div id="adminFeedback"></div>
       <div id="adminUsers"></div>
       <div id="adminTickets"></div>
+    </div>
+
+    <div id="tab-aichat" class="tab-content">
+      <div class="card" style="border-color:rgba(167,139,250,.25)">
+        <div class="card-header"><h2 style="color:var(--purple)">&#129504; Ask Your AI</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128172;</div></div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:14px">Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.</p>
+        <div id="aiChatMessages" style="max-height:55vh;overflow-y:auto;margin-bottom:12px;padding:4px"></div>
+        <div style="display:flex;gap:6px">
+          <input id="aiChatInput" type="text" placeholder="Ask anything about your content strategy..." autocomplete="off" style="flex:1;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:13px;outline:none" onkeydown="if(event.key==='Enter'){event.preventDefault();sendAiChat()}">
+          <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer">Send</button>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
+          <button onclick="quickAiChat('What content should I post today and why?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>
+          <button onclick="quickAiChat('What emotional triggers work best for my audience?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">My audience triggers</button>
+          <button onclick="quickAiChat('What formats get me the most views?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Best formats for me</button>
+          <button onclick="quickAiChat('Give me 5 video ideas based on what works for my audience')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">5 video ideas</button>
+          <button onclick="quickAiChat('Analyse my content patterns - what am I doing right and wrong?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Content analysis</button>
+          <button onclick="quickAiChat('What niches overlap with mine that I could expand into?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Cross-niche ideas</button>
+        </div>
+      </div>
     </div>
 
     <div id="tab-notifications" class="tab-content">
@@ -3367,6 +3396,54 @@ function renderDailyPlan(results, emerging) {
   var slot1Subs = KEYWORD_SUBTOPICS[slot1SubKey];
   slot1Subcat = slot1Subs[slot1DayOfYear % slot1Subs.length];
 
+  function getAudienceWhyReason(keyword) {
+    var stats = getAudienceModelStats();
+    if (!stats || stats.totalPosts < 3) return null;
+    var match = getAudienceMatchScore(keyword);
+    var reasons = [];
+    if (match && match.score >= 40) {
+      if (match.reasons && match.reasons.length > 0) {
+        for (var ri = 0; ri < Math.min(2, match.reasons.length); ri++) reasons.push(match.reasons[ri]);
+      }
+    }
+    if (stats.drivers && stats.drivers.length > 0) {
+      var topDriver = stats.drivers[0];
+      if (topDriver.avgViews > 0) reasons.push("Your audience responds strongest to " + topDriver.name + " content (" + topDriver.avgViews.toLocaleString() + " avg views)");
+    }
+    if (stats.emotions && stats.emotions.length > 0) {
+      reasons.push("Top emotional trigger: " + stats.emotions[0].name + " (" + stats.emotions[0].avgViews.toLocaleString() + " avg views)");
+    }
+    if (stats.formats && stats.formats.length > 0) {
+      reasons.push("Best format: " + stats.formats[0].name + " (" + stats.formats[0].avgViews.toLocaleString() + " avg views)");
+    }
+    if (reasons.length === 0) return null;
+    return {reasons: reasons.slice(0, 3), matchPct: match ? match.score : 0, predictions: match ? match.predictions : null};
+  }
+
+  function renderAudienceWhy(keyword) {
+    var why = getAudienceWhyReason(keyword);
+    if (!why) return '';
+    var h = '<div style="margin:8px 0;padding:10px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.15);border-radius:10px">';
+    h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
+    h += '<span style="font-size:10px;font-weight:900;color:var(--purple);text-transform:uppercase;letter-spacing:1px">Why This For You</span>';
+    if (why.matchPct > 0) h += '<span style="font-size:9px;font-weight:700;color:' + (why.matchPct >= 70 ? 'var(--green)' : why.matchPct >= 45 ? 'var(--amber)' : 'var(--muted)') + ';padding:1px 6px;background:rgba(0,0,0,.3);border-radius:4px">' + why.matchPct + '% AUDIENCE MATCH</span>';
+    h += '</div>';
+    for (var i = 0; i < why.reasons.length; i++) {
+      h += '<div style="font-size:10px;color:var(--white);margin-bottom:3px;padding-left:10px;border-left:2px solid rgba(167,139,250,.3)">&#8227; ' + why.reasons[i] + '</div>';
+    }
+    if (why.predictions) {
+      h += '<div style="display:flex;gap:8px;margin-top:6px">';
+      var preds = [["Comments", why.predictions.comments], ["Shares", why.predictions.shares], ["Followers", why.predictions.followers]];
+      for (var pi = 0; pi < preds.length; pi++) {
+        var pColor = preds[pi][1] === "High" ? "var(--green)" : preds[pi][1] === "Medium" ? "var(--amber)" : "var(--muted)";
+        h += '<div style="font-size:9px;color:' + pColor + '"><span style="color:var(--muted)">' + preds[pi][0] + ':</span> <b>' + preds[pi][1] + '</b></div>';
+      }
+      h += '</div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
   var riseVal = Number(pk.item.rise_percent || 0);
   var vs = Number(pk.item.viral_score || 0);
   var urgency, urgColor, urgMsg, urgWindow, urgPhase;
@@ -3410,6 +3487,7 @@ function renderDailyPlan(results, emerging) {
   var planCS = Number(pk.item.content_score || 0);
   var planCSText = planCS > 0 ? ' | Content: ' + planCS + '/100' : '';
   h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + pk.item.viral_score + ' | Rise: ' + formatRise(riseVal) + planCSText + ' | ' + viewInfo + ' | ' + freshInfo + '</div>';
+  h += renderAudienceWhy(pk.kw);
   h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + hooks[0] + '"</div>';
   h += '<div style="display:flex;gap:6px;margin-bottom:6px"><button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:0;flex:1">More hooks</button>';
   h += '<button id="ai-btn-plan0" class="copy-btn" onclick="aiEnhanceSection(\'' + pk.kw.replace(/'/g, "\\'") + '\',\'plan0\')" style="margin-top:0;flex:1;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">&#129504; AI Enhance</button></div>';
@@ -3465,6 +3543,7 @@ function renderDailyPlan(results, emerging) {
       var nCS = Number(npk.item.content_score || 0);
       var nCSText = nCS > 0 ? ' | Content: ' + nCS + '/100' : '';
       h += '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">Viral: ' + npk.item.viral_score + ' | Rise: ' + formatRise(nRise) + nCSText + ' | ' + nViewInfo + ' | ' + nFreshInfo + '</div>';
+      h += renderAudienceWhy(npk.kw);
       h += '<div style="font-size:12px;color:var(--white);background:var(--panel);padding:10px;border-radius:8px;margin-bottom:6px">"' + nHooks[0] + '"</div>';
       h += '<div style="display:flex;gap:6px;margin-bottom:6px"><button class="copy-btn" onclick="toggleHooks(\'' + nHookId + '\')" style="margin-top:0;flex:1">More hooks</button>';
       h += '<button id="ai-btn-plan' + nsp.idx + '" class="copy-btn" onclick="aiEnhanceSection(\'' + npk.kw.replace(/'/g, "\\'") + '\',\'plan' + nsp.idx + '\')" style="margin-top:0;flex:1;background:rgba(167,139,250,.08);color:var(--purple);border-color:rgba(167,139,250,.25)">&#129504; AI Enhance</button></div>';
@@ -4473,6 +4552,18 @@ function renderFeed(items) {
       h += '<div style="margin-top:4px;font-size:10px">Audience Score: <b class="rise-positive">' + feedAud + '/10</b></div>';
     }
 
+    var feedMatch = getAudienceMatchScore(item.keyword);
+    if (feedMatch && feedMatch.score >= 40) {
+      var fmColor = feedMatch.score >= 70 ? "var(--green)" : feedMatch.score >= 45 ? "var(--amber)" : "var(--muted)";
+      h += '<div style="margin:6px 0;padding:6px 8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.1);border-radius:8px">';
+      h += '<span style="font-size:9px;font-weight:800;color:var(--purple)">WHY THIS FITS YOU: </span>';
+      if (feedMatch.reasons && feedMatch.reasons.length > 0) {
+        h += '<span style="font-size:9px;color:var(--white)">' + feedMatch.reasons.slice(0, 2).join(" | ") + '</span>';
+      }
+      h += ' <span style="font-size:9px;font-weight:700;color:' + fmColor + '">' + feedMatch.score + '% match</span>';
+      h += '</div>';
+    }
+
     h += '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">';
     h += '<button class="copy-btn" onclick="toggleHooks(\'' + hookId + '\')" style="margin-top:0">&#9776; Show Hooks</button>';
     h += '<button class="copy-btn" style="margin-top:0;background:rgba(167,139,250,.1);color:var(--purple);border-color:rgba(167,139,250,.3)" onclick="openPerfModal(\'' + (item.keyword || "").replace(/'/g, "\\'") + '\')">&#9998; Log Performance</button>';
@@ -4571,6 +4662,7 @@ var cachedBreakingNews = [];
 
 async function fetchBreakingNews() {
   var niche = (USER_NICHE || "general").toLowerCase();
+  var newsCacheKey = "cr_news_cache_" + niche;
   var queries = [];
   if (niche === "patriotic" || niche === "patriot" || niche === "uk politics") {
     queries = ["UK politics", "UK news today", "British news", "UK government"];
@@ -4587,13 +4679,22 @@ async function fetchBreakingNews() {
   } else {
     queries = [niche + " news", niche + " trending today", niche + " latest"];
   }
+
+  var cachedNews = null;
+  try { cachedNews = JSON.parse(localStorage.getItem(newsCacheKey)); } catch(e) {}
+  if (cachedNews && cachedNews.items && cachedNews.items.length > 0) {
+    var newsAge = Date.now() - (cachedNews.ts || 0);
+    cachedBreakingNews = cachedNews.items;
+    if (newsAge < 600000) return cachedBreakingNews;
+  }
+
   var allNews = [];
   var seen = {};
   for (var q = 0; q < Math.min(2, queries.length); q++) {
     try {
       var rssUrl = "https://news.google.com/rss/search?q=" + encodeURIComponent(queries[q]) + "&hl=en&gl=GB";
       var proxyUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent(rssUrl);
-      var resp = await fetch(proxyUrl);
+      var resp = await fetch(proxyUrl, {signal: AbortSignal.timeout(6000)});
       if (!resp.ok) continue;
       var data = await resp.json();
       if (data.items) {
@@ -4609,8 +4710,13 @@ async function fetchBreakingNews() {
       }
     } catch(e) {}
   }
-  allNews.sort(function(a,b){return a.hoursAgo - b.hoursAgo});
-  cachedBreakingNews = allNews.slice(0, 8);
+  if (allNews.length > 0) {
+    allNews.sort(function(a,b){return a.hoursAgo - b.hoursAgo});
+    cachedBreakingNews = allNews.slice(0, 8);
+    try { localStorage.setItem(newsCacheKey, JSON.stringify({items: cachedBreakingNews, ts: Date.now()})); } catch(e) {}
+  } else if (cachedBreakingNews && cachedBreakingNews.length > 0) {
+    return cachedBreakingNews;
+  }
   return cachedBreakingNews;
 }
 
@@ -6487,6 +6593,100 @@ function switchTab(tab) {
   localStorage.setItem('patriot_active_tab', tab);
   trackEvent("tab_switch", {tab: tab});
   if (tab === "trends") aiTrendInsights();
+  if (tab === "aichat" && !document.getElementById("aiChatMessages").innerHTML) {
+    var welcomeHtml = '<div class="ai-chat-msg ai-chat-ai">';
+    welcomeHtml += '<b>Hey! I\'m your Creator Radar AI.</b><br><br>';
+    welcomeHtml += 'I know your niche, your audience data, and what\'s trending right now. Ask me anything:<br><br>';
+    welcomeHtml += '- "What should I post about today?"<br>';
+    welcomeHtml += '- "Why does my audience like debate formats?"<br>';
+    welcomeHtml += '- "Give me video ideas that match my best performing patterns"<br>';
+    welcomeHtml += '- "What emotions drive the most views for me?"<br><br>';
+    welcomeHtml += 'Or use the quick buttons below to get started.';
+    welcomeHtml += '</div>';
+    document.getElementById("aiChatMessages").innerHTML = welcomeHtml;
+  }
+}
+
+var aiChatHistory = [];
+
+function quickAiChat(question) {
+  document.getElementById("aiChatInput").value = question;
+  sendAiChat();
+}
+
+async function sendAiChat() {
+  var input = document.getElementById("aiChatInput");
+  var question = (input.value || "").trim();
+  if (!question) return;
+  input.value = "";
+
+  var msgContainer = document.getElementById("aiChatMessages");
+  msgContainer.innerHTML += '<div class="ai-chat-msg ai-chat-user">' + question.replace(/</g,"&lt;").replace(/>/g,"&gt;") + '</div>';
+  msgContainer.innerHTML += '<div class="ai-chat-thinking" id="aiChatThinking">Thinking...</div>';
+  msgContainer.scrollTop = msgContainer.scrollHeight;
+
+  trackEvent("ai_chat", {question: question.substring(0, 50)});
+
+  var audienceCtx = getEnhancedAudienceContext();
+  var niche = USER_NICHE || "general";
+  var perfData = loadPerfData();
+  var perfSummary = "";
+  var totalLogs = 0;
+  for (var k in perfData) { totalLogs += perfData[k].length; }
+  if (totalLogs > 0) {
+    var topByViews = [];
+    for (var kk in perfData) {
+      var entries = perfData[kk];
+      var tv = 0; for (var vi = 0; vi < entries.length; vi++) tv += Number(entries[vi].views || 0);
+      topByViews.push({kw: kk, avgViews: Math.round(tv / entries.length), count: entries.length});
+    }
+    topByViews.sort(function(a,b){return b.avgViews - a.avgViews});
+    perfSummary = " Performance data (" + totalLogs + " logs): Top performing: " + topByViews.slice(0, 5).map(function(t){return t.kw + " (" + t.avgViews + " avg views, " + t.count + " posts)"}).join(", ") + ".";
+  }
+
+  var trendCtx = "";
+  if (cachedResults && cachedResults.length > 0) {
+    trendCtx = " Currently trending in " + niche + ": " + cachedResults.slice(0, 8).map(function(r){return r.keyword + " (viral:" + r.viral_score + ", rise:" + r.rise_percent + "%)"}).join(", ") + ".";
+  }
+
+  var systemPrompt = "You are the Creator Radar AI assistant, a personal content strategist for a " + titleCase(niche) + " content creator. You know everything about their audience, performance data, and current trends." + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Be specific and actionable, not generic\n- Reference their actual data when possible (audience drivers, emotional triggers, best formats, view counts)\n- When recommending content, always explain WHY it will work for THEIR specific audience based on the data\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+
+  aiChatHistory.push({role: "user", content: question});
+  if (aiChatHistory.length > 10) aiChatHistory = aiChatHistory.slice(-10);
+
+  var messages = [{role: "system", content: systemPrompt}].concat(aiChatHistory);
+
+  try {
+    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: messages, temperature: 0.7, max_tokens: 1200})
+    });
+    var thinking = document.getElementById("aiChatThinking");
+    if (thinking) thinking.remove();
+
+    if (!resp.ok) {
+      msgContainer.innerHTML += '<div class="ai-chat-msg ai-chat-ai">Sorry, I couldn\'t process that right now. Try again in a moment.</div>';
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+      return;
+    }
+    var data = await resp.json();
+    var answer = (data.choices[0].message.content || "").trim();
+    aiChatHistory.push({role: "assistant", content: answer});
+
+    var formatted = answer.replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+      .replace(/\n\n/g, "<br><br>")
+      .replace(/\n- /g, "<br>- ")
+      .replace(/\n(\d+)\./g, "<br>$1.")
+      .replace(/\n/g, "<br>");
+    msgContainer.innerHTML += '<div class="ai-chat-msg ai-chat-ai">' + formatted + '</div>';
+  } catch(e) {
+    var thinking2 = document.getElementById("aiChatThinking");
+    if (thinking2) thinking2.remove();
+    msgContainer.innerHTML += '<div class="ai-chat-msg ai-chat-ai">Connection error. Check your internet and try again.</div>';
+  }
+  msgContainer.scrollTop = msgContainer.scrollHeight;
 }
 
 function loadActiveTab() {
@@ -7877,6 +8077,13 @@ var TUTORIAL_STEPS = [
     tab: "platforms",
     text: "Platform-specific captions, hashtags, and the Video Analyzer. Get optimised content for TikTok, Instagram, YouTube, X/Twitter and LinkedIn. The Analyzer gives you alternative content angles from different categories.",
     tip: "Use the topic selector to switch between trending keywords. Each platform gives you optimised captions and best practices."
+  },
+  {
+    title: "Ask Your AI",
+    icon: "&#129504;",
+    tab: "aichat",
+    text: "Your personal AI content strategist. Ask it anything about your audience, content strategy, trends, or niche. It knows your performance data, audience patterns, and what's trending right now. Use the quick buttons or type your own questions.",
+    tip: "The more performance data you log, the smarter the AI gets. It uses your actual audience patterns to give personalised advice."
   },
   {
     title: "Quick Log",
