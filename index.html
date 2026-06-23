@@ -5337,8 +5337,10 @@ function analyzeVideo(caption) {
   var structureScore = analyzeStructure(text, words, lines);
   var engagementScore = analyzeEngagement(text);
   var hashtagScore = analyzeHashtags(text);
+  var trendScore = analyzeTrendRelevance(text);
+  var originalityScore = analyzeOriginality(text, words);
 
-  var totalScore = Math.round((hookScore.score + ctaScore.score + structureScore.score + engagementScore.score + hashtagScore.score) / 5);
+  var totalScore = Math.round((hookScore.score + ctaScore.score + structureScore.score + engagementScore.score + hashtagScore.score + trendScore.score + originalityScore.score) / 7);
 
   var grade, gradeCls;
   if (totalScore >= 80) { grade = "S"; gradeCls = "cs-grade-s"; }
@@ -5352,6 +5354,8 @@ function analyzeVideo(caption) {
   if (structureScore.score < 70) improvements = improvements.concat(structureScore.fixes);
   if (engagementScore.score < 70) improvements = improvements.concat(engagementScore.fixes);
   if (hashtagScore.score < 70) improvements = improvements.concat(hashtagScore.fixes);
+  if (trendScore.score < 70) improvements = improvements.concat(trendScore.fixes);
+  if (originalityScore.score < 70) improvements = improvements.concat(originalityScore.fixes);
 
   var improved = generateImprovedCaption(text, firstLine, hookScore, ctaScore, engagementScore);
 
@@ -5362,6 +5366,7 @@ function analyzeVideo(caption) {
     british: british, debate: debate,
     hookScore: hookScore, ctaScore: ctaScore, structureScore: structureScore,
     engagementScore: engagementScore, hashtagScore: hashtagScore,
+    trendScore: trendScore, originalityScore: originalityScore,
     totalScore: totalScore, grade: grade, gradeCls: gradeCls,
     improvements: improvements, improved: improved,
     alternatives: alternatives, timestamp: new Date().toLocaleString()
@@ -5441,6 +5446,56 @@ function analyzeHashtags(text) {
   else { s += 15; }
   if (hashtags.length > 0) s += 15;
   return { score: Math.min(100, s), label: s >= 70 ? "Good" : s >= 40 ? "Needs Work" : "Missing", fixes: fixes };
+}
+
+function analyzeTrendRelevance(text) {
+  var s = 30;
+  var fixes = [];
+  var t = text.toLowerCase();
+  var matchedTrends = [];
+  if (cachedResults && cachedResults.length > 0) {
+    for (var i = 0; i < cachedResults.length; i++) {
+      var kw = (cachedResults[i].keyword || "").toLowerCase();
+      if (kw && t.indexOf(kw) !== -1) { matchedTrends.push(kw); s += 15; }
+      else {
+        var kwParts = kw.split(/\s+/);
+        for (var j = 0; j < kwParts.length; j++) {
+          if (kwParts[j].length > 3 && t.indexOf(kwParts[j]) !== -1) { s += 5; break; }
+        }
+      }
+    }
+  }
+  var timelyWords = ["2026","2025","today","this week","right now","just","breaking","new","latest","update","announced","just dropped"];
+  for (var tw = 0; tw < timelyWords.length; tw++) {
+    if (t.indexOf(timelyWords[tw]) !== -1) { s += 10; break; }
+  }
+  if (s < 50) fixes.push("Reference current trends or timely topics - check your Discovery tab for what's trending now");
+  if (matchedTrends.length === 0 && cachedResults && cachedResults.length > 0) fixes.push("Your content doesn't match any current trending keywords. Try weaving in: " + cachedResults.slice(0, 3).map(function(r){return r.keyword}).join(", "));
+  return { score: Math.min(100, s), label: s >= 70 ? "Relevant" : s >= 40 ? "Moderate" : "Low", fixes: fixes };
+}
+
+function analyzeOriginality(text, wordCount) {
+  var s = 50;
+  var fixes = [];
+  var t = text.toLowerCase();
+  var cliches = ["link in bio","drop a comment","smash that like","hit that follow","you won't believe","this changed my life","must watch","life hack","game changer","mind blown","wait for it","watch till the end"];
+  var clicheCount = 0;
+  for (var i = 0; i < cliches.length; i++) {
+    if (t.indexOf(cliches[i]) !== -1) clicheCount++;
+  }
+  if (clicheCount === 0) { s += 20; }
+  else if (clicheCount >= 3) { s -= 15; fixes.push("Your caption uses " + clicheCount + " overused phrases. Replace cliches like '" + cliches.filter(function(c){return t.indexOf(c)!==-1})[0] + "' with something unique to your voice"); }
+  else { s += 5; }
+  if (/\b(I|my|me)\b/i.test(text) && /\b(tried|tested|discovered|learned|found|built|made|created)\b/i.test(t)) { s += 15; }
+  if (/\d{2,}/.test(text) || /\b\d+\s*(days?|hours?|weeks?|months?|years?|times?|%)\b/i.test(text)) { s += 10; }
+  if (wordCount >= 20 && wordCount <= 120) s += 5;
+  var uniqueWords = {};
+  var wArr = t.replace(/[^a-z\s]/g, "").split(/\s+/);
+  for (var w = 0; w < wArr.length; w++) { if (wArr[w].length > 3) uniqueWords[wArr[w]] = true; }
+  var uniqueRatio = Object.keys(uniqueWords).length / Math.max(1, wArr.length);
+  if (uniqueRatio > 0.6) s += 10;
+  if (s < 50) fixes.push("Add personal experience, specific numbers, or a unique angle to stand out from generic content");
+  return { score: Math.min(100, s), label: s >= 70 ? "Unique" : s >= 40 ? "Average" : "Generic", fixes: fixes };
 }
 
 function generateImprovedCaption(text, firstLine, hookResult, ctaResult, engResult) {
@@ -6658,24 +6713,52 @@ async function runAnalyzer() {
   if (author) h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">By: @' + author + '</div>';
   h += '</div>';
 
-  h += '<div class="cs-wrap">';
-  h += '<div class="cs-header">';
-  h += '<div><span class="cs-label">Viral Readiness Score</span><br><span class="cs-total">' + result.totalScore + '</span><span style="font-size:12px;color:var(--muted)">/100</span></div>';
-  h += '<span class="cs-grade ' + result.gradeCls + '">Grade ' + result.grade + '</span>';
+  var audienceMatch = getAudienceMatchScore ? getAudienceMatchScore(result.text.split(/\s+/).slice(0, 4).join(" ")) : null;
+
+  h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:12px">';
+  h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
+  h += '<div>';
+  h += '<div style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:1px">Viral Readiness Score</div>';
+  h += '<div style="display:flex;align-items:baseline;gap:4px;margin-top:2px"><span style="font-size:32px;font-weight:900;color:var(--white)">' + result.totalScore + '</span><span style="font-size:13px;color:var(--muted)">/100</span></div>';
   h += '</div>';
-  h += '<div class="cs-bars">';
+  h += '<span class="cs-grade ' + result.gradeCls + '" style="font-size:14px;padding:6px 14px">Grade ' + result.grade + '</span>';
+  h += '</div>';
+
   var dims = [
-    {label:"Hook",score:result.hookScore.score,lbl:result.hookScore.label,col:"var(--green)"},
-    {label:"CTA",score:result.ctaScore.score,lbl:result.ctaScore.label,col:"var(--amber)"},
-    {label:"Structure",score:result.structureScore.score,lbl:result.structureScore.label,col:"var(--blue)"},
-    {label:"Engagement",score:result.engagementScore.score,lbl:result.engagementScore.label,col:"var(--purple)"},
-    {label:"Hashtags",score:result.hashtagScore.score,lbl:result.hashtagScore.label,col:"var(--green2)"}
+    {label:"Hook Strength",score:result.hookScore.score,lbl:result.hookScore.label,col:"#00ff88",icon:"&#9889;"},
+    {label:"Call to Action",score:result.ctaScore.score,lbl:result.ctaScore.label,col:"#fbbf24",icon:"&#128227;"},
+    {label:"Structure",score:result.structureScore.score,lbl:result.structureScore.label,col:"#4dc9f6",icon:"&#128196;"},
+    {label:"Engagement",score:result.engagementScore.score,lbl:result.engagementScore.label,col:"#a78bfa",icon:"&#128293;"},
+    {label:"Hashtags",score:result.hashtagScore.score,lbl:result.hashtagScore.label,col:"#34d399",icon:"#"},
+    {label:"Trend Relevance",score:result.trendScore.score,lbl:result.trendScore.label,col:"#f472b6",icon:"&#128200;"},
+    {label:"Originality",score:result.originalityScore.score,lbl:result.originalityScore.label,col:"#818cf8",icon:"&#10024;"}
   ];
   for (var di = 0; di < dims.length; di++) {
     var dm = dims[di];
-    h += '<div class="cs-dim"><span class="cs-dim-label">' + dm.label + '</span><div class="cs-dim-bar"><div style="height:100%;width:' + dm.score + '%;background:' + dm.col + ';border-radius:3px;transition:width .5s"></div></div><span class="cs-dim-val" style="color:' + dm.col + '">' + dm.score + '</span></div>';
+    var dimCol = dm.score >= 70 ? dm.col : dm.score >= 40 ? "#fbbf24" : "#ff4757";
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+    h += '<span style="width:14px;text-align:center;font-size:11px">' + dm.icon + '</span>';
+    h += '<span style="width:100px;font-size:10px;color:var(--muted);font-weight:600">' + dm.label + '</span>';
+    h += '<div style="flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + dm.score + '%;background:' + dimCol + ';border-radius:4px;transition:width .6s ease"></div></div>';
+    h += '<span style="width:30px;text-align:right;font-size:11px;font-weight:800;color:' + dimCol + '">' + dm.score + '</span>';
+    h += '<span style="width:55px;font-size:8px;color:var(--muted);text-align:right">' + dm.lbl + '</span>';
+    h += '</div>';
   }
-  h += '</div></div>';
+
+  if (audienceMatch && audienceMatch.matchPct > 0) {
+    var amCol = audienceMatch.matchPct >= 70 ? "var(--green)" : audienceMatch.matchPct >= 40 ? "var(--amber)" : "#ff4757";
+    h += '<div style="margin-top:10px;padding:8px 10px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);border-radius:8px">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center">';
+    h += '<span style="font-size:9px;color:var(--green);font-weight:700;text-transform:uppercase">Audience Match</span>';
+    h += '<span style="font-size:14px;font-weight:900;color:' + amCol + '">' + audienceMatch.matchPct + '%</span>';
+    h += '</div>';
+    if (audienceMatch.reasons && audienceMatch.reasons.length > 0) {
+      h += '<div style="margin-top:4px;font-size:9px;color:var(--muted);line-height:1.4">' + audienceMatch.reasons.slice(0, 2).join(" | ") + '</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '</div>';
 
   if (result.improvements.length > 0) {
     h += '<div class="az-section" style="border-left:3px solid var(--amber)">';
