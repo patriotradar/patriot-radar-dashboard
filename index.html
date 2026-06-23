@@ -6707,6 +6707,13 @@ async function runAnalyzer() {
 
   var h = '<div class="az-result">';
 
+  if (url && !usedVideoFrame) {
+    h += '<div style="padding:8px 12px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:8px">';
+    h += '<span style="font-size:14px">&#127909;</span>';
+    h += '<div><span style="font-size:10px;color:var(--purple);font-weight:700">Want deeper analysis?</span><br><span style="font-size:9px;color:var(--muted)">Upload the actual video file above for AI visual analysis - thumbnail scoring, scroll-stop power, and more</span></div>';
+    h += '</div>';
+  }
+
   h += '<div class="az-section" style="border-left:3px solid var(--green)">';
   h += '<div class="az-section-title">Content Analysis</div>';
   h += '<div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px;line-height:1.5;background:var(--panel2);padding:10px;border-radius:8px">"' + result.text.replace(/\n/g, '<br>') + '"</div>';
@@ -6910,23 +6917,25 @@ function renderVideoAnalyzer() {
 
   h += '<div class="card card-glow" style="border-color:var(--purple)">';
   h += '<div class="card-header"><h2 style="color:var(--purple)">Video Analyzer</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128269;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Paste a caption to get AI-powered analysis, specific fixes, an improved version, and content ideas for your niche.</p>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:10px">Upload your video or screenshot for AI visual analysis, or paste a caption for content scoring. All results are personalised to YOUR audience data.</p>';
 
-  h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:8px">';
-  h += '<span style="color:var(--green);font-size:9px;font-weight:700">&#129504; AI-POWERED ANALYSIS</span>';
-  h += '<span style="font-size:9px;color:var(--muted);margin-left:auto">Works for any niche automatically</span>';
+  h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:6px 10px;background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);border-radius:8px">';
+  h += '<span style="color:var(--purple);font-size:9px;font-weight:700">&#129504; AI VISUAL + CONTENT ANALYSIS</span>';
+  h += '<span style="font-size:9px;color:var(--muted);margin-left:auto">Personalised to your audience</span>';
   h += '</div>';
 
-  h += '<textarea class="az-textarea" id="azCaption" placeholder="Paste your video caption, hook, or script here..." style="margin-bottom:6px"></textarea>';
-  h += '<div class="az-or">or upload a video/thumbnail for visual analysis</div>';
-  h += '<div style="margin-bottom:8px">';
-  h += '<label for="azVideoUpload" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:2px dashed rgba(167,139,250,.3);border-radius:10px;cursor:pointer;background:rgba(167,139,250,.03);transition:all .2s">';
-  h += '<span style="font-size:20px">&#127909;</span>';
-  h += '<span style="font-size:12px;color:var(--purple);font-weight:600">Upload Video or Screenshot</span>';
+  h += '<div style="margin-bottom:12px">';
+  h += '<label for="azVideoUpload" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 14px;border:2px dashed rgba(167,139,250,.4);border-radius:12px;cursor:pointer;background:linear-gradient(135deg,rgba(167,139,250,.06),rgba(167,139,250,.02));transition:all .2s">';
+  h += '<span style="font-size:28px">&#127909;</span>';
+  h += '<span style="font-size:13px;color:var(--purple);font-weight:700">Upload Video or Screenshot</span>';
+  h += '<span style="font-size:10px;color:var(--muted)">Get AI visual analysis - thumbnail scoring, scroll-stop power, emotional impact</span>';
   h += '</label>';
   h += '<input type="file" id="azVideoUpload" accept="video/*,image/*" style="display:none" onchange="handleVideoUpload(this)">';
-  h += '<div id="azUploadPreview" style="display:none;margin-top:6px;text-align:center"></div>';
+  h += '<div id="azUploadPreview" style="display:none;margin-top:8px;text-align:center"></div>';
   h += '</div>';
+
+  h += '<div class="az-or">or paste caption / script for content scoring</div>';
+  h += '<textarea class="az-textarea" id="azCaption" placeholder="Paste your video caption, hook, or script here..." style="margin-bottom:6px"></textarea>';
   h += '<div class="az-or">or paste a video URL</div>';
   h += '<div class="az-input-wrap">';
   h += '<input class="az-input" id="azUrl" type="text" placeholder="Paste video URL (TikTok supported)...">';
