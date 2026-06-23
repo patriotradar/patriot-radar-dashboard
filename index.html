@@ -1585,6 +1585,30 @@ input[type=range]::-webkit-slider-thumb{
 
 <div id="perfModal" class="modal-overlay hidden"></div>
 
+<div id="logNudgePopup" style="display:none;position:fixed;inset:0;z-index:9996;background:rgba(0,0,0,.92);overflow-y:auto;-webkit-overflow-scrolling:touch">
+  <div style="max-width:420px;margin:0 auto;padding:20px;min-height:100vh;display:flex;align-items:center">
+    <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;width:100%;box-shadow:0 0 40px rgba(0,255,136,.15)">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:40px;margin-bottom:8px">&#128200;</div>
+        <h2 style="font-size:18px;color:var(--green);margin-bottom:8px">Unlock Your Audience Intelligence</h2>
+        <p style="font-size:13px;color:var(--muted);line-height:1.6">You're using Creator Radar but the AI doesn't know what YOUR audience likes yet. Log your video stats (or upload a screenshot of your analytics) and the system will learn what works for you specifically.</p>
+      </div>
+      <div style="background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
+        <p style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">What happens when you log:</p>
+        <div style="font-size:12px;color:var(--muted);line-height:1.8">
+          <div>&#10003; AI learns which topics YOUR audience engages with</div>
+          <div>&#10003; Content Plan personalises to your best-performing styles</div>
+          <div>&#10003; You get an Audience Score showing what resonates</div>
+          <div>&#10003; Screenshot upload auto-extracts your stats via AI</div>
+        </div>
+      </div>
+      <button onclick="closeLogNudge();openPerfModal('')" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--green),var(--green2));color:#031109;border:none;border-radius:12px;font-weight:900;font-size:14px;cursor:pointer;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Log My First Video Now</button>
+      <button onclick="closeLogNudge()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer">I'll do it later</button>
+      <p style="font-size:10px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.4">Takes 30 seconds. Just enter your views, likes, and comments from any recent video - or tap the camera icon to upload a screenshot.</p>
+    </div>
+  </div>
+</div>
+
 <script>
 var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
@@ -3306,7 +3330,8 @@ function renderDailyPlan(results, emerging) {
     freshPick3 = getFreshSlotIdea(topEmotions, excludeForSlot3, dayOfYear + hourSeed + 13);
   }
 
-  var h = '<div class="card card-glow" style="border-color:var(--green)">';
+  var h = getLogNudgeBanner();
+  h += '<div class="card card-glow" style="border-color:var(--green)">';
   h += '<div class="card-header"><h2>Today\'s Content Plan</h2><div class="section-icon" style="color:var(--green)">&#9776;</div></div>';
 
   // --- SLOT 1: Top trending scanner keyword ---
@@ -8173,6 +8198,42 @@ function closeNudge() {
   localStorage.setItem("cr_referral_nudge_shown", "1");
 }
 
+function showLogNudge() {
+  var perfData = {};
+  try { perfData = JSON.parse(localStorage.getItem(PERF_KEY) || "{}"); } catch(e) {}
+  var totalLogs = 0;
+  for (var k in perfData) { if (Array.isArray(perfData[k])) totalLogs += perfData[k].length; }
+  if (totalLogs > 0) return;
+  var sessions = parseInt(localStorage.getItem("cr_session_count") || "0", 10);
+  if (sessions < 2) return;
+  var lastDismissed = parseInt(localStorage.getItem("cr_log_nudge_dismissed_at") || "0", 10);
+  if (lastDismissed > 0 && sessions - lastDismissed < 3) return;
+  var popup = document.getElementById("logNudgePopup");
+  if (popup) {
+    popup.style.display = "block";
+    trackEvent("feature_use", {feature: "log_nudge_shown", session_count: sessions});
+  }
+}
+
+function closeLogNudge() {
+  var popup = document.getElementById("logNudgePopup");
+  if (popup) popup.style.display = "none";
+  var sessions = parseInt(localStorage.getItem("cr_session_count") || "0", 10);
+  localStorage.setItem("cr_log_nudge_dismissed_at", sessions.toString());
+}
+
+function getLogNudgeBanner() {
+  var perfData = {};
+  try { perfData = JSON.parse(localStorage.getItem(PERF_KEY) || "{}"); } catch(e) {}
+  var totalLogs = 0;
+  for (var k in perfData) { if (Array.isArray(perfData[k])) totalLogs += perfData[k].length; }
+  if (totalLogs > 0) return "";
+  return '<div onclick="openPerfModal(\'\')" style="cursor:pointer;padding:14px;margin-bottom:12px;background:linear-gradient(135deg,rgba(0,255,136,.08),rgba(0,184,107,.05));border:1px solid rgba(0,255,136,.25);border-radius:14px;text-align:center">' +
+    '<div style="font-size:13px;color:var(--green);font-weight:700;margin-bottom:4px">&#128200; Your AI isn\'t learning yet</div>' +
+    '<div style="font-size:11px;color:var(--muted);line-height:1.5">Log a video\'s views, likes & comments (or upload a screenshot) so the AI can learn what YOUR audience likes. Tap here to log now.</div>' +
+    '</div>';
+}
+
 function closeNudgeAndScroll() {
   closeNudge();
   setTimeout(function() { scrollToReferral(); }, 300);
@@ -8256,6 +8317,10 @@ async function showDashboard() {
     setTimeout(function() { showNichePrompt(); }, 600);
     setTimeout(function() { if (document.getElementById("nichePromptPopup").style.display !== "block") showFeedbackPopup(); }, 1500);
     setTimeout(function() { if (!sessionStorage.getItem("cr_fb_shown") || localStorage.getItem("cr_fb_submitted")) { showReferralPopup(); } }, 2000);
+    setTimeout(function() {
+      var anyPopupOpen = document.getElementById("nichePromptPopup").style.display === "block" || document.getElementById("feedbackPopup").style.display === "block";
+      if (!anyPopupOpen) showLogNudge();
+    }, 2500);
     checkReferralNudge();
   }
 }
