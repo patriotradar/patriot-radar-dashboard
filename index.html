@@ -9000,13 +9000,17 @@ async function showDashboard() {
   document.getElementById("resetBox").classList.add("hidden");
 
   var isAdmin = false;
+  var currentUser = null;
   try {
-    var u = (await supabaseClient.auth.getUser()).data.user;
-    if (u && u.user_metadata && u.user_metadata.role === "admin") isAdmin = true;
-    if (u && u.email) {
+    currentUser = (await supabaseClient.auth.getUser()).data.user;
+    if (currentUser && currentUser.user_metadata && currentUser.user_metadata.role === "admin") isAdmin = true;
+    if (currentUser && currentUser.email) {
       for (var i = 0; i < ADMIN_EMAILS.length; i++) {
-        if (u.email.toLowerCase() === ADMIN_EMAILS[i]) { isAdmin = true; break; }
+        if (currentUser.email.toLowerCase() === ADMIN_EMAILS[i]) { isAdmin = true; break; }
       }
+    }
+    if (currentUser && currentUser.user_metadata && currentUser.user_metadata.niche) {
+      USER_NICHE = currentUser.user_metadata.niche;
     }
   } catch(e) {}
 
@@ -9020,13 +9024,6 @@ async function showDashboard() {
 
   document.getElementById("dashboard").classList.remove("hidden");
 
-  try {
-    var u = (await supabaseClient.auth.getUser()).data.user;
-    if (u && u.user_metadata && u.user_metadata.niche) {
-      USER_NICHE = u.user_metadata.niche;
-    }
-  } catch(e) {}
-
   trackEvent("session_start", {niche: USER_NICHE || "general"});
   trackUserActivity();
   if (FINANCIAL_NICHES.indexOf((USER_NICHE || "").toLowerCase()) !== -1) showFinancialDisclaimer();
@@ -9034,10 +9031,10 @@ async function showDashboard() {
   checkAdminStatus();
   initNicheSwitcher();
   initVoiceInput();
-  await loadPerfFromSupabase();
   initStreak();
   loadLiveStats();
   loadReferralCard();
+  loadPerfFromSupabase();
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
   } else {
