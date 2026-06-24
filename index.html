@@ -6898,8 +6898,7 @@ function loadHistoryAnalysis(idx) {
   }
 }
 
-var auditCaptions = [];
-var auditThumbnails = [];
+var auditPosts = [{caption:"",image:null},{caption:"",image:null},{caption:"",image:null}];
 
 function renderAuditTab() {
   var el = document.getElementById("auditContent");
@@ -6908,7 +6907,7 @@ function renderAuditTab() {
 
   var h = '<div class="card card-glow" style="border-color:#f472b6;margin-bottom:16px">';
   h += '<div class="card-header"><h2 style="color:#f472b6">Creator Audit</h2><div class="section-icon" style="background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.3);color:#f472b6">&#128203;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.5">Audit any creator\'s content strategy. Paste their captions and upload their thumbnails to generate a professional report with scores, strengths, weaknesses, and actionable recommendations.</p>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.5">Audit any creator\'s content strategy. For each post, paste the caption AND upload the analytics screenshot so the AI can analyze both together.</p>';
 
   h += '<div style="margin-bottom:12px">';
   h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Creator Name / Handle</label>';
@@ -6932,24 +6931,32 @@ function renderAuditTab() {
   h += '</div>';
 
   h += '<div style="margin-bottom:12px">';
-  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Paste Their Captions (one per box - add at least 3 for best results)</label>';
-  h += '<div id="auditCaptionList">';
-  var numCaptions = Math.max(3, auditCaptions.length + 1);
-  for (var ci = 0; ci < numCaptions; ci++) {
-    h += '<textarea class="audit-caption-input" placeholder="Paste caption ' + (ci+1) + '..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#07100c;color:var(--white);font-size:13px;outline:none;resize:vertical;min-height:60px;max-height:120px;margin-bottom:6px;box-sizing:border-box;font-family:inherit;line-height:1.4">' + (auditCaptions[ci] || '') + '</textarea>';
-  }
-  h += '</div>';
-  h += '<button onclick="addAuditCaption()" style="padding:6px 12px;font-size:10px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.2);color:#f472b6;border-radius:6px;cursor:pointer;font-weight:700">+ Add Another Caption</button>';
-  h += '</div>';
+  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:8px">Their Posts (caption + screenshot for each)</label>';
 
-  h += '<div style="margin-bottom:14px">';
-  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Upload Their Thumbnails / Screenshots (optional)</label>';
-  h += '<label for="auditThumbUpload" style="display:flex;align-items:center;gap:8px;padding:14px;border:2px dashed rgba(244,114,182,.3);border-radius:10px;cursor:pointer;background:rgba(244,114,182,.03)">';
-  h += '<span style="font-size:20px">&#128247;</span>';
-  h += '<div><span style="font-size:12px;color:#f472b6;font-weight:700">Upload Images</span><br><span style="font-size:10px;color:var(--muted)">Thumbnails, screenshots, or video frames</span></div>';
-  h += '</label>';
-  h += '<input type="file" id="auditThumbUpload" accept="image/*" multiple style="display:none" onchange="handleAuditThumbnails(this)">';
-  h += '<div id="auditThumbPreview" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>';
+  for (var ci = 0; ci < auditPosts.length; ci++) {
+    h += '<div style="padding:12px;border:1px solid rgba(244,114,182,.15);border-radius:12px;margin-bottom:10px;background:rgba(244,114,182,.02)">';
+    h += '<div style="font-size:10px;color:#f472b6;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Post ' + (ci+1) + '</div>';
+    h += '<textarea class="audit-caption-input" data-idx="' + ci + '" placeholder="Paste caption for post ' + (ci+1) + '..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#07100c;color:var(--white);font-size:13px;outline:none;resize:vertical;min-height:60px;max-height:120px;margin-bottom:8px;box-sizing:border-box;font-family:inherit;line-height:1.4">' + (auditPosts[ci].caption || '') + '</textarea>';
+
+    h += '<div style="display:flex;align-items:center;gap:8px">';
+    if (auditPosts[ci].image) {
+      h += '<div style="position:relative;width:56px;height:56px;border-radius:6px;overflow:hidden;border:1px solid var(--border);flex-shrink:0">';
+      h += '<img src="' + auditPosts[ci].image + '" style="width:100%;height:100%;object-fit:cover">';
+      h += '<button onclick="removeAuditImage(' + ci + ')" style="position:absolute;top:1px;right:1px;width:16px;height:16px;background:rgba(0,0,0,.8);color:#fff;border:none;border-radius:50%;font-size:9px;cursor:pointer;line-height:1">x</button>';
+      h += '</div>';
+      h += '<span style="font-size:10px;color:var(--green);font-weight:600">Screenshot attached</span>';
+    } else {
+      h += '<label for="auditImg' + ci + '" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border:1px dashed rgba(244,114,182,.3);border-radius:8px;cursor:pointer;background:rgba(244,114,182,.03);flex:1">';
+      h += '<span style="font-size:16px">&#128247;</span>';
+      h += '<span style="font-size:11px;color:#f472b6;font-weight:600">Upload screenshot / thumbnail</span>';
+      h += '</label>';
+      h += '<input type="file" id="auditImg' + ci + '" accept="image/*" style="display:none" onchange="handleAuditPostImage(this,' + ci + ')">';
+    }
+    h += '</div>';
+    h += '</div>';
+  }
+
+  h += '<button onclick="addAuditPost()" style="padding:8px 14px;font-size:11px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.2);color:#f472b6;border-radius:8px;cursor:pointer;font-weight:700;margin-bottom:4px">+ Add Another Post</button>';
   h += '</div>';
 
   h += '<button id="auditRunBtn" onclick="runCreatorAudit()" style="width:100%;padding:16px;background:linear-gradient(135deg,#f472b6,#a855f7);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;margin-bottom:8px">GENERATE AUDIT REPORT</button>';
@@ -6973,7 +6980,6 @@ function renderAuditTab() {
   }
 
   el.innerHTML = h;
-  renderAuditThumbnailPreviews();
 }
 
 function selectAuditPlatform(btn, platform) {
@@ -6989,66 +6995,58 @@ function selectAuditPlatform(btn, platform) {
   document.getElementById("auditPlatform").value = platform;
 }
 
-function addAuditCaption() {
-  collectAuditCaptions();
-  auditCaptions.push("");
+function collectAuditPosts() {
+  var inputs = document.querySelectorAll(".audit-caption-input");
+  for (var i = 0; i < inputs.length; i++) {
+    var idx = parseInt(inputs[i].getAttribute("data-idx"));
+    if (!isNaN(idx) && auditPosts[idx]) auditPosts[idx].caption = inputs[i].value.trim();
+  }
+}
+
+function addAuditPost() {
+  collectAuditPosts();
+  auditPosts.push({caption:"",image:null});
   renderAuditTab();
 }
 
-function collectAuditCaptions() {
-  var inputs = document.querySelectorAll(".audit-caption-input");
-  auditCaptions = [];
-  for (var i = 0; i < inputs.length; i++) {
-    if (inputs[i].value.trim()) auditCaptions.push(inputs[i].value.trim());
-  }
+function handleAuditPostImage(input, idx) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    collectAuditPosts();
+    auditPosts[idx].image = e.target.result;
+    renderAuditTab();
+  };
+  reader.readAsDataURL(file);
 }
 
-function handleAuditThumbnails(input) {
-  var files = input.files;
-  for (var i = 0; i < files.length; i++) {
-    (function(file) {
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        auditThumbnails.push({name: file.name, data: e.target.result});
-        renderAuditThumbnailPreviews();
-      };
-      reader.readAsDataURL(file);
-    })(files[i]);
-  }
-}
-
-function renderAuditThumbnailPreviews() {
-  var el = document.getElementById("auditThumbPreview");
-  if (!el) return;
-  var h = "";
-  for (var i = 0; i < auditThumbnails.length; i++) {
-    h += '<div style="position:relative;width:60px;height:60px;border-radius:6px;overflow:hidden;border:1px solid var(--border)">';
-    h += '<img src="' + auditThumbnails[i].data + '" style="width:100%;height:100%;object-fit:cover">';
-    h += '<button onclick="auditThumbnails.splice(' + i + ',1);renderAuditThumbnailPreviews()" style="position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;font-size:10px;cursor:pointer;line-height:1">x</button>';
-    h += '</div>';
-  }
-  el.innerHTML = h;
+function removeAuditImage(idx) {
+  collectAuditPosts();
+  auditPosts[idx].image = null;
+  renderAuditTab();
 }
 
 async function runCreatorAudit() {
-  collectAuditCaptions();
+  collectAuditPosts();
   var creatorName = (document.getElementById("auditCreatorName").value || "").trim();
   var niche = (document.getElementById("auditNiche").value || "").trim();
   var platform = (document.getElementById("auditPlatform").value || "").trim();
 
   if (!creatorName) { alert("Please enter the creator's name or handle"); return; }
   if (!niche) { alert("Please enter their niche"); return; }
-  if (auditCaptions.length < 1) { alert("Please paste at least one caption to audit"); return; }
+  var filledPosts = auditPosts.filter(function(p) { return p.caption; });
+  if (filledPosts.length < 1) { alert("Please paste at least one caption to audit"); return; }
 
   var btn = document.getElementById("auditRunBtn");
   var resultDiv = document.getElementById("auditResult");
   btn.disabled = true;
   btn.textContent = "ANALYZING CONTENT...";
-  resultDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)"><div style="font-size:24px;margin-bottom:8px">&#9881;</div>Scoring ' + auditCaptions.length + ' captions across 7 dimensions...</div>';
+  resultDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)"><div style="font-size:24px;margin-bottom:8px">&#9881;</div>Scoring ' + filledPosts.length + ' posts across 7 dimensions...</div>';
 
   var captionResults = [];
-  for (var i = 0; i < auditCaptions.length; i++) {
-    var r = analyzeVideo(auditCaptions[i]);
+  for (var i = 0; i < filledPosts.length; i++) {
+    var r = analyzeVideo(filledPosts[i].caption);
     if (r) captionResults.push(r);
   }
 
@@ -7088,12 +7086,16 @@ async function runCreatorAudit() {
   avgTotal = Math.round(avgTotal / n);
 
   var thumbnailResults = [];
-  if (auditThumbnails.length > 0) {
-    btn.textContent = "ANALYZING THUMBNAILS...";
-    for (var ti = 0; ti < Math.min(5, auditThumbnails.length); ti++) {
+  var postsWithImages = filledPosts.filter(function(p) { return p.image; });
+  if (postsWithImages.length > 0) {
+    btn.textContent = "ANALYZING SCREENSHOTS (" + postsWithImages.length + ")...";
+    for (var ti = 0; ti < postsWithImages.length; ti++) {
       try {
-        var thumbResult = await analyzeVideoFrame(auditThumbnails[ti].data, auditCaptions[0] || "");
-        if (thumbResult) thumbnailResults.push(thumbResult);
+        var thumbResult = await analyzeVideoFrame(postsWithImages[ti].image, postsWithImages[ti].caption);
+        if (thumbResult) {
+          thumbResult._postCaption = postsWithImages[ti].caption.substring(0, 80);
+          thumbnailResults.push(thumbResult);
+        }
       } catch(e) {}
     }
   }
@@ -7101,8 +7103,21 @@ async function runCreatorAudit() {
   btn.textContent = "GENERATING AI REPORT...";
   var aiReport = null;
   if (GROQ_KEY) {
-    var captionSummary = auditCaptions.map(function(c, idx) { return "Caption " + (idx+1) + ": " + c.substring(0, 200); }).join("\n");
-    var auditPrompt = "You are a professional social media auditor. Generate a detailed audit report for this creator.\n\nCreator: " + creatorName + "\nNiche: " + niche + "\nPlatform: " + (platform || "Multi-platform") + "\n\nTheir recent captions:\n" + captionSummary + "\n\nContent scoring averages (out of 100):\n- Hook Strength: " + avgHook + "\n- Call to Action: " + avgCTA + "\n- Structure: " + avgStructure + "\n- Engagement: " + avgEngagement + "\n- Hashtags: " + avgHashtags + "\n- Trend Relevance: " + avgTrend + "\n- Originality: " + avgOriginality + "\n- Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier\n\nProvide a professional audit report in this exact JSON format (no markdown):\n{\n\"summary\": \"2-3 sentence executive summary of their content strategy\",\n\"strengths\": [\"Strength 1 with specific example from their content\", \"Strength 2\", \"Strength 3\"],\n\"weaknesses\": [\"Weakness 1 with specific example\", \"Weakness 2\", \"Weakness 3\"],\n\"recommendations\": [\"Specific actionable recommendation 1\", \"Recommendation 2\", \"Recommendation 3\", \"Recommendation 4\", \"Recommendation 5\"],\n\"contentStrategy\": \"A paragraph about their overall content strategy - what's working and what needs to change\",\n\"growthPotential\": \"High/Medium/Low - explain why based on their scores and content\",\n\"competitorComparison\": \"How they compare to typical creators in the " + niche + " niche\",\n\"quickWins\": [\"Quick win 1 they can implement today\", \"Quick win 2\", \"Quick win 3\"]\n}";
+    var captionSummary = filledPosts.map(function(p, idx) {
+      var line = "Post " + (idx+1) + ": " + p.caption.substring(0, 200);
+      if (p.image) line += " [screenshot attached - analyzed separately]";
+      return line;
+    }).join("\n");
+    var visualSummary = "";
+    if (thumbnailResults.length > 0) {
+      visualSummary = "\n\nVisual analysis of " + thumbnailResults.length + " screenshots:\n";
+      for (var vi = 0; vi < thumbnailResults.length; vi++) {
+        visualSummary += "- Image " + (vi+1) + ": Visual score " + (thumbnailResults[vi].visualScore || 0) + "/100, Scroll-Stop: " + (thumbnailResults[vi].scrollStopPower || "Unknown");
+        if (thumbnailResults[vi].thumbnailAnalysis) visualSummary += ", " + thumbnailResults[vi].thumbnailAnalysis.substring(0, 100);
+        visualSummary += "\n";
+      }
+    }
+    var auditPrompt = "You are a professional social media auditor. Generate a detailed audit report for this creator.\n\nCreator: " + creatorName + "\nNiche: " + niche + "\nPlatform: " + (platform || "Multi-platform") + "\n\nTheir recent posts:\n" + captionSummary + "\n\nContent scoring averages (out of 100):\n- Hook Strength: " + avgHook + "\n- Call to Action: " + avgCTA + "\n- Structure: " + avgStructure + "\n- Engagement: " + avgEngagement + "\n- Hashtags: " + avgHashtags + "\n- Trend Relevance: " + avgTrend + "\n- Originality: " + avgOriginality + "\n- Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier" + visualSummary + "\n\nProvide a professional audit report in this exact JSON format (no markdown):\n{\n\"summary\": \"2-3 sentence executive summary of their content strategy\",\n\"strengths\": [\"Strength 1 with specific example from their content\", \"Strength 2\", \"Strength 3\"],\n\"weaknesses\": [\"Weakness 1 with specific example\", \"Weakness 2\", \"Weakness 3\"],\n\"recommendations\": [\"Specific actionable recommendation 1\", \"Recommendation 2\", \"Recommendation 3\", \"Recommendation 4\", \"Recommendation 5\"],\n\"contentStrategy\": \"A paragraph about their overall content strategy - what's working and what needs to change\",\n\"growthPotential\": \"High/Medium/Low - explain why based on their scores and content\",\n\"competitorComparison\": \"How they compare to typical creators in the " + niche + " niche\",\n\"quickWins\": [\"Quick win 1 they can implement today\", \"Quick win 2\", \"Quick win 3\"]\n}";
     try {
       var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
@@ -7260,7 +7275,7 @@ function renderAuditReport(audit, container) {
       h += '<div style="padding:8px;border-bottom:1px solid var(--border);margin-bottom:6px">';
       h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
       h += '<span style="font-size:14px;font-weight:900;color:' + trCol + '">' + (tr.visualScore || 0) + '/100</span>';
-      h += '<span style="font-size:10px;color:var(--muted)">Image ' + (thi+1) + '</span>';
+      h += '<span style="font-size:10px;color:var(--muted)">' + (tr._postCaption ? '"' + tr._postCaption + '..."' : 'Image ' + (thi+1)) + '</span>';
       if (tr.scrollStopPower) h += '<span style="font-size:9px;padding:2px 6px;border:1px solid var(--border);border-radius:4px;color:var(--muted)">Scroll-Stop: ' + tr.scrollStopPower + '</span>';
       h += '</div>';
       if (tr.thumbnailAnalysis) h += '<div style="font-size:10px;color:var(--white);line-height:1.4">' + tr.thumbnailAnalysis + '</div>';
