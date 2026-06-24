@@ -10238,6 +10238,12 @@ async function loadAdminPanel() {
   h += '<div id="adminReferralsList"><p style="color:var(--muted);font-size:12px">Loading referrals...</p></div>';
   h += '</div>';
 
+  // Audit Applications section
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:#a855f7;margin-bottom:12px">&#129504; Audit Applications</h2>';
+  h += '<div id="adminAuditApps"><p style="color:var(--muted);font-size:12px">Loading applications...</p></div>';
+  h += '</div>';
+
   // Users section
   h += '<div class="card">';
   h += '<h2 style="font-size:14px;color:var(--purple);margin-bottom:12px">&#128101; Active Users</h2>';
@@ -10249,7 +10255,107 @@ async function loadAdminPanel() {
   loadAdminFeedback();
   loadAdminTickets();
   loadAdminReferrals();
+  loadAdminAuditApps();
   loadAdminUsers();
+}
+
+function loadAdminAuditApps() {
+  var container = document.getElementById("adminAuditApps");
+  if (!container) return;
+  var apps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+  if (apps.length === 0) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:11px">No audit applications yet. Share your landing page to start receiving them.</p>';
+    container.innerHTML += '<div style="margin-top:8px;padding:10px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px">';
+    container.innerHTML += '<div style="font-size:10px;color:#a855f7;font-weight:700;margin-bottom:4px">YOUR AUDIT LANDING PAGE</div>';
+    container.innerHTML += '<div style="font-size:11px;color:var(--white);word-break:break-all">patriotradar.github.io/patriot-radar-dashboard/audit.html</div>';
+    container.innerHTML += '</div>';
+    return;
+  }
+  var h = '<div style="margin-bottom:8px;padding:8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px">';
+  h += '<div style="font-size:10px;color:#a855f7;font-weight:700">LANDING PAGE: </div>';
+  h += '<div style="font-size:10px;color:var(--white);word-break:break-all">patriotradar.github.io/patriot-radar-dashboard/audit.html</div>';
+  h += '</div>';
+  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:10px">' + apps.length + ' application(s)</div>';
+  for (var i = 0; i < apps.length; i++) {
+    var app = apps[i];
+    var statusCol = app.status === "complete" ? "var(--green)" : app.status === "processing" ? "var(--amber)" : "var(--muted)";
+    var statusText = app.status || "pending";
+    h += '<div style="padding:12px;border:1px solid rgba(168,85,247,.15);border-radius:10px;margin-bottom:8px;background:rgba(168,85,247,.02)">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    h += '<div style="font-size:13px;font-weight:800;color:var(--white)">' + (app.name || "Unknown") + '</div>';
+    h += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(168,85,247,.1);color:' + statusCol + ';font-weight:700;text-transform:uppercase">' + statusText + '</span>';
+    h += '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">' + (app.handle || "") + ' | ' + (app.platform || "") + ' | ' + (app.niche || "") + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Email: ' + (app.email || "N/A") + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Period: ' + (app.analyticsPeriod || "N/A") + '</div>';
+    if (app.challenge) h += '<div style="font-size:10px;color:var(--amber);margin-bottom:4px">Challenge: ' + app.challenge.substring(0, 100) + '</div>';
+    var captionCount = 0;
+    if (app.captions) { for (var ci = 0; ci < app.captions.length; ci++) { if (app.captions[ci]) captionCount++; } }
+    h += '<div style="font-size:9px;color:var(--muted)">' + captionCount + ' captions submitted | ' + (app.timestamp ? new Date(app.timestamp).toLocaleDateString() : "Unknown date") + '</div>';
+    h += '<div style="display:flex;gap:6px;margin-top:8px">';
+    h += '<button onclick="loadAuditAppIntoForm(' + i + ')" style="padding:6px 12px;font-size:10px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700">GENERATE REPORT</button>';
+    h += '<button onclick="deleteAuditApp(' + i + ')" style="padding:6px 12px;font-size:10px;background:rgba(255,71,87,.08);color:#ff4757;border:1px solid rgba(255,71,87,.2);border-radius:6px;cursor:pointer;font-weight:600">DELETE</button>';
+    h += '</div>';
+    h += '</div>';
+  }
+  container.innerHTML = h;
+}
+
+function loadAuditAppIntoForm(idx) {
+  var apps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+  var app = apps[idx];
+  if (!app) return;
+  switchTab("audit");
+  setTimeout(function() {
+    var nameEl = document.getElementById("auditCreatorName");
+    var nicheEl = document.getElementById("auditNiche");
+    if (nameEl) nameEl.value = app.name + " (" + (app.handle || "") + ")";
+    if (nicheEl) nicheEl.value = app.niche || "";
+    if (app.platform) {
+      var platBtns = document.querySelectorAll(".audit-plat-btn");
+      for (var pi = 0; pi < platBtns.length; pi++) {
+        if (platBtns[pi].textContent.toLowerCase().indexOf(app.platform.toLowerCase()) !== -1) {
+          selectAuditPlatform(platBtns[pi], app.platform);
+          break;
+        }
+      }
+    }
+    if (app.analyticsPeriod) {
+      var periodBtns = document.querySelectorAll(".audit-period-btn");
+      for (var pri = 0; pri < periodBtns.length; pri++) {
+        if (periodBtns[pri].textContent.indexOf(app.analyticsPeriod.replace(" days", " Days").replace("days", "Days")) !== -1) {
+          selectAuditPeriod(periodBtns[pri], periodBtns[pri].textContent);
+          break;
+        }
+      }
+    }
+    if (app.captions) {
+      auditPosts = [];
+      for (var ci = 0; ci < app.captions.length; ci++) {
+        auditPosts.push({caption: app.captions[ci] || "", image: null});
+      }
+      if (auditPosts.length === 0) auditPosts = [{caption:"",image:null}];
+      renderAuditTab();
+      setTimeout(function() {
+        var nameEl2 = document.getElementById("auditCreatorName");
+        var nicheEl2 = document.getElementById("auditNiche");
+        if (nameEl2) nameEl2.value = app.name + " (" + (app.handle || "") + ")";
+        if (nicheEl2) nicheEl2.value = app.niche || "";
+        var challengeEl = document.getElementById("auditChallenge");
+        if (challengeEl && app.challenge) challengeEl.value = app.challenge;
+      }, 100);
+    }
+    apps[idx].status = "processing";
+    localStorage.setItem("cr_audit_applications", JSON.stringify(apps));
+  }, 300);
+}
+
+function deleteAuditApp(idx) {
+  if (!confirm("Delete this audit application?")) return;
+  var apps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+  apps.splice(idx, 1);
+  localStorage.setItem("cr_audit_applications", JSON.stringify(apps));
+  loadAdminAuditApps();
 }
 
 async function trackUserActivity() {
