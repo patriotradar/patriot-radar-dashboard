@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Audience Intelligence Audit | Creator Radar</title>
+<title>Audience Intelligence Report | Creator Radar</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg: #030504;
@@ -31,7 +32,6 @@ body {
   line-height: 1.6;
 }
 
-/* Animated gradient background */
 .bg-gradient {
   position: fixed;
   top: 0; left: 0;
@@ -66,7 +66,6 @@ body {
   padding: 16px;
 }
 
-/* ─── Hero ─── */
 .hero {
   text-align: center;
   padding: 60px 20px 50px;
@@ -118,10 +117,7 @@ body {
   line-height: 1.5;
 }
 
-.hero-price {
-  margin-bottom: 28px;
-}
-
+.hero-price { margin-bottom: 28px; }
 .price-label {
   display: block;
   font-size: 11px;
@@ -131,14 +127,12 @@ body {
   font-weight: 700;
   margin-bottom: 6px;
 }
-
 .price-amount {
   font-size: 42px;
   font-weight: 900;
   color: var(--white);
   letter-spacing: -1px;
 }
-
 .price-amount span {
   font-size: 20px;
   color: var(--muted);
@@ -161,19 +155,13 @@ body {
   transition: transform 0.15s, box-shadow 0.2s;
   box-shadow: 0 0 30px rgba(0,255,136,0.2), 0 4px 20px rgba(0,0,0,0.4);
 }
-
 .cta-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 40px rgba(0,255,136,0.35), 0 8px 30px rgba(0,0,0,0.5);
 }
-
 .cta-btn:active { transform: translateY(0); }
 
-/* ─── Section shared ─── */
-.section {
-  padding: 50px 0;
-}
-
+.section { padding: 50px 0; }
 .section-title {
   text-align: center;
   font-size: clamp(22px, 4.5vw, 32px);
@@ -181,14 +169,12 @@ body {
   margin-bottom: 12px;
   letter-spacing: 0.5px;
 }
-
 .section-subtitle {
   text-align: center;
   color: var(--muted);
   font-size: 14px;
   margin-bottom: 36px;
 }
-
 .section-divider {
   width: 60px;
   height: 3px;
@@ -197,7 +183,6 @@ body {
   margin: 0 auto 40px;
 }
 
-/* ─── Card grid ─── */
 .card {
   background: rgba(11,18,15,0.82);
   border: 1px solid var(--border);
@@ -207,7 +192,6 @@ body {
   overflow: hidden;
   transition: border-color 0.2s, transform 0.15s;
 }
-
 .card::after {
   content: "";
   position: absolute;
@@ -215,18 +199,12 @@ body {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(0,255,136,0.3), transparent);
 }
-
 .card:hover {
   border-color: var(--border-glow);
   transform: translateY(-2px);
 }
 
-/* ─── What You'll Learn ─── */
-.learn-grid {
-  display: grid;
-  gap: 12px;
-}
-
+.learn-grid { display: grid; gap: 12px; }
 .learn-item {
   display: flex;
   gap: 14px;
@@ -237,9 +215,7 @@ body {
   border-radius: 14px;
   transition: border-color 0.2s;
 }
-
 .learn-item:hover { border-color: var(--green); }
-
 .learn-icon {
   flex-shrink: 0;
   width: 40px; height: 40px;
@@ -251,75 +227,31 @@ body {
   background: rgba(0,255,136,0.08);
   border: 1px solid rgba(0,255,136,0.2);
 }
-
 .learn-item:nth-child(2) .learn-icon { background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); }
 .learn-item:nth-child(3) .learn-icon { background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.3); }
 .learn-item:nth-child(4) .learn-icon { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.3); }
 .learn-item:nth-child(5) .learn-icon { background: rgba(77,201,246,0.1); border-color: rgba(77,201,246,0.3); }
+.learn-text { font-size: 15px; font-weight: 600; line-height: 1.4; }
+.learn-text em { font-style: normal; color: var(--green); font-weight: 700; }
 
-.learn-text {
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.learn-text em {
-  font-style: normal;
-  color: var(--green);
-  font-weight: 700;
-}
-
-/* ─── What's Included ─── */
-.included-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-@media (min-width: 520px) {
-  .included-grid { grid-template-columns: 1fr 1fr; }
-}
-
-.included-card {
-  display: flex;
-  gap: 14px;
-  align-items: flex-start;
-}
-
+.included-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 520px) { .included-grid { grid-template-columns: 1fr 1fr; } }
+.included-card { display: flex; gap: 14px; align-items: flex-start; }
 .included-card .card-num {
   flex-shrink: 0;
   width: 36px; height: 36px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
   background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(168,85,247,0.15));
   border: 1px solid rgba(0,255,136,0.3);
   color: var(--green);
 }
+.included-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.included-card p { font-size: 12px; color: var(--muted); line-height: 1.5; }
 
-.included-card h3 {
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.included-card p {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* ─── How It Works ─── */
-.steps {
-  display: grid;
-  gap: 16px;
-  position: relative;
-}
-
-.step {
+.steps { display: grid; gap: 16px; position: relative; }
+.step-card {
   display: flex;
   gap: 18px;
   align-items: flex-start;
@@ -329,41 +261,21 @@ body {
   border-radius: 14px;
   transition: border-color 0.2s;
 }
-
-.step:hover { border-color: var(--green); }
-
+.step-card:hover { border-color: var(--green); }
 .step-num {
   flex-shrink: 0;
   width: 44px; height: 44px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900;
   background: linear-gradient(135deg, var(--green-dim), rgba(168,85,247,0.15));
   border: 1.5px solid rgba(0,255,136,0.4);
   color: var(--green);
 }
+.step-content h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.step-content p { font-size: 13px; color: var(--muted); line-height: 1.5; }
 
-.step-content h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.step-content p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* ─── Who Is This For ─── */
-.who-grid {
-  display: grid;
-  gap: 12px;
-}
-
+.who-grid { display: grid; gap: 12px; }
 .who-item {
   display: flex;
   gap: 12px;
@@ -372,32 +284,22 @@ body {
   background: rgba(11,18,15,0.82);
   border: 1px solid var(--border);
   border-radius: 14px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 15px; font-weight: 500;
   transition: border-color 0.2s;
 }
-
 .who-item:hover { border-color: var(--pink); }
-
 .who-check {
   flex-shrink: 0;
   width: 28px; height: 28px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   font-size: 14px;
   background: rgba(0,255,136,0.1);
   border: 1px solid rgba(0,255,136,0.3);
   color: var(--green);
 }
 
-/* ─── FAQ ─── */
-.faq-list {
-  display: grid;
-  gap: 10px;
-}
-
+.faq-list { display: grid; gap: 10px; }
 .faq-item {
   background: rgba(11,18,15,0.82);
   border: 1px solid var(--border);
@@ -405,9 +307,7 @@ body {
   overflow: hidden;
   transition: border-color 0.2s;
 }
-
 .faq-item:hover { border-color: var(--border-glow); }
-
 .faq-q {
   padding: 18px 20px;
   font-size: 14px;
@@ -420,7 +320,6 @@ body {
   user-select: none;
   -webkit-user-select: none;
 }
-
 .faq-q::after {
   content: "+";
   flex-shrink: 0;
@@ -428,33 +327,13 @@ body {
   color: var(--green);
   transition: transform 0.2s;
 }
+.faq-item.open .faq-q::after { transform: rotate(45deg); }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; }
+.faq-item.open .faq-a { max-height: 200px; padding: 0 20px 18px; }
+.faq-a p { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-.faq-item.open .faq-q::after {
-  transform: rotate(45deg);
-}
-
-.faq-a {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-}
-
-.faq-item.open .faq-a {
-  max-height: 200px;
-  padding: 0 20px 18px;
-}
-
-.faq-a p {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-/* ─── Application Form ─── */
-.form-section {
-  padding: 50px 0;
-}
-
+/* Form */
+.form-section { padding: 50px 0; }
 .form-card {
   background: rgba(11,18,15,0.9);
   border: 1px solid var(--border);
@@ -463,7 +342,6 @@ body {
   position: relative;
   overflow: hidden;
 }
-
 .form-card::before {
   content: "";
   position: absolute;
@@ -471,11 +349,7 @@ body {
   height: 2px;
   background: linear-gradient(90deg, var(--green), var(--purple), var(--pink));
 }
-
-.form-group {
-  margin-bottom: 20px;
-}
-
+.form-group { margin-bottom: 20px; }
 .form-group label {
   display: block;
   font-size: 12px;
@@ -485,14 +359,8 @@ body {
   color: var(--muted);
   margin-bottom: 8px;
 }
-
-.form-group label .required {
-  color: var(--pink);
-}
-
-.form-input,
-.form-select,
-.form-textarea {
+.form-group label .req { color: var(--pink); }
+.form-input, .form-select, .form-textarea {
   width: 100%;
   padding: 14px 16px;
   background: rgba(3,5,4,0.8);
@@ -504,19 +372,11 @@ body {
   transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
-
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
+.form-input:focus, .form-select:focus, .form-textarea:focus {
   border-color: var(--green);
   box-shadow: 0 0 0 3px rgba(0,255,136,0.1);
 }
-
-.form-input::placeholder,
-.form-textarea::placeholder {
-  color: rgba(138,169,154,0.5);
-}
-
+.form-input::placeholder, .form-textarea::placeholder { color: rgba(138,169,154,0.5); }
 .form-select {
   appearance: none;
   -webkit-appearance: none;
@@ -526,17 +386,8 @@ body {
   padding-right: 40px;
   cursor: pointer;
 }
-
-.form-select option {
-  background: var(--panel);
-  color: var(--white);
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 80px;
-}
-
+.form-select option { background: var(--panel); color: var(--white); }
+.form-textarea { resize: vertical; min-height: 80px; }
 .form-file {
   width: 100%;
   padding: 14px 16px;
@@ -549,15 +400,8 @@ body {
   cursor: pointer;
   transition: border-color 0.2s;
 }
-
 .form-file:hover { border-color: var(--green); }
-
-.radio-group {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
+.radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
 .radio-label {
   display: flex;
   align-items: center;
@@ -570,27 +414,11 @@ body {
   font-size: 13px;
   transition: border-color 0.2s, background 0.2s;
 }
-
 .radio-label:hover { border-color: var(--green); }
-
-.radio-label input {
-  accent-color: var(--green);
-}
-
-.radio-label input:checked + span {
-  color: var(--green);
-  font-weight: 600;
-}
-
-.captions-group {
-  display: grid;
-  gap: 10px;
-}
-
-.caption-field {
-  position: relative;
-}
-
+.radio-label input { accent-color: var(--green); }
+.radio-label input:checked + span { color: var(--green); font-weight: 600; }
+.captions-group { display: grid; gap: 10px; }
+.caption-field { position: relative; }
 .caption-field .caption-num {
   position: absolute;
   top: 14px; left: 16px;
@@ -599,11 +427,7 @@ body {
   color: var(--green);
   letter-spacing: 0.5px;
 }
-
-.caption-field textarea {
-  padding-left: 50px;
-}
-
+.caption-field textarea { padding-left: 50px; }
 .submit-btn {
   width: 100%;
   padding: 18px;
@@ -620,121 +444,200 @@ body {
   box-shadow: 0 0 30px rgba(0,255,136,0.15), 0 4px 20px rgba(0,0,0,0.3);
   margin-top: 8px;
 }
-
 .submit-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 0 40px rgba(0,255,136,0.3), 0 8px 30px rgba(0,0,0,0.4);
 }
-
 .submit-btn:active { transform: translateY(0); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
+/* Step indicator */
+.steps-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 28px;
 }
-
-.form-note {
+.step-pip {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  background: rgba(255,255,255,.04);
+  border: 2px solid var(--border);
+  color: var(--muted);
+  transition: all 0.3s;
+  position: relative;
+  z-index: 2;
+}
+.step-pip.active {
+  background: rgba(0,255,136,.1);
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 0 0 12px rgba(0,255,136,.3);
+}
+.step-pip.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--bg);
+}
+.step-line {
+  width: 60px; height: 2px;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.step-line.done { background: var(--green); }
+.step-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding: 0 10px;
+}
+.step-lbl {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
   text-align: center;
+  flex: 1;
+}
+.step-lbl.active { color: var(--green); }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.form-msg {
+  font-size: 12px;
+  margin-top: 10px;
+  text-align: center;
+  min-height: 18px;
+}
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
   font-size: 12px;
   color: var(--muted);
-  margin-top: 14px;
-  line-height: 1.5;
+  cursor: pointer;
+}
+.back-link:hover { color: var(--green); }
+.pwd-hint {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Testimonials */
+.testimonial-grid { display: grid; gap: 12px; }
+.testimonial-card {
+  background: rgba(11,18,15,0.82);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.testimonial-stars { color: #fbbf24; font-size: 14px; margin-bottom: 8px; }
+.testimonial-quote {
+  font-size: 14px;
+  color: var(--white);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.testimonial-author { font-size: 12px; color: var(--green); font-weight: 700; }
+.testimonial-detail { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.stat-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.stat-chip {
+  padding: 6px 12px;
+  background: rgba(0,255,136,.06);
+  border: 1px solid rgba(0,255,136,.15);
+  border-radius: 8px;
+  font-size: 11px;
+  color: var(--green);
+  font-weight: 700;
 }
 
 /* Confirmation */
-.confirm-msg {
-  display: none;
-  text-align: center;
-  padding: 40px 20px;
-}
-
-.confirm-msg.show { display: block; }
-
+.confirm-wrap { text-align: center; padding: 40px 20px; }
 .confirm-icon {
   width: 64px; height: 64px;
   border-radius: 50%;
   margin: 0 auto 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   font-size: 28px;
   background: rgba(0,255,136,0.1);
   border: 2px solid rgba(0,255,136,0.4);
   color: var(--green);
   animation: popIn 0.4s ease;
 }
-
 @keyframes popIn {
   0% { transform: scale(0); }
   70% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
-
-.confirm-msg h3 {
+.confirm-wrap h3 {
   font-size: 22px;
   font-weight: 800;
   margin-bottom: 12px;
   color: var(--green);
 }
-
-.confirm-msg p {
+.confirm-wrap p {
   font-size: 14px;
   color: var(--muted);
   line-height: 1.6;
   max-width: 400px;
-  margin: 0 auto;
+  margin: 0 auto 8px;
+}
+.login-btn {
+  display: inline-block;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, var(--green) 0%, var(--green2) 100%);
+  color: var(--bg);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 12px;
+  margin-top: 20px;
+  transition: transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 0 30px rgba(0,255,136,0.2), 0 4px 20px rgba(0,0,0,0.4);
+}
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(0,255,136,0.35), 0 8px 30px rgba(0,0,0,0.5);
+}
+.trial-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.3);
+  color: var(--purple);
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 16px;
 }
 
-/* ─── Footer ─── */
 .footer {
   text-align: center;
   padding: 40px 20px;
   border-top: 1px solid var(--border);
   margin-top: 20px;
 }
-
-.footer-brand {
-  font-size: 12px;
-  color: var(--muted);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
-.footer-brand strong {
-  color: var(--green);
-  font-weight: 700;
-}
-
-.footer a {
-  color: var(--green);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  transition: opacity 0.2s;
-}
-
+.footer-brand { font-size: 12px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.footer-brand strong { color: var(--green); font-weight: 700; }
+.footer a { color: var(--green); text-decoration: none; font-size: 13px; font-weight: 600; transition: opacity 0.2s; }
 .footer a:hover { opacity: 0.7; }
 
-/* ─── Scrollbar ─── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-glow); }
-
-/* ─── Smooth scroll ─── */
 html { scroll-behavior: smooth; }
-
-/* ─── Utility ─── */
-.sr-only {
-  position: absolute;
-  width: 1px; height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
 </style>
 </head>
 <body>
@@ -743,50 +646,78 @@ html { scroll-behavior: smooth; }
 
 <div class="page-wrap">
 
-  <!-- ═══ HERO ═══ -->
+  <!-- HERO -->
   <section class="hero">
     <div class="hero-badge">
       <span class="hero-badge-dot"></span>
       Now Accepting Applications
     </div>
-    <h1>Audience Intelligence Audit</h1>
-    <p class="hero-sub">Discover exactly what your audience wants and how to give them more of it</p>
+    <h1>Audience Intelligence Report</h1>
+    <p class="hero-sub">Discover exactly what your audience wants, why they engage, and how to create content they can't ignore</p>
     <div class="hero-price">
       <span class="price-label">Limited Launch Price</span>
-      <span class="price-amount">&pound;49.99 <span>GBP</span></span>
+      <span class="price-amount">&pound;20 <span>GBP</span></span>
     </div>
-    <a href="#apply" class="cta-btn">Apply for Your Audit</a>
+    <a href="#apply" class="cta-btn">Get My Intelligence Report</a>
   </section>
 
-  <!-- ═══ WHAT YOU'LL LEARN ═══ -->
+  <!-- RESULTS / TESTIMONIALS -->
+  <section class="section">
+    <h2 class="section-title">Real Creator Results</h2>
+    <div class="section-divider"></div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="testimonial-quote">"The Audience Intelligence Report completely changed how I approach content. I finally understand WHY my audience engages with certain posts and not others. My views increased significantly within the first month of applying the insights."</div>
+        <div class="testimonial-author">Henry</div>
+        <div class="testimonial-detail">Creator Radar Beta User</div>
+        <div class="stat-row">
+          <span class="stat-chip">Primary Driver: Pride</span>
+          <span class="stat-chip">Best Format: Yes/No Debate</span>
+        </div>
+      </div>
+      <div class="testimonial-card" style="border-color:rgba(168,85,247,.2)">
+        <div style="font-size:10px;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Platform Data</div>
+        <div class="testimonial-quote" style="font-style:normal">"Our own account analysis shows creators who understand their Audience DNA and primary psychological drivers see consistently higher engagement. The data doesn't lie - knowing your audience's psychology is the biggest unlock."</div>
+        <div class="testimonial-author">Creator Radar Intelligence Engine</div>
+        <div class="testimonial-detail">Based on platform-wide analysis</div>
+        <div class="stat-row">
+          <span class="stat-chip" style="background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:var(--purple)">63 Posts Analyzed</span>
+          <span class="stat-chip" style="background:rgba(168,85,247,.08);border-color:rgba(168,85,247,.2);color:var(--purple)">69,871 Total Views</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT YOU'LL LEARN -->
   <section class="section">
     <h2 class="section-title">What You'll Learn</h2>
     <div class="section-divider"></div>
     <div class="learn-grid">
       <div class="learn-item">
         <div class="learn-icon">&#128200;</div>
-        <div class="learn-text">What content <em>YOUR</em> audience engages with most</div>
+        <div class="learn-text">What content <em>YOUR</em> audience engages with most and why</div>
       </div>
       <div class="learn-item">
         <div class="learn-icon">&#127916;</div>
-        <div class="learn-text">What content formats perform best for <em>YOUR</em> niche</div>
+        <div class="learn-text">Which content formats perform best for <em>YOUR</em> niche</div>
       </div>
       <div class="learn-item">
         <div class="learn-icon">&#129504;</div>
-        <div class="learn-text">What psychological triggers are driving <em>YOUR</em> engagement</div>
+        <div class="learn-text">The psychological triggers driving <em>YOUR</em> engagement</div>
       </div>
       <div class="learn-item">
         <div class="learn-icon">&#128683;</div>
-        <div class="learn-text">Where you're losing viewers and engagement</div>
+        <div class="learn-text">Where you're losing viewers and engagement (audience leakage)</div>
       </div>
       <div class="learn-item">
         <div class="learn-icon">&#127775;</div>
-        <div class="learn-text">What you should create more of (and what to stop)</div>
+        <div class="learn-text">A 30-day action plan with content ideas tailored to <em>YOUR</em> audience</div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ WHAT'S INCLUDED ═══ -->
+  <!-- WHAT'S INCLUDED -->
   <section class="section">
     <h2 class="section-title">What's Included</h2>
     <div class="section-divider"></div>
@@ -796,7 +727,7 @@ html { scroll-behavior: smooth; }
           <div class="card-num">1</div>
           <div>
             <h3>Audience Behaviour Analysis</h3>
-            <p>Deep dive into how your audience interacts with your content across sessions, formats, and posting times.</p>
+            <p>Deep dive into how your audience interacts with your content across formats, topics, and posting patterns.</p>
           </div>
         </div>
       </div>
@@ -823,7 +754,7 @@ html { scroll-behavior: smooth; }
           <div class="card-num">4</div>
           <div>
             <h3>Content Opportunities Map</h3>
-            <p>A visual map of untapped content angles and trending topics your audience is hungry for.</p>
+            <p>Untapped content angles and trending topics your audience is hungry for.</p>
           </div>
         </div>
       </div>
@@ -832,7 +763,7 @@ html { scroll-behavior: smooth; }
           <div class="card-num">5</div>
           <div>
             <h3>30-Day Action Plan</h3>
-            <p>Specific content ideas, posting schedule, and format recommendations tailored to your growth goals.</p>
+            <p>Specific content ideas, format recommendations, and hook formulas tailored to your growth.</p>
           </div>
         </div>
       </div>
@@ -840,51 +771,51 @@ html { scroll-behavior: smooth; }
         <div class="included-card">
           <div class="card-num">6</div>
           <div>
-            <h3>Personalized Hook &amp; CTA Recs</h3>
-            <p>Custom hooks and calls-to-action designed around what your specific audience responds to.</p>
+            <h3>14-Day Creator Radar Trial</h3>
+            <p>Full access to Creator Radar's dashboard including trend scanning, hooks, and personalised intelligence.</p>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ HOW IT WORKS ═══ -->
+  <!-- HOW IT WORKS -->
   <section class="section">
     <h2 class="section-title">How It Works</h2>
     <div class="section-divider"></div>
     <div class="steps">
-      <div class="step">
+      <div class="step-card">
         <div class="step-num">1</div>
         <div class="step-content">
-          <h3>Apply and share your analytics</h3>
-          <p>Fill in the application form below with your details and upload your analytics screenshots.</p>
+          <h3>Create your Creator Radar account</h3>
+          <p>Sign up below with your email and password. This is where your report will be delivered.</p>
         </div>
       </div>
-      <div class="step">
+      <div class="step-card">
         <div class="step-num">2</div>
         <div class="step-content">
-          <h3>We analyze your audience psychology</h3>
-          <p>Our team runs your data through Creator Radar's intelligence engine to decode audience behaviour patterns.</p>
+          <h3>Submit your content and analytics</h3>
+          <p>Share your social handle, recent captions, analytics screenshots, and your biggest challenge.</p>
         </div>
       </div>
-      <div class="step">
+      <div class="step-card">
         <div class="step-num">3</div>
         <div class="step-content">
-          <h3>Download your intelligence report</h3>
-          <p>Your full Audience Intelligence Report is delivered through your Creator Radar account within 24-48 hours.</p>
+          <h3>We decode your audience psychology</h3>
+          <p>Our intelligence engine analyses your content through 7 dimensions to build a complete audience profile.</p>
         </div>
       </div>
-      <div class="step">
+      <div class="step-card">
         <div class="step-num">4</div>
         <div class="step-content">
-          <h3>Start creating content your audience actually wants</h3>
-          <p>Use your personalised insights, action plan, and hook recommendations to create with confidence.</p>
+          <h3>Access your report in Creator Radar</h3>
+          <p>Log in to your Creator Radar account to view and download your full Audience Intelligence Report within 24-48 hours.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ WHO IS THIS FOR ═══ -->
+  <!-- WHO IS THIS FOR -->
   <section class="section">
     <h2 class="section-title">Who Is This For?</h2>
     <div class="section-divider"></div>
@@ -903,62 +834,118 @@ html { scroll-behavior: smooth; }
       </div>
       <div class="who-item">
         <div class="who-check">&#10003;</div>
-        <span>Any niche, any platform</span>
+        <span>Any niche, any platform, any level</span>
       </div>
     </div>
   </section>
 
-  <!-- ═══ FAQ ═══ -->
+  <!-- FAQ -->
   <section class="section">
     <h2 class="section-title">Frequently Asked Questions</h2>
     <div class="section-divider"></div>
     <div class="faq-list">
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How long does the audit take?</div>
-        <div class="faq-a"><p>Your Audience Intelligence Report is delivered within 24-48 hours of submitting your application and analytics.</p></div>
+        <div class="faq-q" onclick="toggleFaq(this)">How long does the report take?</div>
+        <div class="faq-a"><p>Your Audience Intelligence Report is delivered directly to your Creator Radar account within 24-48 hours of submitting your application.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">What do I need to provide?</div>
-        <div class="faq-a"><p>Screenshots of your analytics dashboard (overview, audience, and content performance) plus your 5 most recent captions or post descriptions.</p></div>
+        <div class="faq-a"><p>Your social media handle, screenshots of your analytics dashboard, your 5 most recent captions, and a brief description of your biggest content challenge.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">What platforms do you audit?</div>
-        <div class="faq-a"><p>We currently audit TikTok, Instagram, YouTube, X (Twitter), LinkedIn, and Facebook. Select your primary platform in the application form.</p></div>
+        <div class="faq-a"><p>We analyse TikTok, Instagram, YouTube, X (Twitter), LinkedIn, and Facebook. Select your primary platform in the application form.</p></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Do I get ongoing support?</div>
-        <div class="faq-a"><p>Yes! Your audit report unlocks a Creator Radar account where you can access your intelligence profile, track progress, and get updated recommendations.</p></div>
+        <div class="faq-q" onclick="toggleFaq(this)">What happens after I get my report?</div>
+        <div class="faq-a"><p>Your report includes a 14-day free trial of Creator Radar. During the trial you get full access to trend scanning, content hooks, personalised intelligence, and more. After 14 days you can subscribe to continue using the platform.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ APPLICATION FORM ═══ -->
+  <!-- APPLICATION FORM -->
   <section class="form-section" id="apply">
-    <h2 class="section-title">Apply for Your Audit</h2>
-    <p class="section-subtitle">Complete the form below to get started</p>
+    <h2 class="section-title">Get Your Report</h2>
+    <p class="section-subtitle">Create your account and submit your application</p>
     <div class="section-divider"></div>
 
     <div class="form-card">
-      <form id="auditForm" onsubmit="return submitAudit(event)">
+      <!-- Step indicator -->
+      <div class="steps-bar">
+        <div class="step-pip active" id="pip1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-pip" id="pip2">2</div>
+        <div class="step-line" id="line2"></div>
+        <div class="step-pip" id="pip3">&#10003;</div>
+      </div>
+      <div class="step-labels">
+        <div class="step-lbl active" id="lbl1">Account</div>
+        <div class="step-lbl" id="lbl2">Application</div>
+        <div class="step-lbl" id="lbl3">Complete</div>
+      </div>
 
-        <div class="form-group">
-          <label>Name <span class="required">*</span></label>
-          <input type="text" class="form-input" name="name" placeholder="Your full name" required>
+      <!-- STEP 1: Account Creation -->
+      <div class="form-step active" id="step1">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px">Create Your Creator Radar Account</div>
+          <div style="font-size:12px;color:var(--muted)">Your report will be delivered here</div>
         </div>
 
         <div class="form-group">
-          <label>Email <span class="required">*</span></label>
-          <input type="email" class="form-input" name="email" placeholder="you@example.com" required>
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" class="form-input" id="acctName" placeholder="Your full name">
         </div>
 
         <div class="form-group">
-          <label>Social Media Handle <span class="required">*</span></label>
-          <input type="text" class="form-input" name="handle" placeholder="@yourhandle" required>
+          <label>Email <span class="req">*</span></label>
+          <input type="email" class="form-input" id="acctEmail" placeholder="you@example.com">
         </div>
 
         <div class="form-group">
-          <label>Platform <span class="required">*</span></label>
-          <select class="form-select" name="platform" required>
+          <label>Create Password <span class="req">*</span></label>
+          <input type="password" class="form-input" id="acctPassword" placeholder="e.g. MyPass1!">
+          <div class="pwd-hint">Must be 6+ characters with uppercase, lowercase, number, and special character</div>
+        </div>
+
+        <button class="submit-btn" id="step1Btn" onclick="createAccount()">Create Account &amp; Continue</button>
+        <div class="form-msg" id="step1Msg"></div>
+
+        <p style="font-size:12px;color:var(--muted);margin-top:16px;text-align:center">
+          Already have a Creator Radar account?
+          <a href="#" onclick="showLoginStep();return false" style="color:var(--green);text-decoration:underline">Log in here</a>
+        </p>
+
+        <!-- Login sub-form (hidden by default) -->
+        <div id="loginSubForm" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-input" id="loginEmail" placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-input" id="loginPassword" placeholder="Your password">
+          </div>
+          <button class="submit-btn" id="loginBtn" onclick="loginExisting()" style="background:linear-gradient(135deg,var(--purple),#6366f1)">Log In &amp; Continue</button>
+          <div class="form-msg" id="loginMsg"></div>
+          <div class="back-link" onclick="hideLoginStep()">Back to create account</div>
+        </div>
+      </div>
+
+      <!-- STEP 2: Application Details -->
+      <div class="form-step" id="step2">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px">Tell Us About Your Content</div>
+          <div style="font-size:12px;color:var(--muted)" id="step2UserLabel">Logged in as ---</div>
+        </div>
+
+        <div class="form-group">
+          <label>Social Media Handle <span class="req">*</span></label>
+          <input type="text" class="form-input" id="appHandle" placeholder="@yourhandle">
+        </div>
+
+        <div class="form-group">
+          <label>Platform <span class="req">*</span></label>
+          <select class="form-select" id="appPlatform">
             <option value="" disabled selected>Select your primary platform</option>
             <option value="tiktok">TikTok</option>
             <option value="instagram">Instagram</option>
@@ -970,31 +957,22 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="form-group">
-          <label>Niche / Topic <span class="required">*</span></label>
-          <input type="text" class="form-input" name="niche" placeholder="e.g. Fitness, Comedy, Beauty, Business" required>
+          <label>Niche / Topic <span class="req">*</span></label>
+          <input type="text" class="form-input" id="appNiche" placeholder="e.g. Fitness, Comedy, Beauty, Business">
         </div>
 
         <div class="form-group">
-          <label>Analytics Period <span class="required">*</span></label>
+          <label>Analytics Period <span class="req">*</span></label>
           <div class="radio-group">
-            <label class="radio-label">
-              <input type="radio" name="period" value="7days" required>
-              <span>7 Days</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="period" value="28days">
-              <span>28 Days</span>
-            </label>
-            <label class="radio-label">
-              <input type="radio" name="period" value="60days">
-              <span>60 Days</span>
-            </label>
+            <label class="radio-label"><input type="radio" name="appPeriod" value="7 Days"><span>7 Days</span></label>
+            <label class="radio-label"><input type="radio" name="appPeriod" value="28 Days" checked><span>28 Days</span></label>
+            <label class="radio-label"><input type="radio" name="appPeriod" value="60 Days"><span>60 Days</span></label>
           </div>
         </div>
 
         <div class="form-group">
           <label>Upload Analytics Screenshots</label>
-          <input type="file" class="form-file" name="screenshots" multiple accept="image/*" id="fileInput">
+          <input type="file" class="form-file" id="appScreenshots" multiple accept="image/*">
           <p style="font-size:11px;color:var(--muted);margin-top:6px;">Upload overview, audience, and content performance screenshots</p>
         </div>
 
@@ -1003,45 +981,53 @@ html { scroll-behavior: smooth; }
           <div class="captions-group">
             <div class="caption-field">
               <span class="caption-num">#1</span>
-              <textarea class="form-textarea" name="caption1" placeholder="Paste your most recent caption..." rows="2" style="padding-left:50px"></textarea>
+              <textarea class="form-textarea" id="appCaption1" placeholder="Paste your most recent caption..." rows="2" style="padding-left:50px"></textarea>
             </div>
             <div class="caption-field">
               <span class="caption-num">#2</span>
-              <textarea class="form-textarea" name="caption2" placeholder="Second most recent caption..." rows="2" style="padding-left:50px"></textarea>
+              <textarea class="form-textarea" id="appCaption2" placeholder="Second most recent caption..." rows="2" style="padding-left:50px"></textarea>
             </div>
             <div class="caption-field">
               <span class="caption-num">#3</span>
-              <textarea class="form-textarea" name="caption3" placeholder="Third caption..." rows="2" style="padding-left:50px"></textarea>
+              <textarea class="form-textarea" id="appCaption3" placeholder="Third caption..." rows="2" style="padding-left:50px"></textarea>
             </div>
             <div class="caption-field">
               <span class="caption-num">#4</span>
-              <textarea class="form-textarea" name="caption4" placeholder="Fourth caption..." rows="2" style="padding-left:50px"></textarea>
+              <textarea class="form-textarea" id="appCaption4" placeholder="Fourth caption..." rows="2" style="padding-left:50px"></textarea>
             </div>
             <div class="caption-field">
               <span class="caption-num">#5</span>
-              <textarea class="form-textarea" name="caption5" placeholder="Fifth caption..." rows="2" style="padding-left:50px"></textarea>
+              <textarea class="form-textarea" id="appCaption5" placeholder="Fifth caption..." rows="2" style="padding-left:50px"></textarea>
             </div>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Biggest Challenge <span class="required">*</span></label>
-          <textarea class="form-textarea" name="challenge" placeholder="What's the biggest challenge you're facing with your content or growth right now?" rows="3" required></textarea>
+          <label>Biggest Challenge <span class="req">*</span></label>
+          <textarea class="form-textarea" id="appChallenge" placeholder="What's the biggest challenge you're facing with your content or growth right now?" rows="3"></textarea>
         </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
-        <p class="form-note">Your application will be reviewed and your Audience Intelligence Report delivered within 24-48 hours.</p>
-      </form>
-
-      <div class="confirm-msg" id="confirmMsg">
-        <div class="confirm-icon">&#10003;</div>
-        <h3>Application Received!</h3>
-        <p>We'll have your Audience Intelligence Report ready within 24-48 hours. You'll receive access through your Creator Radar account.</p>
+        <button class="submit-btn" id="step2Btn" onclick="submitApplication()">Submit Application</button>
+        <div class="form-msg" id="step2Msg"></div>
+        <div class="back-link" onclick="goToStep(1)">Back to account</div>
       </div>
+
+      <!-- STEP 3: Confirmation -->
+      <div class="form-step" id="step3">
+        <div class="confirm-wrap">
+          <div class="confirm-icon">&#10003;</div>
+          <h3>Application Submitted!</h3>
+          <p>Your Audience Intelligence Report will be ready within 24-48 hours and delivered directly to your Creator Radar account.</p>
+          <p style="font-size:12px;margin-top:4px">Log in to Creator Radar to check your report status.</p>
+          <a href="index.html" class="login-btn">Login to Creator Radar</a>
+          <div class="trial-badge">Includes 14-day free trial of Creator Radar</div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- ═══ FOOTER ═══ -->
+  <!-- FOOTER -->
   <footer class="footer">
     <p class="footer-brand">Powered by <strong>Creator Radar</strong></p>
     <a href="index.html">Go to Dashboard &rarr;</a>
@@ -1050,70 +1036,230 @@ html { scroll-behavior: smooth; }
 </div>
 
 <script>
-// FAQ toggle
-function toggleFaq(el) {
-  var item = el.parentElement;
-  var wasOpen = item.classList.contains('open');
-  // Close all
-  document.querySelectorAll('.faq-item').forEach(function(f) { f.classList.remove('open'); });
-  // Toggle clicked
-  if (!wasOpen) item.classList.add('open');
+var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+var currentStep = 1;
+var userEmail = "";
+var userName = "";
+
+function goToStep(n) {
+  currentStep = n;
+  for (var i = 1; i <= 3; i++) {
+    var el = document.getElementById("step" + i);
+    if (el) el.classList.toggle("active", i === n);
+    var pip = document.getElementById("pip" + i);
+    if (pip) {
+      pip.classList.remove("active", "done");
+      if (i < n) pip.classList.add("done");
+      else if (i === n) pip.classList.add("active");
+    }
+    var lbl = document.getElementById("lbl" + i);
+    if (lbl) {
+      lbl.classList.remove("active");
+      if (i === n) lbl.classList.add("active");
+    }
+  }
+  var l1 = document.getElementById("line1");
+  var l2 = document.getElementById("line2");
+  if (l1) l1.classList.toggle("done", n > 1);
+  if (l2) l2.classList.toggle("done", n > 2);
+  document.getElementById("apply").scrollIntoView({behavior: "smooth", block: "start"});
 }
 
-// Form submission
-function submitAudit(e) {
-  e.preventDefault();
-  var form = document.getElementById('auditForm');
-  var btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting...';
+function showLoginStep() {
+  document.getElementById("loginSubForm").style.display = "block";
+  document.getElementById("step1Btn").style.display = "none";
+}
 
-  // Gather file names (can't store actual files in localStorage)
-  var fileInput = document.getElementById('fileInput');
+function hideLoginStep() {
+  document.getElementById("loginSubForm").style.display = "none";
+  document.getElementById("step1Btn").style.display = "block";
+}
+
+async function createAccount() {
+  var name = (document.getElementById("acctName").value || "").trim();
+  var email = (document.getElementById("acctEmail").value || "").trim();
+  var pw = document.getElementById("acctPassword").value || "";
+  var msg = document.getElementById("step1Msg");
+  var btn = document.getElementById("step1Btn");
+
+  if (!name) { msg.innerHTML = '<span style="color:#ff4757">Please enter your name.</span>'; return; }
+  if (!email) { msg.innerHTML = '<span style="color:#ff4757">Please enter your email.</span>'; return; }
+  if (!pw || pw.length < 6) { msg.innerHTML = '<span style="color:#ff4757">Password must be at least 6 characters.</span>'; return; }
+  if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) {
+    msg.innerHTML = '<span style="color:#ff4757">Password needs lowercase, uppercase, number, and special character (e.g. MyPass1!)</span>';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Creating account...";
+  msg.innerHTML = '<span style="color:var(--green)">Setting up your account...</span>';
+
+  var r = await sb.auth.signUp({
+    email: email,
+    password: pw,
+    options: {
+      data: {
+        name: name,
+        audit_customer: true,
+        signup_date: new Date().toISOString(),
+        niche: "pending"
+      }
+    }
+  });
+
+  if (r.error) {
+    var emsg = r.error.message;
+    if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) {
+      emsg = "Password needs lowercase, uppercase, number, and special character (e.g. MyPass1!)";
+    }
+    msg.innerHTML = '<span style="color:#ff4757">' + emsg + '</span>';
+    btn.disabled = false;
+    btn.textContent = "Create Account & Continue";
+    return;
+  }
+
+  if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
+    msg.innerHTML = '<span style="color:#fbbf24">This email is already registered. Try logging in instead.</span>';
+    btn.disabled = false;
+    btn.textContent = "Create Account & Continue";
+    showLoginStep();
+    document.getElementById("loginEmail").value = email;
+    return;
+  }
+
+  if (r.data && r.data.session) {
+    userEmail = email;
+    userName = name;
+  } else if (r.data && r.data.user) {
+    var lr = await sb.auth.signInWithPassword({email: email, password: pw});
+    if (lr.error) {
+      msg.innerHTML = '<span style="color:#ff4757">' + lr.error.message + '</span>';
+      btn.disabled = false;
+      btn.textContent = "Create Account & Continue";
+      return;
+    }
+    userEmail = email;
+    userName = name;
+  }
+
+  document.getElementById("step2UserLabel").textContent = "Logged in as " + userEmail;
+  btn.disabled = false;
+  btn.textContent = "Create Account & Continue";
+  goToStep(2);
+}
+
+async function loginExisting() {
+  var email = (document.getElementById("loginEmail").value || "").trim();
+  var pw = document.getElementById("loginPassword").value || "";
+  var msg = document.getElementById("loginMsg");
+  var btn = document.getElementById("loginBtn");
+
+  if (!email || !pw) { msg.innerHTML = '<span style="color:#ff4757">Enter your email and password.</span>'; return; }
+
+  btn.disabled = true;
+  btn.textContent = "Logging in...";
+
+  var r = await sb.auth.signInWithPassword({email: email, password: pw});
+  if (r.error) {
+    msg.innerHTML = '<span style="color:#ff4757">' + r.error.message + '</span>';
+    btn.disabled = false;
+    btn.textContent = "Log In & Continue";
+    return;
+  }
+
+  userEmail = email;
+  userName = (r.data.user && r.data.user.user_metadata && r.data.user.user_metadata.name) || email;
+
+  await sb.auth.updateUser({data: {audit_customer: true}});
+
+  document.getElementById("step2UserLabel").textContent = "Logged in as " + userEmail;
+  btn.disabled = false;
+  btn.textContent = "Log In & Continue";
+  goToStep(2);
+}
+
+async function submitApplication() {
+  var handle = (document.getElementById("appHandle").value || "").trim();
+  var platform = document.getElementById("appPlatform").value;
+  var niche = (document.getElementById("appNiche").value || "").trim();
+  var periodEl = document.querySelector('input[name="appPeriod"]:checked');
+  var period = periodEl ? periodEl.value : "28 Days";
+  var challenge = (document.getElementById("appChallenge").value || "").trim();
+  var msg = document.getElementById("step2Msg");
+  var btn = document.getElementById("step2Btn");
+
+  if (!handle) { msg.innerHTML = '<span style="color:#ff4757">Please enter your social media handle.</span>'; return; }
+  if (!platform) { msg.innerHTML = '<span style="color:#ff4757">Please select your platform.</span>'; return; }
+  if (!niche) { msg.innerHTML = '<span style="color:#ff4757">Please enter your niche.</span>'; return; }
+  if (!challenge) { msg.innerHTML = '<span style="color:#ff4757">Please describe your biggest challenge.</span>'; return; }
+
+  var captions = [];
+  for (var i = 1; i <= 5; i++) {
+    var c = (document.getElementById("appCaption" + i).value || "").trim();
+    if (c) captions.push(c);
+  }
+
+  if (captions.length === 0) { msg.innerHTML = '<span style="color:#ff4757">Please paste at least one caption.</span>'; return; }
+
+  var fileInput = document.getElementById("appScreenshots");
   var fileNames = [];
   if (fileInput.files) {
-    for (var i = 0; i < fileInput.files.length; i++) {
-      fileNames.push(fileInput.files[i].name);
+    for (var fi = 0; fi < fileInput.files.length; fi++) {
+      fileNames.push(fileInput.files[fi].name);
     }
   }
 
-  var data = {
-    name: form.name.value.trim(),
-    email: form.email.value.trim(),
-    handle: form.handle.value.trim(),
-    platform: form.platform.value,
-    niche: form.niche.value.trim(),
-    period: form.period.value,
-    screenshots: fileNames,
-    captions: [
-      form.caption1.value.trim(),
-      form.caption2.value.trim(),
-      form.caption3.value.trim(),
-      form.caption4.value.trim(),
-      form.caption5.value.trim()
-    ].filter(function(c) { return c.length > 0; }),
-    challenge: form.challenge.value.trim(),
-    timestamp: new Date().toISOString()
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+  msg.innerHTML = '<span style="color:var(--green)">Saving your application...</span>';
+
+  var appData = {
+    name: userName,
+    handle: handle,
+    platform: platform,
+    niche: niche,
+    period: period,
+    challenge: challenge,
+    captions: captions,
+    screenshots: fileNames
   };
 
-  // Save to localStorage
+  try {
+    await sb.auth.updateUser({data: {niche: niche, audit_status: "pending"}});
+
+    await sb.from("cr_support_tickets").insert([{
+      user_email: userEmail,
+      category: "audit_application",
+      subject: "Audit Application - " + (userName || handle),
+      description: JSON.stringify(appData),
+      niche: niche,
+      status: "pending"
+    }]);
+  } catch(e) {}
+
   var existing = [];
   try {
-    var stored = localStorage.getItem('cr_audit_applications');
+    var stored = localStorage.getItem("cr_audit_applications");
     if (stored) existing = JSON.parse(stored);
   } catch(e) {}
-  existing.push(data);
-  localStorage.setItem('cr_audit_applications', JSON.stringify(existing));
+  appData.email = userEmail;
+  appData.timestamp = new Date().toISOString();
+  existing.push(appData);
+  localStorage.setItem("cr_audit_applications", JSON.stringify(existing));
 
-  // Show confirmation
-  setTimeout(function() {
-    form.style.display = 'none';
-    document.getElementById('confirmMsg').classList.add('show');
-    // Scroll to confirmation
-    document.getElementById('apply').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 600);
+  btn.disabled = false;
+  btn.textContent = "Submit Application";
+  goToStep(3);
+}
 
-  return false;
+function toggleFaq(el) {
+  var item = el.parentElement;
+  var wasOpen = item.classList.contains("open");
+  document.querySelectorAll(".faq-item").forEach(function(f) { f.classList.remove("open"); });
+  if (!wasOpen) item.classList.add("open");
 }
 </script>
 

@@ -7202,6 +7202,7 @@ async function runCreatorAudit() {
   if (savedAudits.length > 20) savedAudits = savedAudits.slice(0, 20);
   localStorage.setItem("cr_audits", JSON.stringify(savedAudits));
 
+  window._lastGeneratedReport = savedAudit;
   renderAuditReport(savedAudit, resultDiv);
   btn.disabled = false;
   btn.textContent = "GENERATE INTELLIGENCE REPORT";
@@ -7511,6 +7512,9 @@ function renderAuditReport(audit, container) {
 
   h += '<div style="text-align:center;margin-top:18px">';
   h += '<button onclick="shareAuditReport()" style="padding:12px 24px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">COPY REPORT</button>';
+  if (window._currentAuditApp && window._currentAuditApp.email) {
+    h += '<button onclick="deliverReportToUser(window._lastGeneratedReport)" style="padding:12px 24px;background:linear-gradient(135deg,var(--green),var(--green2));color:var(--bg);border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">SEND TO USER</button>';
+  }
   h += '<button onclick="renderAuditTab()" style="padding:12px 24px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--white);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">NEW REPORT</button>';
   h += '</div>';
 
@@ -9406,6 +9410,68 @@ async function submitTicket() {
   }
 }
 
+async function checkMyAuditReport() {
+  try {
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    if (!u || !u.email) return;
+    var isAuditCustomer = u.user_metadata && u.user_metadata.audit_customer;
+    if (!isAuditCustomer) return;
+
+    var banner = document.getElementById("trialBanner");
+    if (!banner) return;
+
+    var reportRes = await supabaseClient.from("cr_support_tickets").select("*").eq("user_email", u.email).eq("category", "audit_report").limit(1);
+    var hasReport = reportRes.data && reportRes.data.length > 0;
+
+    var appRes = await supabaseClient.from("cr_support_tickets").select("status").eq("user_email", u.email).eq("category", "audit_application").order("created_at", {ascending: false}).limit(1);
+    var appStatus = (appRes.data && appRes.data.length > 0) ? appRes.data[0].status : "pending";
+
+    if (hasReport) {
+      var reportData = {};
+      try { reportData = JSON.parse(reportRes.data[0].description || "{}"); } catch(e) {}
+      var rh = '<div style="padding:16px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.2);border-radius:14px;margin-bottom:14px">';
+      rh += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+      rh += '<div style="font-size:14px;font-weight:800;color:var(--green)">&#129504; Your Audience Intelligence Report</div>';
+      rh += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(0,255,136,.1);color:var(--green);font-weight:700">COMPLETE</span>';
+      rh += '</div>';
+      rh += '<p style="font-size:11px;color:var(--muted);margin-bottom:10px">Your report has been delivered. Click below to view it.</p>';
+      rh += '<button onclick="viewMyAuditReport()" style="padding:10px 20px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">VIEW MY REPORT</button>';
+      rh += '</div>';
+      banner.insertAdjacentHTML("afterend", rh);
+
+      window._myAuditReport = reportData;
+    } else if (appStatus === "processing") {
+      var ph = '<div style="padding:16px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:14px;margin-bottom:14px">';
+      ph += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      ph += '<div style="font-size:14px;font-weight:800;color:#a855f7">&#129504; Audience Intelligence Report</div>';
+      ph += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(251,191,36,.1);color:var(--amber);font-weight:700">PROCESSING</span>';
+      ph += '</div>';
+      ph += '<p style="font-size:11px;color:var(--muted);margin-top:6px">Your report is being generated. Check back soon!</p>';
+      ph += '</div>';
+      banner.insertAdjacentHTML("afterend", ph);
+    } else if (appStatus === "pending") {
+      var wh = '<div style="padding:16px;background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:14px;margin-bottom:14px">';
+      wh += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      wh += '<div style="font-size:14px;font-weight:800;color:#a855f7">&#129504; Audience Intelligence Report</div>';
+      wh += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(168,85,247,.1);color:var(--muted);font-weight:700">PENDING</span>';
+      wh += '</div>';
+      wh += '<p style="font-size:11px;color:var(--muted);margin-top:6px">Your application has been received. Your report will be delivered within 24-48 hours.</p>';
+      wh += '</div>';
+      banner.insertAdjacentHTML("afterend", wh);
+    }
+  } catch(e) {}
+}
+
+function viewMyAuditReport() {
+  var report = window._myAuditReport;
+  if (!report) return;
+  switchTab("audit");
+  setTimeout(function() {
+    var resultDiv = document.getElementById("auditResult");
+    if (resultDiv) renderAuditReport(report, resultDiv);
+  }, 300);
+}
+
 var TRIAL_DAYS = 14;
 var MAX_REFERRALS = 3;
 var REFERRAL_BONUS_DAYS = 7;
@@ -9691,6 +9757,8 @@ async function showDashboard() {
   if (daysLeft > 0) { showTrialBanner(daysLeft); }
 
   document.getElementById("dashboard").classList.remove("hidden");
+
+  checkMyAuditReport();
 
   trackEvent("session_start", {niche: USER_NICHE || "general"});
   trackUserActivity();
@@ -10259,57 +10327,112 @@ async function loadAdminPanel() {
   loadAdminUsers();
 }
 
-function loadAdminAuditApps() {
+async function loadAdminAuditApps() {
   var container = document.getElementById("adminAuditApps");
   if (!container) return;
-  var apps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
-  if (apps.length === 0) {
-    container.innerHTML = '<p style="color:var(--muted);font-size:11px">No audit applications yet. Share your landing page to start receiving them.</p>';
-    container.innerHTML += '<div style="margin-top:8px;padding:10px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px">';
-    container.innerHTML += '<div style="font-size:10px;color:#a855f7;font-weight:700;margin-bottom:4px">YOUR AUDIT LANDING PAGE</div>';
-    container.innerHTML += '<div style="font-size:11px;color:var(--white);word-break:break-all">patriotradar.github.io/patriot-radar-dashboard/audit.html</div>';
-    container.innerHTML += '</div>';
+
+  var landingUrl = "patriotradar.github.io/patriot-radar-dashboard/audit.html";
+  var linkBox = '<div style="margin-bottom:8px;padding:8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px">';
+  linkBox += '<div style="font-size:10px;color:#a855f7;font-weight:700">LANDING PAGE: </div>';
+  linkBox += '<div style="font-size:10px;color:var(--white);word-break:break-all">' + landingUrl + '</div>';
+  linkBox += '</div>';
+
+  var allApps = [];
+
+  try {
+    var res = await supabaseClient.from("cr_support_tickets").select("*").eq("category", "audit_application").order("created_at", {ascending: false});
+    if (res.data && res.data.length > 0) {
+      for (var si = 0; si < res.data.length; si++) {
+        var row = res.data[si];
+        var parsed = {};
+        try { parsed = JSON.parse(row.description || "{}"); } catch(e) { parsed = {name: row.subject}; }
+        allApps.push({
+          source: "supabase",
+          id: row.id,
+          name: parsed.name || row.subject || "Unknown",
+          handle: parsed.handle || "",
+          platform: parsed.platform || "",
+          niche: parsed.niche || row.niche || "",
+          email: row.user_email || "",
+          period: parsed.period || "",
+          challenge: parsed.challenge || "",
+          captions: parsed.captions || [],
+          screenshots: parsed.screenshots || [],
+          status: row.status || "pending",
+          timestamp: row.created_at
+        });
+      }
+    }
+  } catch(e) {}
+
+  var localApps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+  for (var li = 0; li < localApps.length; li++) {
+    var la = localApps[li];
+    var isDupe = false;
+    for (var di = 0; di < allApps.length; di++) {
+      if (allApps[di].email === la.email && allApps[di].handle === la.handle) { isDupe = true; break; }
+    }
+    if (!isDupe) {
+      allApps.push({
+        source: "local",
+        localIdx: li,
+        name: la.name || "Unknown",
+        handle: la.handle || "",
+        platform: la.platform || "",
+        niche: la.niche || "",
+        email: la.email || "N/A",
+        period: la.period || la.analyticsPeriod || "",
+        challenge: la.challenge || "",
+        captions: la.captions || [],
+        screenshots: la.screenshots || [],
+        status: la.status || "pending",
+        timestamp: la.timestamp
+      });
+    }
+  }
+
+  if (allApps.length === 0) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:11px">No audit applications yet. Share your landing page to start receiving them.</p>' + linkBox;
     return;
   }
-  var h = '<div style="margin-bottom:8px;padding:8px;background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.15);border-radius:8px">';
-  h += '<div style="font-size:10px;color:#a855f7;font-weight:700">LANDING PAGE: </div>';
-  h += '<div style="font-size:10px;color:var(--white);word-break:break-all">patriotradar.github.io/patriot-radar-dashboard/audit.html</div>';
-  h += '</div>';
-  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:10px">' + apps.length + ' application(s)</div>';
-  for (var i = 0; i < apps.length; i++) {
-    var app = apps[i];
+
+  var h = linkBox;
+  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:10px">' + allApps.length + ' application(s)</div>';
+  for (var i = 0; i < allApps.length; i++) {
+    var app = allApps[i];
     var statusCol = app.status === "complete" ? "var(--green)" : app.status === "processing" ? "var(--amber)" : "var(--muted)";
-    var statusText = app.status || "pending";
+    var srcBadge = app.source === "supabase" ? '<span style="font-size:8px;padding:2px 5px;border-radius:3px;background:rgba(0,255,136,.08);color:var(--green);margin-left:6px">CLOUD</span>' : '<span style="font-size:8px;padding:2px 5px;border-radius:3px;background:rgba(255,140,0,.08);color:#ff8c00;margin-left:6px">LOCAL</span>';
     h += '<div style="padding:12px;border:1px solid rgba(168,85,247,.15);border-radius:10px;margin-bottom:8px;background:rgba(168,85,247,.02)">';
     h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-    h += '<div style="font-size:13px;font-weight:800;color:var(--white)">' + (app.name || "Unknown") + '</div>';
-    h += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(168,85,247,.1);color:' + statusCol + ';font-weight:700;text-transform:uppercase">' + statusText + '</span>';
+    h += '<div style="font-size:13px;font-weight:800;color:var(--white)">' + app.name + srcBadge + '</div>';
+    h += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(168,85,247,.1);color:' + statusCol + ';font-weight:700;text-transform:uppercase">' + app.status + '</span>';
     h += '</div>';
-    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">' + (app.handle || "") + ' | ' + (app.platform || "") + ' | ' + (app.niche || "") + '</div>';
-    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Email: ' + (app.email || "N/A") + '</div>';
-    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Period: ' + (app.analyticsPeriod || "N/A") + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">' + app.handle + ' | ' + app.platform + ' | ' + app.niche + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Email: ' + app.email + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">Period: ' + app.period + '</div>';
     if (app.challenge) h += '<div style="font-size:10px;color:var(--amber);margin-bottom:4px">Challenge: ' + app.challenge.substring(0, 100) + '</div>';
-    var captionCount = 0;
-    if (app.captions) { for (var ci = 0; ci < app.captions.length; ci++) { if (app.captions[ci]) captionCount++; } }
-    h += '<div style="font-size:9px;color:var(--muted)">' + captionCount + ' captions submitted | ' + (app.timestamp ? new Date(app.timestamp).toLocaleDateString() : "Unknown date") + '</div>';
-    h += '<div style="display:flex;gap:6px;margin-top:8px">';
-    h += '<button onclick="loadAuditAppIntoForm(' + i + ')" style="padding:6px 12px;font-size:10px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700">GENERATE REPORT</button>';
-    h += '<button onclick="deleteAuditApp(' + i + ')" style="padding:6px 12px;font-size:10px;background:rgba(255,71,87,.08);color:#ff4757;border:1px solid rgba(255,71,87,.2);border-radius:6px;cursor:pointer;font-weight:600">DELETE</button>';
+    var captionCount = app.captions.length;
+    h += '<div style="font-size:9px;color:var(--muted)">' + captionCount + ' captions | ' + (app.timestamp ? new Date(app.timestamp).toLocaleDateString() : "Unknown date") + '</div>';
+    h += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">';
+    h += '<button onclick="loadAuditAppFromList(' + i + ')" style="padding:6px 12px;font-size:10px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700">GENERATE REPORT</button>';
+    h += '<button onclick="deleteAuditAppFromList(' + i + ')" style="padding:6px 12px;font-size:10px;background:rgba(255,71,87,.08);color:#ff4757;border:1px solid rgba(255,71,87,.2);border-radius:6px;cursor:pointer;font-weight:600">DELETE</button>';
     h += '</div>';
     h += '</div>';
   }
   container.innerHTML = h;
+  window._auditAppsList = allApps;
 }
 
-function loadAuditAppIntoForm(idx) {
-  var apps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+function loadAuditAppFromList(idx) {
+  var apps = window._auditAppsList || [];
   var app = apps[idx];
   if (!app) return;
+  window._currentAuditApp = app;
   switchTab("audit");
   setTimeout(function() {
     var nameEl = document.getElementById("auditCreatorName");
     var nicheEl = document.getElementById("auditNiche");
-    if (nameEl) nameEl.value = app.name + " (" + (app.handle || "") + ")";
+    if (nameEl) nameEl.value = app.name + " (" + app.handle + ")";
     if (nicheEl) nicheEl.value = app.niche || "";
     if (app.platform) {
       var platBtns = document.querySelectorAll(".audit-plat-btn");
@@ -10320,16 +10443,17 @@ function loadAuditAppIntoForm(idx) {
         }
       }
     }
-    if (app.analyticsPeriod) {
+    var periodVal = app.period || "";
+    if (periodVal) {
       var periodBtns = document.querySelectorAll(".audit-period-btn");
       for (var pri = 0; pri < periodBtns.length; pri++) {
-        if (periodBtns[pri].textContent.indexOf(app.analyticsPeriod.replace(" days", " Days").replace("days", "Days")) !== -1) {
+        if (periodBtns[pri].textContent.indexOf(periodVal.replace(" days", " Days").replace("days", "Days")) !== -1) {
           selectAuditPeriod(periodBtns[pri], periodBtns[pri].textContent);
           break;
         }
       }
     }
-    if (app.captions) {
+    if (app.captions && app.captions.length > 0) {
       auditPosts = [];
       for (var ci = 0; ci < app.captions.length; ci++) {
         auditPosts.push({caption: app.captions[ci] || "", image: null});
@@ -10339,23 +10463,61 @@ function loadAuditAppIntoForm(idx) {
       setTimeout(function() {
         var nameEl2 = document.getElementById("auditCreatorName");
         var nicheEl2 = document.getElementById("auditNiche");
-        if (nameEl2) nameEl2.value = app.name + " (" + (app.handle || "") + ")";
+        if (nameEl2) nameEl2.value = app.name + " (" + app.handle + ")";
         if (nicheEl2) nicheEl2.value = app.niche || "";
         var challengeEl = document.getElementById("auditChallenge");
         if (challengeEl && app.challenge) challengeEl.value = app.challenge;
       }, 100);
     }
-    apps[idx].status = "processing";
-    localStorage.setItem("cr_audit_applications", JSON.stringify(apps));
+    if (app.source === "supabase" && app.id) {
+      supabaseClient.from("cr_support_tickets").update({status: "processing"}).eq("id", app.id).then(function(){});
+    }
+    if (app.source === "local" && typeof app.localIdx === "number") {
+      var localApps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+      if (localApps[app.localIdx]) {
+        localApps[app.localIdx].status = "processing";
+        localStorage.setItem("cr_audit_applications", JSON.stringify(localApps));
+      }
+    }
   }, 300);
 }
 
-function deleteAuditApp(idx) {
-  if (!confirm("Delete this audit application?")) return;
-  var apps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
-  apps.splice(idx, 1);
-  localStorage.setItem("cr_audit_applications", JSON.stringify(apps));
+async function deleteAuditAppFromList(idx) {
+  var apps = window._auditAppsList || [];
+  var app = apps[idx];
+  if (!app) return;
+  if (!confirm("Delete this audit application from " + app.name + "?")) return;
+  if (app.source === "supabase" && app.id) {
+    await supabaseClient.from("cr_support_tickets").delete().eq("id", app.id);
+  }
+  if (app.source === "local" && typeof app.localIdx === "number") {
+    var localApps = JSON.parse(localStorage.getItem("cr_audit_applications") || "[]");
+    localApps.splice(app.localIdx, 1);
+    localStorage.setItem("cr_audit_applications", JSON.stringify(localApps));
+  }
   loadAdminAuditApps();
+}
+
+async function deliverReportToUser(reportData) {
+  var app = window._currentAuditApp;
+  if (!app || !app.email) { alert("No linked user email. Cannot deliver report."); return; }
+  try {
+    await supabaseClient.from("cr_support_tickets").insert([{
+      user_email: app.email,
+      category: "audit_report",
+      subject: "Audience Intelligence Report - " + (app.name || app.handle),
+      description: JSON.stringify(reportData),
+      niche: app.niche || "",
+      status: "complete"
+    }]);
+    if (app.source === "supabase" && app.id) {
+      await supabaseClient.from("cr_support_tickets").update({status: "complete"}).eq("id", app.id);
+    }
+    alert("Report delivered to " + app.email + "'s Creator Radar account!");
+    window._currentAuditApp = null;
+  } catch(e) {
+    alert("Error delivering report: " + e.message);
+  }
 }
 
 async function trackUserActivity() {
