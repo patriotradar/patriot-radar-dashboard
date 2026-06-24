@@ -6905,9 +6905,10 @@ function renderAuditTab() {
   if (!el) return;
   var savedAudits = JSON.parse(localStorage.getItem("cr_audits") || "[]");
 
-  var h = '<div class="card card-glow" style="border-color:#f472b6;margin-bottom:16px">';
-  h += '<div class="card-header"><h2 style="color:#f472b6">Creator Audit</h2><div class="section-icon" style="background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.3);color:#f472b6">&#128203;</div></div>';
-  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.5">Audit any creator\'s content strategy. For each post, paste the caption AND upload the analytics screenshot so the AI can analyze both together.</p>';
+  var h = '<div class="card card-glow" style="border-color:#a855f7;margin-bottom:16px">';
+  h += '<div class="card-header"><h2 style="color:#a855f7;font-size:15px">Audience Intelligence Report</h2><div class="section-icon" style="background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.3);color:#a855f7">&#129504;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.5">Discover exactly what their audience responds to and how to create more of it.</p>';
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.4;opacity:.7">Upload analytics screenshots + captions for a full psychological audience profile with actionable strategy.</p>';
 
   h += '<div style="margin-bottom:12px">';
   h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Creator Name / Handle</label>';
@@ -6931,11 +6932,23 @@ function renderAuditTab() {
   h += '</div>';
 
   h += '<div style="margin-bottom:12px">';
-  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:8px">Their Posts (caption + screenshot for each)</label>';
+  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Analytics Period</label>';
+  h += '<div style="display:flex;gap:6px">';
+  var periods = ["7 Days","28 Days","60 Days"];
+  for (var pri = 0; pri < periods.length; pri++) {
+    var prSel = pri === 1 ? 'background:rgba(168,85,247,.15);color:#a855f7;border-color:#a855f7' : 'background:rgba(255,255,255,.04);color:var(--muted);border-color:var(--border)';
+    h += '<button class="audit-period-btn" onclick="selectAuditPeriod(this,\'' + periods[pri] + '\')" style="padding:8px 16px;font-size:11px;' + prSel + ';border:1px solid;border-radius:8px;cursor:pointer;font-weight:600;flex:1">' + periods[pri] + '</button>';
+  }
+  h += '</div>';
+  h += '<input type="hidden" id="auditPeriod" value="28 Days">';
+  h += '</div>';
+
+  h += '<div style="margin-bottom:12px">';
+  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:8px">Their Posts (caption + analytics screenshot for each)</label>';
 
   for (var ci = 0; ci < auditPosts.length; ci++) {
-    h += '<div style="padding:12px;border:1px solid rgba(244,114,182,.15);border-radius:12px;margin-bottom:10px;background:rgba(244,114,182,.02)">';
-    h += '<div style="font-size:10px;color:#f472b6;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Post ' + (ci+1) + '</div>';
+    h += '<div style="padding:12px;border:1px solid rgba(168,85,247,.15);border-radius:12px;margin-bottom:10px;background:rgba(168,85,247,.02)">';
+    h += '<div style="font-size:10px;color:#a855f7;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Post ' + (ci+1) + '</div>';
     h += '<textarea class="audit-caption-input" data-idx="' + ci + '" placeholder="Paste caption for post ' + (ci+1) + '..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#07100c;color:var(--white);font-size:13px;outline:none;resize:vertical;min-height:60px;max-height:120px;margin-bottom:8px;box-sizing:border-box;font-family:inherit;line-height:1.4">' + (auditPosts[ci].caption || '') + '</textarea>';
 
     h += '<div style="display:flex;align-items:center;gap:8px">';
@@ -6946,9 +6959,9 @@ function renderAuditTab() {
       h += '</div>';
       h += '<span style="font-size:10px;color:var(--green);font-weight:600">Screenshot attached</span>';
     } else {
-      h += '<label for="auditImg' + ci + '" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border:1px dashed rgba(244,114,182,.3);border-radius:8px;cursor:pointer;background:rgba(244,114,182,.03);flex:1">';
+      h += '<label for="auditImg' + ci + '" style="display:flex;align-items:center;gap:6px;padding:10px 14px;border:1px dashed rgba(168,85,247,.3);border-radius:8px;cursor:pointer;background:rgba(168,85,247,.03);flex:1">';
       h += '<span style="font-size:16px">&#128247;</span>';
-      h += '<span style="font-size:11px;color:#f472b6;font-weight:600">Upload screenshot / thumbnail</span>';
+      h += '<span style="font-size:11px;color:#a855f7;font-weight:600">Upload analytics screenshot</span>';
       h += '</label>';
       h += '<input type="file" id="auditImg' + ci + '" accept="image/*" style="display:none" onchange="handleAuditPostImage(this,' + ci + ')">';
     }
@@ -6956,16 +6969,21 @@ function renderAuditTab() {
     h += '</div>';
   }
 
-  h += '<button onclick="addAuditPost()" style="padding:8px 14px;font-size:11px;background:rgba(244,114,182,.08);border:1px solid rgba(244,114,182,.2);color:#f472b6;border-radius:8px;cursor:pointer;font-weight:700;margin-bottom:4px">+ Add Another Post</button>';
+  h += '<button onclick="addAuditPost()" style="padding:8px 14px;font-size:11px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);color:#a855f7;border-radius:8px;cursor:pointer;font-weight:700;margin-bottom:4px">+ Add Another Post</button>';
   h += '</div>';
 
-  h += '<button id="auditRunBtn" onclick="runCreatorAudit()" style="width:100%;padding:16px;background:linear-gradient(135deg,#f472b6,#a855f7);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;margin-bottom:8px">GENERATE AUDIT REPORT</button>';
+  h += '<div style="margin-bottom:14px">';
+  h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Their Biggest Challenge</label>';
+  h += '<textarea id="auditChallenge" placeholder="e.g. I post consistently but views are dropping, I can\'t convert viewers to followers, my engagement is low despite high views..." style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#07100c;color:var(--white);font-size:13px;outline:none;resize:vertical;min-height:60px;max-height:100px;box-sizing:border-box;font-family:inherit;line-height:1.4"></textarea>';
+  h += '</div>';
+
+  h += '<button id="auditRunBtn" onclick="runCreatorAudit()" style="width:100%;padding:16px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;letter-spacing:1px;margin-bottom:8px">GENERATE INTELLIGENCE REPORT</button>';
   h += '<div id="auditResult"></div>';
   h += '</div>';
 
   if (savedAudits.length > 0) {
-    h += '<div class="card" style="border-color:rgba(244,114,182,.2)">';
-    h += '<div class="card-header"><h2 style="color:#f472b6;font-size:14px">Past Audits</h2></div>';
+    h += '<div class="card" style="border-color:rgba(168,85,247,.2)">';
+    h += '<div class="card-header"><h2 style="color:#a855f7;font-size:14px">Past Reports</h2></div>';
     for (var si = 0; si < Math.min(10, savedAudits.length); si++) {
       var sa = savedAudits[si];
       var saGrade = sa.overallScore >= 80 ? "S" : sa.overallScore >= 60 ? "A" : sa.overallScore >= 40 ? "B" : "C";
@@ -6980,6 +6998,19 @@ function renderAuditTab() {
   }
 
   el.innerHTML = h;
+}
+
+function selectAuditPeriod(btn, period) {
+  var btns = document.querySelectorAll(".audit-period-btn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].style.background = "rgba(255,255,255,.04)";
+    btns[i].style.color = "var(--muted)";
+    btns[i].style.borderColor = "var(--border)";
+  }
+  btn.style.background = "rgba(168,85,247,.15)";
+  btn.style.color = "#a855f7";
+  btn.style.borderColor = "#a855f7";
+  document.getElementById("auditPeriod").value = period;
 }
 
 function selectAuditPlatform(btn, platform) {
@@ -7032,17 +7063,19 @@ async function runCreatorAudit() {
   var creatorName = (document.getElementById("auditCreatorName").value || "").trim();
   var niche = (document.getElementById("auditNiche").value || "").trim();
   var platform = (document.getElementById("auditPlatform").value || "").trim();
+  var period = (document.getElementById("auditPeriod").value || "28 Days").trim();
+  var challenge = (document.getElementById("auditChallenge").value || "").trim();
 
   if (!creatorName) { alert("Please enter the creator's name or handle"); return; }
   if (!niche) { alert("Please enter their niche"); return; }
   var filledPosts = auditPosts.filter(function(p) { return p.caption; });
-  if (filledPosts.length < 1) { alert("Please paste at least one caption to audit"); return; }
+  if (filledPosts.length < 1) { alert("Please paste at least one caption to analyze"); return; }
 
   var btn = document.getElementById("auditRunBtn");
   var resultDiv = document.getElementById("auditResult");
   btn.disabled = true;
   btn.textContent = "ANALYZING CONTENT...";
-  resultDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted)"><div style="font-size:24px;margin-bottom:8px">&#9881;</div>Scoring ' + filledPosts.length + ' posts across 7 dimensions...</div>';
+  resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#129504;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Building Audience Intelligence Profile</div><div style="font-size:11px">Scoring ' + filledPosts.length + ' posts across 7 dimensions...</div></div>';
 
   var captionResults = [];
   for (var i = 0; i < filledPosts.length; i++) {
@@ -7053,13 +7086,16 @@ async function runCreatorAudit() {
   if (captionResults.length === 0) {
     resultDiv.innerHTML = '<div style="padding:12px;color:#ff4757">Could not analyze any captions. Please check the content and try again.</div>';
     btn.disabled = false;
-    btn.textContent = "GENERATE AUDIT REPORT";
+    btn.textContent = "GENERATE INTELLIGENCE REPORT";
     return;
   }
 
   var avgHook = 0, avgCTA = 0, avgStructure = 0, avgEngagement = 0, avgHashtags = 0, avgTrend = 0, avgOriginality = 0, avgTotal = 0;
   var allImprovements = [];
   var gradeCount = {S:0, A:0, B:0, C:0};
+  var detectedFormats = {};
+  var detectedEmotions = {};
+  var detectedTopics = {};
   for (var j = 0; j < captionResults.length; j++) {
     var cr = captionResults[j];
     avgHook += cr.hookScore.score;
@@ -7071,6 +7107,13 @@ async function runCreatorAudit() {
     avgOriginality += cr.originalityScore.score;
     avgTotal += cr.totalScore;
     gradeCount[cr.grade]++;
+    if (cr.format) detectedFormats[cr.format] = (detectedFormats[cr.format] || 0) + 1;
+    if (cr.topic) detectedTopics[cr.topic] = (detectedTopics[cr.topic] || 0) + 1;
+    if (cr.emotions) {
+      for (var ei = 0; ei < cr.emotions.length; ei++) {
+        detectedEmotions[cr.emotions[ei]] = (detectedEmotions[cr.emotions[ei]] || 0) + 1;
+      }
+    }
     for (var k = 0; k < cr.improvements.length; k++) {
       if (allImprovements.indexOf(cr.improvements[k]) === -1) allImprovements.push(cr.improvements[k]);
     }
@@ -7085,10 +7128,15 @@ async function runCreatorAudit() {
   avgOriginality = Math.round(avgOriginality / n);
   avgTotal = Math.round(avgTotal / n);
 
+  var formatSummary = Object.keys(detectedFormats).sort(function(a,b){return detectedFormats[b]-detectedFormats[a]}).slice(0,5).map(function(f){return f+" ("+detectedFormats[f]+")"}).join(", ");
+  var emotionSummary = Object.keys(detectedEmotions).sort(function(a,b){return detectedEmotions[b]-detectedEmotions[a]}).slice(0,5).map(function(e){return e+" ("+detectedEmotions[e]+")"}).join(", ");
+  var topicSummary = Object.keys(detectedTopics).sort(function(a,b){return detectedTopics[b]-detectedTopics[a]}).slice(0,5).map(function(t){return t+" ("+detectedTopics[t]+")"}).join(", ");
+
   var thumbnailResults = [];
   var postsWithImages = filledPosts.filter(function(p) { return p.image; });
   if (postsWithImages.length > 0) {
     btn.textContent = "ANALYZING SCREENSHOTS (" + postsWithImages.length + ")...";
+    resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#128247;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Analyzing Visual Content</div><div style="font-size:11px">Processing ' + postsWithImages.length + ' analytics screenshots...</div></div>';
     for (var ti = 0; ti < postsWithImages.length; ti++) {
       try {
         var thumbResult = await analyzeVideoFrame(postsWithImages[ti].image, postsWithImages[ti].caption);
@@ -7100,29 +7148,31 @@ async function runCreatorAudit() {
     }
   }
 
-  btn.textContent = "GENERATING AI REPORT...";
+  btn.textContent = "GENERATING INTELLIGENCE REPORT...";
+  resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#129504;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Building Audience Intelligence Report</div><div style="font-size:11px">Analyzing audience psychology, behavior patterns, and content opportunities...</div></div>';
+
   var aiReport = null;
   if (GROQ_KEY) {
     var captionSummary = filledPosts.map(function(p, idx) {
-      var line = "Post " + (idx+1) + ": " + p.caption.substring(0, 200);
-      if (p.image) line += " [screenshot attached - analyzed separately]";
+      var line = "Post " + (idx+1) + ": " + p.caption.substring(0, 300);
+      if (p.image) line += " [analytics screenshot attached]";
       return line;
     }).join("\n");
     var visualSummary = "";
     if (thumbnailResults.length > 0) {
-      visualSummary = "\n\nVisual analysis of " + thumbnailResults.length + " screenshots:\n";
+      visualSummary = "\n\nVisual/Screenshot analysis of " + thumbnailResults.length + " images:\n";
       for (var vi = 0; vi < thumbnailResults.length; vi++) {
         visualSummary += "- Image " + (vi+1) + ": Visual score " + (thumbnailResults[vi].visualScore || 0) + "/100, Scroll-Stop: " + (thumbnailResults[vi].scrollStopPower || "Unknown");
-        if (thumbnailResults[vi].thumbnailAnalysis) visualSummary += ", " + thumbnailResults[vi].thumbnailAnalysis.substring(0, 100);
+        if (thumbnailResults[vi].thumbnailAnalysis) visualSummary += ", " + thumbnailResults[vi].thumbnailAnalysis.substring(0, 150);
         visualSummary += "\n";
       }
     }
-    var auditPrompt = "You are a professional social media auditor. Generate a detailed audit report for this creator.\n\nCreator: " + creatorName + "\nNiche: " + niche + "\nPlatform: " + (platform || "Multi-platform") + "\n\nTheir recent posts:\n" + captionSummary + "\n\nContent scoring averages (out of 100):\n- Hook Strength: " + avgHook + "\n- Call to Action: " + avgCTA + "\n- Structure: " + avgStructure + "\n- Engagement: " + avgEngagement + "\n- Hashtags: " + avgHashtags + "\n- Trend Relevance: " + avgTrend + "\n- Originality: " + avgOriginality + "\n- Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier" + visualSummary + "\n\nProvide a professional audit report in this exact JSON format (no markdown):\n{\n\"summary\": \"2-3 sentence executive summary of their content strategy\",\n\"strengths\": [\"Strength 1 with specific example from their content\", \"Strength 2\", \"Strength 3\"],\n\"weaknesses\": [\"Weakness 1 with specific example\", \"Weakness 2\", \"Weakness 3\"],\n\"recommendations\": [\"Specific actionable recommendation 1\", \"Recommendation 2\", \"Recommendation 3\", \"Recommendation 4\", \"Recommendation 5\"],\n\"contentStrategy\": \"A paragraph about their overall content strategy - what's working and what needs to change\",\n\"growthPotential\": \"High/Medium/Low - explain why based on their scores and content\",\n\"competitorComparison\": \"How they compare to typical creators in the " + niche + " niche\",\n\"quickWins\": [\"Quick win 1 they can implement today\", \"Quick win 2\", \"Quick win 3\"]\n}";
+    var auditPrompt = "You are a premium Audience Intelligence analyst. Generate a comprehensive audience psychology report for this creator. Focus on WHY their audience engages, not just WHAT they post. The report should feel like: 'Here is exactly what your audience responds to and how to create more of it.'\n\nCreator: " + creatorName + "\nNiche: " + niche + "\nPlatform: " + (platform || "Multi-platform") + "\nAnalytics Period: " + period + (challenge ? "\nTheir Biggest Challenge: " + challenge : "") + "\n\nTheir recent posts:\n" + captionSummary + "\n\nDetected content formats used: " + (formatSummary || "Various") + "\nDetected emotional triggers: " + (emotionSummary || "Various") + "\nDetected topics: " + (topicSummary || "Various") + "\n\nContent scoring averages (out of 100):\n- Hook Strength: " + avgHook + "\n- Call to Action: " + avgCTA + "\n- Structure: " + avgStructure + "\n- Engagement Triggers: " + avgEngagement + "\n- Hashtags: " + avgHashtags + "\n- Trend Relevance: " + avgTrend + "\n- Originality: " + avgOriginality + "\n- Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier" + visualSummary + "\n\nProvide a comprehensive Audience Intelligence Report in this exact JSON format (no markdown, no code blocks):\n{\n\"executiveSummary\": \"3-4 sentence overview of their audience relationship and content performance. Be specific about what their audience responds to.\",\n\"audienceBehaviour\": {\n\"bestFormats\": [\"Format 1 - why it works for their audience\", \"Format 2 - why it works\"],\n\"worstFormats\": [\"Format 1 - why it underperforms\", \"Format 2 - why it falls flat\"],\n\"engagementPattern\": \"A paragraph analyzing their audience engagement patterns and trends\",\n\"topContent\": \"What type of content consistently gets the strongest response from their audience and why\"\n},\n\"audienceIntelligence\": {\n\"primaryDrivers\": [\"Psychological driver 1 - explanation of how it manifests\", \"Driver 2\", \"Driver 3\"],\n\"audienceDNA\": \"A detailed paragraph describing the psychological profile of their audience - who these people are, what motivates them, what keeps them coming back\",\n\"winningPatterns\": [\"Winning psychology pattern 1 with specific example\", \"Pattern 2\", \"Pattern 3\"],\n\"emotionalTriggers\": [\"Emotional trigger 1 - how it drives engagement\", \"Trigger 2\", \"Trigger 3\"]\n},\n\"audienceLeakage\": {\n\"viewLeakage\": \"Where and why views are being lost based on content analysis\",\n\"engagementLeakage\": \"Where and why engagement drops based on patterns\",\n\"underperformingTypes\": [\"Content type 1 - why it loses their audience\", \"Type 2\"]\n},\n\"contentOpportunities\": {\n\"postMoreOf\": [\"Opportunity 1 with reasoning\", \"Opportunity 2\", \"Opportunity 3\"],\n\"postLessOf\": [\"Content type to reduce 1 with reasoning\", \"Type 2\"],\n\"recommendedFormats\": [\"Format 1 - why it would work for their audience\", \"Format 2\"],\n\"psychologicalAngles\": [\"Angle 1 - how to use it\", \"Angle 2\", \"Angle 3\"]\n},\n\"actionPlan\": {\n\"thirtyDayStrategy\": \"A detailed paragraph outlining a 30-day content strategy tailored to their audience psychology\",\n\"contentIdeas\": [\"Specific content idea 1 with hook suggestion\", \"Idea 2\", \"Idea 3\", \"Idea 4\", \"Idea 5\", \"Idea 6\", \"Idea 7\"],\n\"hookRecommendations\": [\"Hook formula 1 with example\", \"Hook 2\", \"Hook 3\"],\n\"ctaRecommendations\": [\"CTA strategy 1 with example\", \"CTA 2\", \"CTA 3\"]\n},\n\"strengths\": [\"Strength 1 with specific evidence\", \"Strength 2\", \"Strength 3\"],\n\"weaknesses\": [\"Weakness 1 with specific evidence\", \"Weakness 2\", \"Weakness 3\"],\n\"growthPotential\": \"High/Medium/Low - detailed explanation with specific reasoning\",\n\"nicheComparison\": \"How they compare to successful creators in the " + niche + " niche and what sets top performers apart\"\n}";
     try {
       var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
         headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-        body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 1500})
+        body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000})
       });
       if (resp.ok) {
         var data = await resp.json();
@@ -7134,17 +7184,18 @@ async function runCreatorAudit() {
   }
 
   var overallGrade = avgTotal >= 80 ? "S" : avgTotal >= 60 ? "A" : avgTotal >= 40 ? "B" : "C";
-  var gradeCol = avgTotal >= 70 ? "var(--green)" : avgTotal >= 40 ? "var(--amber)" : "#ff4757";
 
   var savedAudit = {
     creatorName: creatorName, niche: niche, platform: platform,
+    period: period, challenge: challenge,
     overallScore: avgTotal, grade: overallGrade, captionCount: n,
     date: new Date().toLocaleDateString(),
     avgHook: avgHook, avgCTA: avgCTA, avgStructure: avgStructure,
     avgEngagement: avgEngagement, avgHashtags: avgHashtags,
     avgTrend: avgTrend, avgOriginality: avgOriginality,
+    detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
     aiReport: aiReport, thumbnailResults: thumbnailResults,
-    allImprovements: allImprovements.slice(0, 10)
+    allImprovements: allImprovements.slice(0, 15)
   };
   var savedAudits = JSON.parse(localStorage.getItem("cr_audits") || "[]");
   savedAudits.unshift(savedAudit);
@@ -7153,25 +7204,27 @@ async function runCreatorAudit() {
 
   renderAuditReport(savedAudit, resultDiv);
   btn.disabled = false;
-  btn.textContent = "GENERATE AUDIT REPORT";
+  btn.textContent = "GENERATE INTELLIGENCE REPORT";
   trackEvent("audit_generated", {creator: creatorName, niche: niche, captions: n});
 }
 
 function renderAuditReport(audit, container) {
   var gradeCol = audit.overallScore >= 70 ? "var(--green)" : audit.overallScore >= 40 ? "var(--amber)" : "#ff4757";
   var gradeLetter = audit.grade || (audit.overallScore >= 80 ? "S" : audit.overallScore >= 60 ? "A" : audit.overallScore >= 40 ? "B" : "C");
+  var sectionStyle = function(col, alpha) { return 'padding:16px;background:rgba(' + col + ',' + (alpha||.03) + ');border:1px solid rgba(' + col + ',.12);border-radius:14px;margin-bottom:14px'; };
+  var sectionHead = function(text, col) { return '<div style="font-size:10px;color:' + col + ';text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:10px">' + text + '</div>'; };
 
   var h = '<div style="margin-top:16px">';
 
-  h += '<div style="padding:20px;background:linear-gradient(135deg,rgba(244,114,182,.08),rgba(168,85,247,.08));border:1px solid rgba(244,114,182,.25);border-radius:14px;margin-bottom:14px;text-align:center">';
-  h += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:2px;margin-bottom:4px">CREATOR AUDIT REPORT</div>';
-  h += '<div style="font-size:18px;font-weight:900;color:var(--white);margin-bottom:2px">' + (audit.creatorName || "") + '</div>';
-  h += '<div style="font-size:11px;color:var(--muted)">' + (audit.niche || "") + ' | ' + (audit.platform || "Multi-platform") + ' | ' + (audit.captionCount || 0) + ' posts analyzed</div>';
-  h += '<div style="margin-top:12px;display:flex;justify-content:center;align-items:baseline;gap:8px">';
-  h += '<span style="font-size:48px;font-weight:900;color:' + gradeCol + '">' + audit.overallScore + '</span>';
+  h += '<div style="padding:24px 20px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(99,102,241,.1));border:1px solid rgba(168,85,247,.3);border-radius:16px;margin-bottom:14px;text-align:center">';
+  h += '<div style="font-size:9px;color:#a855f7;text-transform:uppercase;font-weight:800;letter-spacing:3px;margin-bottom:6px">Audience Intelligence Report</div>';
+  h += '<div style="font-size:20px;font-weight:900;color:var(--white);margin-bottom:2px">' + (audit.creatorName || "") + '</div>';
+  h += '<div style="font-size:11px;color:var(--muted)">' + (audit.niche || "") + ' | ' + (audit.platform || "Multi-platform") + ' | ' + (audit.period || "28 Days") + ' | ' + (audit.captionCount || 0) + ' posts</div>';
+  h += '<div style="margin-top:14px;display:flex;justify-content:center;align-items:baseline;gap:8px">';
+  h += '<span style="font-size:52px;font-weight:900;color:' + gradeCol + '">' + audit.overallScore + '</span>';
   h += '<span style="font-size:16px;color:var(--muted)">/100</span>';
   h += '</div>';
-  h += '<div style="font-size:13px;font-weight:800;color:' + gradeCol + ';margin-top:2px">Grade ' + gradeLetter + '</div>';
+  h += '<div style="font-size:13px;font-weight:800;color:' + gradeCol + ';margin-top:2px">Content Grade ' + gradeLetter + '</div>';
   h += '</div>';
 
   var dims = [
@@ -7185,7 +7238,7 @@ function renderAuditReport(audit, container) {
   ];
 
   h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:14px">';
-  h += '<div style="font-size:10px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:12px">Score Breakdown</div>';
+  h += sectionHead('Content Score Breakdown', 'var(--muted)');
   for (var di = 0; di < dims.length; di++) {
     var dm = dims[di];
     var dimCol = dm.score >= 70 ? dm.col : dm.score >= 40 ? "#fbbf24" : "#ff4757";
@@ -7200,75 +7253,238 @@ function renderAuditReport(audit, container) {
 
   var report = audit.aiReport;
   if (report) {
-    if (report.summary) {
-      h += '<div style="padding:14px;background:rgba(244,114,182,.04);border:1px solid rgba(244,114,182,.15);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:#f472b6;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:6px">Executive Summary</div>';
-      h += '<div style="font-size:12px;color:var(--white);line-height:1.6">' + report.summary + '</div>';
+    var summary = report.executiveSummary || report.summary;
+    if (summary) {
+      h += '<div style="' + sectionStyle('168,85,247', .04) + '">';
+      h += sectionHead('Executive Summary', '#a855f7');
+      h += '<div style="font-size:12px;color:var(--white);line-height:1.7">' + summary + '</div>';
       h += '</div>';
     }
 
     if (report.growthPotential) {
       var gpCol = report.growthPotential.indexOf("High") !== -1 ? "var(--green)" : report.growthPotential.indexOf("Low") !== -1 ? "#ff4757" : "var(--amber)";
-      h += '<div style="padding:10px 14px;background:rgba(0,0,0,.3);border-left:3px solid ' + gpCol + ';border-radius:0 8px 8px 0;margin-bottom:12px">';
+      h += '<div style="padding:12px 16px;background:rgba(0,0,0,.3);border-left:3px solid ' + gpCol + ';border-radius:0 10px 10px 0;margin-bottom:14px">';
       h += '<span style="font-size:10px;color:var(--muted);font-weight:700">GROWTH POTENTIAL: </span>';
       h += '<span style="font-size:12px;color:' + gpCol + ';font-weight:800">' + report.growthPotential + '</span>';
       h += '</div>';
     }
 
+    if (report.audienceBehaviour) {
+      var ab = report.audienceBehaviour;
+      h += '<div style="' + sectionStyle('255,140,0', .04) + '">';
+      h += sectionHead('&#128202; Audience Behaviour Analysis', '#ff8c00');
+
+      if (ab.bestFormats && ab.bestFormats.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Best Performing Content</div>';
+        for (var bf = 0; bf < ab.bestFormats.length; bf++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);margin-right:6px">&#9650;</span>' + ab.bestFormats[bf] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (ab.worstFormats && ab.worstFormats.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:#ff4757;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Worst Performing Content</div>';
+        for (var wf = 0; wf < ab.worstFormats.length; wf++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#ff4757;margin-right:6px">&#9660;</span>' + ab.worstFormats[wf] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (ab.engagementPattern) {
+        h += '<div style="font-size:10px;font-weight:700;color:#ff8c00;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Engagement Trends</div>';
+        h += '<div style="font-size:11px;color:var(--white);line-height:1.6;margin-bottom:10px">' + ab.engagementPattern + '</div>';
+      }
+
+      if (ab.topContent) {
+        h += '<div style="padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:8px">';
+        h += '<div style="font-size:9px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Highest Engagement Content</div>';
+        h += '<div style="font-size:11px;color:var(--white);line-height:1.5">' + ab.topContent + '</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    if (report.audienceIntelligence) {
+      var ai = report.audienceIntelligence;
+      h += '<div style="' + sectionStyle('167,139,250', .04) + '">';
+      h += sectionHead('&#129504; Audience Intelligence', '#a78bfa');
+
+      if (ai.primaryDrivers && ai.primaryDrivers.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:#ff8c00;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Audience Drivers (Why They Engage)</div>';
+        h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">';
+        for (var pd = 0; pd < ai.primaryDrivers.length; pd++) {
+          var driverText = ai.primaryDrivers[pd];
+          var driverName = driverText.split(" - ")[0] || driverText;
+          var driverDesc = driverText.split(" - ")[1] || "";
+          var drBg = pd === 0 ? "rgba(255,140,0,.12)" : "rgba(255,140,0,.06)";
+          var drBorder = pd === 0 ? "rgba(255,140,0,.4)" : "rgba(255,140,0,.15)";
+          h += '<div style="padding:10px 14px;background:' + drBg + ';border:1px solid ' + drBorder + ';border-radius:10px;text-align:center;min-width:90px;max-width:160px">';
+          h += '<div style="font-size:13px;font-weight:900;color:#ff8c00">' + driverName + '</div>';
+          if (driverDesc) h += '<div style="font-size:9px;color:var(--muted);margin-top:3px;line-height:1.3">' + driverDesc + '</div>';
+          if (pd === 0) h += '<div style="font-size:8px;color:#ff8c00;font-weight:700;margin-top:3px">PRIMARY DRIVER</div>';
+          h += '</div>';
+        }
+        h += '</div>';
+      }
+
+      if (ai.audienceDNA) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Audience DNA Profile</div>';
+        h += '<div style="font-size:11px;color:var(--white);line-height:1.7;margin-bottom:14px;padding:10px;background:rgba(167,139,250,.05);border-radius:8px;border-left:3px solid rgba(167,139,250,.3)">' + ai.audienceDNA + '</div>';
+      }
+
+      if (ai.winningPatterns && ai.winningPatterns.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Winning Psychology Patterns</div>';
+        for (var wp = 0; wp < ai.winningPatterns.length; wp++) {
+          h += '<div style="padding:8px 10px;margin-bottom:6px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);border-radius:8px;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);font-weight:700;margin-right:6px">&#10003;</span>' + ai.winningPatterns[wp] + '</div>';
+        }
+        h += '<div style="margin-bottom:10px"></div>';
+      }
+
+      if (ai.emotionalTriggers && ai.emotionalTriggers.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Emotional Triggers Driving Engagement</div>';
+        h += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+        for (var et = 0; et < ai.emotionalTriggers.length; et++) {
+          var trigText = ai.emotionalTriggers[et];
+          var trigName = trigText.split(" - ")[0] || trigText;
+          var trigDesc = trigText.split(" - ")[1] || "";
+          h += '<div style="padding:8px 12px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);border-radius:10px;min-width:80px;max-width:180px">';
+          h += '<div style="font-size:12px;font-weight:800;color:var(--amber)">' + trigName + '</div>';
+          if (trigDesc) h += '<div style="font-size:9px;color:var(--muted);margin-top:2px;line-height:1.3">' + trigDesc + '</div>';
+          h += '</div>';
+        }
+        h += '</div>';
+      }
+      h += '</div>';
+    }
+
+    if (report.audienceLeakage) {
+      var al = report.audienceLeakage;
+      h += '<div style="' + sectionStyle('255,71,87', .03) + '">';
+      h += sectionHead('&#128683; Audience Leakage Analysis', '#ff4757');
+
+      if (al.viewLeakage) {
+        h += '<div style="padding:10px;background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.1);border-radius:8px;margin-bottom:10px">';
+        h += '<div style="font-size:9px;color:#ff4757;font-weight:700;text-transform:uppercase;margin-bottom:4px">Where Views Are Dropping</div>';
+        h += '<div style="font-size:11px;color:var(--white);line-height:1.5">' + al.viewLeakage + '</div>';
+        h += '</div>';
+      }
+      if (al.engagementLeakage) {
+        h += '<div style="padding:10px;background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.1);border-radius:8px;margin-bottom:10px">';
+        h += '<div style="font-size:9px;color:#ff4757;font-weight:700;text-transform:uppercase;margin-bottom:4px">Where Engagement Is Dropping</div>';
+        h += '<div style="font-size:11px;color:var(--white);line-height:1.5">' + al.engagementLeakage + '</div>';
+        h += '</div>';
+      }
+      if (al.underperformingTypes && al.underperformingTypes.length > 0) {
+        h += '<div style="font-size:9px;color:#ff4757;font-weight:700;text-transform:uppercase;margin-bottom:6px">Underperforming Content Types</div>';
+        for (var ut = 0; ut < al.underperformingTypes.length; ut++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#ff4757;margin-right:6px">&#9888;</span>' + al.underperformingTypes[ut] + '</div>';
+        }
+      }
+      h += '</div>';
+    }
+
+    if (report.contentOpportunities) {
+      var co = report.contentOpportunities;
+      h += '<div style="' + sectionStyle('0,255,136', .03) + '">';
+      h += sectionHead('&#127919; Content Opportunities', 'var(--green)');
+
+      if (co.postMoreOf && co.postMoreOf.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Post More Of</div>';
+        for (var pm = 0; pm < co.postMoreOf.length; pm++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);margin-right:6px">&#9650;</span>' + co.postMoreOf[pm] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (co.postLessOf && co.postLessOf.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:#ff4757;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Post Less Of</div>';
+        for (var pl = 0; pl < co.postLessOf.length; pl++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#ff4757;margin-right:6px">&#9660;</span>' + co.postLessOf[pl] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (co.recommendedFormats && co.recommendedFormats.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:#4dc9f6;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Recommended Formats</div>';
+        for (var rf = 0; rf < co.recommendedFormats.length; rf++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#4dc9f6;margin-right:6px">&#128313;</span>' + co.recommendedFormats[rf] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (co.psychologicalAngles && co.psychologicalAngles.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--purple);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Recommended Psychological Angles</div>';
+        for (var pa = 0; pa < co.psychologicalAngles.length; pa++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--purple);margin-right:6px">&#129504;</span>' + co.psychologicalAngles[pa] + '</div>';
+        }
+      }
+      h += '</div>';
+    }
+
+    if (report.actionPlan) {
+      var ap = report.actionPlan;
+      h += '<div style="' + sectionStyle('99,102,241', .04) + '">';
+      h += sectionHead('&#128640; 30-Day Action Plan', '#6366f1');
+
+      if (ap.thirtyDayStrategy) {
+        h += '<div style="font-size:11px;color:var(--white);line-height:1.7;margin-bottom:14px;padding:12px;background:rgba(99,102,241,.05);border-radius:8px;border-left:3px solid rgba(99,102,241,.3)">' + ap.thirtyDayStrategy + '</div>';
+      }
+
+      if (ap.contentIdeas && ap.contentIdeas.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:#818cf8;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Content Ideas Based on Their Audience</div>';
+        for (var ci2 = 0; ci2 < ap.contentIdeas.length; ci2++) {
+          h += '<div style="padding:8px 10px;margin-bottom:6px;background:rgba(129,140,248,.04);border:1px solid rgba(129,140,248,.1);border-radius:8px;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#818cf8;font-weight:800;margin-right:6px">' + (ci2+1) + '.</span>' + ap.contentIdeas[ci2] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (ap.hookRecommendations && ap.hookRecommendations.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Hook Recommendations</div>';
+        for (var hr = 0; hr < ap.hookRecommendations.length; hr++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);margin-right:6px">&#9889;</span>' + ap.hookRecommendations[hr] + '</div>';
+        }
+        h += '<div style="margin-bottom:12px"></div>';
+      }
+
+      if (ap.ctaRecommendations && ap.ctaRecommendations.length > 0) {
+        h += '<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">CTA Recommendations</div>';
+        for (var cr2 = 0; cr2 < ap.ctaRecommendations.length; cr2++) {
+          h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--amber);margin-right:6px">&#128227;</span>' + ap.ctaRecommendations[cr2] + '</div>';
+        }
+      }
+      h += '</div>';
+    }
+
     if (report.strengths && report.strengths.length > 0) {
-      h += '<div style="padding:14px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:var(--green);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Strengths</div>';
-      for (var si = 0; si < report.strengths.length; si++) {
-        h += '<div style="padding:6px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);margin-right:6px">&#10003;</span>' + report.strengths[si] + '</div>';
+      h += '<div style="' + sectionStyle('0,255,136', .03) + '">';
+      h += sectionHead('Strengths', 'var(--green)');
+      for (var si2 = 0; si2 < report.strengths.length; si2++) {
+        h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);margin-right:6px">&#10003;</span>' + report.strengths[si2] + '</div>';
       }
       h += '</div>';
     }
 
     if (report.weaknesses && report.weaknesses.length > 0) {
-      h += '<div style="padding:14px;background:rgba(255,71,87,.03);border:1px solid rgba(255,71,87,.12);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:#ff4757;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Areas for Improvement</div>';
-      for (var wi = 0; wi < report.weaknesses.length; wi++) {
-        h += '<div style="padding:6px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#ff4757;margin-right:6px">&#9888;</span>' + report.weaknesses[wi] + '</div>';
+      h += '<div style="' + sectionStyle('255,71,87', .03) + '">';
+      h += sectionHead('Areas for Improvement', '#ff4757');
+      for (var wi2 = 0; wi2 < report.weaknesses.length; wi2++) {
+        h += '<div style="padding:5px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#ff4757;margin-right:6px">&#9888;</span>' + report.weaknesses[wi2] + '</div>';
       }
       h += '</div>';
     }
 
-    if (report.recommendations && report.recommendations.length > 0) {
-      h += '<div style="padding:14px;background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.12);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:var(--purple);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Recommendations</div>';
-      for (var ri = 0; ri < report.recommendations.length; ri++) {
-        h += '<div style="padding:6px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--purple);font-weight:700;margin-right:6px">' + (ri+1) + '.</span>' + report.recommendations[ri] + '</div>';
-      }
-      h += '</div>';
-    }
-
-    if (report.quickWins && report.quickWins.length > 0) {
-      h += '<div style="padding:14px;background:rgba(251,191,36,.04);border:1px solid rgba(251,191,36,.12);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:var(--amber);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Quick Wins (Do Today)</div>';
-      for (var qi = 0; qi < report.quickWins.length; qi++) {
-        h += '<div style="padding:6px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--amber);margin-right:6px">&#9889;</span>' + report.quickWins[qi] + '</div>';
-      }
-      h += '</div>';
-    }
-
-    if (report.contentStrategy) {
-      h += '<div style="padding:14px;background:rgba(77,201,246,.04);border:1px solid rgba(77,201,246,.12);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:#4dc9f6;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:6px">Content Strategy Analysis</div>';
-      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.contentStrategy + '</div>';
-      h += '</div>';
-    }
-
-    if (report.competitorComparison) {
-      h += '<div style="padding:14px;background:rgba(129,140,248,.04);border:1px solid rgba(129,140,248,.12);border-radius:12px;margin-bottom:12px">';
-      h += '<div style="font-size:10px;color:#818cf8;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:6px">Niche Comparison</div>';
-      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.competitorComparison + '</div>';
+    var comparison = report.nicheComparison || report.competitorComparison;
+    if (comparison) {
+      h += '<div style="' + sectionStyle('129,140,248', .04) + '">';
+      h += sectionHead('Niche Comparison', '#818cf8');
+      h += '<div style="font-size:11px;color:var(--white);line-height:1.7">' + comparison + '</div>';
       h += '</div>';
     }
   }
 
   if (audit.thumbnailResults && audit.thumbnailResults.length > 0) {
-    h += '<div style="padding:14px;background:rgba(244,114,182,.04);border:1px solid rgba(244,114,182,.12);border-radius:12px;margin-bottom:12px">';
-    h += '<div style="font-size:10px;color:#f472b6;text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Thumbnail / Visual Analysis</div>';
+    h += '<div style="' + sectionStyle('244,114,182', .03) + '">';
+    h += sectionHead('Visual / Screenshot Analysis', '#f472b6');
     for (var thi = 0; thi < audit.thumbnailResults.length; thi++) {
       var tr = audit.thumbnailResults[thi];
       var trCol = (tr.visualScore || 0) >= 70 ? "var(--green)" : (tr.visualScore || 0) >= 45 ? "var(--amber)" : "#ff4757";
@@ -7285,20 +7501,20 @@ function renderAuditReport(audit, container) {
   }
 
   if (audit.allImprovements && audit.allImprovements.length > 0) {
-    h += '<div style="padding:14px;background:rgba(251,191,36,.03);border:1px solid rgba(251,191,36,.1);border-radius:12px;margin-bottom:12px">';
-    h += '<div style="font-size:10px;color:var(--amber);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:8px">Specific Content Fixes</div>';
-    for (var fi = 0; fi < Math.min(8, audit.allImprovements.length); fi++) {
+    h += '<div style="' + sectionStyle('251,191,36', .03) + '">';
+    h += sectionHead('Specific Content Fixes', 'var(--amber)');
+    for (var fi = 0; fi < Math.min(10, audit.allImprovements.length); fi++) {
       h += '<div style="padding:5px 0;font-size:10px;color:var(--white);line-height:1.5"><span style="color:var(--amber)">&#8226;</span> ' + audit.allImprovements[fi] + '</div>';
     }
     h += '</div>';
   }
 
-  h += '<div style="text-align:center;margin-top:16px">';
-  h += '<button onclick="shareAuditReport()" style="padding:12px 24px;background:linear-gradient(135deg,#f472b6,#a855f7);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">COPY REPORT AS TEXT</button>';
-  h += '<button onclick="renderAuditTab()" style="padding:12px 24px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--white);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">NEW AUDIT</button>';
+  h += '<div style="text-align:center;margin-top:18px">';
+  h += '<button onclick="shareAuditReport()" style="padding:12px 24px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">COPY REPORT</button>';
+  h += '<button onclick="renderAuditTab()" style="padding:12px 24px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--white);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer">NEW REPORT</button>';
   h += '</div>';
 
-  h += '<div style="text-align:center;margin-top:10px;font-size:9px;color:var(--muted)">Powered by Creator Radar | creatorradar.co.uk</div>';
+  h += '<div style="text-align:center;margin-top:10px;font-size:9px;color:var(--muted)">Powered by Creator Radar Audience Intelligence</div>';
   h += '</div>';
 
   container.innerHTML = h;
