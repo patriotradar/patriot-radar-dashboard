@@ -7287,6 +7287,21 @@ async function runCreatorAudit() {
   if (savedAudits.length > 20) savedAudits = savedAudits.slice(0, 20);
   localStorage.setItem("cr_audits", JSON.stringify(savedAudits));
 
+  // Also save to Supabase so reports persist across devices
+  try {
+    var su = (await supabaseClient.auth.getUser()).data.user;
+    if (su && su.email) {
+      await supabaseClient.from("cr_support_tickets").insert([{
+        user_email: su.email,
+        category: "audit_report",
+        subject: "Audience Intelligence Report - " + (creatorName || "Unknown"),
+        description: JSON.stringify(savedAudit),
+        niche: niche || "",
+        status: "complete"
+      }]);
+    }
+  } catch(e) {}
+
   window._lastGeneratedReport = savedAudit;
   renderAuditReport(savedAudit, resultDiv);
   btn.disabled = false;
@@ -9615,9 +9630,6 @@ async function checkMyAuditReport() {
   try {
     var u = (await supabaseClient.auth.getUser()).data.user;
     if (!u || !u.email) return;
-    var isAuditCustomer = u.user_metadata && u.user_metadata.audit_customer;
-    if (!isAuditCustomer) return;
-
     var banner = document.getElementById("trialBanner");
     if (!banner) return;
 
