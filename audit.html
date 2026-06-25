@@ -428,6 +428,67 @@ body {
   letter-spacing: 0.5px;
 }
 .caption-field textarea { padding-left: 50px; }
+
+.post-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: rgba(3,5,4,0.5);
+}
+.post-card-header {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.upload-zone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: border-color 0.2s, background 0.2s;
+  background: rgba(0,255,136,0.02);
+}
+.upload-zone:hover {
+  border-color: var(--green);
+  background: rgba(0,255,136,0.06);
+}
+.upload-zone-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.5px;
+}
+.upload-filename {
+  font-size: 11px;
+  color: var(--green);
+  padding: 4px 0 0 4px;
+}
+.add-post-btn {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  margin-top: 4px;
+}
+.add-post-btn:hover {
+  border-color: var(--green);
+  background: rgba(0,255,136,0.04);
+}
 .submit-btn {
   width: 100%;
   padding: 18px;
@@ -978,40 +1039,60 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="form-group">
-          <label>Upload Video Analytics Screenshots</label>
-          <div id="uploadDropzone" style="border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;background:rgba(0,255,136,0.03);transition:border-color 0.2s,background 0.2s" onclick="document.getElementById('appScreenshots').click()" onmouseover="this.style.borderColor='var(--green)';this.style.background='rgba(0,255,136,0.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='rgba(0,255,136,0.03)'">
-            <div style="font-size:36px;margin-bottom:8px">&#128202;</div>
-            <div style="font-size:14px;color:var(--white);font-weight:700;margin-bottom:6px">Tap here to upload your analytics screenshots</div>
-            <div style="font-size:11px;color:var(--muted);line-height:1.5">Overview, audience demographics, and content performance<br>PNG, JPG or screenshot from your phone</div>
-            <input type="file" id="appScreenshots" multiple accept="image/*" style="display:none" onchange="showUploadedFiles(this)">
+          <label>Their Posts <span style="font-weight:400;text-transform:none;letter-spacing:0">(Caption + Analytics Screenshot For Each)</span></label>
+          <div id="postsContainer">
+            <div class="post-card" id="postCard1">
+              <div class="post-card-header">POST 1</div>
+              <textarea class="form-textarea" id="appCaption1" placeholder="Paste caption for post 1..." rows="3"></textarea>
+              <div class="upload-zone" onclick="document.getElementById('appScreenshot1').click()">
+                <span style="font-size:16px">&#128247;</span>
+                <span class="upload-zone-text">UPLOAD ANALYTICS SCREENSHOT</span>
+                <input type="file" id="appScreenshot1" accept="image/*" style="display:none" onchange="showPostFile(this,1)">
+              </div>
+              <div id="postFile1" class="upload-filename"></div>
+            </div>
+            <div class="post-card" id="postCard2">
+              <div class="post-card-header">POST 2</div>
+              <textarea class="form-textarea" id="appCaption2" placeholder="Paste caption for post 2..." rows="3"></textarea>
+              <div class="upload-zone" onclick="document.getElementById('appScreenshot2').click()">
+                <span style="font-size:16px">&#128247;</span>
+                <span class="upload-zone-text">UPLOAD ANALYTICS SCREENSHOT</span>
+                <input type="file" id="appScreenshot2" accept="image/*" style="display:none" onchange="showPostFile(this,2)">
+              </div>
+              <div id="postFile2" class="upload-filename"></div>
+            </div>
+            <div class="post-card" id="postCard3">
+              <div class="post-card-header">POST 3</div>
+              <textarea class="form-textarea" id="appCaption3" placeholder="Paste caption for post 3..." rows="3"></textarea>
+              <div class="upload-zone" onclick="document.getElementById('appScreenshot3').click()">
+                <span style="font-size:16px">&#128247;</span>
+                <span class="upload-zone-text">UPLOAD ANALYTICS SCREENSHOT</span>
+                <input type="file" id="appScreenshot3" accept="image/*" style="display:none" onchange="showPostFile(this,3)">
+              </div>
+              <div id="postFile3" class="upload-filename"></div>
+            </div>
+            <div class="post-card" id="postCard4" style="display:none">
+              <div class="post-card-header">POST 4</div>
+              <textarea class="form-textarea" id="appCaption4" placeholder="Paste caption for post 4..." rows="3"></textarea>
+              <div class="upload-zone" onclick="document.getElementById('appScreenshot4').click()">
+                <span style="font-size:16px">&#128247;</span>
+                <span class="upload-zone-text">UPLOAD ANALYTICS SCREENSHOT</span>
+                <input type="file" id="appScreenshot4" accept="image/*" style="display:none" onchange="showPostFile(this,4)">
+              </div>
+              <div id="postFile4" class="upload-filename"></div>
+            </div>
+            <div class="post-card" id="postCard5" style="display:none">
+              <div class="post-card-header">POST 5</div>
+              <textarea class="form-textarea" id="appCaption5" placeholder="Paste caption for post 5..." rows="3"></textarea>
+              <div class="upload-zone" onclick="document.getElementById('appScreenshot5').click()">
+                <span style="font-size:16px">&#128247;</span>
+                <span class="upload-zone-text">UPLOAD ANALYTICS SCREENSHOT</span>
+                <input type="file" id="appScreenshot5" accept="image/*" style="display:none" onchange="showPostFile(this,5)">
+              </div>
+              <div id="postFile5" class="upload-filename"></div>
+            </div>
           </div>
-          <div id="uploadedFilesList" style="margin-top:8px"></div>
-        </div>
-
-        <div class="form-group">
-          <label>Recent Captions <span style="font-weight:400;text-transform:none;letter-spacing:0">(up to 5)</span></label>
-          <div class="captions-group">
-            <div class="caption-field">
-              <span class="caption-num">#1</span>
-              <textarea class="form-textarea" id="appCaption1" placeholder="Paste your most recent caption..." rows="2" style="padding-left:50px"></textarea>
-            </div>
-            <div class="caption-field">
-              <span class="caption-num">#2</span>
-              <textarea class="form-textarea" id="appCaption2" placeholder="Second most recent caption..." rows="2" style="padding-left:50px"></textarea>
-            </div>
-            <div class="caption-field">
-              <span class="caption-num">#3</span>
-              <textarea class="form-textarea" id="appCaption3" placeholder="Third caption..." rows="2" style="padding-left:50px"></textarea>
-            </div>
-            <div class="caption-field">
-              <span class="caption-num">#4</span>
-              <textarea class="form-textarea" id="appCaption4" placeholder="Fourth caption..." rows="2" style="padding-left:50px"></textarea>
-            </div>
-            <div class="caption-field">
-              <span class="caption-num">#5</span>
-              <textarea class="form-textarea" id="appCaption5" placeholder="Fifth caption..." rows="2" style="padding-left:50px"></textarea>
-            </div>
-          </div>
+          <button type="button" class="add-post-btn" id="addPostBtn" onclick="addPost()">+ ADD ANOTHER POST</button>
         </div>
 
         <div class="form-group">
@@ -1335,14 +1416,22 @@ async function initPayPalButtons() {
   }
 }
 
-function showUploadedFiles(input) {
-  var list = document.getElementById("uploadedFilesList");
-  if (!input.files || input.files.length === 0) { list.innerHTML = ""; return; }
-  var html = "";
-  for (var i = 0; i < input.files.length; i++) {
-    html += '<div style="font-size:11px;color:var(--green);padding:3px 0">&#10003; ' + input.files[i].name + '</div>';
+var postCount = 3;
+
+function showPostFile(input, num) {
+  var el = document.getElementById("postFile" + num);
+  if (input.files && input.files.length > 0) {
+    el.innerHTML = "&#10003; " + input.files[0].name;
+  } else {
+    el.innerHTML = "";
   }
-  list.innerHTML = html;
+}
+
+function addPost() {
+  if (postCount >= 5) return;
+  postCount++;
+  document.getElementById("postCard" + postCount).style.display = "block";
+  if (postCount >= 5) document.getElementById("addPostBtn").style.display = "none";
 }
 
 // ===== CONTENT ANALYSIS ENGINE =====
