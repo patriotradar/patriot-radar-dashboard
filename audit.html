@@ -1153,7 +1153,7 @@ html { scroll-behavior: smooth; }
             <h3 style="color:var(--white);margin-bottom:8px;font-size:18px">Generating Your Report</h3>
             <p id="genStatus" style="color:var(--muted);font-size:13px;margin-bottom:20px">Analyzing your content across 7 dimensions...</p>
             <div style="width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:12px">
-              <div id="genProgress" style="width:5%;height:100%;background:linear-gradient(90deg,var(--green),var(--purple));border-radius:3px;transition:width 0.5s ease"></div>
+              <div id="genProgress" style="width:2%;height:100%;background:linear-gradient(90deg,var(--green),var(--purple));border-radius:3px;transition:width 0.15s linear"></div>
             </div>
             <p style="font-size:10px;color:var(--muted)">This usually takes about a minute</p>
           </div>
@@ -1674,11 +1674,29 @@ async function runAutoAudit(formData) {
   var genStatus = document.getElementById("genStatus");
   var genProgress = document.getElementById("genProgress");
 
+  var statusMsgs = [
+    "Analyzing hook patterns...",
+    "Scoring engagement triggers...",
+    "Mapping audience psychology...",
+    "Detecting content formats...",
+    "Evaluating hashtag strategy...",
+    "Building intelligence profile..."
+  ];
+  var msgIdx = 0;
+  var targetWidth = 10;
+  var currentWidth = 2;
+
+  function animateProgress() {
+    if (currentWidth < targetWidth) {
+      currentWidth += Math.max(0.3, (targetWidth - currentWidth) * 0.08);
+      genProgress.style.width = Math.min(currentWidth, targetWidth) + "%";
+    }
+  }
+  var progressInterval = setInterval(animateProgress, 50);
+  function setTarget(pct, msg) { targetWidth = pct; if (msg) genStatus.textContent = msg; }
+
   try {
-    // Phase 1: Analyze captions
-    genStatus.textContent = "Scoring " + formData.captions.length + " posts across 7 dimensions...";
-    genProgress.style.width = "15%";
-    await new Promise(function(r){setTimeout(r,400)});
+    setTarget(15, "Scoring " + formData.captions.length + " posts across 7 dimensions...");
 
     var captionResults = [];
     for (var i = 0; i < formData.captions.length; i++) {
@@ -1687,16 +1705,14 @@ async function runAutoAudit(formData) {
     }
 
     if (captionResults.length === 0) {
+      clearInterval(progressInterval);
       genStatus.textContent = "Could not analyze captions. Please contact support.";
       genProgress.style.width = "100%";
       genProgress.style.background = "#ff4757";
       return;
     }
 
-    // Phase 2: Compute averages and rankings
-    genStatus.textContent = "Building Audience Intelligence profile...";
-    genProgress.style.width = "30%";
-    await new Promise(function(r){setTimeout(r,300)});
+    setTarget(30, statusMsgs[msgIdx++ % statusMsgs.length]);
 
     var n = captionResults.length;
     var avgHook = 0, avgCTA = 0, avgStructure = 0, avgEngagement = 0, avgHashtags = 0, avgTrend = 0, avgOriginality = 0, avgTotal = 0;
@@ -1789,9 +1805,7 @@ async function runAutoAudit(formData) {
       hookRanking.push({style: hk, posts: hookStyles[hk].count, avgScore: hAvg});
     }
 
-    // Phase 3: AI Report via Groq
-    genStatus.textContent = "Generating AI-powered insights...";
-    genProgress.style.width = "50%";
+    setTarget(50, statusMsgs[msgIdx++ % statusMsgs.length]);
 
     var aiReport = null;
     if (GROQ_KEY) {
@@ -1803,12 +1817,16 @@ async function runAutoAudit(formData) {
       var creatorName = formData.handle || formData.name;
       var auditPrompt = "You are a premium Audience Intelligence analyst for Creator Radar. Generate a DATA-DRIVEN, evidence-based report.\n\nCRITICAL RULES:\n- DO NOT write generic AI paragraphs like 'your audience values authenticity'\n- EVERY claim MUST reference the creator's actual data below\n- Use specific numbers, percentages, and post counts from the analysis\n- The report must feel like: 'We've analyzed YOUR account' not 'AI has written you a report'\n- Keep all text SHORT and PUNCHY - max 2-3 sentences per insight field\n\nCREATOR DATA:\nCreator: " + creatorName + "\nNiche: " + formData.niche + "\nPlatform: " + (formData.platform || "Multi-platform") + "\nPeriod: " + formData.period + (formData.challenge ? "\nChallenge: " + formData.challenge : "") + "\n\nFORMAT PERFORMANCE (ranked by quality score):\n" + formatRankStr + "\n\nAUDIENCE DRIVERS/EMOTIONS (ranked by frequency):\n" + emotionRankStr + "\n\nCONTENT THEMES (ranked by score):\n" + topicRankStr + "\n\nHOOK STYLE PERFORMANCE:\n" + hookRankStr + "\n\nCONTENT QUALITY SCORES (avg out of 100):\nHook: " + avgHook + " | CTA: " + avgCTA + " | Structure: " + avgStructure + " | Engagement: " + avgEngagement + " | Hashtags: " + avgHashtags + " | Trend: " + avgTrend + " | Originality: " + avgOriginality + " | Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier\n\nPosts analyzed:\n" + captionSummary + "\n\nBased on THIS SPECIFIC DATA, provide analysis in this exact JSON format (no markdown, no code blocks):\n{\n\"headline\": \"One punchy sentence with a specific stat from the data\",\n\"evidenceBullets\": [\"5-7 specific data-backed findings, each MUST reference a number from the analysis above\"],\n\"formatInsight\": \"2-3 sentences explaining WHY the top format works, referencing scores\",\n\"driverInsight\": \"2-3 sentences explaining WHY these psychology drivers dominate, reference percentages\",\n\"audienceDNA\": \"2-3 sentences describing WHO the audience is based on driver profile\",\n\"hookInsight\": \"2-3 sentences on hook performance, reference hook score data\",\n\"themeInsight\": \"2-3 sentences on which themes work and why, reference topic scores\",\n\"winningPatterns\": [{\"combo\": \"Driver + Format combination\", \"why\": \"Data-backed reason this works\"}],\n\"doubleDown\": [{\"what\": \"Specific format/topic/approach to increase\", \"why\": \"Backed by specific numbers from the data\", \"impact\": \"High/Medium/Low\"}],\n\"stopPosting\": [{\"what\": \"Specific thing to stop or reduce\", \"why\": \"Backed by specific numbers from the data\"}],\n\"opportunities\": [{\"idea\": \"Untapped content opportunity\", \"potential\": \"High/Medium\", \"reasoning\": \"Why this would work based on their data\"}],\n\"contentIdeas\": [{\"idea\": \"Specific content idea tailored to their niche\", \"hook\": \"Suggested hook text\", \"format\": \"The format to use\", \"driver\": \"Primary audience driver it taps\"}],\n\"hookRecommendations\": [{\"formula\": \"Hook formula template\", \"example\": \"Example using their niche\", \"why\": \"Why this works based on hook data\"}],\n\"thirtyDayPlan\": {\"week1\": \"Focus and specific actions\", \"week2\": \"Focus and specific actions\", \"week3\": \"Focus and specific actions\", \"week4\": \"Focus and specific actions\"},\n\"strengths\": [\"Strength with specific evidence from the data\"],\n\"weaknesses\": [\"Weakness with specific evidence from the data\"],\n\"growthVerdict\": \"High/Medium/Low - specific reasoning referencing their scores\"\n}";
       try {
-        genProgress.style.width = "60%";
+        setTarget(60, "Generating AI-powered insights...");
+        var aiMsgs = ["Analyzing content patterns...", "Mapping audience psychology...", "Building growth recommendations...", "Crafting your 30-day plan..."];
+        var aiMsgIdx = 0;
+        var aiMsgTimer = setInterval(function() { aiMsgIdx++; setTarget(60 + Math.min(aiMsgIdx * 4, 20), aiMsgs[aiMsgIdx % aiMsgs.length]); }, 2500);
         var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
           headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
           body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000})
         });
+        clearInterval(aiMsgTimer);
         if (resp.ok) {
           var data = await resp.json();
           var content = data.choices[0].message.content;
@@ -1818,8 +1836,7 @@ async function runAutoAudit(formData) {
       } catch(e) {}
     }
 
-    genStatus.textContent = "Saving your report...";
-    genProgress.style.width = "85%";
+    setTarget(85, "Saving your report...");
 
     var overallGrade = avgTotal >= 80 ? "S" : avgTotal >= 60 ? "A" : avgTotal >= 40 ? "B" : "C";
 
@@ -1838,45 +1855,34 @@ async function runAutoAudit(formData) {
       allImprovements: allImprovements.slice(0, 15)
     };
 
-    // Include referral and payment info in saved data
     savedAudit.referral_code = formData.referral_code || "";
     savedAudit.paypal_order_id = formData.paypal_order_id || "";
 
-    // Save report to Supabase
     var reportSubject = "Audience Intelligence Report - " + (formData.handle || formData.name);
     if (formData.referral_code) reportSubject += " [REF:" + formData.referral_code + "]";
-    var insertRes = await sb.from("cr_support_tickets").insert([{
-      user_email: userEmail,
-      category: "audit_report",
-      subject: reportSubject,
-      description: JSON.stringify(savedAudit),
-      niche: formData.niche,
-      status: "complete"
-    }]).select("id");
-
-    // Save audit application record
     var appSubject = "Audit - " + (formData.name || formData.handle);
     if (formData.referral_code) appSubject += " [REF:" + formData.referral_code + "]";
     appSubject += " [AUTO]";
-    await sb.from("cr_support_tickets").insert([{
-      user_email: userEmail,
-      category: "audit_application",
-      subject: appSubject,
-      description: JSON.stringify(formData),
-      niche: formData.niche,
-      status: "complete"
-    }]);
-
-    // Update user metadata with audit flags
     var metaUpdate = { niche: formData.niche, audit_customer: true, has_audit_report: true, discount_code: "AUDIT10" };
     if (formData.referral_code) metaUpdate.referred_by = formData.referral_code;
-    await sb.auth.updateUser({ data: metaUpdate });
 
-    // Complete
+    var saveResults = await Promise.all([
+      sb.from("cr_support_tickets").insert([{
+        user_email: userEmail, category: "audit_report", subject: reportSubject,
+        description: JSON.stringify(savedAudit), niche: formData.niche, status: "complete"
+      }]).select("id"),
+      sb.from("cr_support_tickets").insert([{
+        user_email: userEmail, category: "audit_application", subject: appSubject,
+        description: JSON.stringify(formData), niche: formData.niche, status: "complete"
+      }]),
+      sb.auth.updateUser({ data: metaUpdate })
+    ]);
+
+    clearInterval(progressInterval);
     genProgress.style.width = "100%";
     genStatus.textContent = "Complete!";
-    await new Promise(function(r){setTimeout(r,600)});
 
+    var insertRes = saveResults[0];
     var reportId = (insertRes.data && insertRes.data[0]) ? insertRes.data[0].id : null;
     if (reportId) {
       var reportLink = window.location.origin + window.location.pathname.replace("audit.html", "") + "report.html?id=" + reportId;
@@ -1889,6 +1895,7 @@ async function runAutoAudit(formData) {
     document.getElementById("reportReady").style.display = "block";
 
   } catch(err) {
+    clearInterval(progressInterval);
     genStatus.textContent = "Something went wrong. Please contact support.";
     genProgress.style.background = "#ff4757";
     genProgress.style.width = "100%";
