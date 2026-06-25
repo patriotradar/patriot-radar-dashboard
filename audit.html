@@ -860,6 +860,10 @@ html { scroll-behavior: smooth; }
         <div class="faq-q" onclick="toggleFaq(this)">What happens after I get my report?</div>
         <div class="faq-a"><p>Your report includes a 14-day free trial of Creator Radar plus a 10% discount on your first month's subscription. During the trial you get full access to trend scanning, content hooks, personalised intelligence, and more.</p></div>
       </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">What is the refund policy?</div>
+        <div class="faq-a"><p>Due to the instant, AI-powered nature of our reports, we are unable to offer refunds once a report has been generated. Each report requires significant computational resources to analyse your content across 7 unique dimensions and generate personalised AI insights tailored specifically to your account. We are confident you will find the report valuable - creators who apply the insights typically see measurable improvements in their engagement within the first month.</p></div>
+      </div>
     </div>
   </section>
 
@@ -974,9 +978,14 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="form-group">
-          <label>Upload Analytics Screenshots</label>
-          <input type="file" class="form-file" id="appScreenshots" multiple accept="image/*">
-          <p style="font-size:11px;color:var(--muted);margin-top:6px;">Upload overview, audience, and content performance screenshots</p>
+          <label>Upload Video Analytics Screenshots</label>
+          <div id="uploadDropzone" style="border:2px dashed var(--border);border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;background:rgba(0,255,136,0.03);transition:border-color 0.2s,background 0.2s" onclick="document.getElementById('appScreenshots').click()" onmouseover="this.style.borderColor='var(--green)';this.style.background='rgba(0,255,136,0.06)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='rgba(0,255,136,0.03)'">
+            <div style="font-size:36px;margin-bottom:8px">&#128202;</div>
+            <div style="font-size:14px;color:var(--white);font-weight:700;margin-bottom:6px">Tap here to upload your analytics screenshots</div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5">Overview, audience demographics, and content performance<br>PNG, JPG or screenshot from your phone</div>
+            <input type="file" id="appScreenshots" multiple accept="image/*" style="display:none" onchange="showUploadedFiles(this)">
+          </div>
+          <div id="uploadedFilesList" style="margin-top:8px"></div>
         </div>
 
         <div class="form-group">
@@ -1037,7 +1046,9 @@ html { scroll-behavior: smooth; }
             <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> 10% off your first month's subscription</div>
           </div>
 
-          <button class="submit-btn" id="payBtn" onclick="handlePayment()" style="margin-bottom:12px">Pay &pound;20 - Get Your Report Instantly</button>
+          <div id="paypal-button-container" style="margin-bottom:12px"></div>
+
+          <button class="submit-btn" id="payBtnTest" onclick="handlePayment()" style="margin-bottom:12px;display:none">Pay &pound;20 - Get Your Report Instantly (Test Mode)</button>
 
           <div id="payMsg" class="form-msg"></div>
         </div>
@@ -1045,7 +1056,11 @@ html { scroll-behavior: smooth; }
         <div class="back-link" onclick="goToStep(2)">Back to application details</div>
 
         <div style="text-align:center;margin-top:16px;padding:12px;background:rgba(255,255,255,.02);border-radius:10px">
-          <div style="font-size:10px;color:var(--muted);line-height:1.6">Secure checkout via Stripe. Card, Apple Pay, and Google Pay accepted. Your report generates instantly after payment.</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6">Secure checkout via PayPal. Your report generates instantly after payment.</div>
+        </div>
+
+        <div style="text-align:center;margin-top:12px">
+          <div style="font-size:10px;color:var(--muted);line-height:1.6">By purchasing you agree to our no-refund policy. Reports are generated instantly using AI and cannot be reversed.</div>
         </div>
       </div>
 
@@ -1101,17 +1116,28 @@ var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ===== PAYMENT CONFIG =====
-// Set your Stripe Payment Link URL here. Create one at stripe.com:
-// Products > Add Product > "Audience Intelligence Report" > £20 GBP one-time
-// Then create a Payment Link for that product.
-// Set the success URL to: https://patriotradar.github.io/patriot-radar-dashboard/audit.html?payment=success
-var STRIPE_PAYMENT_LINK = "";
-// Set to "test" to skip payment (for testing), "stripe" for live
+// Set your PayPal Client ID here. Get it from developer.paypal.com:
+// My Apps & Credentials > Create App (Live) > Copy Client ID
+var PAYPAL_CLIENT_ID = "";
+// Set to "test" to skip payment (for testing), "paypal" for live
 var PAYMENT_MODE = "test";
 
 var currentStep = 1;
 var userEmail = "";
 var userName = "";
+var pendingFormData = null;
+var paypalLoaded = false;
+
+// ===== REFERRAL TRACKING =====
+var referralCode = "";
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var ref = params.get("ref");
+  if (ref) {
+    localStorage.setItem("cr_referral", ref.toLowerCase().trim());
+  }
+  referralCode = localStorage.getItem("cr_referral") || "";
+})();
 
 // ===== GROQ AI KEY =====
 var _gk = ["Z3NrX2xSNWpy","bnc3U3Y5OGhJ","cVBxcVRrV0dk","eWIzRllQQ1pB","aXpJcExiQm1q","OFhZWGVobzJn","Ykk="];
@@ -1161,7 +1187,25 @@ function goToPaymentStep() {
   }
   if (captions.length === 0) { msg.innerHTML = '<span style="color:#ff4757">Please paste at least one caption.</span>'; return; }
   msg.innerHTML = "";
+
+  pendingFormData = {
+    email: userEmail, name: userName,
+    handle: handle, platform: platform,
+    niche: niche,
+    period: (document.querySelector('input[name="appPeriod"]:checked') || {}).value || "28 Days",
+    challenge: challenge,
+    captions: captions,
+    referral_code: referralCode
+  };
+
   goToStep(3);
+
+  if (PAYMENT_MODE === "paypal" && PAYPAL_CLIENT_ID) {
+    initPayPalButtons();
+  } else if (PAYMENT_MODE === "test") {
+    document.getElementById("payBtnTest").style.display = "block";
+    document.getElementById("paypal-button-container").style.display = "none";
+  }
 }
 
 // ===== ACCOUNT =====
@@ -1235,37 +1279,70 @@ async function loginExisting() {
 
 // ===== PAYMENT =====
 function handlePayment() {
-  var btn = document.getElementById("payBtn");
-  var msg = document.getElementById("payMsg");
-
-  var formData = {
-    email: userEmail, name: userName,
-    handle: (document.getElementById("appHandle").value || "").trim(),
-    platform: document.getElementById("appPlatform").value,
-    niche: (document.getElementById("appNiche").value || "").trim(),
-    period: (document.querySelector('input[name="appPeriod"]:checked') || {}).value || "28 Days",
-    challenge: (document.getElementById("appChallenge").value || "").trim(),
-    captions: []
-  };
-  for (var i = 1; i <= 5; i++) {
-    var c = (document.getElementById("appCaption" + i).value || "").trim();
-    if (c) formData.captions.push(c);
-  }
-  sessionStorage.setItem("cr_audit_form", JSON.stringify(formData));
-
-  if (PAYMENT_MODE === "test") {
+  if (PAYMENT_MODE === "test" && pendingFormData) {
     goToStep(4);
-    runAutoAudit(formData);
-    return;
+    runAutoAudit(pendingFormData);
   }
+}
 
-  if (PAYMENT_MODE === "stripe" && STRIPE_PAYMENT_LINK) {
-    btn.disabled = true; btn.textContent = "Redirecting to checkout...";
-    window.location.href = STRIPE_PAYMENT_LINK + (STRIPE_PAYMENT_LINK.indexOf("?") === -1 ? "?" : "&") + "prefilled_email=" + encodeURIComponent(userEmail);
-    return;
+function loadPayPalSDK() {
+  return new Promise(function(resolve, reject) {
+    if (paypalLoaded) { resolve(); return; }
+    var script = document.createElement("script");
+    script.src = "https://www.paypal.com/sdk/js?client-id=" + PAYPAL_CLIENT_ID + "&currency=GBP";
+    script.onload = function() { paypalLoaded = true; resolve(); };
+    script.onerror = function() { reject(new Error("PayPal SDK failed to load")); };
+    document.head.appendChild(script);
+  });
+}
+
+async function initPayPalButtons() {
+  var container = document.getElementById("paypal-button-container");
+  var msg = document.getElementById("payMsg");
+  if (container.children.length > 0) return;
+
+  try {
+    await loadPayPalSDK();
+    paypal.Buttons({
+      style: { layout: "vertical", color: "gold", shape: "rect", label: "pay", height: 50 },
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: { value: "20.00", currency_code: "GBP" },
+            description: "Creator Radar Audience Intelligence Report"
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          if (pendingFormData) {
+            pendingFormData.paypal_order_id = data.orderID;
+            pendingFormData.paypal_payer = details.payer && details.payer.email_address ? details.payer.email_address : "";
+          }
+          goToStep(4);
+          runAutoAudit(pendingFormData);
+        });
+      },
+      onCancel: function() {
+        msg.innerHTML = '<span style="color:var(--muted)">Payment cancelled. Click PayPal to try again.</span>';
+      },
+      onError: function(err) {
+        msg.innerHTML = '<span style="color:#ff4757">Payment failed. Please try again or contact support.</span>';
+      }
+    }).render("#paypal-button-container");
+  } catch(e) {
+    msg.innerHTML = '<span style="color:#ff4757">Could not load payment system. Please try refreshing the page.</span>';
   }
+}
 
-  msg.innerHTML = '<span style="color:#ff4757">Payment not configured. Please contact support.</span>';
+function showUploadedFiles(input) {
+  var list = document.getElementById("uploadedFilesList");
+  if (!input.files || input.files.length === 0) { list.innerHTML = ""; return; }
+  var html = "";
+  for (var i = 0; i < input.files.length; i++) {
+    html += '<div style="font-size:11px;color:var(--green);padding:3px 0">&#10003; ' + input.files[i].name + '</div>';
+  }
+  list.innerHTML = html;
 }
 
 // ===== CONTENT ANALYSIS ENGINE =====
@@ -1669,30 +1746,39 @@ async function runAutoAudit(formData) {
       allImprovements: allImprovements.slice(0, 15)
     };
 
+    // Include referral and payment info in saved data
+    savedAudit.referral_code = formData.referral_code || "";
+    savedAudit.paypal_order_id = formData.paypal_order_id || "";
+
     // Save report to Supabase
+    var reportSubject = "Audience Intelligence Report - " + (formData.handle || formData.name);
+    if (formData.referral_code) reportSubject += " [REF:" + formData.referral_code + "]";
     var insertRes = await sb.from("cr_support_tickets").insert([{
       user_email: userEmail,
       category: "audit_report",
-      subject: "Audience Intelligence Report - " + (formData.handle || formData.name),
+      subject: reportSubject,
       description: JSON.stringify(savedAudit),
       niche: formData.niche,
       status: "complete"
     }]).select("id");
 
     // Save audit application record
+    var appSubject = "Audit - " + (formData.name || formData.handle);
+    if (formData.referral_code) appSubject += " [REF:" + formData.referral_code + "]";
+    appSubject += " [AUTO]";
     await sb.from("cr_support_tickets").insert([{
       user_email: userEmail,
       category: "audit_application",
-      subject: "Audit - " + (formData.name || formData.handle) + " [AUTO]",
+      subject: appSubject,
       description: JSON.stringify(formData),
       niche: formData.niche,
       status: "complete"
     }]);
 
     // Update user metadata with audit flags
-    await sb.auth.updateUser({
-      data: { niche: formData.niche, audit_customer: true, has_audit_report: true, discount_code: "AUDIT10" }
-    });
+    var metaUpdate = { niche: formData.niche, audit_customer: true, has_audit_report: true, discount_code: "AUDIT10" };
+    if (formData.referral_code) metaUpdate.referred_by = formData.referral_code;
+    await sb.auth.updateUser({ data: metaUpdate });
 
     // Complete
     genProgress.style.width = "100%";
@@ -1706,6 +1792,7 @@ async function runAutoAudit(formData) {
     }
 
     sessionStorage.removeItem("cr_audit_form");
+    if (referralCode) localStorage.removeItem("cr_referral");
     document.getElementById("reportGenerating").style.display = "none";
     document.getElementById("reportReady").style.display = "block";
 
@@ -1724,6 +1811,7 @@ async function checkPaymentReturn() {
   var stored = sessionStorage.getItem("cr_audit_form");
   if (!stored) return;
   var formData = JSON.parse(stored);
+  formData.referral_code = localStorage.getItem("cr_referral") || "";
   var session = await sb.auth.getSession();
   if (!session.data.session) {
     var savedCreds = sessionStorage.getItem("cr_audit_creds");
