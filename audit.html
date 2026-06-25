@@ -876,12 +876,15 @@ html { scroll-behavior: smooth; }
         <div class="step-line" id="line1"></div>
         <div class="step-pip" id="pip2">2</div>
         <div class="step-line" id="line2"></div>
-        <div class="step-pip" id="pip3">&#10003;</div>
+        <div class="step-pip" id="pip3">3</div>
+        <div class="step-line" id="line3"></div>
+        <div class="step-pip" id="pip4">&#10003;</div>
       </div>
       <div class="step-labels">
         <div class="step-lbl active" id="lbl1">Account</div>
-        <div class="step-lbl" id="lbl2">Application</div>
-        <div class="step-lbl" id="lbl3">Complete</div>
+        <div class="step-lbl" id="lbl2">Details</div>
+        <div class="step-lbl" id="lbl3">Payment</div>
+        <div class="step-lbl" id="lbl4">Complete</div>
       </div>
 
       <!-- STEP 1: Account Creation -->
@@ -1007,13 +1010,64 @@ html { scroll-behavior: smooth; }
           <textarea class="form-textarea" id="appChallenge" placeholder="What's the biggest challenge you're facing with your content or growth right now?" rows="3"></textarea>
         </div>
 
-        <button class="submit-btn" id="step2Btn" onclick="submitApplication()">Submit Application</button>
+        <button class="submit-btn" id="step2Btn" onclick="goToPaymentStep()">Continue to Payment</button>
         <div class="form-msg" id="step2Msg"></div>
         <div class="back-link" onclick="goToStep(1)">Back to account</div>
       </div>
 
-      <!-- STEP 3: Confirmation -->
+      <!-- STEP 3: Payment -->
       <div class="form-step" id="step3">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px">Complete Your Payment</div>
+          <div style="font-size:12px;color:var(--muted)">One-time payment for your personalised report</div>
+        </div>
+
+        <div style="padding:24px;background:linear-gradient(135deg,rgba(0,255,136,.04),rgba(168,85,247,.04));border:1px solid rgba(0,255,136,.15);border-radius:16px;margin-bottom:20px">
+          <div style="text-align:center;margin-bottom:16px">
+            <div style="font-size:36px;font-weight:900;color:var(--green);margin-bottom:4px">&pound;20</div>
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">One-Time Payment</div>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> Full psychological audience profile</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> Format performance ranking</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> Hook style analysis</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> 30-day personalised growth plan</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> 14-day free trial of Creator Radar</div>
+          </div>
+
+          <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">How to pay:</div>
+            <div style="font-size:13px;color:var(--white);line-height:1.8">
+              1. Click the button below to open PayPal<br>
+              2. Send <strong style="color:var(--green)">&pound;20.00 GBP</strong> to:<br>
+              <span style="display:inline-block;margin:6px 0 6px 18px;padding:6px 14px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);border-radius:8px;font-weight:700;color:var(--green);font-size:14px;letter-spacing:.5px" id="paypalEmailDisplay">jamiemahon22@icloud.com</span><br>
+              3. Come back here and confirm your payment
+            </div>
+          </div>
+
+          <a href="https://www.paypal.com/send" target="_blank" rel="noopener" id="paypalOpenBtn" style="display:block;width:100%;padding:14px;background:#0070ba;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:12px;letter-spacing:.5px">Open PayPal to Send Payment</a>
+
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;cursor:pointer" onclick="togglePaymentConfirm()">
+            <div id="payConfirmBox" style="width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s"></div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--white)">I've sent &pound;20 via PayPal</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Tick this after you've completed the payment</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="submit-btn" id="step3Btn" onclick="submitApplication()" disabled style="opacity:0.4">Submit Application</button>
+        <div class="form-msg" id="step3Msg"></div>
+        <div class="back-link" onclick="goToStep(2)">Back to application details</div>
+
+        <div style="text-align:center;margin-top:16px;padding:12px;background:rgba(255,255,255,.02);border-radius:10px">
+          <div style="font-size:10px;color:var(--muted);line-height:1.6">Secure payment via PayPal. Your payment is protected by PayPal's buyer protection policy. Report delivery within 24-48 hours.</div>
+        </div>
+      </div>
+
+      <!-- STEP 4: Confirmation -->
+      <div class="form-step" id="step4">
         <div class="confirm-wrap">
           <div class="confirm-icon">&#10003;</div>
           <h3>Application Submitted!</h3>
@@ -1044,9 +1098,13 @@ var currentStep = 1;
 var userEmail = "";
 var userName = "";
 
+var paymentConfirmed = false;
+var PAYPAL_EMAIL = "jamiemahon22@icloud.com";
+var REPORT_PRICE = "20";
+
 function goToStep(n) {
   currentStep = n;
-  for (var i = 1; i <= 3; i++) {
+  for (var i = 1; i <= 4; i++) {
     var el = document.getElementById("step" + i);
     if (el) el.classList.toggle("active", i === n);
     var pip = document.getElementById("pip" + i);
@@ -1063,9 +1121,53 @@ function goToStep(n) {
   }
   var l1 = document.getElementById("line1");
   var l2 = document.getElementById("line2");
+  var l3 = document.getElementById("line3");
   if (l1) l1.classList.toggle("done", n > 1);
   if (l2) l2.classList.toggle("done", n > 2);
+  if (l3) l3.classList.toggle("done", n > 3);
   document.getElementById("apply").scrollIntoView({behavior: "smooth", block: "start"});
+}
+
+function togglePaymentConfirm() {
+  paymentConfirmed = !paymentConfirmed;
+  var box = document.getElementById("payConfirmBox");
+  var btn = document.getElementById("step3Btn");
+  if (paymentConfirmed) {
+    box.style.background = "var(--green)";
+    box.style.borderColor = "var(--green)";
+    box.innerHTML = '<span style="color:var(--bg);font-weight:900;font-size:14px">&#10003;</span>';
+    btn.disabled = false;
+    btn.style.opacity = "1";
+  } else {
+    box.style.background = "transparent";
+    box.style.borderColor = "var(--border)";
+    box.innerHTML = "";
+    btn.disabled = true;
+    btn.style.opacity = "0.4";
+  }
+}
+
+function goToPaymentStep() {
+  var handle = (document.getElementById("appHandle").value || "").trim();
+  var platform = document.getElementById("appPlatform").value;
+  var niche = (document.getElementById("appNiche").value || "").trim();
+  var challenge = (document.getElementById("appChallenge").value || "").trim();
+  var msg = document.getElementById("step2Msg");
+
+  if (!handle) { msg.innerHTML = '<span style="color:#ff4757">Please enter your social media handle.</span>'; return; }
+  if (!platform) { msg.innerHTML = '<span style="color:#ff4757">Please select your platform.</span>'; return; }
+  if (!niche) { msg.innerHTML = '<span style="color:#ff4757">Please enter your niche.</span>'; return; }
+  if (!challenge) { msg.innerHTML = '<span style="color:#ff4757">Please describe your biggest challenge.</span>'; return; }
+
+  var captions = [];
+  for (var i = 1; i <= 5; i++) {
+    var c = (document.getElementById("appCaption" + i).value || "").trim();
+    if (c) captions.push(c);
+  }
+  if (captions.length === 0) { msg.innerHTML = '<span style="color:#ff4757">Please paste at least one caption.</span>'; return; }
+
+  msg.innerHTML = "";
+  goToStep(3);
 }
 
 function showLoginStep() {
@@ -1188,21 +1290,16 @@ async function submitApplication() {
   var periodEl = document.querySelector('input[name="appPeriod"]:checked');
   var period = periodEl ? periodEl.value : "28 Days";
   var challenge = (document.getElementById("appChallenge").value || "").trim();
-  var msg = document.getElementById("step2Msg");
-  var btn = document.getElementById("step2Btn");
+  var msg = document.getElementById("step3Msg");
+  var btn = document.getElementById("step3Btn");
 
-  if (!handle) { msg.innerHTML = '<span style="color:#ff4757">Please enter your social media handle.</span>'; return; }
-  if (!platform) { msg.innerHTML = '<span style="color:#ff4757">Please select your platform.</span>'; return; }
-  if (!niche) { msg.innerHTML = '<span style="color:#ff4757">Please enter your niche.</span>'; return; }
-  if (!challenge) { msg.innerHTML = '<span style="color:#ff4757">Please describe your biggest challenge.</span>'; return; }
+  if (!paymentConfirmed) { msg.innerHTML = '<span style="color:#ff4757">Please confirm your payment before submitting.</span>'; return; }
 
   var captions = [];
   for (var i = 1; i <= 5; i++) {
     var c = (document.getElementById("appCaption" + i).value || "").trim();
     if (c) captions.push(c);
   }
-
-  if (captions.length === 0) { msg.innerHTML = '<span style="color:#ff4757">Please paste at least one caption.</span>'; return; }
 
   var fileInput = document.getElementById("appScreenshots");
   var fileNames = [];
@@ -1224,7 +1321,11 @@ async function submitApplication() {
     period: period,
     challenge: challenge,
     captions: captions,
-    screenshots: fileNames
+    screenshots: fileNames,
+    payment_method: "paypal",
+    payment_email: PAYPAL_EMAIL,
+    payment_amount: REPORT_PRICE,
+    payment_confirmed: true
   };
 
   try {
@@ -1233,7 +1334,7 @@ async function submitApplication() {
     await sb.from("cr_support_tickets").insert([{
       user_email: userEmail,
       category: "audit_application",
-      subject: "Audit Application - " + (userName || handle),
+      subject: "Audit Application - " + (userName || handle) + " [PAID]",
       description: JSON.stringify(appData),
       niche: niche,
       status: "pending"
@@ -1252,7 +1353,7 @@ async function submitApplication() {
 
   btn.disabled = false;
   btn.textContent = "Submit Application";
-  goToStep(3);
+  goToStep(4);
 }
 
 function toggleFaq(el) {
