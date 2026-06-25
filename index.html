@@ -7712,6 +7712,7 @@ function renderAuditReport(audit, container) {
   // ACTION BUTTONS
   h += '<div style="text-align:center;margin-top:20px">';
   h += '<button onclick="shareAuditReport()" style="padding:12px 24px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">COPY REPORT</button>';
+  h += '<button onclick="getShareableLink()" style="padding:12px 24px;background:linear-gradient(135deg,#ff8c00,#ff6b00);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">GET SHAREABLE LINK</button>';
   if (window._currentAuditApp && window._currentAuditApp.email) {
     h += '<button onclick="deliverReportToUser(window._lastGeneratedReport)" style="padding:12px 24px;background:linear-gradient(135deg,var(--green),var(--green2));color:var(--bg);border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">SEND TO USER</button>';
   }
@@ -10727,21 +10728,77 @@ async function deliverReportToUser(reportData) {
   var app = window._currentAuditApp;
   if (!app || !app.email) { alert("No linked user email. Cannot deliver report."); return; }
   try {
-    await supabaseClient.from("cr_support_tickets").insert([{
+    var insertRes = await supabaseClient.from("cr_support_tickets").insert([{
       user_email: app.email,
       category: "audit_report",
       subject: "Audience Intelligence Report - " + (app.name || app.handle),
       description: JSON.stringify(reportData),
       niche: app.niche || "",
       status: "complete"
-    }]);
+    }]).select("id");
     if (app.source === "supabase" && app.id) {
       await supabaseClient.from("cr_support_tickets").update({status: "complete"}).eq("id", app.id);
     }
-    alert("Report delivered to " + app.email + "'s Creator Radar account!");
+    var shareId = (insertRes.data && insertRes.data[0]) ? insertRes.data[0].id : null;
+    if (shareId) {
+      var shareLink = window.location.origin + window.location.pathname.replace("index.html","") + "report.html?id=" + shareId;
+      window._lastShareLink = shareLink;
+      alert("Report delivered to " + app.email + "!\n\nShareable link (copied to clipboard):\n" + shareLink);
+      try { navigator.clipboard.writeText(shareLink); } catch(e2) {}
+    } else {
+      alert("Report delivered to " + app.email + "'s Creator Radar account!");
+    }
     window._currentAuditApp = null;
   } catch(e) {
     alert("Error delivering report: " + e.message);
+  }
+}
+
+async function createShareableReport(reportData) {
+  var creatorName = reportData.creatorName || "Unknown Creator";
+  try {
+    var insertRes = await supabaseClient.from("cr_support_tickets").insert([{
+      user_email: "shared_report",
+      category: "audit_report",
+      subject: "Audience Intelligence Report - " + creatorName,
+      description: JSON.stringify(reportData),
+      niche: reportData.niche || "",
+      status: "shared"
+    }]).select("id");
+    if (insertRes.data && insertRes.data[0]) {
+      var shareLink = window.location.origin + window.location.pathname.replace("index.html","") + "report.html?id=" + insertRes.data[0].id;
+      window._lastShareLink = shareLink;
+      try { navigator.clipboard.writeText(shareLink); } catch(e2) {}
+      return shareLink;
+    }
+    return null;
+  } catch(e) {
+    alert("Error creating shareable link: " + e.message);
+    return null;
+  }
+}
+
+async function getShareableLink() {
+  var reportData = window._lastGeneratedReport;
+  if (!reportData) { alert("No report to share. Generate a report first."); return; }
+  var btn = event.target;
+  btn.textContent = "CREATING LINK...";
+  btn.disabled = true;
+  var link = await createShareableReport(reportData);
+  if (link) {
+    btn.textContent = "LINK COPIED!";
+    btn.style.background = "var(--green)";
+    btn.style.color = "var(--bg)";
+    prompt("Shareable report link (send this to anyone):", link);
+    setTimeout(function() {
+      btn.textContent = "GET SHAREABLE LINK";
+      btn.style.background = "linear-gradient(135deg,#ff8c00,#ff6b00)";
+      btn.style.color = "#fff";
+      btn.disabled = false;
+    }, 3000);
+  } else {
+    btn.textContent = "GET SHAREABLE LINK";
+    btn.disabled = false;
   }
 }
 

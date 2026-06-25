@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audience Intelligence Report | Creator Radar</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg: #030504;
+  --panel: #0a110e;
+  --panel2: #0d1712;
+  --border: #1f3a2d;
+  --green: #00ff88;
+  --green2: #00b86b;
+  --amber: #fbbf24;
+  --red: #ff4757;
+  --blue: #4dc9f6;
+  --purple: #a855f7;
+  --muted: #8aa99a;
+  --white: #f5fff9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.report-wrap {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.loading-pulse {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(168,85,247,.2);
+  border-top-color: #a855f7;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-state {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.brand-header {
+  text-align: center;
+  padding: 20px 0 8px;
+}
+
+.brand-logo {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0f2a1e 0%, #060e0a 70%);
+  border: 1.5px solid rgba(0,255,136,.4);
+  box-shadow: 0 0 20px rgba(0,255,136,.15);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 10px;
+  font-size: 18px; font-weight: 900; color: var(--green);
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.brand-sub {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.cta-banner {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(168,85,247,.08), rgba(99,102,241,.08));
+  border: 1px solid rgba(168,85,247,.2);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.cta-banner h3 {
+  font-size: 16px;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.cta-banner p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.cta-btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #a855f7, #6366f1);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="report-wrap">
+  <div class="brand-header">
+    <div class="brand-logo">CR</div>
+    <div class="brand-name">Creator Radar</div>
+    <div class="brand-sub">Audience Intelligence Report</div>
+  </div>
+
+  <div id="reportContainer">
+    <div class="loading-state">
+      <div class="loading-pulse"></div>
+      <div style="font-size:14px;color:var(--white);font-weight:700;margin-bottom:6px">Loading Your Report</div>
+      <div style="font-size:11px;color:var(--muted)">Preparing your audience intelligence data...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
+var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
+var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function getReportId() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get("id") || "";
+}
+
+function renderReport(audit) {
+  var report = audit.aiReport;
+  var gradeCol = audit.overallScore >= 70 ? "var(--green)" : audit.overallScore >= 40 ? "var(--amber)" : "#ff4757";
+  var gradeLetter = audit.grade || (audit.overallScore >= 80 ? "S" : audit.overallScore >= 60 ? "A" : audit.overallScore >= 40 ? "B" : "C");
+  var h = '<div style="margin-top:16px">';
+
+  h += '<div style="padding:24px 20px;background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(99,102,241,.08));border:1px solid rgba(168,85,247,.2);border-radius:16px;margin-bottom:16px">';
+  h += '<div style="font-size:9px;color:#a855f7;text-transform:uppercase;font-weight:800;letter-spacing:3px;margin-bottom:8px">AUDIENCE INTELLIGENCE REPORT</div>';
+  h += '<div style="font-size:22px;font-weight:900;color:var(--white);margin-bottom:4px">' + (audit.creatorName || "") + '</div>';
+  h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">';
+  h += '<span style="font-size:10px;padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;color:var(--muted)">' + (audit.niche || "") + '</span>';
+  h += '<span style="font-size:10px;padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;color:var(--muted)">' + (audit.platform || "Multi-platform") + '</span>';
+  h += '<span style="font-size:10px;padding:4px 10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:6px;color:var(--muted)">' + (audit.period || "28 Days") + '</span>';
+  h += '</div>';
+
+  h += '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">';
+  var keyStats = [
+    {label:"Posts Analyzed", value:audit.captionCount||0, col:"#4dc9f6"},
+    {label:"Content Grade", value:gradeLetter+"-Tier ("+(audit.overallScore||0)+"/100)", col:gradeCol},
+    {label:"Best Format", value:(audit.formatRanking&&audit.formatRanking.length>0)?audit.formatRanking[0].format:"N/A", col:"var(--green)"},
+    {label:"Primary Driver", value:(audit.emotionRanking&&audit.emotionRanking.length>0)?audit.emotionRanking[0].driver:"N/A", col:"#ff8c00"}
+  ];
+  for (var ksi=0;ksi<keyStats.length;ksi++){
+    var ks=keyStats[ksi];
+    h+='<div style="padding:14px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:12px;text-align:center">';
+    h+='<div style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:1px;margin-bottom:6px">'+ks.label+'</div>';
+    h+='<div style="font-size:16px;font-weight:900;color:'+ks.col+'">'+ks.value+'</div>';
+    h+='</div>';
+  }
+  h+='</div></div>';
+
+  if (report && report.evidenceBullets && report.evidenceBullets.length > 0) {
+    h += '<div style="padding:16px;background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.12);border-radius:14px;margin-bottom:16px">';
+    if (report.headline) {
+      h += '<div style="font-size:14px;font-weight:900;color:var(--white);margin-bottom:12px;line-height:1.4">' + report.headline + '</div>';
+    }
+    h += '<div style="font-size:10px;color:#a855f7;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:10px">KEY FINDINGS FROM YOUR DATA</div>';
+    for (var ebi = 0; ebi < report.evidenceBullets.length; ebi++) {
+      h += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0">';
+      h += '<span style="color:var(--green);font-size:11px;margin-top:2px;flex-shrink:0">&#9679;</span>';
+      h += '<span style="font-size:12px;color:var(--white);line-height:1.5;font-weight:600">' + report.evidenceBullets[ebi] + '</span>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (audit.formatRanking && audit.formatRanking.length > 0) {
+    h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:var(--white);margin-bottom:4px">Format Performance</div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-bottom:14px">Which content formats perform best. Ranked by content quality score.</div>';
+    var bestFmt = audit.formatRanking[0];
+    h += '<div style="padding:14px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:12px;margin-bottom:14px">';
+    h += '<div style="font-size:13px;font-weight:800;color:var(--green);margin-bottom:4px">Your Best Format: ' + bestFmt.format + '</div>';
+    h += '<div style="font-size:11px;color:var(--white);line-height:1.5">Averages ' + bestFmt.avgScore + '/100 across ' + bestFmt.posts + ' posts.';
+    if (audit.formatRanking.length > 1) {
+      var worstFmt = audit.formatRanking[audit.formatRanking.length - 1];
+      var multiplier = worstFmt.avgScore > 0 ? (bestFmt.avgScore / worstFmt.avgScore).toFixed(1) : "N/A";
+      h += ' That\'s <b style="color:var(--green)">' + multiplier + 'x better</b> than ' + worstFmt.format + '.';
+    }
+    h += '</div></div>';
+    var maxFmtScore = audit.formatRanking[0].avgScore || 1;
+    for (var fmi = 0; fmi < audit.formatRanking.length; fmi++) {
+      var fm = audit.formatRanking[fmi];
+      var fmBarW = Math.round((fm.avgScore / maxFmtScore) * 100);
+      var fmCol = fmi === 0 ? "var(--green)" : fmi < audit.formatRanking.length - 1 ? "#4dc9f6" : "var(--amber)";
+      var fmIcon = fmi === 0 ? "&#127942;" : fmi === 1 ? "&#129352;" : fmi === 2 ? "&#129353;" : "&#128204;";
+      h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
+      h += '<span style="font-size:14px;width:20px;text-align:center">' + fmIcon + '</span>';
+      h += '<div style="flex:1">';
+      h += '<div style="display:flex;justify-content:space-between;margin-bottom:4px">';
+      h += '<span style="font-size:12px;color:var(--white);font-weight:600">' + fm.format + ' (' + fm.posts + ' posts)</span>';
+      h += '<span style="font-size:13px;font-weight:900;color:' + fmCol + '">' + fm.avgScore + ' avg</span>';
+      h += '</div>';
+      h += '<div style="height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden"><div style="height:100%;width:' + fmBarW + '%;background:' + fmCol + ';border-radius:5px;transition:width .6s ease"></div></div>';
+      h += '</div></div>';
+    }
+    if (report && report.formatInsight) {
+      h += '<div style="padding:10px 12px;background:rgba(168,85,247,.04);border-left:3px solid rgba(168,85,247,.3);border-radius:0 8px 8px 0;margin-top:8px">';
+      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.formatInsight + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (audit.emotionRanking && audit.emotionRanking.length > 0) {
+    h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:var(--white);margin-bottom:4px">Audience DNA</div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-bottom:14px">Psychological audience profile built from ' + (audit.captionCount || 0) + ' classified posts.</div>';
+    h += '<div style="font-size:10px;color:#ff8c00;text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:10px">AUDIENCE DRIVERS (WHY THEY ENGAGE)</div>';
+    h += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">';
+    for (var eri2 = 0; eri2 < audit.emotionRanking.length; eri2++) {
+      var er = audit.emotionRanking[eri2];
+      var erBg = eri2 === 0 ? "rgba(255,140,0,.12)" : "rgba(255,140,0,.05)";
+      var erBorder = eri2 === 0 ? "rgba(255,140,0,.4)" : "rgba(255,140,0,.12)";
+      h += '<div style="padding:12px 16px;background:' + erBg + ';border:1px solid ' + erBorder + ';border-radius:12px;text-align:center;min-width:90px">';
+      h += '<div style="font-size:14px;font-weight:900;color:#ff8c00">' + er.driver + '</div>';
+      h += '<div style="font-size:10px;color:var(--muted);margin-top:3px">' + er.count + ' posts | ' + er.pct + '%</div>';
+      if (eri2 === 0) h += '<div style="font-size:8px;color:#ff8c00;font-weight:700;margin-top:4px;text-transform:uppercase;letter-spacing:1px">PRIMARY DRIVER</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+    if (report && report.driverInsight) {
+      h += '<div style="padding:10px 12px;background:rgba(168,85,247,.04);border-left:3px solid rgba(255,140,0,.3);border-radius:0 8px 8px 0;margin-bottom:14px">';
+      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.driverInsight + '</div>';
+      h += '</div>';
+    }
+    if (report && report.winningPatterns && report.winningPatterns.length > 0) {
+      h += '<div style="font-size:10px;color:var(--green);text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:10px">WINNING PSYCHOLOGY PATTERNS</div>';
+      for (var wpi = 0; wpi < report.winningPatterns.length; wpi++) {
+        var wp = report.winningPatterns[wpi];
+        var wpCombo = typeof wp === "string" ? wp : (wp.combo || wp.pattern || "");
+        var wpWhy = typeof wp === "string" ? "" : (wp.why || wp.reason || "");
+        h += '<div style="padding:10px 14px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);border-radius:10px;margin-bottom:8px">';
+        h += '<div style="font-size:12px;font-weight:800;color:var(--green)">' + wpCombo + '</div>';
+        if (wpWhy) h += '<div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4">' + wpWhy + '</div>';
+        h += '</div>';
+      }
+    }
+    if (report && report.audienceDNA) {
+      h += '<div style="margin-top:12px;padding:12px;background:rgba(167,139,250,.04);border-left:3px solid rgba(167,139,250,.3);border-radius:0 8px 8px 0">';
+      h += '<div style="font-size:9px;color:var(--purple);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">WHO YOUR AUDIENCE IS</div>';
+      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.audienceDNA + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (audit.hookRanking && audit.hookRanking.length > 0) {
+    h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:var(--white);margin-bottom:4px">Hook Style Analysis</div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-bottom:14px">Which hook styles capture attention. Ranked by hook effectiveness score.</div>';
+    var maxHookScore = audit.hookRanking[0].avgScore || 1;
+    for (var hri = 0; hri < audit.hookRanking.length; hri++) {
+      var hr = audit.hookRanking[hri];
+      var hrBarW = Math.round((hr.avgScore / maxHookScore) * 100);
+      var hrCol = hri === 0 ? "var(--green)" : hri < audit.hookRanking.length - 1 ? "#4dc9f6" : "#ff4757";
+      var hrLabel = hri === 0 ? "BEST" : hri === audit.hookRanking.length - 1 ? "WEAKEST" : "";
+      h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">';
+      h += '<div style="flex:1">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h += '<span style="font-size:12px;color:var(--white);font-weight:600">' + hr.style + ' (' + hr.posts + ' posts)</span>';
+      h += '<div style="display:flex;align-items:center;gap:6px">';
+      if (hrLabel) h += '<span style="font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(' + (hri === 0 ? '0,255,136' : '255,71,87') + ',.1);color:' + hrCol + ';font-weight:700">' + hrLabel + '</span>';
+      h += '<span style="font-size:13px;font-weight:900;color:' + hrCol + '">' + hr.avgScore + '</span>';
+      h += '</div></div>';
+      h += '<div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + hrBarW + '%;background:' + hrCol + ';border-radius:4px"></div></div>';
+      h += '</div></div>';
+    }
+    if (report && report.hookInsight) {
+      h += '<div style="padding:10px 12px;background:rgba(168,85,247,.04);border-left:3px solid rgba(77,201,246,.3);border-radius:0 8px 8px 0">';
+      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.hookInsight + '</div>';
+      h += '</div>';
+    }
+    if (report && report.hookRecommendations && report.hookRecommendations.length > 0) {
+      h += '<div style="margin-top:12px;font-size:10px;color:var(--green);text-transform:uppercase;font-weight:800;letter-spacing:1.5px;margin-bottom:8px">RECOMMENDED HOOK FORMULAS</div>';
+      for (var hrei = 0; hrei < report.hookRecommendations.length; hrei++) {
+        var hre = report.hookRecommendations[hrei];
+        var hreFormula = typeof hre === "string" ? hre : (hre.formula || hre.style || "");
+        var hreExample = typeof hre === "string" ? "" : (hre.example || "");
+        var hreWhy = typeof hre === "string" ? "" : (hre.why || "");
+        h += '<div style="padding:10px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.08);border-radius:8px;margin-bottom:6px">';
+        h += '<div style="font-size:12px;font-weight:700;color:var(--white)">' + hreFormula + '</div>';
+        if (hreExample) h += '<div style="font-size:10px;color:var(--green);margin-top:3px;font-style:italic">"' + hreExample + '"</div>';
+        if (hreWhy) h += '<div style="font-size:10px;color:var(--muted);margin-top:2px">' + hreWhy + '</div>';
+        h += '</div>';
+      }
+    }
+    h += '</div>';
+  }
+
+  if (audit.topicRanking && audit.topicRanking.length > 0) {
+    h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:var(--white);margin-bottom:4px">Content Themes</div>';
+    h += '<div style="font-size:11px;color:var(--muted);margin-bottom:14px">Which topics your audience responds to. Ranked by quality score.</div>';
+    var maxTopicScore = audit.topicRanking[0].avgScore || 1;
+    for (var tpi = 0; tpi < audit.topicRanking.length; tpi++) {
+      var tp = audit.topicRanking[tpi];
+      var tpBarW = Math.round((tp.avgScore / maxTopicScore) * 100);
+      var tpCol = tpi === 0 ? "var(--green)" : tpi < Math.ceil(audit.topicRanking.length / 2) ? "#4dc9f6" : "#ff4757";
+      var tpTag = tpi === 0 ? "TOP" : tpi === audit.topicRanking.length - 1 && audit.topicRanking.length > 1 ? "LOWEST" : "";
+      h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">';
+      h += '<div style="flex:1">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+      h += '<span style="font-size:12px;color:var(--white);font-weight:600">' + tp.topic + ' (' + tp.posts + ' posts)</span>';
+      h += '<div style="display:flex;align-items:center;gap:6px">';
+      if (tpTag) h += '<span style="font-size:8px;padding:2px 6px;border-radius:4px;background:rgba(' + (tpi === 0 ? '0,255,136' : '255,71,87') + ',.1);color:' + tpCol + ';font-weight:700">' + tpTag + '</span>';
+      h += '<span style="font-size:13px;font-weight:900;color:' + tpCol + '">' + tp.avgScore + '</span>';
+      h += '</div></div>';
+      h += '<div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden"><div style="height:100%;width:' + tpBarW + '%;background:' + tpCol + ';border-radius:4px"></div></div>';
+      h += '</div></div>';
+    }
+    if (report && report.themeInsight) {
+      h += '<div style="padding:10px 12px;background:rgba(168,85,247,.04);border-left:3px solid rgba(168,85,247,.3);border-radius:0 8px 8px 0">';
+      h += '<div style="font-size:11px;color:var(--white);line-height:1.6">' + report.themeInsight + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  var dims = [
+    {label:"Hook Strength",score:audit.avgHook,col:"#00ff88",icon:"&#9889;"},
+    {label:"Call to Action",score:audit.avgCTA,col:"#fbbf24",icon:"&#128227;"},
+    {label:"Structure",score:audit.avgStructure,col:"#4dc9f6",icon:"&#128196;"},
+    {label:"Engagement Triggers",score:audit.avgEngagement,col:"#a78bfa",icon:"&#128293;"},
+    {label:"Hashtags",score:audit.avgHashtags,col:"#34d399",icon:"#"},
+    {label:"Trend Relevance",score:audit.avgTrend,col:"#f472b6",icon:"&#128200;"},
+    {label:"Originality",score:audit.avgOriginality,col:"#818cf8",icon:"&#10024;"}
+  ];
+  h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+  h += '<div style="font-size:15px;font-weight:900;color:var(--white);margin-bottom:4px">Content Score Breakdown</div>';
+  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:14px">How your content scores across 7 quality dimensions.</div>';
+  for (var di = 0; di < dims.length; di++) {
+    var dm = dims[di];
+    if (typeof dm.score === "undefined" || dm.score === null) continue;
+    var dimCol = dm.score >= 70 ? dm.col : dm.score >= 40 ? "#fbbf24" : "#ff4757";
+    h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">';
+    h += '<span style="width:16px;text-align:center;font-size:12px">' + dm.icon + '</span>';
+    h += '<span style="width:120px;font-size:11px;color:var(--white);font-weight:600">' + dm.label + '</span>';
+    h += '<div style="flex:1;height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden"><div style="height:100%;width:' + dm.score + '%;background:' + dimCol + ';border-radius:5px;transition:width .6s ease"></div></div>';
+    h += '<span style="width:35px;text-align:right;font-size:13px;font-weight:900;color:' + dimCol + '">' + dm.score + '</span>';
+    h += '</div>';
+  }
+  h += '</div>';
+
+  if (report && report.doubleDown && report.doubleDown.length > 0) {
+    h += '<div style="padding:16px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:var(--green);margin-bottom:12px">Double Down On</div>';
+    for (var ddi = 0; ddi < report.doubleDown.length; ddi++) {
+      var dd = report.doubleDown[ddi];
+      var ddWhat = typeof dd === "string" ? dd : (dd.what || "");
+      var ddWhy = typeof dd === "string" ? "" : (dd.why || "");
+      var ddImpact = typeof dd === "string" ? "" : (dd.impact || "");
+      h += '<div style="padding:12px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.08);border-radius:10px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px">';
+      h += '<span style="color:var(--green);font-size:14px;margin-top:1px">&#9650;</span>';
+      h += '<div style="flex:1">';
+      h += '<div style="font-size:13px;font-weight:800;color:var(--white)">' + ddWhat + '</div>';
+      if (ddWhy) h += '<div style="font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5">' + ddWhy + '</div>';
+      h += '</div>';
+      if (ddImpact) h += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(0,255,136,.1);color:var(--green);font-weight:700;white-space:nowrap">' + ddImpact + '</span>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (report && report.stopPosting && report.stopPosting.length > 0) {
+    h += '<div style="padding:16px;background:rgba(255,71,87,.03);border:1px solid rgba(255,71,87,.12);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:#ff4757;margin-bottom:12px">Stop or Reduce</div>';
+    for (var spi = 0; spi < report.stopPosting.length; spi++) {
+      var sp = report.stopPosting[spi];
+      var spWhat = typeof sp === "string" ? sp : (sp.what || "");
+      var spWhy = typeof sp === "string" ? "" : (sp.why || "");
+      h += '<div style="padding:12px;background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.08);border-radius:10px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px">';
+      h += '<span style="color:#ff4757;font-size:14px;margin-top:1px">&#9660;</span>';
+      h += '<div style="flex:1">';
+      h += '<div style="font-size:13px;font-weight:800;color:var(--white)">' + spWhat + '</div>';
+      if (spWhy) h += '<div style="font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5">' + spWhy + '</div>';
+      h += '</div></div>';
+    }
+    h += '</div>';
+  }
+
+  if (report && report.opportunities && report.opportunities.length > 0) {
+    h += '<div style="padding:16px;background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.12);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:#a855f7;margin-bottom:12px">Untapped Opportunities</div>';
+    for (var opi = 0; opi < report.opportunities.length; opi++) {
+      var op = report.opportunities[opi];
+      var opIdea = typeof op === "string" ? op : (op.idea || "");
+      var opPotential = typeof op === "string" ? "" : (op.potential || "");
+      var opReason = typeof op === "string" ? "" : (op.reasoning || "");
+      h += '<div style="padding:12px;background:rgba(168,85,247,.04);border:1px solid rgba(168,85,247,.08);border-radius:10px;margin-bottom:8px">';
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">';
+      h += '<div style="font-size:13px;font-weight:800;color:var(--white)">' + opIdea + '</div>';
+      if (opPotential) h += '<span style="font-size:9px;padding:3px 8px;border-radius:4px;background:rgba(168,85,247,.1);color:#a855f7;font-weight:700">' + opPotential + '</span>';
+      h += '</div>';
+      if (opReason) h += '<div style="font-size:11px;color:var(--muted);line-height:1.5">' + opReason + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (report && report.contentIdeas && report.contentIdeas.length > 0) {
+    h += '<div style="padding:16px;background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.12);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:#6366f1;margin-bottom:12px">Content Ideas For You</div>';
+    for (var cii = 0; cii < report.contentIdeas.length; cii++) {
+      var ci = report.contentIdeas[cii];
+      var ciIdea = typeof ci === "string" ? ci : (ci.idea || "");
+      var ciHook = typeof ci === "string" ? "" : (ci.hook || "");
+      var ciFormat = typeof ci === "string" ? "" : (ci.format || "");
+      var ciDriver = typeof ci === "string" ? "" : (ci.driver || "");
+      h += '<div style="padding:12px;background:rgba(99,102,241,.03);border:1px solid rgba(99,102,241,.08);border-radius:10px;margin-bottom:8px">';
+      h += '<div style="display:flex;align-items:flex-start;gap:8px">';
+      h += '<span style="color:#6366f1;font-weight:800;font-size:13px;margin-top:1px">' + (cii+1) + '.</span>';
+      h += '<div style="flex:1">';
+      h += '<div style="font-size:12px;font-weight:700;color:var(--white);line-height:1.4">' + ciIdea + '</div>';
+      if (ciHook) h += '<div style="font-size:10px;color:#6366f1;margin-top:4px;font-style:italic">"' + ciHook + '"</div>';
+      var tags = [];
+      if (ciFormat) tags.push(ciFormat);
+      if (ciDriver) tags.push(ciDriver);
+      if (tags.length > 0) {
+        h += '<div style="display:flex;gap:4px;margin-top:4px">';
+        for (var ti = 0; ti < tags.length; ti++) {
+          h += '<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(99,102,241,.1);color:#818cf8">' + tags[ti] + '</span>';
+        }
+        h += '</div>';
+      }
+      h += '</div></div></div>';
+    }
+    h += '</div>';
+  }
+
+  if (report && report.thirtyDayPlan) {
+    h += '<div style="padding:16px;background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.12);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:#6366f1;margin-bottom:12px">30-Day Growth Plan</div>';
+    var planWeeks = ["week1","week2","week3","week4"];
+    var planLabels = ["Week 1","Week 2","Week 3","Week 4"];
+    var planCols = ["#a855f7","#6366f1","#4dc9f6","var(--green)"];
+    for (var pwi = 0; pwi < planWeeks.length; pwi++) {
+      var planText = report.thirtyDayPlan[planWeeks[pwi]];
+      if (!planText) continue;
+      h += '<div style="display:flex;gap:12px;margin-bottom:10px">';
+      h += '<div style="width:60px;flex-shrink:0;padding:8px;background:rgba(99,102,241,.08);border-radius:8px;text-align:center">';
+      h += '<div style="font-size:10px;font-weight:800;color:' + planCols[pwi] + '">' + planLabels[pwi] + '</div>';
+      h += '</div>';
+      h += '<div style="flex:1;padding:8px 0;font-size:12px;color:var(--white);line-height:1.5">' + planText + '</div>';
+      h += '</div>';
+    }
+    if (typeof report.thirtyDayPlan === "string") {
+      h += '<div style="font-size:12px;color:var(--white);line-height:1.6">' + report.thirtyDayPlan + '</div>';
+    }
+    h += '</div>';
+  }
+
+  var hasStr = report && report.strengths && report.strengths.length > 0;
+  var hasWk = report && report.weaknesses && report.weaknesses.length > 0;
+  if (hasStr || hasWk) {
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">';
+    if (hasStr) {
+      h += '<div style="padding:14px;background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.1);border-radius:14px">';
+      h += '<div style="font-size:12px;font-weight:800;color:var(--green);margin-bottom:10px">STRENGTHS</div>';
+      for (var si2 = 0; si2 < report.strengths.length; si2++) {
+        h += '<div style="padding:4px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:var(--green);margin-right:4px">&#10003;</span>' + report.strengths[si2] + '</div>';
+      }
+      h += '</div>';
+    }
+    if (hasWk) {
+      h += '<div style="padding:14px;background:rgba(255,71,87,.03);border:1px solid rgba(255,71,87,.1);border-radius:14px">';
+      h += '<div style="font-size:12px;font-weight:800;color:#ff4757;margin-bottom:10px">WEAKNESSES</div>';
+      for (var wi = 0; wi < report.weaknesses.length; wi++) {
+        h += '<div style="padding:4px 0;font-size:11px;color:var(--white);line-height:1.5"><span style="color:#ff4757;margin-right:4px">&#9888;</span>' + report.weaknesses[wi] + '</div>';
+      }
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  if (report && report.growthVerdict) {
+    var gvCol = report.growthVerdict.indexOf("High") !== -1 ? "var(--green)" : report.growthVerdict.indexOf("Low") !== -1 ? "#ff4757" : "var(--amber)";
+    h += '<div style="padding:14px 16px;background:rgba(0,0,0,.3);border-left:4px solid ' + gvCol + ';border-radius:0 12px 12px 0;margin-bottom:16px">';
+    h += '<span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px">GROWTH POTENTIAL: </span>';
+    h += '<span style="font-size:13px;color:' + gvCol + ';font-weight:800">' + report.growthVerdict + '</span>';
+    h += '</div>';
+  }
+
+  if (audit.thumbnailResults && audit.thumbnailResults.length > 0) {
+    h += '<div style="padding:16px;background:rgba(10,18,14,.6);border:1px solid var(--border);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:var(--white);margin-bottom:12px">Visual / Screenshot Analysis</div>';
+    for (var thi = 0; thi < audit.thumbnailResults.length; thi++) {
+      var tr = audit.thumbnailResults[thi];
+      var trCol = (tr.visualScore || 0) >= 70 ? "var(--green)" : (tr.visualScore || 0) >= 45 ? "var(--amber)" : "#ff4757";
+      h += '<div style="padding:10px;border-bottom:1px solid var(--border);margin-bottom:6px">';
+      h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">';
+      h += '<span style="font-size:15px;font-weight:900;color:' + trCol + '">' + (tr.visualScore || 0) + '/100</span>';
+      h += '<span style="font-size:10px;color:var(--muted)">' + (tr._postCaption ? tr._postCaption + '...' : 'Image ' + (thi+1)) + '</span>';
+      if (tr.scrollStopPower) h += '<span style="font-size:9px;padding:2px 6px;border:1px solid var(--border);border-radius:4px;color:var(--muted)">Scroll-Stop: ' + tr.scrollStopPower + '</span>';
+      h += '</div>';
+      if (tr.thumbnailAnalysis) h += '<div style="font-size:10px;color:var(--white);line-height:1.4">' + tr.thumbnailAnalysis + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
+  h += '<div style="text-align:center;margin-top:10px;font-size:9px;color:var(--muted)">Powered by Creator Radar Audience Intelligence</div>';
+
+  h += '<div class="cta-banner">';
+  h += '<h3>Want Your Own Audience Intelligence?</h3>';
+  h += '<p>Get a full psychological profile of your audience, discover what content to double down on, and get a personalized 30-day growth plan.</p>';
+  h += '<a href="audit.html" class="cta-btn">Get Your Free Report</a>';
+  h += '</div>';
+
+  h += '</div>';
+  return h;
+}
+
+async function loadReport() {
+  var container = document.getElementById("reportContainer");
+  var reportId = getReportId();
+
+  if (!reportId) {
+    container.innerHTML = '<div class="error-state">' +
+      '<div style="font-size:40px;margin-bottom:12px">&#128269;</div>' +
+      '<div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px">No Report Found</div>' +
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:20px">This link doesn\'t contain a valid report ID.</div>' +
+      '<a href="audit.html" class="cta-btn">Get Your Own Report</a>' +
+      '</div>';
+    return;
+  }
+
+  try {
+    var res = await sb.from("cr_support_tickets").select("*").eq("id", reportId).eq("category", "audit_report").single();
+
+    if (res.error || !res.data) {
+      container.innerHTML = '<div class="error-state">' +
+        '<div style="font-size:40px;margin-bottom:12px">&#128533;</div>' +
+        '<div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px">Report Not Found</div>' +
+        '<div style="font-size:12px;color:var(--muted);margin-bottom:20px">This report may have been removed or the link is incorrect.</div>' +
+        '<a href="audit.html" class="cta-btn">Get Your Own Report</a>' +
+        '</div>';
+      return;
+    }
+
+    var audit = JSON.parse(res.data.description);
+    document.title = (audit.creatorName || "Creator") + " - Audience Intelligence Report | Creator Radar";
+    container.innerHTML = renderReport(audit);
+  } catch(e) {
+    container.innerHTML = '<div class="error-state">' +
+      '<div style="font-size:40px;margin-bottom:12px">&#9888;</div>' +
+      '<div style="font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px">Error Loading Report</div>' +
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:20px">' + e.message + '</div>' +
+      '<a href="audit.html" class="cta-btn">Get Your Own Report</a>' +
+      '</div>';
+  }
+}
+
+loadReport();
+</script>
+</body>
+</html>
