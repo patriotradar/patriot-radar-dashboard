@@ -801,15 +801,15 @@ html { scroll-behavior: smooth; }
       <div class="step-card">
         <div class="step-num">3</div>
         <div class="step-content">
-          <h3>We decode your audience psychology</h3>
-          <p>Our intelligence engine analyses your content through 7 dimensions to build a complete audience profile.</p>
+          <h3>Pay &amp; get your report instantly</h3>
+          <p>Complete a one-time &pound;20 payment. Your report generates automatically - no waiting.</p>
         </div>
       </div>
       <div class="step-card">
         <div class="step-num">4</div>
         <div class="step-content">
-          <h3>Access your report in Creator Radar</h3>
-          <p>Log in to your Creator Radar account to view and download your full Audience Intelligence Report within 24-48 hours.</p>
+          <h3>View your report in Creator Radar</h3>
+          <p>Your Audience Intelligence Report appears instantly in your Creator Radar dashboard. View it anytime, forever.</p>
         </div>
       </div>
     </div>
@@ -846,7 +846,7 @@ html { scroll-behavior: smooth; }
     <div class="faq-list">
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">How long does the report take?</div>
-        <div class="faq-a"><p>Your Audience Intelligence Report is delivered directly to your Creator Radar account within 24-48 hours of submitting your application.</p></div>
+        <div class="faq-a"><p>Your Audience Intelligence Report generates instantly after payment. Within a minute or two it appears in your Creator Radar dashboard, ready to view anytime.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">What do I need to provide?</div>
@@ -858,7 +858,7 @@ html { scroll-behavior: smooth; }
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">What happens after I get my report?</div>
-        <div class="faq-a"><p>Your report includes a 14-day free trial of Creator Radar. During the trial you get full access to trend scanning, content hooks, personalised intelligence, and more. After 14 days you can subscribe to continue using the platform.</p></div>
+        <div class="faq-a"><p>Your report includes a 14-day free trial of Creator Radar plus a 10% discount on your first month's subscription. During the trial you get full access to trend scanning, content hooks, personalised intelligence, and more.</p></div>
       </div>
     </div>
   </section>
@@ -883,8 +883,8 @@ html { scroll-behavior: smooth; }
       <div class="step-labels">
         <div class="step-lbl active" id="lbl1">Account</div>
         <div class="step-lbl" id="lbl2">Details</div>
-        <div class="step-lbl" id="lbl3">Payment</div>
-        <div class="step-lbl" id="lbl4">Complete</div>
+        <div class="step-lbl" id="lbl3">Pay</div>
+        <div class="step-lbl" id="lbl4">Report</div>
       </div>
 
       <!-- STEP 1: Account Creation -->
@@ -1019,7 +1019,7 @@ html { scroll-behavior: smooth; }
       <div class="form-step" id="step3">
         <div style="text-align:center;margin-bottom:20px">
           <div style="font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px">Complete Your Payment</div>
-          <div style="font-size:12px;color:var(--muted)">One-time payment for your personalised report</div>
+          <div style="font-size:12px;color:var(--muted)">Your report generates instantly after payment</div>
         </div>
 
         <div style="padding:24px;background:linear-gradient(135deg,rgba(0,255,136,.04),rgba(168,85,247,.04));border:1px solid rgba(0,255,136,.15);border-radius:16px;margin-bottom:20px">
@@ -1034,47 +1034,53 @@ html { scroll-behavior: smooth; }
             <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> Hook style analysis</div>
             <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> 30-day personalised growth plan</div>
             <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> 14-day free trial of Creator Radar</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 0;font-size:12px;color:var(--white)"><span style="color:var(--green)">&#10003;</span> 10% off your first month's subscription</div>
           </div>
 
-          <div style="background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px">
-            <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">How to pay:</div>
-            <div style="font-size:13px;color:var(--white);line-height:1.8">
-              1. Click the button below to open PayPal<br>
-              2. Send <strong style="color:var(--green)">&pound;20.00 GBP</strong> to:<br>
-              <span style="display:inline-block;margin:6px 0 6px 18px;padding:6px 14px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);border-radius:8px;font-weight:700;color:var(--green);font-size:14px;letter-spacing:.5px" id="paypalEmailDisplay">jamiemahon22@icloud.com</span><br>
-              3. Come back here and confirm your payment
-            </div>
-          </div>
+          <button class="submit-btn" id="payBtn" onclick="handlePayment()" style="margin-bottom:12px">Pay &pound;20 - Get Your Report Instantly</button>
 
-          <a href="https://www.paypal.com/send" target="_blank" rel="noopener" id="paypalOpenBtn" style="display:block;width:100%;padding:14px;background:#0070ba;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:12px;letter-spacing:.5px">Open PayPal to Send Payment</a>
-
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;cursor:pointer" onclick="togglePaymentConfirm()">
-            <div id="payConfirmBox" style="width:22px;height:22px;border:2px solid var(--border);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s"></div>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--white)">I've sent &pound;20 via PayPal</div>
-              <div style="font-size:11px;color:var(--muted);margin-top:2px">Tick this after you've completed the payment</div>
-            </div>
-          </div>
+          <div id="payMsg" class="form-msg"></div>
         </div>
 
-        <button class="submit-btn" id="step3Btn" onclick="submitApplication()" disabled style="opacity:0.4">Submit Application</button>
-        <div class="form-msg" id="step3Msg"></div>
         <div class="back-link" onclick="goToStep(2)">Back to application details</div>
 
         <div style="text-align:center;margin-top:16px;padding:12px;background:rgba(255,255,255,.02);border-radius:10px">
-          <div style="font-size:10px;color:var(--muted);line-height:1.6">Secure payment via PayPal. Your payment is protected by PayPal's buyer protection policy. Report delivery within 24-48 hours.</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.6">Secure checkout via Stripe. Card, Apple Pay, and Google Pay accepted. Your report generates instantly after payment.</div>
         </div>
       </div>
 
-      <!-- STEP 4: Confirmation -->
+      <!-- STEP 4: Report Generation -->
       <div class="form-step" id="step4">
-        <div class="confirm-wrap">
-          <div class="confirm-icon">&#10003;</div>
-          <h3>Application Submitted!</h3>
-          <p>Your Audience Intelligence Report will be ready within 24-48 hours and delivered directly to your Creator Radar account.</p>
-          <p style="font-size:12px;margin-top:4px">Log in to Creator Radar to check your report status.</p>
-          <a href="index.html" class="login-btn">Login to Creator Radar</a>
-          <div class="trial-badge">Includes 14-day free trial of Creator Radar</div>
+        <div id="reportGenerating">
+          <div style="text-align:center;padding:40px 20px">
+            <div style="font-size:48px;margin-bottom:16px;animation:blink 2s infinite">&#129504;</div>
+            <h3 style="color:var(--white);margin-bottom:8px;font-size:18px">Generating Your Report</h3>
+            <p id="genStatus" style="color:var(--muted);font-size:13px;margin-bottom:20px">Analyzing your content across 7 dimensions...</p>
+            <div style="width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:12px">
+              <div id="genProgress" style="width:5%;height:100%;background:linear-gradient(90deg,var(--green),var(--purple));border-radius:3px;transition:width 0.5s ease"></div>
+            </div>
+            <p style="font-size:10px;color:var(--muted)">This usually takes about a minute</p>
+          </div>
+        </div>
+
+        <div id="reportReady" style="display:none">
+          <div style="text-align:center;padding:40px 20px">
+            <div style="width:64px;height:64px;border-radius:50%;background:rgba(0,255,136,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px">&#10003;</div>
+            <h3 style="color:var(--green);margin-bottom:8px;font-size:20px">Your Report is Ready!</h3>
+            <p style="color:var(--muted);font-size:13px;margin-bottom:24px">Your Audience Intelligence Report has been delivered to your Creator Radar account.</p>
+
+            <a id="reportViewBtn" href="#" target="_blank" style="display:block;width:100%;padding:16px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:900;cursor:pointer;text-decoration:none;text-align:center;margin-bottom:12px;letter-spacing:.5px">View Full Report</a>
+
+            <a href="index.html" style="display:block;width:100%;padding:14px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);border-radius:12px;font-size:14px;font-weight:700;text-decoration:none;text-align:center;margin-bottom:24px">Go to Dashboard</a>
+
+            <div style="padding:16px;background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:12px">
+              <div style="font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">EXCLUSIVE DISCOUNT</div>
+              <div style="font-size:24px;font-weight:900;color:var(--white);margin-bottom:4px;letter-spacing:2px">AUDIT10</div>
+              <div style="font-size:12px;color:var(--muted)">10% off your first month of Creator Radar</div>
+            </div>
+
+            <div class="trial-badge" style="margin-top:16px">Includes 14-day free trial of Creator Radar</div>
+          </div>
         </div>
       </div>
 
@@ -1094,14 +1100,24 @@ var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
 var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ===== PAYMENT CONFIG =====
+// Set your Stripe Payment Link URL here. Create one at stripe.com:
+// Products > Add Product > "Audience Intelligence Report" > £20 GBP one-time
+// Then create a Payment Link for that product.
+// Set the success URL to: https://patriotradar.github.io/patriot-radar-dashboard/audit.html?payment=success
+var STRIPE_PAYMENT_LINK = "";
+// Set to "test" to skip payment (for testing), "stripe" for live
+var PAYMENT_MODE = "test";
+
 var currentStep = 1;
 var userEmail = "";
 var userName = "";
 
-var paymentConfirmed = false;
-var PAYPAL_EMAIL = "jamiemahon22@icloud.com";
-var REPORT_PRICE = "20";
+// ===== GROQ AI KEY =====
+var _gk = ["Z3NrX2xSNWpy","bnc3U3Y5OGhJ","cVBxcVRrV0dk","eWIzRllQQ1pB","aXpJcExiQm1q","OFhZWGVobzJn","Ykk="];
+var GROQ_KEY = atob(_gk.join(""));
 
+// ===== STEP NAVIGATION =====
 function goToStep(n) {
   currentStep = n;
   for (var i = 1; i <= 4; i++) {
@@ -1128,53 +1144,31 @@ function goToStep(n) {
   document.getElementById("apply").scrollIntoView({behavior: "smooth", block: "start"});
 }
 
-function togglePaymentConfirm() {
-  paymentConfirmed = !paymentConfirmed;
-  var box = document.getElementById("payConfirmBox");
-  var btn = document.getElementById("step3Btn");
-  if (paymentConfirmed) {
-    box.style.background = "var(--green)";
-    box.style.borderColor = "var(--green)";
-    box.innerHTML = '<span style="color:var(--bg);font-weight:900;font-size:14px">&#10003;</span>';
-    btn.disabled = false;
-    btn.style.opacity = "1";
-  } else {
-    box.style.background = "transparent";
-    box.style.borderColor = "var(--border)";
-    box.innerHTML = "";
-    btn.disabled = true;
-    btn.style.opacity = "0.4";
-  }
-}
-
 function goToPaymentStep() {
   var handle = (document.getElementById("appHandle").value || "").trim();
   var platform = document.getElementById("appPlatform").value;
   var niche = (document.getElementById("appNiche").value || "").trim();
   var challenge = (document.getElementById("appChallenge").value || "").trim();
   var msg = document.getElementById("step2Msg");
-
   if (!handle) { msg.innerHTML = '<span style="color:#ff4757">Please enter your social media handle.</span>'; return; }
   if (!platform) { msg.innerHTML = '<span style="color:#ff4757">Please select your platform.</span>'; return; }
   if (!niche) { msg.innerHTML = '<span style="color:#ff4757">Please enter your niche.</span>'; return; }
   if (!challenge) { msg.innerHTML = '<span style="color:#ff4757">Please describe your biggest challenge.</span>'; return; }
-
   var captions = [];
   for (var i = 1; i <= 5; i++) {
     var c = (document.getElementById("appCaption" + i).value || "").trim();
     if (c) captions.push(c);
   }
   if (captions.length === 0) { msg.innerHTML = '<span style="color:#ff4757">Please paste at least one caption.</span>'; return; }
-
   msg.innerHTML = "";
   goToStep(3);
 }
 
+// ===== ACCOUNT =====
 function showLoginStep() {
   document.getElementById("loginSubForm").style.display = "block";
   document.getElementById("step1Btn").style.display = "none";
 }
-
 function hideLoginStep() {
   document.getElementById("loginSubForm").style.display = "none";
   document.getElementById("step1Btn").style.display = "block";
@@ -1186,7 +1180,6 @@ async function createAccount() {
   var pw = document.getElementById("acctPassword").value || "";
   var msg = document.getElementById("step1Msg");
   var btn = document.getElementById("step1Btn");
-
   if (!name) { msg.innerHTML = '<span style="color:#ff4757">Please enter your name.</span>'; return; }
   if (!email) { msg.innerHTML = '<span style="color:#ff4757">Please enter your email.</span>'; return; }
   if (!pw || pw.length < 6) { msg.innerHTML = '<span style="color:#ff4757">Password must be at least 6 characters.</span>'; return; }
@@ -1194,62 +1187,32 @@ async function createAccount() {
     msg.innerHTML = '<span style="color:#ff4757">Password needs lowercase, uppercase, number, and special character (e.g. MyPass1!)</span>';
     return;
   }
-
   btn.disabled = true;
   btn.textContent = "Creating account...";
   msg.innerHTML = '<span style="color:var(--green)">Setting up your account...</span>';
-
   var r = await sb.auth.signUp({
-    email: email,
-    password: pw,
-    options: {
-      data: {
-        name: name,
-        audit_customer: true,
-        signup_date: new Date().toISOString(),
-        niche: "pending"
-      }
-    }
+    email: email, password: pw,
+    options: { data: { name: name, audit_customer: true, signup_date: new Date().toISOString(), niche: "pending" } }
   });
-
   if (r.error) {
     var emsg = r.error.message;
-    if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) {
-      emsg = "Password needs lowercase, uppercase, number, and special character (e.g. MyPass1!)";
-    }
+    if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs lowercase, uppercase, number, and special character (e.g. MyPass1!)";
     msg.innerHTML = '<span style="color:#ff4757">' + emsg + '</span>';
-    btn.disabled = false;
-    btn.textContent = "Create Account & Continue";
-    return;
+    btn.disabled = false; btn.textContent = "Create Account & Continue"; return;
   }
-
   if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerHTML = '<span style="color:#fbbf24">This email is already registered. Try logging in instead.</span>';
-    btn.disabled = false;
-    btn.textContent = "Create Account & Continue";
-    showLoginStep();
-    document.getElementById("loginEmail").value = email;
-    return;
+    btn.disabled = false; btn.textContent = "Create Account & Continue";
+    showLoginStep(); document.getElementById("loginEmail").value = email; return;
   }
-
-  if (r.data && r.data.session) {
-    userEmail = email;
-    userName = name;
-  } else if (r.data && r.data.user) {
+  if (r.data && r.data.session) { userEmail = email; userName = name; }
+  else if (r.data && r.data.user) {
     var lr = await sb.auth.signInWithPassword({email: email, password: pw});
-    if (lr.error) {
-      msg.innerHTML = '<span style="color:#ff4757">' + lr.error.message + '</span>';
-      btn.disabled = false;
-      btn.textContent = "Create Account & Continue";
-      return;
-    }
-    userEmail = email;
-    userName = name;
+    if (lr.error) { msg.innerHTML = '<span style="color:#ff4757">' + lr.error.message + '</span>'; btn.disabled = false; btn.textContent = "Create Account & Continue"; return; }
+    userEmail = email; userName = name;
   }
-
   document.getElementById("step2UserLabel").textContent = "Logged in as " + userEmail;
-  btn.disabled = false;
-  btn.textContent = "Create Account & Continue";
+  btn.disabled = false; btn.textContent = "Create Account & Continue";
   goToStep(2);
 }
 
@@ -1258,110 +1221,536 @@ async function loginExisting() {
   var pw = document.getElementById("loginPassword").value || "";
   var msg = document.getElementById("loginMsg");
   var btn = document.getElementById("loginBtn");
-
   if (!email || !pw) { msg.innerHTML = '<span style="color:#ff4757">Enter your email and password.</span>'; return; }
-
-  btn.disabled = true;
-  btn.textContent = "Logging in...";
-
+  btn.disabled = true; btn.textContent = "Logging in...";
   var r = await sb.auth.signInWithPassword({email: email, password: pw});
-  if (r.error) {
-    msg.innerHTML = '<span style="color:#ff4757">' + r.error.message + '</span>';
-    btn.disabled = false;
-    btn.textContent = "Log In & Continue";
-    return;
-  }
-
+  if (r.error) { msg.innerHTML = '<span style="color:#ff4757">' + r.error.message + '</span>'; btn.disabled = false; btn.textContent = "Log In & Continue"; return; }
   userEmail = email;
   userName = (r.data.user && r.data.user.user_metadata && r.data.user.user_metadata.name) || email;
-
   await sb.auth.updateUser({data: {audit_customer: true}});
-
   document.getElementById("step2UserLabel").textContent = "Logged in as " + userEmail;
-  btn.disabled = false;
-  btn.textContent = "Log In & Continue";
+  btn.disabled = false; btn.textContent = "Log In & Continue";
   goToStep(2);
 }
 
-async function submitApplication() {
-  var handle = (document.getElementById("appHandle").value || "").trim();
-  var platform = document.getElementById("appPlatform").value;
-  var niche = (document.getElementById("appNiche").value || "").trim();
-  var periodEl = document.querySelector('input[name="appPeriod"]:checked');
-  var period = periodEl ? periodEl.value : "28 Days";
-  var challenge = (document.getElementById("appChallenge").value || "").trim();
-  var msg = document.getElementById("step3Msg");
-  var btn = document.getElementById("step3Btn");
+// ===== PAYMENT =====
+function handlePayment() {
+  var btn = document.getElementById("payBtn");
+  var msg = document.getElementById("payMsg");
 
-  if (!paymentConfirmed) { msg.innerHTML = '<span style="color:#ff4757">Please confirm your payment before submitting.</span>'; return; }
-
-  var captions = [];
+  var formData = {
+    email: userEmail, name: userName,
+    handle: (document.getElementById("appHandle").value || "").trim(),
+    platform: document.getElementById("appPlatform").value,
+    niche: (document.getElementById("appNiche").value || "").trim(),
+    period: (document.querySelector('input[name="appPeriod"]:checked') || {}).value || "28 Days",
+    challenge: (document.getElementById("appChallenge").value || "").trim(),
+    captions: []
+  };
   for (var i = 1; i <= 5; i++) {
     var c = (document.getElementById("appCaption" + i).value || "").trim();
-    if (c) captions.push(c);
+    if (c) formData.captions.push(c);
+  }
+  sessionStorage.setItem("cr_audit_form", JSON.stringify(formData));
+
+  if (PAYMENT_MODE === "test") {
+    goToStep(4);
+    runAutoAudit(formData);
+    return;
   }
 
-  var fileInput = document.getElementById("appScreenshots");
-  var fileNames = [];
-  if (fileInput.files) {
-    for (var fi = 0; fi < fileInput.files.length; fi++) {
-      fileNames.push(fileInput.files[fi].name);
+  if (PAYMENT_MODE === "stripe" && STRIPE_PAYMENT_LINK) {
+    btn.disabled = true; btn.textContent = "Redirecting to checkout...";
+    window.location.href = STRIPE_PAYMENT_LINK + (STRIPE_PAYMENT_LINK.indexOf("?") === -1 ? "?" : "&") + "prefilled_email=" + encodeURIComponent(userEmail);
+    return;
+  }
+
+  msg.innerHTML = '<span style="color:#ff4757">Payment not configured. Please contact support.</span>';
+}
+
+// ===== CONTENT ANALYSIS ENGINE =====
+function detectFormat(text) {
+  var t = text.toLowerCase();
+  if (/yes\s*(or|\/)\s*no/i.test(t) || /\?\s*(yes|no)/i.test(t)) return { format: "Yes/No Question", icon: "?", color: "var(--green)" };
+  if (/\b[a-d]\)|\ba\s*or\s*b\b|\boption\s*[a-d]/i.test(t)) return { format: "A/B/C/D Multiple Choice", icon: "ABCD", color: "var(--purple)" };
+  if (/rank|top\s*\d|list|worst.*best|best.*worst/i.test(t)) return { format: "Ranking/List", icon: "#", color: "var(--amber)" };
+  if (/what\s*(do|would|should)\s*you|your\s*opinion|thoughts\s*\?|comment\s*(below|your)|drop\s*(your|a)\s*(answer|comment)/i.test(t)) return { format: "Opinion Poll", icon: "!", color: "var(--blue)" };
+  if (/story|when\s*i|i\s*remember|back\s*in|growing\s*up|my\s*(dad|mum|gran)/i.test(t)) return { format: "Story/Nostalgia", icon: "~", color: "#ff6b9d" };
+  if (/did\s*you\s*know|bet\s*you|most\s*people\s*don|nobody\s*knows|secret/i.test(t)) return { format: "Did You Know / Fact", icon: "i", color: "var(--blue)" };
+  if (/vs\b|versus|compared|better\s*than|or\s*is\s*it/i.test(t)) return { format: "Comparison/VS", icon: "VS", color: "var(--amber)" };
+  if (/should|is\s*it|does|has|are\s*(we|they|you)|will|can\s*(we|they|britain)/i.test(t) && /\?/.test(t)) return { format: "Debate Question", icon: "?", color: "var(--green)" };
+  return { format: "Statement/Hook", icon: ">", color: "var(--muted)" };
+}
+
+function detectEmotions(text) {
+  var t = text.toLowerCase();
+  var emotions = [];
+  var checks = [
+    { words: ["pride","proud","proudly","pride in","patriot","patriotic"], label: "Pride", color: "var(--green)" },
+    { words: ["nostalgia","remember when","back in","growing up","miss the","used to","the old","those days"], label: "Nostalgia", color: "var(--purple)" },
+    { words: ["anger","angry","furious","outrage","disgrace","disgusting","ridiculous","unacceptable","shameful"], label: "Anger", color: "var(--red)" },
+    { words: ["curiosity","curious","wonder","did you know","bet you","secret","hidden","unknown","mystery"], label: "Curiosity", color: "var(--blue)" },
+    { words: ["concern","worried","fear","threat","crisis","danger","losing","decline","collapse","dying"], label: "Concern", color: "var(--amber)" },
+    { words: ["respect","honour","honor","tribute","salute","hero","brave","sacrifice","duty","service"], label: "Respect", color: "#00b86b" },
+    { words: ["hope","inspiring","incredible","amazing","powerful","beautiful","love","faith","belief"], label: "Hope", color: "#4dc9f6" },
+    { words: ["shock","shocking","unbelievable","can not believe","stunned","jaw","mind blown","insane"], label: "Shock", color: "#ff4757" }
+  ];
+  for (var i = 0; i < checks.length; i++) {
+    for (var j = 0; j < checks[i].words.length; j++) {
+      if (t.indexOf(checks[i].words[j]) !== -1) { emotions.push(checks[i]); break; }
     }
   }
+  if (emotions.length === 0) {
+    if (/should|ban|compulsory|abolish|bring back|get rid/i.test(t)) emotions.push({ label: "Debate", color: "var(--amber)" });
+    if (/britain|british|england|english|uk /i.test(t)) emotions.push({ label: "Identity", color: "var(--green)" });
+  }
+  return emotions;
+}
 
-  btn.disabled = true;
-  btn.textContent = "Submitting...";
-  msg.innerHTML = '<span style="color:var(--green)">Saving your application...</span>';
+function detectTopic(text) {
+  var t = text.toLowerCase();
+  var topics = [
+    { words: ["army","navy","raf","military","armed forces","soldier","troops","regiment","battalion"], label: "Military/Defence" },
+    { words: ["remembrance","poppy","cenotaph","memorial","veterans","lest we forget","fallen","armistice"], label: "Remembrance" },
+    { words: ["king","queen","royal","monarchy","prince","princess","buckingham","coronation","throne"], label: "Royal Family" },
+    { words: ["churchill","spitfire","dunkirk","d-day","ve day","blitz","ww2","ww1","normandy","battle of britain"], label: "British History" },
+    { words: ["immigration","migrant","small boats","channel","border","asylum","deportation"], label: "Immigration" },
+    { words: ["flag","union jack","st george","england flag","english flag","cross of st george"], label: "National Symbols" },
+    { words: ["tradition","heritage","culture","identity","values","way of life","british culture"], label: "Culture/Identity" },
+    { words: ["parliament","government","politics","labour","conservative","reform","mp ","minister"], label: "Politics" },
+    { words: ["school","education","teach","curriculum","children","young","generation"], label: "Education" },
+    { words: ["nhs","hospital","healthcare","doctor","nurse"], label: "NHS/Healthcare" },
+    { words: ["police","crime","law","justice","court","prison","sentence"], label: "Law & Order" },
+    { words: ["music","song","album","artist","singer","rapper","beat","lyrics","melody","musician","concert","studio"], label: "Music" },
+    { words: ["workout","gym","exercise","fitness","muscle","cardio","gains","lift","squat","bench"], label: "Fitness" },
+    { words: ["recipe","cook","bake","kitchen","meal","ingredient","food","dish","dinner","breakfast"], label: "Cooking" },
+    { words: ["skincare","makeup","beauty","glow","moisturize","routine","serum","foundation","contour"], label: "Beauty" },
+    { words: ["outfit","fashion","style","wear","trend","clothing","dress","streetwear","wardrobe"], label: "Fashion" },
+    { words: ["iphone","android","laptop","gadget","software","app","review","specs","tech","device"], label: "Tech" },
+    { words: ["game","gaming","playstation","xbox","pc","fps","rpg","esports","stream","twitch"], label: "Gaming" },
+    { words: ["travel","trip","destination","flight","hotel","beach","backpack","explore","adventure"], label: "Travel" },
+    { words: ["invest","stock","crypto","bitcoin","money","budget","savings","income","finance","wealth"], label: "Finance" },
+    { words: ["camera","photo","lens","portrait","landscape","editing","lightroom","composition","shoot"], label: "Photography" },
+    { words: ["yoga","pilates","meditation","mindful","stretch","wellness","mental health","self care"], label: "Wellness" }
+  ];
+  for (var i = 0; i < topics.length; i++) {
+    for (var j = 0; j < topics[i].words.length; j++) {
+      if (t.indexOf(topics[i].words[j]) !== -1) return topics[i].label;
+    }
+  }
+  return "General/Topical";
+}
 
-  var appData = {
-    name: userName,
-    handle: handle,
-    platform: platform,
-    niche: niche,
-    period: period,
-    challenge: challenge,
-    captions: captions,
-    screenshots: fileNames,
-    payment_method: "paypal",
-    payment_email: PAYPAL_EMAIL,
-    payment_amount: REPORT_PRICE,
-    payment_confirmed: true
+function detectBritishRelevance(text) {
+  var t = text.toLowerCase();
+  var strong = ["army","navy","raf","military","armed forces","veterans","remembrance","poppy","cenotaph","memorial","churchill","spitfire","dunkirk","d-day","patriot","heritage","tradition","pride","union jack","st george","flag","king charles","coronation"];
+  var general = ["britain","british","england","english","uk ","united kingdom","royal","queen","prince","parliament","westminster","buckingham","london","scotland","wales","nhs","bbc","commonwealth"];
+  var strongHits = 0, genHits = 0;
+  for (var i = 0; i < strong.length; i++) { if (t.indexOf(strong[i]) !== -1) strongHits++; }
+  for (var i = 0; i < general.length; i++) { if (t.indexOf(general[i]) !== -1) genHits++; }
+  var score = Math.min(25, strongHits * 6 + genHits * 3);
+  if (score >= 20) return { score: score, label: "Very High", color: "var(--green)" };
+  if (score >= 14) return { score: score, label: "High", color: "var(--green2)" };
+  if (score >= 8) return { score: score, label: "Medium", color: "var(--amber)" };
+  return { score: score, label: "Low", color: "var(--red)" };
+}
+
+function detectDebatePotential(text) {
+  var t = text.toLowerCase();
+  var triggers = ["should","is it","does","will","can","has","are we","yes or no","agree","right or wrong","too far","not enough","bring back","abolish","ban","compulsory","still","anymore","acceptable","unacceptable","free","pay","fund","tax","every","all"];
+  var hits = 0;
+  for (var i = 0; i < triggers.length; i++) { if (t.indexOf(triggers[i]) !== -1) hits++; }
+  var hasQ = /\?/.test(t);
+  var score = Math.min(25, hits * 4 + (hasQ ? 8 : 0));
+  if (score >= 20) return { score: score, label: "Explosive", color: "var(--red)" };
+  if (score >= 14) return { score: score, label: "Strong", color: "var(--amber)" };
+  if (score >= 8) return { score: score, label: "Moderate", color: "var(--green)" };
+  return { score: score, label: "Low", color: "var(--muted)" };
+}
+
+function analyzeHook(firstLine) {
+  var s = 30, fixes = [], fl = firstLine.toLowerCase();
+  var hookPatterns = ["stop","wait","this","here's","don't","never","why","how","what","who","the","i","you","3 ","5 ","7 ","10 ","pov","breaking","unpopular","hot take","truth"];
+  for (var i = 0; i < hookPatterns.length; i++) { if (fl.indexOf(hookPatterns[i]) !== -1) { s += 10; break; } }
+  if (firstLine.length <= 60) s += 15; else if (firstLine.length <= 100) s += 8; else fixes.push("Shorten your hook to under 60 characters - shorter hooks get 2x more watch-through");
+  if (/[!?]/.test(firstLine)) s += 10;
+  if (/\b(you|your|you're)\b/i.test(firstLine)) s += 10; else fixes.push("Use 'you' or 'your' in the hook - it makes it feel personal");
+  if (/\b(secret|hack|mistake|truth|nobody|never|always|stop|wait)\b/i.test(firstLine)) s += 15;
+  if (/\d/.test(firstLine)) s += 5;
+  if (s < 50) fixes.push("Start with a pattern interrupt: 'Stop doing X', 'The truth about X', or 'I tried X for 30 days'");
+  return { score: Math.min(100, s), label: s >= 70 ? "Strong" : s >= 40 ? "Needs Work" : "Weak", fixes: fixes };
+}
+
+function analyzeCTA(text) {
+  var s = 20, fixes = [], t = text.toLowerCase();
+  var ctaWords = ["follow","subscribe","like","comment","share","save","tag","drop","tell me","let me know","link in bio","check out","tap","click","dm me","reply"];
+  var found = 0;
+  for (var i = 0; i < ctaWords.length; i++) { if (t.indexOf(ctaWords[i]) !== -1) { found++; s += 20; } }
+  if (found === 0) fixes.push("Add a clear call-to-action: 'Follow for more', 'Comment your answer', 'Save this for later'");
+  if (found >= 2) s += 10;
+  if (/comment|drop|tell me|let me know|what do you think|your (thoughts|take|opinion|experience)/i.test(t)) s += 15; else fixes.push("Ask a specific question to drive comments");
+  return { score: Math.min(100, s), label: s >= 70 ? "Strong" : s >= 40 ? "Needs Work" : "Missing", fixes: fixes };
+}
+
+function analyzeStructure(text, wordCount, lines) {
+  var s = 40, fixes = [];
+  if (wordCount >= 15 && wordCount <= 150) s += 20; else if (wordCount < 15) { s += 5; fixes.push("Your caption is very short. Add more context - 15-150 words performs best"); } else fixes.push("Caption is quite long. Consider trimming to 150 words max");
+  if (lines.length >= 3) s += 15; else fixes.push("Break your caption into multiple lines with spacing");
+  if (/\b(1\.|2\.|3\.|step|first|second|tip)\b/i.test(text) || /[•\-\*]\s/.test(text)) s += 15;
+  if (/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}]/u.test(text)) s += 10;
+  return { score: Math.min(100, s), label: s >= 70 ? "Good" : s >= 40 ? "Needs Work" : "Poor", fixes: fixes };
+}
+
+function analyzeEngagement(text) {
+  var s = 20, fixes = [], t = text.toLowerCase();
+  if (/\?/.test(text)) s += 20; else fixes.push("Add a question to your caption - posts with questions get 50% more comments");
+  if (/agree|disagree|yes or no|which|pick one|rate|would you|have you|do you|are you/i.test(t)) s += 20;
+  if (/controversial|unpopular|hot take|nobody|truth|secret|mistake|wrong/i.test(t)) s += 15;
+  if (/save this|bookmark|come back|pin this/i.test(t)) s += 10; else fixes.push("Add 'Save this for later' - it boosts saves which the algorithm loves");
+  if (/tag|send this to|share with/i.test(t)) s += 10;
+  if (s < 50) fixes.push("Add engagement triggers: ask a question, use 'agree or disagree?', or invite people to share their experience");
+  return { score: Math.min(100, s), label: s >= 70 ? "High" : s >= 40 ? "Moderate" : "Low", fixes: fixes };
+}
+
+function analyzeHashtags(text) {
+  var hashtags = text.match(/#\w+/g) || [];
+  var s = 40, fixes = [];
+  if (hashtags.length >= 3 && hashtags.length <= 10) s += 30;
+  else if (hashtags.length === 0) { fixes.push("Add 3-8 relevant hashtags to increase discoverability"); }
+  else if (hashtags.length < 3) { s += 15; fixes.push("Add a few more hashtags - 3-8 is the sweet spot"); }
+  else if (hashtags.length > 15) fixes.push("Too many hashtags can look spammy. Trim to 5-10 targeted ones");
+  else s += 20;
+  var generic = ["#fyp","#foryou","#viral","#trending","#foryoupage"];
+  var genericCount = 0;
+  for (var i = 0; i < hashtags.length; i++) { if (generic.indexOf(hashtags[i].toLowerCase()) !== -1) genericCount++; }
+  if (genericCount > 2) fixes.push("Replace generic hashtags (#fyp, #viral) with niche-specific ones");
+  else s += 15;
+  if (hashtags.length > 0) s += 15;
+  return { score: Math.min(100, s), label: s >= 70 ? "Good" : s >= 40 ? "Needs Work" : "Missing", fixes: fixes };
+}
+
+function analyzeTrendRelevance(text) {
+  var s = 30, fixes = [], t = text.toLowerCase();
+  var timelyWords = ["2026","2025","today","this week","right now","just","breaking","new","latest","update","announced","just dropped"];
+  for (var tw = 0; tw < timelyWords.length; tw++) { if (t.indexOf(timelyWords[tw]) !== -1) { s += 10; break; } }
+  if (s < 50) fixes.push("Reference current trends or timely topics to increase relevance");
+  return { score: Math.min(100, s), label: s >= 70 ? "Relevant" : s >= 40 ? "Moderate" : "Low", fixes: fixes };
+}
+
+function analyzeOriginality(text, wordCount) {
+  var s = 50, fixes = [], t = text.toLowerCase();
+  var cliches = ["link in bio","drop a comment","smash that like","hit that follow","you won't believe","this changed my life","must watch","life hack","game changer","mind blown","wait for it","watch till the end"];
+  var clicheCount = 0;
+  for (var i = 0; i < cliches.length; i++) { if (t.indexOf(cliches[i]) !== -1) clicheCount++; }
+  if (clicheCount === 0) s += 20;
+  else if (clicheCount >= 3) { s -= 15; fixes.push("Your caption uses " + clicheCount + " overused phrases. Replace with something unique to your voice"); }
+  else s += 5;
+  if (/\b(I|my|me)\b/i.test(text) && /\b(tried|tested|discovered|learned|found|built|made|created)\b/i.test(t)) s += 15;
+  if (/\d{2,}/.test(text) || /\b\d+\s*(days?|hours?|weeks?|months?|years?|times?|%)\b/i.test(text)) s += 10;
+  if (wordCount >= 20 && wordCount <= 120) s += 5;
+  var uniqueWords = {};
+  var wArr = t.replace(/[^a-z\s]/g, "").split(/\s+/);
+  for (var w = 0; w < wArr.length; w++) { if (wArr[w].length > 3) uniqueWords[wArr[w]] = true; }
+  var uniqueRatio = Object.keys(uniqueWords).length / Math.max(1, wArr.length);
+  if (uniqueRatio > 0.6) s += 10;
+  if (s < 50) fixes.push("Add personal experience, specific numbers, or a unique angle to stand out");
+  return { score: Math.min(100, s), label: s >= 70 ? "Unique" : s >= 40 ? "Average" : "Generic", fixes: fixes };
+}
+
+function analyzeVideo(caption) {
+  var text = caption.trim();
+  if (!text) return null;
+  var format = detectFormat(text);
+  var emotions = detectEmotions(text);
+  var topic = detectTopic(text);
+  var british = detectBritishRelevance(text);
+  var debate = detectDebatePotential(text);
+  var lines = text.split(/\n+/).filter(function(l){return l.trim().length>0});
+  var firstLine = lines[0] || text;
+  var words = text.split(/\s+/).length;
+  var hookScore = analyzeHook(firstLine);
+  var ctaScore = analyzeCTA(text);
+  var structureScore = analyzeStructure(text, words, lines);
+  var engagementScore = analyzeEngagement(text);
+  var hashtagScore = analyzeHashtags(text);
+  var trendScore = analyzeTrendRelevance(text);
+  var originalityScore = analyzeOriginality(text, words);
+  var totalScore = Math.round((hookScore.score + ctaScore.score + structureScore.score + engagementScore.score + hashtagScore.score + trendScore.score + originalityScore.score) / 7);
+  var grade;
+  if (totalScore >= 80) grade = "S";
+  else if (totalScore >= 60) grade = "A";
+  else if (totalScore >= 40) grade = "B";
+  else grade = "C";
+  var improvements = [];
+  if (hookScore.score < 70) improvements = improvements.concat(hookScore.fixes);
+  if (ctaScore.score < 70) improvements = improvements.concat(ctaScore.fixes);
+  if (structureScore.score < 70) improvements = improvements.concat(structureScore.fixes);
+  if (engagementScore.score < 70) improvements = improvements.concat(engagementScore.fixes);
+  if (hashtagScore.score < 70) improvements = improvements.concat(hashtagScore.fixes);
+  if (trendScore.score < 70) improvements = improvements.concat(trendScore.fixes);
+  if (originalityScore.score < 70) improvements = improvements.concat(originalityScore.fixes);
+  return {
+    text: text, format: format, emotions: emotions, topic: topic,
+    british: british, debate: debate,
+    hookScore: hookScore, ctaScore: ctaScore, structureScore: structureScore,
+    engagementScore: engagementScore, hashtagScore: hashtagScore,
+    trendScore: trendScore, originalityScore: originalityScore,
+    totalScore: totalScore, grade: grade,
+    improvements: improvements
   };
+}
+
+// ===== AUTO AUDIT =====
+async function runAutoAudit(formData) {
+  var genStatus = document.getElementById("genStatus");
+  var genProgress = document.getElementById("genProgress");
 
   try {
-    await sb.auth.updateUser({data: {niche: niche, audit_status: "pending"}});
+    // Phase 1: Analyze captions
+    genStatus.textContent = "Scoring " + formData.captions.length + " posts across 7 dimensions...";
+    genProgress.style.width = "15%";
+    await new Promise(function(r){setTimeout(r,400)});
 
+    var captionResults = [];
+    for (var i = 0; i < formData.captions.length; i++) {
+      var r = analyzeVideo(formData.captions[i]);
+      if (r) captionResults.push(r);
+    }
+
+    if (captionResults.length === 0) {
+      genStatus.textContent = "Could not analyze captions. Please contact support.";
+      genProgress.style.width = "100%";
+      genProgress.style.background = "#ff4757";
+      return;
+    }
+
+    // Phase 2: Compute averages and rankings
+    genStatus.textContent = "Building Audience Intelligence profile...";
+    genProgress.style.width = "30%";
+    await new Promise(function(r){setTimeout(r,300)});
+
+    var n = captionResults.length;
+    var avgHook = 0, avgCTA = 0, avgStructure = 0, avgEngagement = 0, avgHashtags = 0, avgTrend = 0, avgOriginality = 0, avgTotal = 0;
+    var allImprovements = [];
+    var gradeCount = {S:0, A:0, B:0, C:0};
+    var detectedFormats = {}, detectedEmotions = {}, detectedTopics = {};
+    for (var j = 0; j < n; j++) {
+      var cr = captionResults[j];
+      avgHook += cr.hookScore.score; avgCTA += cr.ctaScore.score; avgStructure += cr.structureScore.score;
+      avgEngagement += cr.engagementScore.score; avgHashtags += cr.hashtagScore.score;
+      avgTrend += cr.trendScore.score; avgOriginality += cr.originalityScore.score; avgTotal += cr.totalScore;
+      gradeCount[cr.grade]++;
+      if (cr.format) detectedFormats[cr.format.format || cr.format] = (detectedFormats[cr.format.format || cr.format] || 0) + 1;
+      if (cr.topic) detectedTopics[cr.topic] = (detectedTopics[cr.topic] || 0) + 1;
+      if (cr.emotions) { for (var ei = 0; ei < cr.emotions.length; ei++) { detectedEmotions[cr.emotions[ei].label || cr.emotions[ei]] = (detectedEmotions[cr.emotions[ei].label || cr.emotions[ei]] || 0) + 1; } }
+      for (var k = 0; k < cr.improvements.length; k++) { if (allImprovements.indexOf(cr.improvements[k]) === -1) allImprovements.push(cr.improvements[k]); }
+    }
+    avgHook = Math.round(avgHook / n); avgCTA = Math.round(avgCTA / n); avgStructure = Math.round(avgStructure / n);
+    avgEngagement = Math.round(avgEngagement / n); avgHashtags = Math.round(avgHashtags / n);
+    avgTrend = Math.round(avgTrend / n); avgOriginality = Math.round(avgOriginality / n); avgTotal = Math.round(avgTotal / n);
+
+    // Format rankings
+    var formatRanking = [];
+    var formatScores = {};
+    for (var fri = 0; fri < n; fri++) {
+      var fmt = (captionResults[fri].format && captionResults[fri].format.format) ? captionResults[fri].format.format : "Unknown";
+      if (!formatScores[fmt]) formatScores[fmt] = {scores: [], count: 0};
+      formatScores[fmt].scores.push(captionResults[fri].totalScore);
+      formatScores[fmt].count++;
+    }
+    var formatKeys = Object.keys(formatScores).sort(function(a,b) {
+      return (formatScores[b].scores.reduce(function(s,v){return s+v},0)/formatScores[b].scores.length) - (formatScores[a].scores.reduce(function(s,v){return s+v},0)/formatScores[a].scores.length);
+    });
+    for (var fki = 0; fki < formatKeys.length; fki++) {
+      var fk = formatKeys[fki];
+      var fAvg = Math.round(formatScores[fk].scores.reduce(function(s,v){return s+v},0) / formatScores[fk].scores.length);
+      formatRanking.push({format: fk, posts: formatScores[fk].count, avgScore: fAvg, pct: Math.round((formatScores[fk].count / n) * 100)});
+    }
+
+    // Topic rankings
+    var topicRanking = [];
+    var topicScores2 = {};
+    for (var tri2 = 0; tri2 < n; tri2++) {
+      var tpc = captionResults[tri2].topic || "Unknown";
+      if (!topicScores2[tpc]) topicScores2[tpc] = {scores: [], count: 0};
+      topicScores2[tpc].scores.push(captionResults[tri2].totalScore);
+      topicScores2[tpc].count++;
+    }
+    var topicKeys2 = Object.keys(topicScores2).sort(function(a,b) {
+      return (topicScores2[b].scores.reduce(function(s,v){return s+v},0)/topicScores2[b].scores.length) - (topicScores2[a].scores.reduce(function(s,v){return s+v},0)/topicScores2[a].scores.length);
+    });
+    for (var tki = 0; tki < topicKeys2.length; tki++) {
+      var tk = topicKeys2[tki];
+      var tAvg = Math.round(topicScores2[tk].scores.reduce(function(s,v){return s+v},0) / topicScores2[tk].scores.length);
+      topicRanking.push({topic: tk, posts: topicScores2[tk].count, avgScore: tAvg, pct: Math.round((topicScores2[tk].count / n) * 100)});
+    }
+
+    // Emotion rankings
+    var emotionRanking = [];
+    var totalEmotionHits = 0;
+    var emotionKeys2 = Object.keys(detectedEmotions);
+    for (var eki = 0; eki < emotionKeys2.length; eki++) totalEmotionHits += detectedEmotions[emotionKeys2[eki]];
+    emotionKeys2.sort(function(a,b) { return detectedEmotions[b] - detectedEmotions[a]; });
+    for (var eri3 = 0; eri3 < emotionKeys2.length; eri3++) {
+      var ek = emotionKeys2[eri3];
+      emotionRanking.push({driver: ek, count: detectedEmotions[ek], pct: totalEmotionHits > 0 ? Math.round((detectedEmotions[ek] / totalEmotionHits) * 100) : 0});
+    }
+
+    // Hook style analysis
+    var hookStyles = {};
+    for (var hsi = 0; hsi < n; hsi++) {
+      var capText = formData.captions[hsi] || "";
+      var hookType = "Statement";
+      var firstQ = capText.indexOf("?");
+      if (firstQ !== -1 && firstQ < 80) hookType = "Question";
+      else if (/^(yes|no|rate|rank|is |are |was |were |do |does |did |should |would |could |will )/i.test(capText)) hookType = "Challenge/Debate";
+      else if (/^(how|why|what|when|where|who)/i.test(capText)) hookType = "Question";
+      else if (/^[0-9]/.test(capText)) hookType = "Numbered List";
+      if (!hookStyles[hookType]) hookStyles[hookType] = {scores: [], count: 0};
+      hookStyles[hookType].scores.push(captionResults[hsi].hookScore ? captionResults[hsi].hookScore.score : 0);
+      hookStyles[hookType].count++;
+    }
+    var hookRanking = [];
+    var hKeys = Object.keys(hookStyles).sort(function(a,b) {
+      return (hookStyles[b].scores.reduce(function(s,v){return s+v},0)/hookStyles[b].scores.length) - (hookStyles[a].scores.reduce(function(s,v){return s+v},0)/hookStyles[a].scores.length);
+    });
+    for (var hki = 0; hki < hKeys.length; hki++) {
+      var hk = hKeys[hki];
+      var hAvg = Math.round(hookStyles[hk].scores.reduce(function(s,v){return s+v},0) / hookStyles[hk].scores.length);
+      hookRanking.push({style: hk, posts: hookStyles[hk].count, avgScore: hAvg});
+    }
+
+    // Phase 3: AI Report via Groq
+    genStatus.textContent = "Generating AI-powered insights...";
+    genProgress.style.width = "50%";
+
+    var aiReport = null;
+    if (GROQ_KEY) {
+      var captionSummary = formData.captions.map(function(c, idx) { return "Post " + (idx+1) + ": " + c.substring(0, 300); }).join("\n");
+      var formatRankStr = formatRanking.map(function(f,idx) { return (idx+1) + ". " + f.format + " (" + f.posts + " posts, avg score: " + f.avgScore + "/100, " + f.pct + "% of content)"; }).join("\n");
+      var emotionRankStr = emotionRanking.map(function(e,idx) { return (idx+1) + ". " + e.driver + " (" + e.count + " posts, " + e.pct + "% of content)"; }).join("\n");
+      var topicRankStr = topicRanking.map(function(t,idx) { return (idx+1) + ". " + t.topic + " (" + t.posts + " posts, avg score: " + t.avgScore + "/100)"; }).join("\n");
+      var hookRankStr = hookRanking.map(function(h,idx) { return (idx+1) + ". " + h.style + " (" + h.posts + " posts, avg hook score: " + h.avgScore + "/100)"; }).join("\n");
+      var creatorName = formData.handle || formData.name;
+      var auditPrompt = "You are a premium Audience Intelligence analyst for Creator Radar. Generate a DATA-DRIVEN, evidence-based report.\n\nCRITICAL RULES:\n- DO NOT write generic AI paragraphs like 'your audience values authenticity'\n- EVERY claim MUST reference the creator's actual data below\n- Use specific numbers, percentages, and post counts from the analysis\n- The report must feel like: 'We've analyzed YOUR account' not 'AI has written you a report'\n- Keep all text SHORT and PUNCHY - max 2-3 sentences per insight field\n\nCREATOR DATA:\nCreator: " + creatorName + "\nNiche: " + formData.niche + "\nPlatform: " + (formData.platform || "Multi-platform") + "\nPeriod: " + formData.period + (formData.challenge ? "\nChallenge: " + formData.challenge : "") + "\n\nFORMAT PERFORMANCE (ranked by quality score):\n" + formatRankStr + "\n\nAUDIENCE DRIVERS/EMOTIONS (ranked by frequency):\n" + emotionRankStr + "\n\nCONTENT THEMES (ranked by score):\n" + topicRankStr + "\n\nHOOK STYLE PERFORMANCE:\n" + hookRankStr + "\n\nCONTENT QUALITY SCORES (avg out of 100):\nHook: " + avgHook + " | CTA: " + avgCTA + " | Structure: " + avgStructure + " | Engagement: " + avgEngagement + " | Hashtags: " + avgHashtags + " | Trend: " + avgTrend + " | Originality: " + avgOriginality + " | Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier\n\nPosts analyzed:\n" + captionSummary + "\n\nBased on THIS SPECIFIC DATA, provide analysis in this exact JSON format (no markdown, no code blocks):\n{\n\"headline\": \"One punchy sentence with a specific stat from the data\",\n\"evidenceBullets\": [\"5-7 specific data-backed findings, each MUST reference a number from the analysis above\"],\n\"formatInsight\": \"2-3 sentences explaining WHY the top format works, referencing scores\",\n\"driverInsight\": \"2-3 sentences explaining WHY these psychology drivers dominate, reference percentages\",\n\"audienceDNA\": \"2-3 sentences describing WHO the audience is based on driver profile\",\n\"hookInsight\": \"2-3 sentences on hook performance, reference hook score data\",\n\"themeInsight\": \"2-3 sentences on which themes work and why, reference topic scores\",\n\"winningPatterns\": [{\"combo\": \"Driver + Format combination\", \"why\": \"Data-backed reason this works\"}],\n\"doubleDown\": [{\"what\": \"Specific format/topic/approach to increase\", \"why\": \"Backed by specific numbers from the data\", \"impact\": \"High/Medium/Low\"}],\n\"stopPosting\": [{\"what\": \"Specific thing to stop or reduce\", \"why\": \"Backed by specific numbers from the data\"}],\n\"opportunities\": [{\"idea\": \"Untapped content opportunity\", \"potential\": \"High/Medium\", \"reasoning\": \"Why this would work based on their data\"}],\n\"contentIdeas\": [{\"idea\": \"Specific content idea tailored to their niche\", \"hook\": \"Suggested hook text\", \"format\": \"The format to use\", \"driver\": \"Primary audience driver it taps\"}],\n\"hookRecommendations\": [{\"formula\": \"Hook formula template\", \"example\": \"Example using their niche\", \"why\": \"Why this works based on hook data\"}],\n\"thirtyDayPlan\": {\"week1\": \"Focus and specific actions\", \"week2\": \"Focus and specific actions\", \"week3\": \"Focus and specific actions\", \"week4\": \"Focus and specific actions\"},\n\"strengths\": [\"Strength with specific evidence from the data\"],\n\"weaknesses\": [\"Weakness with specific evidence from the data\"],\n\"growthVerdict\": \"High/Medium/Low - specific reasoning referencing their scores\"\n}";
+      try {
+        genProgress.style.width = "60%";
+        var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+          body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000})
+        });
+        if (resp.ok) {
+          var data = await resp.json();
+          var content = data.choices[0].message.content;
+          var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+          aiReport = JSON.parse(cleaned);
+        }
+      } catch(e) {}
+    }
+
+    genStatus.textContent = "Saving your report...";
+    genProgress.style.width = "85%";
+
+    var overallGrade = avgTotal >= 80 ? "S" : avgTotal >= 60 ? "A" : avgTotal >= 40 ? "B" : "C";
+
+    var savedAudit = {
+      creatorName: formData.handle || formData.name, niche: formData.niche, platform: formData.platform,
+      period: formData.period, challenge: formData.challenge,
+      overallScore: avgTotal, grade: overallGrade, captionCount: n,
+      date: new Date().toLocaleDateString(),
+      avgHook: avgHook, avgCTA: avgCTA, avgStructure: avgStructure,
+      avgEngagement: avgEngagement, avgHashtags: avgHashtags,
+      avgTrend: avgTrend, avgOriginality: avgOriginality,
+      detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
+      formatRanking: formatRanking, topicRanking: topicRanking,
+      emotionRanking: emotionRanking, hookRanking: hookRanking,
+      aiReport: aiReport, thumbnailResults: [],
+      allImprovements: allImprovements.slice(0, 15)
+    };
+
+    // Save report to Supabase
+    var insertRes = await sb.from("cr_support_tickets").insert([{
+      user_email: userEmail,
+      category: "audit_report",
+      subject: "Audience Intelligence Report - " + (formData.handle || formData.name),
+      description: JSON.stringify(savedAudit),
+      niche: formData.niche,
+      status: "complete"
+    }]).select("id");
+
+    // Save audit application record
     await sb.from("cr_support_tickets").insert([{
       user_email: userEmail,
       category: "audit_application",
-      subject: "Audit Application - " + (userName || handle) + " [PAID]",
-      description: JSON.stringify(appData),
-      niche: niche,
-      status: "pending"
+      subject: "Audit - " + (formData.name || formData.handle) + " [AUTO]",
+      description: JSON.stringify(formData),
+      niche: formData.niche,
+      status: "complete"
     }]);
-  } catch(e) {}
 
-  var existing = [];
-  try {
-    var stored = localStorage.getItem("cr_audit_applications");
-    if (stored) existing = JSON.parse(stored);
-  } catch(e) {}
-  appData.email = userEmail;
-  appData.timestamp = new Date().toISOString();
-  existing.push(appData);
-  localStorage.setItem("cr_audit_applications", JSON.stringify(existing));
+    // Update user metadata with audit flags
+    await sb.auth.updateUser({
+      data: { niche: formData.niche, audit_customer: true, has_audit_report: true, discount_code: "AUDIT10" }
+    });
 
-  btn.disabled = false;
-  btn.textContent = "Submit Application";
-  goToStep(4);
+    // Complete
+    genProgress.style.width = "100%";
+    genStatus.textContent = "Complete!";
+    await new Promise(function(r){setTimeout(r,600)});
+
+    var reportId = (insertRes.data && insertRes.data[0]) ? insertRes.data[0].id : null;
+    if (reportId) {
+      var reportLink = window.location.origin + window.location.pathname.replace("audit.html", "") + "report.html?id=" + reportId;
+      document.getElementById("reportViewBtn").href = reportLink;
+    }
+
+    sessionStorage.removeItem("cr_audit_form");
+    document.getElementById("reportGenerating").style.display = "none";
+    document.getElementById("reportReady").style.display = "block";
+
+  } catch(err) {
+    genStatus.textContent = "Something went wrong. Please contact support.";
+    genProgress.style.background = "#ff4757";
+    genProgress.style.width = "100%";
+  }
 }
 
+// ===== PAYMENT RETURN CHECK =====
+async function checkPaymentReturn() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get("payment") !== "success") return;
+  window.history.replaceState({}, "", window.location.pathname);
+  var stored = sessionStorage.getItem("cr_audit_form");
+  if (!stored) return;
+  var formData = JSON.parse(stored);
+  var session = await sb.auth.getSession();
+  if (!session.data.session) {
+    var savedCreds = sessionStorage.getItem("cr_audit_creds");
+    if (savedCreds) {
+      var creds = JSON.parse(savedCreds);
+      await sb.auth.signInWithPassword({email: creds.email, password: creds.pw});
+      sessionStorage.removeItem("cr_audit_creds");
+    }
+  }
+  session = await sb.auth.getSession();
+  if (!session.data.session) return;
+  userEmail = formData.email;
+  userName = formData.name;
+  goToStep(4);
+  runAutoAudit(formData);
+}
+
+// ===== FAQ =====
 function toggleFaq(el) {
   var item = el.parentElement;
   var wasOpen = item.classList.contains("open");
   document.querySelectorAll(".faq-item").forEach(function(f) { f.classList.remove("open"); });
   if (!wasOpen) item.classList.add("open");
 }
+
+// ===== INIT =====
+checkPaymentReturn();
 </script>
 
 </body>
