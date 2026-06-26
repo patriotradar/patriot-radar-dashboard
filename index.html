@@ -7107,11 +7107,12 @@ async function runCreatorAudit() {
     avgOriginality += cr.originalityScore.score;
     avgTotal += cr.totalScore;
     gradeCount[cr.grade]++;
-    if (cr.format) detectedFormats[cr.format] = (detectedFormats[cr.format] || 0) + 1;
+    if (cr.format) { var fmtName = (cr.format && cr.format.format) ? cr.format.format : (typeof cr.format === "string" ? cr.format : "Unknown"); detectedFormats[fmtName] = (detectedFormats[fmtName] || 0) + 1; }
     if (cr.topic) detectedTopics[cr.topic] = (detectedTopics[cr.topic] || 0) + 1;
     if (cr.emotions) {
       for (var ei = 0; ei < cr.emotions.length; ei++) {
-        detectedEmotions[cr.emotions[ei]] = (detectedEmotions[cr.emotions[ei]] || 0) + 1;
+        var emLabel = (cr.emotions[ei] && cr.emotions[ei].label) ? cr.emotions[ei].label : (typeof cr.emotions[ei] === "string" ? cr.emotions[ei] : "Unknown");
+        detectedEmotions[emLabel] = (detectedEmotions[emLabel] || 0) + 1;
       }
     }
     for (var k = 0; k < cr.improvements.length; k++) {
@@ -7136,7 +7137,7 @@ async function runCreatorAudit() {
   var formatRanking = [];
   var formatScores = {};
   for (var fri = 0; fri < captionResults.length; fri++) {
-    var fmt = captionResults[fri].format || "Unknown";
+    var fmt = (captionResults[fri].format && captionResults[fri].format.format) ? captionResults[fri].format.format : (typeof captionResults[fri].format === "string" ? captionResults[fri].format : "Unknown");
     if (!formatScores[fmt]) formatScores[fmt] = {scores: [], count: 0};
     formatScores[fmt].scores.push(captionResults[fri].totalScore);
     formatScores[fmt].count++;
@@ -7727,7 +7728,7 @@ function renderAuditReport(audit, container) {
   // ACTION BUTTONS
   h += '<div style="text-align:center;margin-top:20px">';
   h += '<button onclick="shareAuditReport()" style="padding:12px 24px;background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">COPY REPORT</button>';
-  h += '<button onclick="getShareableLink()" style="padding:12px 24px;background:linear-gradient(135deg,#ff8c00,#ff6b00);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">GET SHAREABLE LINK</button>';
+  h += '<button onclick="getShareableLink(event)" style="padding:12px 24px;background:linear-gradient(135deg,#ff8c00,#ff6b00);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">GET SHAREABLE LINK</button>';
   if (window._currentAuditApp && window._currentAuditApp.email) {
     h += '<button onclick="deliverReportToUser(window._lastGeneratedReport)" style="padding:12px 24px;background:linear-gradient(135deg,var(--green),var(--green2));color:var(--bg);border:none;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer;margin-right:8px">SEND TO USER</button>';
   }
@@ -9703,6 +9704,7 @@ function viewMyAuditReport(idx) {
   var reports = window._myAuditReports || [];
   var report = typeof idx === "number" ? reports[idx] : (idx || window._myAuditReports[0]);
   if (!report) return;
+  window._lastGeneratedReport = report;
   switchTab("audit");
   setTimeout(function() {
     var resultDiv = document.getElementById("auditResult");
@@ -10805,27 +10807,18 @@ async function createShareableReport(reportData) {
   }
 }
 
-async function getShareableLink() {
+async function getShareableLink(e) {
   var reportData = window._lastGeneratedReport;
   if (!reportData) { alert("No report to share. Generate a report first."); return; }
-  var btn = event.target;
-  btn.textContent = "CREATING LINK...";
-  btn.disabled = true;
+  var btn = (e && e.target) ? e.target : (event && event.target ? event.target : null);
+  if (btn) { btn.textContent = "CREATING LINK..."; btn.disabled = true; }
   var link = await createShareableReport(reportData);
   if (link) {
-    btn.textContent = "LINK COPIED!";
-    btn.style.background = "var(--green)";
-    btn.style.color = "var(--bg)";
+    if (btn) { btn.textContent = "LINK COPIED!"; btn.style.background = "var(--green)"; btn.style.color = "var(--bg)"; }
     prompt("Shareable report link (send this to anyone):", link);
-    setTimeout(function() {
-      btn.textContent = "GET SHAREABLE LINK";
-      btn.style.background = "linear-gradient(135deg,#ff8c00,#ff6b00)";
-      btn.style.color = "#fff";
-      btn.disabled = false;
-    }, 3000);
+    if (btn) setTimeout(function() { btn.textContent = "GET SHAREABLE LINK"; btn.style.background = "linear-gradient(135deg,#ff8c00,#ff6b00)"; btn.style.color = "#fff"; btn.disabled = false; }, 3000);
   } else {
-    btn.textContent = "GET SHAREABLE LINK";
-    btn.disabled = false;
+    if (btn) { btn.textContent = "GET SHAREABLE LINK"; btn.disabled = false; }
   }
 }
 
