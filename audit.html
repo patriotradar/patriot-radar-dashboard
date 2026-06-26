@@ -1822,17 +1822,28 @@ async function runAutoAudit(formData) {
     var aiReport = null;
     if (GROQ_KEY) {
       var creatorName = formData.handle || formData.name;
-      var frs = formatRanking.map(function(f){return f.format+" "+f.posts+"p "+f.avgScore+"avg"}).join(", ");
-      var ers = emotionRanking.map(function(e){return e.driver+" "+e.pct+"%"}).join(", ");
-      var trs = topicRanking.map(function(t){return t.topic+" "+t.avgScore+"avg"}).join(", ");
-      var hrs = hookRanking.map(function(h){return h.style+" "+h.avgScore+"avg"}).join(", ");
-      var caps = formData.captions.map(function(c,i){return (i+1)+")"+c.substring(0,150)}).join(" ");
-      var shortPrompt = "Audience Intelligence report for " + creatorName + " (" + formData.niche + ", " + (formData.platform||"Multi-platform") + ", " + formData.period + ", " + n + " posts)." + (formData.challenge ? " Challenge: " + formData.challenge : "") + " DATA: Formats: " + frs + ". Drivers: " + ers + ". Themes: " + trs + ". Hooks: " + hrs + ". Scores: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Engagement " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Originality " + avgOriginality + " Overall " + avgTotal + ". Grades: " + gradeCount.S + "S " + gradeCount.A + "A " + gradeCount.B + "B " + gradeCount.C + "C. Captions: " + caps + ". Return ONLY valid JSON (no markdown no code blocks): {\"headline\":\"punchy sentence with specific stat\",\"evidenceBullets\":[\"5-7 data-backed findings referencing numbers\"],\"formatInsight\":\"2-3 sentences on format performance with scores\",\"driverInsight\":\"2-3 sentences on audience psychology with percentages\",\"audienceDNA\":\"2-3 sentences describing who the audience is\",\"hookInsight\":\"2-3 sentences on hook performance with scores\",\"themeInsight\":\"2-3 sentences on content themes with scores\",\"winningPatterns\":[{\"combo\":\"driver+format\",\"why\":\"data reason\"}],\"doubleDown\":[{\"what\":\"action\",\"why\":\"data reason\",\"impact\":\"High/Medium/Low\"}],\"stopPosting\":[{\"what\":\"stop this\",\"why\":\"data reason\"}],\"opportunities\":[{\"idea\":\"opportunity\",\"potential\":\"High/Medium\",\"reasoning\":\"data reason\"}],\"contentIdeas\":[{\"idea\":\"niche-specific idea\",\"hook\":\"hook text\",\"format\":\"format\",\"driver\":\"driver\"}],\"hookRecommendations\":[{\"formula\":\"hook formula\",\"example\":\"niche example\",\"why\":\"data reason\"}],\"thirtyDayPlan\":{\"week1\":\"focus+actions\",\"week2\":\"focus+actions\",\"week3\":\"focus+actions\",\"week4\":\"focus+actions\"},\"strengths\":[\"strength with data\"],\"weaknesses\":[\"weakness with data\"],\"growthVerdict\":\"High/Medium/Low - reasoning with scores\"}";
+      var sorted = captionResults.slice().sort(function(a,b){ return b.totalScore - a.totalScore; });
+      var postBreakdown = captionResults.map(function(cr, i) {
+        var firstLine = cr.text.split(/\n/)[0].substring(0, 100);
+        return "P" + (i+1) + "[" + cr.grade + " " + cr.totalScore + "] Hook:" + cr.hookScore.score + " CTA:" + cr.ctaScore.score + " Eng:" + cr.engagementScore.score + " Orig:" + cr.originalityScore.score + " \"" + firstLine + "\"";
+      }).join("\n");
+      var bestPost = sorted[0]; var worstPost = sorted[sorted.length - 1];
+      var bestText = bestPost.text.substring(0, 300);
+      var worstText = worstPost.text.substring(0, 300);
+      var _nicheCtx = formData.niche || "content";
+      var shortPrompt = "You are a content strategist who deeply understands " + _nicheCtx + " audiences. Analyze this creator's ACTUAL content. Reference their specific posts. Explain WHY things work or don't - don't just list scores.\n\n" +
+        "CREATOR: " + creatorName + " | NICHE: " + _nicheCtx + " | PLATFORM: " + (formData.platform||"Multi") + " | PERIOD: " + formData.period + " | " + n + " posts\n" +
+        (formData.challenge ? "THEIR CHALLENGE: " + formData.challenge + "\n" : "") +
+        "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
+        "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100): \"" + bestText + "\"\n\n" +
+        "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100): \"" + worstText + "\"\n\n" +
+        "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
+        "Return ONLY valid JSON (no markdown): {\"headline\":\"punchy insight referencing what they actually post about\",\"evidenceBullets\":[\"5-7 findings that quote or reference specific posts and explain WHY\"],\"formatInsight\":\"why their format choices work or don't for " + _nicheCtx + " audiences\",\"driverInsight\":\"what emotionally drives their audience - what need does their content fill\",\"audienceDNA\":\"paint their ideal follower - demographics, mindset, what they want from " + _nicheCtx + " content\",\"hookInsight\":\"compare best hook vs weakest - quote actual text, explain the difference\",\"themeInsight\":\"which themes resonate and why - reference specific posts\",\"winningPatterns\":[{\"combo\":\"specific pattern from their best content\",\"why\":\"why this works for " + _nicheCtx + " audiences\"}],\"doubleDown\":[{\"what\":\"action based on their actual content\",\"why\":\"evidence from posts\",\"impact\":\"High/Med/Low\"}],\"stopPosting\":[{\"what\":\"what to stop based on weakest content\",\"why\":\"why it underperforms\"}],\"opportunities\":[{\"idea\":\"" + _nicheCtx + " opportunity\",\"potential\":\"High/Med\",\"reasoning\":\"connected to audience needs\"}],\"contentIdeas\":[{\"idea\":\"idea inspired by their best content\",\"hook\":\"hook in their voice\",\"format\":\"format\",\"driver\":\"driver\"}],\"hookRecommendations\":[{\"formula\":\"formula from what works for them\",\"example\":\"in their voice\",\"why\":\"why for their audience\"}],\"thirtyDayPlan\":{\"week1\":\"actions for their specific challenge\",\"week2\":\"build on week 1\",\"week3\":\"experiment based on data\",\"week4\":\"scale winners\"},\"strengths\":[\"strength referencing actual content\"],\"weaknesses\":[\"weakness with specific fix\"],\"growthVerdict\":\"verdict about their content style and audience connection\"}";
       setTarget(60, "Generating AI-powered insights...");
       var aiMsgs = ["Analyzing content patterns...", "Mapping audience psychology...", "Building growth recommendations...", "Crafting your 30-day plan..."];
       var aiMsgIdx = 0;
       var aiMsgTimer = setInterval(function() { aiMsgIdx++; setTarget(60 + Math.min(aiMsgIdx * 4, 20), aiMsgs[aiMsgIdx % aiMsgs.length]); }, 2500);
-      var groqBody = JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: shortPrompt}], temperature: 0.4, max_tokens: 3500});
+      var groqBody = JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: shortPrompt}], temperature: 0.5, max_tokens: 3000});
       var maxRetries = 3;
       for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
         try {
@@ -1891,64 +1902,69 @@ async function runAutoAudit(formData) {
       var _strongDim = "Originality"; var _strongScore = avgOriginality;
       if (avgHook > _strongScore) { _strongDim = "Hook Strength"; _strongScore = avgHook; }
       if (avgHashtags > _strongScore) { _strongDim = "Hashtags"; _strongScore = avgHashtags; }
+      var _sorted = captionResults.slice().sort(function(a,b){ return b.totalScore - a.totalScore; });
+      var _bestHook = _sorted[0].text.split(/\n/)[0].substring(0, 80);
+      var _worstHook = _sorted[_sorted.length-1].text.split(/\n/)[0].substring(0, 80);
+      var _bestScore = _sorted[0].totalScore;
+      var _worstScore = _sorted[_sorted.length-1].totalScore;
       aiReport = {
-        headline: _cn + " scores " + avgTotal + "/100 overall with " + _strongDim + " leading at " + _strongScore + "/100",
+        headline: _cn + "'s " + _niche + " content shows a clear strength in " + _strongDim.toLowerCase() + " (" + _strongScore + "/100) but " + _weakDim.toLowerCase() + " is limiting growth at just " + _weakScore + "/100",
         evidenceBullets: [
-          _bf + " is the top-performing format at " + _bfs + "/100 across " + n + " posts analyzed",
-          _strongDim + " scores highest at " + _strongScore + "/100 - a clear content strength",
-          _weakDim + " scores lowest at " + _weakScore + "/100 - biggest area for improvement",
-          _bd + " drives " + _bdp + "% of audience engagement as the primary psychological trigger",
-          _bt + " content averages " + _bts + "/100 quality score",
-          _bh + " hooks perform best with " + _bhs + "/100 effectiveness score",
-          "Overall content grade: " + (avgTotal >= 80 ? "S" : avgTotal >= 60 ? "A" : avgTotal >= 40 ? "B" : "C") + "-Tier (" + avgTotal + "/100)"
+          "Your strongest post (\"" + _bestHook.substring(0,50) + "...\") scored " + _bestScore + "/100 - this style works because it leads with " + _bd.toLowerCase(),
+          "Your weakest post (\"" + _worstHook.substring(0,50) + "...\") scored only " + _worstScore + "/100 - " + _weakDim.toLowerCase() + " dragged it down",
+          _bf + " format averages " + _bfs + "/100 across " + n + " posts - your audience responds best to this style",
+          _bd + " drives " + _bdp + "% of your audience's emotional response - they come to your content for this feeling",
+          _bt + " content averages " + _bts + "/100 - your niche knowledge shows here",
+          _bh + " hooks score " + _bhs + "/100 - " + (avgHook >= 50 ? "decent hook game but room to experiment" : "your opening lines need more punch to stop the scroll"),
+          "Overall: " + (avgTotal >= 80 ? "S" : avgTotal >= 60 ? "A" : avgTotal >= 40 ? "B" : "C") + "-Tier (" + avgTotal + "/100) - " + (avgTotal >= 60 ? "strong foundation to build on" : "significant room for growth with targeted improvements")
         ],
-        formatInsight: _bf + " averages " + _bfs + "/100 across your content." + (_wf ? " Consider testing more " + _bf + " content and experimenting with variations to boost scores further." : " Focus on refining this format to push scores higher."),
-        driverInsight: _bd + " accounts for " + _bdp + "% of your audience triggers. Your content naturally taps into this driver, which resonates with " + _niche + " audiences looking for authentic, relatable content.",
-        audienceDNA: "Your audience responds to " + _bd + "-driven content in the " + _niche + " space. They value " + _bt.toLowerCase() + " content delivered through " + _bf.toLowerCase() + " formats with strong " + _bh.toLowerCase() + " hooks.",
-        hookInsight: _bh + " hooks score " + _bhs + "/100 for effectiveness. " + (avgHook >= 60 ? "Your hooks are strong - they capture attention effectively." : "Focus on making your opening lines more attention-grabbing with specific numbers or bold claims."),
-        themeInsight: _bt + " content scores " + _bts + "/100 on average. " + (topicRanking.length > 1 ? "Diversifying your themes while keeping " + _bt.toLowerCase() + " as your anchor could help reach new audience segments." : "Consider exploring adjacent topics within " + _niche + " to broaden your content mix."),
-        winningPatterns: [{combo: _bd + " + " + _bf, why: "This combination drives your highest-scoring content at " + _bfs + "/100"}],
+        formatInsight: "Your " + _bf + " content averaging " + _bfs + "/100 tells us your audience prefers this delivery style in the " + _niche + " space. " + (_wf ? "When you switch to " + _wf + " format, scores drop noticeably - your audience connects more with how " + _bf.toLowerCase() + " lets you present " + _niche + " ideas." : "Experimenting with variation within " + _bf.toLowerCase() + " could push scores higher."),
+        driverInsight: _bd + " at " + _bdp + "% means your " + _niche + " audience is primarily drawn to content that makes them feel " + _bd.toLowerCase() + ". This is the emotional core of why people follow you. When your content drifts from this, engagement drops because viewers came for that specific feeling.",
+        audienceDNA: "Your ideal follower is someone actively interested in " + _niche + " who values " + _bd.toLowerCase() + "-driven content. They respond to " + _bf.toLowerCase() + " formats because it matches how they consume " + _niche + " content. They're looking for creators who make them feel " + _bd.toLowerCase() + " while delivering value through " + _bt.toLowerCase() + " themes.",
+        hookInsight: "Your best hook (\"" + _bestHook.substring(0,60) + "\") scored " + _sorted[0].hookScore.score + "/100 because it immediately creates a reason to keep watching. Compare that to \"" + _worstHook.substring(0,60) + "\" which scored " + _sorted[_sorted.length-1].hookScore.score + "/100 - " + (_sorted[_sorted.length-1].hookScore.score < 40 ? "it doesn't grab attention fast enough" : "it works but lacks the emotional punch of your best hooks") + ".",
+        themeInsight: _bt + " content scoring " + _bts + "/100 shows this is your sweet spot in the " + _niche + " space. " + (topicRanking.length > 1 ? "Your audience clearly prefers " + _bt.toLowerCase() + " over " + topicRanking[topicRanking.length-1].topic.toLowerCase() + " (" + topicRanking[topicRanking.length-1].avgScore + "/100). Stay anchored to what resonates." : "Building sub-themes within " + _bt.toLowerCase() + " could expand reach while staying in your lane."),
+        winningPatterns: [{combo: _bd + "-driven " + _bf + " about " + _bt.toLowerCase(), why: "This triple combination produced your highest-scoring content because it matches exactly what your " + _niche + " audience is looking for"}],
         doubleDown: [
-          {what: "More " + _bf + " content", why: "Your top format scores " + _bfs + "/100 - lean into what works", impact: "High"},
-          {what: "Strengthen " + _bh + " hooks", why: "Currently scoring " + _bhs + "/100 - strong hooks are your entry point", impact: "High"},
-          {what: _bd + "-driven storytelling", why: "Your primary audience trigger at " + _bdp + "% - authentic connection matters", impact: "Medium"}
+          {what: "Create more content in the style of your top post", why: "\"" + _bestHook.substring(0,40) + "...\" scored " + _bestScore + "/100 - replicate what made this work", impact: "High"},
+          {what: "Lead every post with a " + _bd.toLowerCase() + "-triggering hook", why: _bdp + "% of your audience responds to " + _bd.toLowerCase() + " - make it the first thing they feel", impact: "High"},
+          {what: "Stick to " + _bt.toLowerCase() + " themes", why: "Scoring " + _bts + "/100 - this is clearly your strongest content territory", impact: "Medium"}
         ],
         stopPosting: [
-          {what: "Low-" + _weakDim.toLowerCase() + " content", why: "Scoring only " + _weakScore + "/100 - every post needs a clear " + _weakDim.toLowerCase()},
-          {what: "Generic content without hooks", why: "Hook strength directly impacts whether audiences stop scrolling"}
+          {what: "Content like \"" + _worstHook.substring(0,40) + "...\"", why: "Only scored " + _worstScore + "/100 - the hook and " + _weakDim.toLowerCase() + " let it down"},
+          {what: "Posts without clear " + _weakDim.toLowerCase(), why: "Your " + _weakDim.toLowerCase() + " averages just " + _weakScore + "/100 - every post needs this to grow"}
         ],
         opportunities: [
-          {idea: "Behind-the-scenes " + _niche + " content", potential: "High", reasoning: "Taps into " + _bd + " driver while showing authenticity"},
-          {idea: "Tutorial/how-to " + _niche + " series", potential: "High", reasoning: "Educational content consistently performs well and builds authority"},
-          {idea: "Trend-reactive " + _niche + " posts", potential: "Medium", reasoning: "Trend Relevance at " + avgTrend + "/100 suggests room to ride trending topics"}
+          {idea: "Behind-the-scenes " + _niche + " content using " + _bf.toLowerCase() + " format", potential: "High", reasoning: "Combines your best format with authenticity that drives " + _bd.toLowerCase()},
+          {idea: "Mini-series on " + _bt.toLowerCase() + " topics", potential: "High", reasoning: "Your audience already loves this theme - a series builds loyalty and anticipation"},
+          {idea: "Trend-reactive " + _niche + " posts", potential: "Medium", reasoning: "Trend score at " + avgTrend + "/100 shows untapped potential in timely content"}
         ],
         contentIdeas: [
-          {idea: "3 " + _niche + " mistakes you're probably making", hook: "Stop doing this right now...", format: _bf, driver: _bd},
-          {idea: "My honest " + _niche + " routine breakdown", hook: "Here's what actually works for me...", format: _bf, driver: _bd},
-          {idea: _niche + " transformation in 7 days", hook: "Day 1 vs Day 7 - the results speak for themselves", format: _bf, driver: "Aspiration"}
+          {idea: "3 " + _niche + " mistakes I see every day", hook: "Stop doing this right now - your " + _niche + " is suffering because of it...", format: _bf, driver: _bd},
+          {idea: "My honest " + _niche + " routine/process breakdown", hook: "Nobody shows you the real side of " + _niche + "...", format: _bf, driver: _bd},
+          {idea: "What I'd do differently starting from scratch in " + _niche, hook: "If I was starting " + _niche + " today, here's the first thing I'd change...", format: _bf, driver: "Aspiration"}
         ],
         hookRecommendations: [
-          {formula: "The bold claim opener", example: "Nobody talks about this in " + _niche + "...", why: "Creates curiosity gap that stops the scroll"},
-          {formula: "The numbered list hook", example: "3 " + _niche + " tips I wish I knew sooner", why: "Numbered hooks set clear expectations and boost engagement"},
-          {formula: "The challenge hook", example: "I tried this " + _niche + " hack for 30 days - here's what happened", why: "Challenge format builds narrative tension"}
+          {formula: "The specificity hook", example: "The one " + _niche + " trick that changed everything for me...", why: "Specificity creates curiosity - your top post works because it's specific, not generic"},
+          {formula: "The counter-intuitive hook", example: "Why most " + _niche + " advice is actually wrong...", why: "Challenges assumptions and stops the scroll - powerful for " + _niche + " audiences"},
+          {formula: "The personal story hook", example: "I tried this " + _niche + " approach for 30 days - here's what actually happened", why: "Personal stakes + time commitment = trust with your audience"}
         ],
         thirtyDayPlan: {
-          week1: "Audit your top 3 posts. Identify what made them work. Create 3 new " + _bf + " posts focusing on " + _bd + " triggers. Improve every CTA.",
-          week2: "Test 2 new hook styles from the recommendations above. Post at your peak engagement times. Add clear CTAs to every single post.",
-          week3: "Create a mini-series around " + _bt + ". Use behind-the-scenes content. Engage with 20 accounts in your niche daily for growth.",
-          week4: "Review your analytics. Double down on what worked in weeks 1-3. Plan next month's content calendar based on winning patterns."
+          week1: "Study your top post (\"" + _bestHook.substring(0,30) + "...\"). Create 3 new posts using the same formula: " + _bf.toLowerCase() + " format + " + _bd.toLowerCase() + " driver. Add a clear CTA to every post - your CTA score needs work.",
+          week2: "Test 2 new hook formulas from the recommendations. Focus on the specificity and counter-intuitive styles. Keep posting about " + _bt.toLowerCase() + " - that's your proven territory.",
+          week3: "Create a 3-part mini-series on your strongest " + _bt.toLowerCase() + " topic. Use the personal story angle. Engage with 20 accounts in " + _niche + " daily for growth.",
+          week4: "Review what worked from weeks 1-3. Your goal: push " + _weakDim + " from " + _weakScore + " to at least " + Math.min(100, _weakScore + 20) + "/100. Plan next month around your winning patterns."
         },
         strengths: [
-          _strongDim + " at " + _strongScore + "/100 shows authentic, unique content",
-          _bf + " format mastery with " + _bfs + "/100 average score",
-          "Strong " + _bd + " connection with audience (" + _bdp + "% of content triggers)"
+          "Your best content (\"" + _bestHook.substring(0,40) + "...\") shows you know how to connect with " + _niche + " audiences when you lean into " + _bd.toLowerCase(),
+          _bf + " format mastery at " + _bfs + "/100 - your audience clearly prefers this delivery style",
+          _strongDim + " at " + _strongScore + "/100 - your content stands out from generic " + _niche + " creators"
         ],
         weaknesses: [
-          _weakDim + " at only " + _weakScore + "/100 needs significant improvement",
-          avgCTA < 40 ? "Call to Action at " + avgCTA + "/100 - posts need clearer next steps for the audience" : "Content structure at " + avgStructure + "/100 could be tighter",
-          avgTrend < 40 ? "Trend Relevance at " + avgTrend + "/100 - missing opportunities to ride trending topics" : "Engagement triggers at " + avgEngagement + "/100 need more interactive elements"
+          _weakDim + " at " + _weakScore + "/100 is your biggest bottleneck - compare your weakest post's " + _weakDim.toLowerCase() + " to your best to see the gap",
+          avgCTA < 40 ? "Call to Action averaging " + avgCTA + "/100 - you're creating content people enjoy but not telling them what to do next" : "Content structure at " + avgStructure + "/100 - tighter formatting would improve readability",
+          avgTrend < 40 ? "Trend Relevance at " + avgTrend + "/100 - you're missing chances to ride trending " + _niche + " topics" : "Engagement triggers at " + avgEngagement + "/100 - add more interactive elements like questions and polls"
         ],
-        growthVerdict: (avgTotal >= 60 ? "High" : avgTotal >= 40 ? "Medium" : "Low") + " - Overall score of " + avgTotal + "/100 with clear strengths in " + _strongDim + " (" + _strongScore + ") but " + _weakDim + " (" + _weakScore + ") holding growth back. Fix " + _weakDim.toLowerCase() + " for fastest improvement."
+        growthVerdict: (avgTotal >= 60 ? "High" : avgTotal >= 40 ? "Medium" : "Low") + " Growth Potential - Your " + _niche + " content has clear identity with " + _strongDim.toLowerCase() + " as a standout strength. The gap between your best post (" + _bestScore + "/100) and weakest (" + _worstScore + "/100) shows inconsistency that fixing " + _weakDim.toLowerCase() + " would solve."
       };
     }
 
