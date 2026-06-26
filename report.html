@@ -152,7 +152,38 @@ function getReportId() {
   return params.get("id") || "";
 }
 
+function sanitizeAuditData(audit) {
+  if (audit.formatRanking) {
+    for (var si = 0; si < audit.formatRanking.length; si++) {
+      var f = audit.formatRanking[si].format;
+      if (typeof f === "object" && f !== null) audit.formatRanking[si].format = f.format || "Unknown";
+      else if (typeof f === "string" && f.indexOf("[object") !== -1) audit.formatRanking[si].format = "Statement/Hook";
+    }
+  }
+  if (audit.emotionRanking) {
+    for (var ei = 0; ei < audit.emotionRanking.length; ei++) {
+      var d = audit.emotionRanking[ei].driver;
+      if (typeof d === "object" && d !== null) audit.emotionRanking[ei].driver = d.label || "Unknown";
+      else if (typeof d === "string" && d.indexOf("[object") !== -1) audit.emotionRanking[ei].driver = "Engagement";
+    }
+  }
+  if (audit.topicRanking) {
+    for (var ti = 0; ti < audit.topicRanking.length; ti++) {
+      var t = audit.topicRanking[ti].topic;
+      if (typeof t === "string" && t.indexOf("[object") !== -1) audit.topicRanking[ti].topic = "General/Topical";
+    }
+  }
+  if (audit.hookRanking) {
+    for (var hi = 0; hi < audit.hookRanking.length; hi++) {
+      var s = audit.hookRanking[hi].style;
+      if (typeof s === "string" && s.indexOf("[object") !== -1) audit.hookRanking[hi].style = "Statement";
+    }
+  }
+  return audit;
+}
+
 function renderReport(audit) {
+  audit = sanitizeAuditData(audit);
   var report = audit.aiReport;
   var gradeCol = audit.overallScore >= 70 ? "var(--green)" : audit.overallScore >= 40 ? "var(--amber)" : "#ff4757";
   var gradeLetter = audit.grade || (audit.overallScore >= 80 ? "S" : audit.overallScore >= 60 ? "A" : audit.overallScore >= 40 ? "B" : "C");
