@@ -7252,19 +7252,31 @@ async function runCreatorAudit() {
     var hookRankStr = hookRanking.map(function(h,idx) { return (idx+1) + ". " + h.style + " (" + h.posts + " posts, avg hook score: " + h.avgScore + "/100)"; }).join("\n");
 
     var auditPrompt = "You are a premium Audience Intelligence analyst for Creator Radar. Generate a DATA-DRIVEN, evidence-based report.\n\nCRITICAL RULES:\n- DO NOT write generic AI paragraphs like \'your audience values authenticity\'\n- EVERY claim MUST reference the creator\'s actual data below\n- Use specific numbers, percentages, and post counts from the analysis\n- The report must feel like: \'We\'ve analyzed YOUR account\' not \'AI has written you a report\'\n- Keep all text SHORT and PUNCHY - max 2-3 sentences per insight field\n\nCREATOR DATA:\nCreator: " + creatorName + "\nNiche: " + niche + "\nPlatform: " + (platform || "Multi-platform") + "\nPeriod: " + period + (challenge ? "\nChallenge: " + challenge : "") + "\n\nFORMAT PERFORMANCE (ranked by quality score):\n" + formatRankStr + "\n\nAUDIENCE DRIVERS/EMOTIONS (ranked by frequency):\n" + emotionRankStr + "\n\nCONTENT THEMES (ranked by score):\n" + topicRankStr + "\n\nHOOK STYLE PERFORMANCE:\n" + hookRankStr + "\n\nCONTENT QUALITY SCORES (avg out of 100):\nHook: " + avgHook + " | CTA: " + avgCTA + " | Structure: " + avgStructure + " | Engagement: " + avgEngagement + " | Hashtags: " + avgHashtags + " | Trend: " + avgTrend + " | Originality: " + avgOriginality + " | Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier\n\nPosts analyzed:\n" + captionSummary + visualSummary + "\n\nBased on THIS SPECIFIC DATA, provide analysis in this exact JSON format (no markdown, no code blocks):\n{\n\"headline\": \"One punchy sentence with a specific stat from the data\",\n\"evidenceBullets\": [\"5-7 specific data-backed findings, each MUST reference a number from the analysis above\"],\n\"formatInsight\": \"2-3 sentences explaining WHY the top format works, referencing scores\",\n\"driverInsight\": \"2-3 sentences explaining WHY these psychology drivers dominate, reference percentages\",\n\"audienceDNA\": \"2-3 sentences describing WHO the audience is based on driver profile\",\n\"hookInsight\": \"2-3 sentences on hook performance, reference hook score data\",\n\"themeInsight\": \"2-3 sentences on which themes work and why, reference topic scores\",\n\"winningPatterns\": [{\n  \"combo\": \"Driver + Format combination\",\n  \"why\": \"Data-backed reason this works\"\n}],\n\"doubleDown\": [{\n  \"what\": \"Specific format/topic/approach to increase\",\n  \"why\": \"Backed by specific numbers from the data\",\n  \"impact\": \"High/Medium/Low\"\n}],\n\"stopPosting\": [{\n  \"what\": \"Specific thing to stop or reduce\",\n  \"why\": \"Backed by specific numbers from the data\"\n}],\n\"opportunities\": [{\n  \"idea\": \"Untapped content opportunity\",\n  \"potential\": \"High/Medium\",\n  \"reasoning\": \"Why this would work based on their data\"\n}],\n\"contentIdeas\": [{\n  \"idea\": \"Specific content idea tailored to their niche\",\n  \"hook\": \"Suggested hook text\",\n  \"format\": \"The format to use\",\n  \"driver\": \"Primary audience driver it taps\"\n}],\n\"hookRecommendations\": [{\n  \"formula\": \"Hook formula template\",\n  \"example\": \"Example using their niche\",\n  \"why\": \"Why this works based on hook data\"\n}],\n\"thirtyDayPlan\": {\n  \"week1\": \"Focus and specific actions\",\n  \"week2\": \"Focus and specific actions\",\n  \"week3\": \"Focus and specific actions\",\n  \"week4\": \"Focus and specific actions\"\n},\n\"strengths\": [\"Strength with specific evidence from the data\"],\n\"weaknesses\": [\"Weakness with specific evidence from the data\"],\n\"growthVerdict\": \"High/Medium/Low - specific reasoning referencing their scores\"\n}";
-    try {
-      var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-        body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000})
-      });
-      if (resp.ok) {
-        var data = await resp.json();
-        var content = data.choices[0].message.content;
-        var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-        aiReport = JSON.parse(cleaned);
+    var groqBody = JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000});
+    var maxRetries = 3;
+    for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
+      try {
+        if (attempt > 0) btn.textContent = "RETRYING AI ANALYSIS (" + (attempt+1) + "/" + maxRetries + ")...";
+        var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+          body: groqBody
+        });
+        if (resp.ok) {
+          var data = await resp.json();
+          var content = data.choices[0].message.content;
+          var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+          if (cleaned.indexOf("{") !== -1) cleaned = cleaned.substring(cleaned.indexOf("{"), cleaned.lastIndexOf("}") + 1);
+          aiReport = JSON.parse(cleaned);
+        } else {
+          console.warn("Groq API error (attempt " + (attempt+1) + "): " + resp.status);
+          if (attempt < maxRetries - 1) await new Promise(function(r) { setTimeout(r, 1500); });
+        }
+      } catch(e) {
+        console.warn("Groq parse/fetch error (attempt " + (attempt+1) + "):", e.message);
+        if (attempt < maxRetries - 1) await new Promise(function(r) { setTimeout(r, 1500); });
       }
-    } catch(e) {}
+    }
   }
 
   var overallGrade = avgTotal >= 80 ? "S" : avgTotal >= 60 ? "A" : avgTotal >= 40 ? "B" : "C";
@@ -7775,6 +7787,7 @@ function renderAuditReport(audit, container) {
 function viewSavedAudit(idx) {
   var saved = JSON.parse(localStorage.getItem("cr_audits") || "[]");
   if (saved[idx]) {
+    window._lastGeneratedReport = saved[idx];
     var resultDiv = document.getElementById("auditResult");
     if (resultDiv) renderAuditReport(saved[idx], resultDiv);
   }
@@ -7784,10 +7797,15 @@ function shareAuditReport() {
   var reportEl = document.getElementById("auditResult");
   if (!reportEl) return;
   var text = reportEl.innerText;
+  var copyBtn = document.querySelector('button[onclick*="shareAuditReport"]');
   navigator.clipboard.writeText(text).then(function() {
-    var btn = event.target;
-    btn.textContent = "COPIED!";
-    setTimeout(function() { btn.textContent = "COPY REPORT AS TEXT"; }, 2000);
+    if (copyBtn) { copyBtn.textContent = "COPIED!"; setTimeout(function() { copyBtn.textContent = "COPY REPORT"; }, 2000); }
+  }).catch(function() {
+    try {
+      var ta = document.createElement("textarea"); ta.value = text; ta.style.position = "fixed"; ta.style.left = "-9999px";
+      document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+      if (copyBtn) { copyBtn.textContent = "COPIED!"; setTimeout(function() { copyBtn.textContent = "COPY REPORT"; }, 2000); }
+    } catch(e2) {}
   });
 }
 
@@ -10817,23 +10835,28 @@ async function deliverReportToUser(reportData) {
 async function createShareableReport(reportData) {
   var creatorName = reportData.creatorName || "Unknown Creator";
   try {
-    var insertRes = await supabaseClient.from("cr_support_tickets").insert([{
-      user_email: "shared_report",
+    var u = (await supabaseClient.auth.getUser()).data.user;
+    var senderEmail = (u && u.email) ? u.email : "shared_report";
+    var timeoutPromise = new Promise(function(_, reject) { setTimeout(function() { reject(new Error("timeout")); }, 15000); });
+    var insertPromise = supabaseClient.from("cr_support_tickets").insert([{
+      user_email: senderEmail,
       category: "audit_report",
-      subject: "Audience Intelligence Report - " + creatorName,
+      subject: "SHARED: Audience Intelligence Report - " + creatorName,
       description: JSON.stringify(reportData),
       niche: reportData.niche || "",
       status: "shared"
     }]).select("id");
-    if (insertRes.data && insertRes.data[0]) {
+    var insertRes = await Promise.race([insertPromise, timeoutPromise]);
+    if (insertRes && insertRes.data && insertRes.data[0]) {
       var shareLink = window.location.origin + window.location.pathname.replace("index.html","") + "report.html?id=" + insertRes.data[0].id;
       window._lastShareLink = shareLink;
-      try { navigator.clipboard.writeText(shareLink); } catch(e2) {}
+      try { await navigator.clipboard.writeText(shareLink); } catch(e2) {}
       return shareLink;
     }
+    if (insertRes && insertRes.error) console.warn("Supabase share error:", insertRes.error.message);
     return null;
   } catch(e) {
-    alert("Error creating shareable link: " + e.message);
+    console.warn("Share link error:", e.message);
     return null;
   }
 }
@@ -10841,15 +10864,25 @@ async function createShareableReport(reportData) {
 async function getShareableLink(e) {
   var reportData = window._lastGeneratedReport;
   if (!reportData) { alert("No report to share. Generate a report first."); return; }
-  var btn = (e && e.target) ? e.target : (event && event.target ? event.target : null);
+  var btn = e && e.target && e.target.tagName === "BUTTON" ? e.target : (e && e.currentTarget ? e.currentTarget : null);
+  if (!btn) { try { btn = document.querySelector('button[onclick*="getShareableLink"]'); } catch(x) {} }
   if (btn) { btn.textContent = "CREATING LINK..."; btn.disabled = true; }
   var link = await createShareableReport(reportData);
   if (link) {
     if (btn) { btn.textContent = "LINK COPIED!"; btn.style.background = "var(--green)"; btn.style.color = "var(--bg)"; }
-    prompt("Shareable report link (send this to anyone):", link);
+    var linkBox = document.createElement("div");
+    linkBox.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:#1a1a2e;border:2px solid var(--green);border-radius:16px;padding:24px;max-width:90vw;width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.8)";
+    linkBox.innerHTML = '<div style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:12px">Link Created & Copied!</div>' +
+      '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">Send this link to anyone - no login needed</div>' +
+      '<input type="text" value="' + link + '" readonly style="width:100%;padding:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:11px;margin-bottom:12px;text-align:center" onclick="this.select()" />' +
+      '<div style="display:flex;gap:8px;justify-content:center">' +
+      '<button onclick="navigator.clipboard.writeText(\'' + link + '\');this.textContent=\'Copied!\';setTimeout(function(){this.textContent=\'Copy Again\'.bind(this)},1500)" style="padding:10px 20px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Copy Again</button>' +
+      '<button onclick="this.parentElement.parentElement.remove()" style="padding:10px 20px;background:rgba(255,255,255,.06);color:var(--white);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Close</button>' +
+      '</div>';
+    document.body.appendChild(linkBox);
     if (btn) setTimeout(function() { btn.textContent = "GET SHAREABLE LINK"; btn.style.background = "linear-gradient(135deg,#ff8c00,#ff6b00)"; btn.style.color = "#fff"; btn.disabled = false; }, 3000);
   } else {
-    if (btn) { btn.textContent = "GET SHAREABLE LINK"; btn.disabled = false; }
+    if (btn) { btn.textContent = "FAILED - TAP TO RETRY"; btn.style.background = "#ff4757"; btn.disabled = false; setTimeout(function() { btn.textContent = "GET SHAREABLE LINK"; btn.style.background = "linear-gradient(135deg,#ff8c00,#ff6b00)"; }, 3000); }
   }
 }
 

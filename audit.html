@@ -1816,24 +1816,36 @@ async function runAutoAudit(formData) {
       var hookRankStr = hookRanking.map(function(h,idx) { return (idx+1) + ". " + h.style + " (" + h.posts + " posts, avg hook score: " + h.avgScore + "/100)"; }).join("\n");
       var creatorName = formData.handle || formData.name;
       var auditPrompt = "You are a premium Audience Intelligence analyst for Creator Radar. Generate a DATA-DRIVEN, evidence-based report.\n\nCRITICAL RULES:\n- DO NOT write generic AI paragraphs like 'your audience values authenticity'\n- EVERY claim MUST reference the creator's actual data below\n- Use specific numbers, percentages, and post counts from the analysis\n- The report must feel like: 'We've analyzed YOUR account' not 'AI has written you a report'\n- Keep all text SHORT and PUNCHY - max 2-3 sentences per insight field\n\nCREATOR DATA:\nCreator: " + creatorName + "\nNiche: " + formData.niche + "\nPlatform: " + (formData.platform || "Multi-platform") + "\nPeriod: " + formData.period + (formData.challenge ? "\nChallenge: " + formData.challenge : "") + "\n\nFORMAT PERFORMANCE (ranked by quality score):\n" + formatRankStr + "\n\nAUDIENCE DRIVERS/EMOTIONS (ranked by frequency):\n" + emotionRankStr + "\n\nCONTENT THEMES (ranked by score):\n" + topicRankStr + "\n\nHOOK STYLE PERFORMANCE:\n" + hookRankStr + "\n\nCONTENT QUALITY SCORES (avg out of 100):\nHook: " + avgHook + " | CTA: " + avgCTA + " | Structure: " + avgStructure + " | Engagement: " + avgEngagement + " | Hashtags: " + avgHashtags + " | Trend: " + avgTrend + " | Originality: " + avgOriginality + " | Overall: " + avgTotal + "\n\nGrade distribution: " + gradeCount.S + " S-tier, " + gradeCount.A + " A-tier, " + gradeCount.B + " B-tier, " + gradeCount.C + " C-tier\n\nPosts analyzed:\n" + captionSummary + "\n\nBased on THIS SPECIFIC DATA, provide analysis in this exact JSON format (no markdown, no code blocks):\n{\n\"headline\": \"One punchy sentence with a specific stat from the data\",\n\"evidenceBullets\": [\"5-7 specific data-backed findings, each MUST reference a number from the analysis above\"],\n\"formatInsight\": \"2-3 sentences explaining WHY the top format works, referencing scores\",\n\"driverInsight\": \"2-3 sentences explaining WHY these psychology drivers dominate, reference percentages\",\n\"audienceDNA\": \"2-3 sentences describing WHO the audience is based on driver profile\",\n\"hookInsight\": \"2-3 sentences on hook performance, reference hook score data\",\n\"themeInsight\": \"2-3 sentences on which themes work and why, reference topic scores\",\n\"winningPatterns\": [{\"combo\": \"Driver + Format combination\", \"why\": \"Data-backed reason this works\"}],\n\"doubleDown\": [{\"what\": \"Specific format/topic/approach to increase\", \"why\": \"Backed by specific numbers from the data\", \"impact\": \"High/Medium/Low\"}],\n\"stopPosting\": [{\"what\": \"Specific thing to stop or reduce\", \"why\": \"Backed by specific numbers from the data\"}],\n\"opportunities\": [{\"idea\": \"Untapped content opportunity\", \"potential\": \"High/Medium\", \"reasoning\": \"Why this would work based on their data\"}],\n\"contentIdeas\": [{\"idea\": \"Specific content idea tailored to their niche\", \"hook\": \"Suggested hook text\", \"format\": \"The format to use\", \"driver\": \"Primary audience driver it taps\"}],\n\"hookRecommendations\": [{\"formula\": \"Hook formula template\", \"example\": \"Example using their niche\", \"why\": \"Why this works based on hook data\"}],\n\"thirtyDayPlan\": {\"week1\": \"Focus and specific actions\", \"week2\": \"Focus and specific actions\", \"week3\": \"Focus and specific actions\", \"week4\": \"Focus and specific actions\"},\n\"strengths\": [\"Strength with specific evidence from the data\"],\n\"weaknesses\": [\"Weakness with specific evidence from the data\"],\n\"growthVerdict\": \"High/Medium/Low - specific reasoning referencing their scores\"\n}";
-      try {
-        setTarget(60, "Generating AI-powered insights...");
-        var aiMsgs = ["Analyzing content patterns...", "Mapping audience psychology...", "Building growth recommendations...", "Crafting your 30-day plan..."];
-        var aiMsgIdx = 0;
-        var aiMsgTimer = setInterval(function() { aiMsgIdx++; setTarget(60 + Math.min(aiMsgIdx * 4, 20), aiMsgs[aiMsgIdx % aiMsgs.length]); }, 2500);
-        var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-          body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000})
-        });
-        clearInterval(aiMsgTimer);
-        if (resp.ok) {
-          var data = await resp.json();
-          var content = data.choices[0].message.content;
-          var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-          aiReport = JSON.parse(cleaned);
+      setTarget(60, "Generating AI-powered insights...");
+      var aiMsgs = ["Analyzing content patterns...", "Mapping audience psychology...", "Building growth recommendations...", "Crafting your 30-day plan..."];
+      var aiMsgIdx = 0;
+      var aiMsgTimer = setInterval(function() { aiMsgIdx++; setTarget(60 + Math.min(aiMsgIdx * 4, 20), aiMsgs[aiMsgIdx % aiMsgs.length]); }, 2500);
+      var groqBody = JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: auditPrompt}], temperature: 0.4, max_tokens: 4000});
+      var maxRetries = 3;
+      for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
+        try {
+          if (attempt > 0) setTarget(60 + attempt * 5, "Retrying AI analysis (attempt " + (attempt+1) + ")...");
+          var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+            body: groqBody
+          });
+          if (resp.ok) {
+            var data = await resp.json();
+            var content = data.choices[0].message.content;
+            var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+            if (cleaned.indexOf("{") !== -1) cleaned = cleaned.substring(cleaned.indexOf("{"), cleaned.lastIndexOf("}") + 1);
+            aiReport = JSON.parse(cleaned);
+          } else {
+            console.warn("Groq API error (attempt " + (attempt+1) + "): " + resp.status);
+            if (attempt < maxRetries - 1) await new Promise(function(r) { setTimeout(r, 1500); });
+          }
+        } catch(e) {
+          console.warn("Groq parse/fetch error (attempt " + (attempt+1) + "):", e.message);
+          if (attempt < maxRetries - 1) await new Promise(function(r) { setTimeout(r, 1500); });
         }
-      } catch(e) {}
+      }
+      clearInterval(aiMsgTimer);
     }
 
     setTarget(85, "Saving your report...");
