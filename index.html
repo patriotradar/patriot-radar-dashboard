@@ -4890,7 +4890,7 @@ function detectEmotions(text) {
     if (/wow|omg|insane|game.?changer|mind.?blow|no way|obsessed|life.?chang/i.test(t)) emotions.push({ label: "Excitement", color: "#ff8c00" });
   }
   if (emotions.length === 0) {
-    emotions.push({ label: "Engagement", color: "var(--blue)" });
+    emotions.push({ label: "Connection", color: "var(--blue)" });
   }
   return emotions;
 }
@@ -7308,7 +7308,7 @@ async function runCreatorAudit() {
     var _bf = (formatRanking.length > 0) ? formatRanking[0].format : "your current format";
     var _bfs = (formatRanking.length > 0) ? formatRanking[0].avgScore : avgTotal;
     var _wf = (formatRanking.length > 1) ? formatRanking[formatRanking.length-1].format : "";
-    var _bd = (emotionRanking.length > 0) ? emotionRanking[0].driver : "Engagement";
+    var _bd = (emotionRanking.length > 0) ? emotionRanking[0].driver : "Connection";
     var _bdp = (emotionRanking.length > 0) ? emotionRanking[0].pct : 0;
     var _bt = (topicRanking.length > 0) ? topicRanking[0].topic : "your niche content";
     var _bts = (topicRanking.length > 0) ? topicRanking[0].avgScore : avgTotal;
@@ -7410,7 +7410,7 @@ async function runCreatorAudit() {
       await supabaseClient.from("cr_support_tickets").insert([{
         user_email: su.email,
         category: "audit_report",
-        subject: "Audience Intelligence Report - " + (creatorName || "Unknown"),
+        section: "Audience Intelligence Report - " + (creatorName || "Unknown"),
         description: JSON.stringify(savedAudit),
         niche: niche || "",
         status: "complete"
@@ -7437,7 +7437,7 @@ function sanitizeAuditData(audit) {
     for (var ei = 0; ei < audit.emotionRanking.length; ei++) {
       var d = audit.emotionRanking[ei].driver;
       if (typeof d === "object" && d !== null) audit.emotionRanking[ei].driver = d.label || "Unknown";
-      else if (typeof d === "string" && d.indexOf("[object") !== -1) audit.emotionRanking[ei].driver = "Engagement";
+      else if (typeof d === "string" && d.indexOf("[object") !== -1) audit.emotionRanking[ei].driver = "Connection";
     }
   }
   if (audit.topicRanking) {
@@ -10912,7 +10912,7 @@ async function deliverReportToUser(reportData) {
     var insertRes = await supabaseClient.from("cr_support_tickets").insert([{
       user_email: app.email,
       category: "audit_report",
-      subject: "Audience Intelligence Report - " + (app.name || app.handle),
+      section: "Audience Intelligence Report - " + (app.name || app.handle),
       description: JSON.stringify(reportData),
       niche: app.niche || "",
       status: "complete"
@@ -10944,7 +10944,7 @@ async function createShareableReport(reportData) {
     var insertPromise = supabaseClient.from("cr_support_tickets").insert([{
       user_email: senderEmail,
       category: "audit_report",
-      subject: "SHARED: Audience Intelligence Report - " + creatorName,
+      section: "SHARED: Audience Intelligence Report - " + creatorName,
       description: JSON.stringify(reportData),
       niche: reportData.niche || "",
       status: "shared"
@@ -10999,7 +10999,7 @@ async function trackUserActivity() {
     if (existing.data && existing.data.length > 0) {
       await supabaseClient.from("cr_support_tickets").update({description: "last_active:" + now, niche: niche, status: "active"}).eq("id", existing.data[0].id);
     } else {
-      await supabaseClient.from("cr_support_tickets").insert({user_email: u.email, category: "user_activity", subject: "User Activity Tracking", description: "last_active:" + now, niche: niche, status: "active"});
+      await supabaseClient.from("cr_support_tickets").insert({user_email: u.email, category: "user_activity", section: "User Activity Tracking", description: "last_active:" + now, niche: niche, status: "active"});
     }
   } catch(e) {}
 }

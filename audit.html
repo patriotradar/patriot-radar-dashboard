@@ -1483,7 +1483,7 @@ function detectEmotions(text) {
     if (/wow|omg|insane|game.?changer|mind.?blow|no way|obsessed|life.?chang/i.test(t)) emotions.push({ label: "Excitement", color: "#ff8c00" });
   }
   if (emotions.length === 0) {
-    emotions.push({ label: "Engagement", color: "var(--blue)" });
+    emotions.push({ label: "Connection", color: "var(--blue)" });
   }
   return emotions;
 }
@@ -1878,7 +1878,7 @@ async function runAutoAudit(formData) {
       var _bf = (formatRanking.length > 0) ? formatRanking[0].format : "your current format";
       var _bfs = (formatRanking.length > 0) ? formatRanking[0].avgScore : avgTotal;
       var _wf = (formatRanking.length > 1) ? formatRanking[formatRanking.length-1].format : "";
-      var _bd = (emotionRanking.length > 0) ? emotionRanking[0].driver : "Engagement";
+      var _bd = (emotionRanking.length > 0) ? emotionRanking[0].driver : "Connection";
       var _bdp = (emotionRanking.length > 0) ? emotionRanking[0].pct : 0;
       var _bt = (topicRanking.length > 0) ? topicRanking[0].topic : "your niche content";
       var _bts = (topicRanking.length > 0) ? topicRanking[0].avgScore : avgTotal;
@@ -1984,11 +1984,11 @@ async function runAutoAudit(formData) {
 
     var saveResults = await Promise.all([
       sb.from("cr_support_tickets").insert([{
-        user_email: userEmail, category: "audit_report", subject: reportSubject,
+        user_email: userEmail, category: "audit_report", section: reportSubject,
         description: JSON.stringify(savedAudit), niche: formData.niche, status: "complete"
       }]).select("id"),
       sb.from("cr_support_tickets").insert([{
-        user_email: userEmail, category: "audit_application", subject: appSubject,
+        user_email: userEmail, category: "audit_application", section: appSubject,
         description: JSON.stringify(formData), niche: formData.niche, status: "complete"
       }]),
       sb.auth.updateUser({ data: metaUpdate })
