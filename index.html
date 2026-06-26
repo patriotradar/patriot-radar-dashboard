@@ -10526,6 +10526,21 @@ async function loadAdminPanel() {
   h += '<p style="font-size:11px;color:var(--muted);margin-bottom:14px">Feedback, support tickets, and user activity</p>';
   h += '</div>';
 
+  // Referral Link Generator
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:#ff8c00;margin-bottom:4px">&#128279; Referral Link Generator</h2>';
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px">Type a name below, tap Generate, then copy the link and send it to your referral partner</p>';
+  h += '<div style="display:flex;gap:8px;margin-bottom:10px">';
+  h += '<input id="refNameInput" type="text" placeholder="e.g. henry" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
+  h += '<button onclick="generateRefLink()" style="padding:10px 16px;border-radius:8px;border:none;background:var(--green);color:#000;font-weight:700;font-size:12px;cursor:pointer;white-space:nowrap">GENERATE</button>';
+  h += '</div>';
+  h += '<div id="refLinkOutput" style="display:none;padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.2);border-radius:8px">';
+  h += '<div style="font-size:10px;color:var(--green);font-weight:700;margin-bottom:4px">REFERRAL LINK:</div>';
+  h += '<div id="refLinkText" style="font-size:11px;color:var(--white);word-break:break-all;margin-bottom:8px"></div>';
+  h += '<button id="refCopyBtn" onclick="copyRefLink()" style="padding:6px 14px;border-radius:6px;border:none;background:var(--green);color:#000;font-weight:700;font-size:11px;cursor:pointer">COPY LINK</button>';
+  h += '</div>';
+  h += '</div>';
+
   // Feedback section
   h += '<div class="card" style="margin-bottom:16px">';
   h += '<h2 style="font-size:14px;color:var(--amber);margin-bottom:12px">&#128172; User Feedback</h2>';
@@ -10957,6 +10972,30 @@ async function loadAmbassadorUsers() {
   } catch(e) {}
 
   el.innerHTML = '<p style="color:var(--muted);font-size:12px">No user data yet. Users will appear here as they log in.</p>';
+}
+
+function generateRefLink() {
+  var name = (document.getElementById("refNameInput").value || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "");
+  if (!name) { document.getElementById("refNameInput").style.borderColor = "#ff4757"; return; }
+  document.getElementById("refNameInput").style.borderColor = "var(--border)";
+  var link = "https://patriotradar.github.io/patriot-radar-dashboard/audit.html?ref=" + name;
+  document.getElementById("refLinkText").textContent = link;
+  document.getElementById("refLinkOutput").style.display = "block";
+  document.getElementById("refCopyBtn").textContent = "COPY LINK";
+}
+
+function copyRefLink() {
+  var link = document.getElementById("refLinkText").textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(function() {
+      document.getElementById("refCopyBtn").textContent = "COPIED!";
+      setTimeout(function() { document.getElementById("refCopyBtn").textContent = "COPY LINK"; }, 2000);
+    });
+  } else {
+    var ta = document.createElement("textarea"); ta.value = link; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); document.body.removeChild(ta);
+    document.getElementById("refCopyBtn").textContent = "COPIED!";
+    setTimeout(function() { document.getElementById("refCopyBtn").textContent = "COPY LINK"; }, 2000);
+  }
 }
 
 async function loadAdminFeedback() {
