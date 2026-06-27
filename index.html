@@ -1145,12 +1145,47 @@ input[type=range]::-webkit-slider-thumb{
 
   <div id="authBox" class="card card-glow">
     <div id="signupView">
-      <h2 style="font-size:18px;margin-bottom:4px">Join the Creator Radar Beta</h2>
-      <p class="intro" style="font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:14px">You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks tailored to your niche.</p>
+      <h2 id="signupTitle" style="font-size:18px;margin-bottom:4px">Join the Creator Radar Beta</h2>
+      <p id="signupDesc" class="intro" style="font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:14px">You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks tailored to your niche.</p>
+
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <div id="signupModeCreator" onclick="setSignupMode('creator')" style="flex:1;padding:12px;border-radius:12px;border:2px solid var(--green);background:rgba(0,255,136,.08);text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:20px;margin-bottom:4px">&#127912;</div>
+          <div style="font-size:12px;font-weight:800;color:var(--green)">CONTENT CREATOR</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Grow your audience</div>
+        </div>
+        <div id="signupModeBusiness" onclick="setSignupMode('business')" style="flex:1;padding:12px;border-radius:12px;border:2px solid var(--border);background:transparent;text-align:center;cursor:pointer;transition:all .2s">
+          <div style="font-size:20px;margin-bottom:4px">&#127970;</div>
+          <div style="font-size:12px;font-weight:800;color:var(--muted)">LOCAL BUSINESS</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px">Get more customers</div>
+        </div>
+      </div>
+
       <label>Your Email</label>
       <input id="signupEmail" type="email" placeholder="your@email.com">
-      <label>Your Niche</label>
+      <label id="signupNicheLabel">Your Niche</label>
       <input id="signupNiche" type="text" list="nicheList" placeholder="Type any niche (e.g. Gardening, Sneakers, True Crime...)" autocomplete="off" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:14px">
+
+      <div id="signupBusinessFields" style="display:none">
+        <label>Business Name</label>
+        <input id="signupBusinessName" type="text" placeholder="e.g. Glow Beauty Salon">
+        <label>Business Type</label>
+        <select id="signupBusinessType" style="width:100%;padding:12px;margin-bottom:12px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none">
+          <option value="">Select your business type...</option>
+          <option value="beauty_salon">Beauty Salon</option>
+          <option value="hair_salon">Hair Salon</option>
+          <option value="restaurant">Restaurant / Cafe</option>
+          <option value="fitness">Gym / Fitness Studio</option>
+          <option value="retail">Retail Shop</option>
+          <option value="health">Health / Wellness</option>
+          <option value="trades">Trades / Services</option>
+          <option value="professional">Professional Services</option>
+          <option value="other">Other</option>
+        </select>
+        <label>Business Location</label>
+        <input id="signupBusinessLocation" type="text" placeholder="e.g. London, Manchester, Birmingham">
+      </div>
+
       <label>Create a Password</label>
       <input id="signupPassword" type="password" placeholder="e.g. MyPass1!">
       <div style="display:flex;align-items:flex-start;gap:10px;margin:14px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('betaConsent');cb.checked=!cb.checked;">
@@ -1201,12 +1236,19 @@ input[type=range]::-webkit-slider-thumb{
     <div id="trialBanner"></div>
 
     <div id="settingsPanel" class="settings-panel">
-      <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
         <label style="margin:0;white-space:nowrap">Brightness</label>
         <button style="width:36px;padding:6px;margin:0;font-size:16px;background:#13231b;color:var(--green);border:1px solid var(--border);border-radius:8px" onclick="stepBrightness(-20)">-</button>
         <input type="range" id="brightnessSlider2" min="80" max="200" value="140" oninput="adjustBrightness(this.value)" style="flex:1;-webkit-appearance:none;appearance:none;height:8px;background:rgba(0,255,136,.15);border-radius:99px;outline:none;border:none;margin:0;padding:0">
         <button style="width:36px;padding:6px;margin:0;font-size:16px;background:#13231b;color:var(--green);border:1px solid var(--border);border-radius:8px" onclick="stepBrightness(20)">+</button>
         <span class="brightness-val" id="brightnessVal2" style="font-size:12px;min-width:36px">140%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <label style="margin:0;white-space:nowrap">Account Mode</label>
+        <div style="display:flex;gap:6px;flex:1">
+          <button id="settingsModeCreator" onclick="switchAccountMode('creator')" style="flex:1;padding:8px;margin:0;font-size:10px;font-weight:800;border-radius:8px;cursor:pointer;border:1px solid var(--green);background:rgba(0,255,136,.1);color:var(--green)">CREATOR</button>
+          <button id="settingsModeBusiness" onclick="switchAccountMode('business')" style="flex:1;padding:8px;margin:0;font-size:10px;font-weight:800;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted)">BUSINESS</button>
+        </div>
       </div>
     </div>
 
@@ -1221,8 +1263,14 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="nicheSwitcher" style="margin-bottom:10px;padding:12px;background:var(--panel);border:1px solid var(--border);border-radius:12px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Your Niche:</span>
+        <span id="nicheSwitcherLabel" style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Your Niche:</span>
         <span id="currentNicheLabel" style="font-size:13px;color:var(--green);font-weight:900;text-transform:uppercase"></span>
+      </div>
+      <div id="businessInfoBar" style="display:none;margin-bottom:8px;padding:8px 10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);border-radius:8px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span id="bizNameDisplay" style="font-size:12px;font-weight:800;color:var(--green)"></span>
+          <span id="bizLocationDisplay" style="font-size:11px;color:var(--muted)"></span>
+        </div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <input id="nicheInput" type="text" list="nicheList" placeholder="Type any niche..." autocomplete="off" style="flex:1;min-width:120px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--white);outline:none"
@@ -1286,21 +1334,14 @@ input[type=range]::-webkit-slider-thumb{
     <div id="tab-aichat" class="tab-content">
       <div class="card" style="border-color:rgba(167,139,250,.25)">
         <div class="card-header"><h2 style="color:var(--purple)">&#129504; Ask Your AI</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128172;</div></div>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:14px">Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.</p>
+        <p id="aiChatDesc" style="font-size:11px;color:var(--muted);margin-bottom:14px">Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.</p>
         <div id="aiChatMessages" style="max-height:50vh;overflow-y:auto;margin-bottom:12px;padding:4px"></div>
         <div style="display:flex;gap:6px;position:relative;z-index:5">
           <textarea id="aiChatInput" rows="2" placeholder="Ask anything..." autocomplete="off" inputmode="text" enterkeyhint="send" style="flex:1;min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:16px;outline:none;-webkit-appearance:none;resize:none;line-height:1.4;height:48px;max-height:80px;font-family:inherit;box-sizing:border-box" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat()}"></textarea>
           <button id="aiVoiceBtn" onclick="toggleVoiceInput()" style="padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-size:16px;cursor:pointer;display:none" title="Voice input">&#127908;</button>
           <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer">Send</button>
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">
-          <button onclick="quickAiChat('What content should I post today and why?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>
-          <button onclick="quickAiChat('What emotional triggers work best for my audience?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">My audience triggers</button>
-          <button onclick="quickAiChat('What formats get me the most views?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Best formats for me</button>
-          <button onclick="quickAiChat('Give me 5 video ideas based on what works for my audience')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">5 video ideas</button>
-          <button onclick="quickAiChat('Analyze my content patterns - what am I doing right and wrong?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Content analysis</button>
-          <button onclick="quickAiChat('What niches overlap with mine that I could expand into?')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Cross-niche ideas</button>
-        </div>
+        <div id="aiQuickBtns" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px"></div>
       </div>
     </div>
 
@@ -1316,8 +1357,8 @@ input[type=range]::-webkit-slider-thumb{
 
 
     <div id="referralCard" class="card" style="margin-top:16px;display:none">
-      <h2 style="margin-bottom:6px">Invite a Creator Friend</h2>
-      <p style="color:var(--muted);font-size:12px;margin-bottom:10px;line-height:1.5">Share your link with a creator friend. When they sign up, you both get an extra week added to your trial. Up to 3 referrals max (3 bonus weeks).</p>
+      <h2 id="referralTitle" style="margin-bottom:6px">Invite a Creator Friend</h2>
+      <p id="referralDesc" style="color:var(--muted);font-size:12px;margin-bottom:10px;line-height:1.5">Share your link with a creator friend. When they sign up, you both get an extra week added to your trial. Up to 3 referrals max (3 bonus weeks).</p>
       <p id="refLimit" style="font-size:11px;margin-bottom:14px;color:var(--green);font-weight:600">3 of 3 referral slots remaining</p>
       <div style="display:flex;gap:8px;margin-bottom:14px">
         <input id="referralLink" readonly style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--green);outline:none;font-family:monospace" value="">
@@ -1335,14 +1376,14 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v11.2 &bull; INTELLIGENCE NETWORK ACTIVE &bull; <a href="terms.html" target="_blank" style="color:var(--muted);text-decoration:underline;font-size:inherit">Terms of Service</a></div>
+    <div class="footer" id="dashboardFooter">CREATOR RADAR v11.2 &bull; INTELLIGENCE NETWORK ACTIVE &bull; <a href="terms.html" target="_blank" style="color:var(--muted);text-decoration:underline;font-size:inherit">Terms of Service</a></div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
     <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;max-width:380px;width:100%;text-align:center;position:relative">
       <div style="font-size:36px;margin-bottom:12px">&#127873;</div>
       <h2 style="color:var(--green);font-size:20px;margin-bottom:8px">Get More Free Time!</h2>
-      <p style="color:var(--white);font-size:14px;line-height:1.6;margin-bottom:16px">Love Creator Radar? Share it with a creator friend and you BOTH get an extra week added to your trial.</p>
+      <p id="referralPopupDesc" style="color:var(--white);font-size:14px;line-height:1.6;margin-bottom:16px">Love Creator Radar? Share it with a creator friend and you BOTH get an extra week added to your trial.</p>
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;text-align:left">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">You get +7 days free</span></div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">Your friend gets +7 days free</span></div>
@@ -1358,9 +1399,9 @@ input[type=range]::-webkit-slider-thumb{
   <div style="background:linear-gradient(135deg,var(--panel),#0d1f16);border:1.5px solid var(--green);border-radius:20px;padding:28px;max-width:400px;width:100%;text-align:center;position:relative;box-shadow:0 0 60px rgba(0,255,136,.12)">
     <div style="font-size:40px;margin-bottom:8px">&#128293;</div>
     <h2 style="color:var(--green);font-size:20px;margin-bottom:6px">You're on a roll!</h2>
-    <p style="color:var(--muted);font-size:13px;margin-bottom:16px">You've been using Creator Radar for a few sessions now - clearly it's working for you!</p>
+    <p id="nudgeDesc" style="color:var(--muted);font-size:13px;margin-bottom:16px">You've been using Creator Radar for a few sessions now - clearly it's working for you!</p>
     <div style="background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;text-align:left">
-      <p style="color:var(--white);font-size:14px;font-weight:700;margin-bottom:10px">Know a creator who'd love this?</p>
+      <p id="nudgeInviteText" style="color:var(--white);font-size:14px;font-weight:700;margin-bottom:10px">Know a creator who'd love this?</p>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">You get +7 bonus days free</span></div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:var(--green);font-size:16px">&#10003;</span><span style="color:var(--white);font-size:13px">Your friend gets +7 bonus days free</span></div>
       <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--amber);font-size:16px">&#9733;</span><span style="color:var(--muted);font-size:12px">Up to 3 invites - that's 42 extra days!</span></div>
@@ -1419,17 +1460,17 @@ input[type=range]::-webkit-slider-thumb{
   <div style="max-width:440px;margin:0 auto;padding:20px;min-height:100vh;display:flex;align-items:center">
     <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;width:100%;box-shadow:0 0 40px rgba(0,255,136,.15)">
       <div style="text-align:center;margin-bottom:16px">
-        <div style="font-size:36px;margin-bottom:8px">&#127919;</div>
-        <h2 style="font-size:18px;color:#fff;margin-bottom:6px">Choose Your Niche</h2>
-        <p style="font-size:13px;color:var(--muted);line-height:1.5">Pick a niche so we can show you relevant trends, hooks, hashtags and content ideas tailored to YOUR audience. Without one, you'll only see generic results.</p>
+        <div id="nichePromptIcon" style="font-size:36px;margin-bottom:8px">&#127919;</div>
+        <h2 id="nichePromptTitle" style="font-size:18px;color:#fff;margin-bottom:6px">Choose Your Niche</h2>
+        <p id="nichePromptDesc" style="font-size:13px;color:var(--muted);line-height:1.5">Pick a niche so we can show you relevant trends, hooks, hashtags and content ideas tailored to YOUR audience. Without one, you'll only see generic results.</p>
       </div>
       <div style="margin-bottom:16px">
-        <label style="font-size:12px;color:var(--muted);margin-bottom:6px;display:block">Type your niche</label>
+        <label id="nichePromptFieldLabel" style="font-size:12px;color:var(--muted);margin-bottom:6px;display:block">Type your niche</label>
         <input id="nichePromptInput" type="text" list="nicheList" placeholder="Type any niche (e.g. Knitting, Anime, Sneakers...)" autocomplete="off" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:#fff;font-size:14px;box-sizing:border-box"
           onkeydown="if(event.key==='Enter'){event.preventDefault();confirmNichePrompt()}"
         >
       </div>
-      <button onclick="confirmNichePrompt()" style="width:100%;padding:14px;background:var(--green);color:#000;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px">Set My Niche</button>
+      <button id="nichePromptBtn" onclick="confirmNichePrompt()" style="width:100%;padding:14px;background:var(--green);color:#000;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px">Set My Niche</button>
       <button onclick="skipNichePrompt()" style="width:100%;padding:10px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted);font-size:12px;cursor:pointer">Skip for now (show generic results)</button>
     </div>
   </div>
@@ -1519,7 +1560,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
 
       <div style="margin-bottom:16px">
-        <label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Would you recommend Creator Radar to other creators?</label>
+        <label id="fbRecommendLabel" style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Would you recommend Creator Radar to other creators?</label>
         <div id="fbRecommend" style="display:flex;gap:8px">
           <button onclick="setFbRecommend(this,'yes')" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:12px;cursor:pointer;font-weight:600;transition:all .15s">Yes!</button>
           <button onclick="setFbRecommend(this,'maybe')" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--panel2);color:var(--muted);font-size:12px;cursor:pointer;font-weight:600;transition:all .15s">Maybe</button>
@@ -1544,7 +1585,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
 
       <div class="survey-q">
-        <label>1. How useful was Creator Radar for your content creation?</label>
+        <label id="surveyQ1Label">1. How useful was Creator Radar for your content creation?</label>
         <div class="survey-stars" id="surveyStars">
           <div class="survey-star" onclick="setSurveyStars(1)">1</div>
           <div class="survey-star" onclick="setSurveyStars(2)">2</div>
@@ -1599,9 +1640,9 @@ input[type=range]::-webkit-slider-thumb{
     <div class="paywall-card">
       <div style="font-size:40px;margin-bottom:8px">&#128640;</div>
       <h2>Continue with Creator Radar</h2>
-      <p class="paywall-sub">Your 2-week beta trial is complete. Upgrade to keep your dashboard active and never miss a trending opportunity.</p>
+      <p class="paywall-sub" id="paywallSubText">Your 2-week beta trial is complete. Upgrade to keep your dashboard active and never miss a trending opportunity.</p>
 
-      <div class="paywall-features">
+      <div id="paywallFeatures" class="paywall-features">
         <div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Real-time trend scanning every 10 minutes</div>
         <div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Daily content plans with ready-to-use hooks</div>
         <div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Audience DNA insights and growth tracking</div>
@@ -1629,8 +1670,8 @@ input[type=range]::-webkit-slider-thumb{
     <div style="background:var(--panel);border:1px solid var(--green);border-radius:20px;padding:28px;width:100%;box-shadow:0 0 40px rgba(0,255,136,.15)">
       <div style="text-align:center;margin-bottom:16px">
         <div style="font-size:40px;margin-bottom:8px">&#128200;</div>
-        <h2 style="font-size:18px;color:var(--green);margin-bottom:8px">Unlock Your Audience Intelligence</h2>
-        <p style="font-size:13px;color:var(--muted);line-height:1.6">You're using Creator Radar but the AI doesn't know what YOUR audience likes yet. Log your video stats (or upload a screenshot of your analytics) and the system will learn what works for you specifically.</p>
+        <h2 id="logNudgeTitle" style="font-size:18px;color:var(--green);margin-bottom:8px">Unlock Your Audience Intelligence</h2>
+        <p id="logNudgeDesc" style="font-size:13px;color:var(--muted);line-height:1.6">You're using Creator Radar but the AI doesn't know what YOUR audience likes yet. Log your video stats (or upload a screenshot of your analytics) and the system will learn what works for you specifically.</p>
       </div>
       <div style="background:var(--panel2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
         <p style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">What happens when you log:</p>
@@ -1673,6 +1714,190 @@ async function trackEvent(eventType, metadata) {
 }
 
 var USER_NICHE = "";
+var USER_ACCOUNT_MODE = "creator";
+var USER_BUSINESS_NAME = "";
+var USER_BUSINESS_TYPE = "";
+var USER_BUSINESS_LOCATION = "";
+var SIGNUP_MODE = "creator";
+
+function isBusinessMode() { return USER_ACCOUNT_MODE === "business"; }
+
+function setSignupMode(mode) {
+  SIGNUP_MODE = mode;
+  var creatorBtn = document.getElementById("signupModeCreator");
+  var businessBtn = document.getElementById("signupModeBusiness");
+  var bizFields = document.getElementById("signupBusinessFields");
+  var nicheLabel = document.getElementById("signupNicheLabel");
+  var nicheInput = document.getElementById("signupNiche");
+  var title = document.getElementById("signupTitle");
+  var desc = document.getElementById("signupDesc");
+  if (mode === "business") {
+    businessBtn.style.border = "2px solid var(--green)";
+    businessBtn.style.background = "rgba(0,255,136,.08)";
+    businessBtn.querySelector("div:nth-child(2)").style.color = "var(--green)";
+    creatorBtn.style.border = "2px solid var(--border)";
+    creatorBtn.style.background = "transparent";
+    creatorBtn.querySelector("div:nth-child(2)").style.color = "var(--muted)";
+    bizFields.style.display = "block";
+    nicheLabel.textContent = "Your Industry";
+    nicheInput.placeholder = "e.g. Beauty, Hair, Fitness, Restaurant...";
+    title.textContent = "Get More Customers with Creator Radar";
+    desc.textContent = "Join businesses using AI-powered social media intelligence to attract local customers, boost engagement, and grow their presence online.";
+  } else {
+    creatorBtn.style.border = "2px solid var(--green)";
+    creatorBtn.style.background = "rgba(0,255,136,.08)";
+    creatorBtn.querySelector("div:nth-child(2)").style.color = "var(--green)";
+    businessBtn.style.border = "2px solid var(--border)";
+    businessBtn.style.background = "transparent";
+    businessBtn.querySelector("div:nth-child(2)").style.color = "var(--muted)";
+    bizFields.style.display = "none";
+    nicheLabel.textContent = "Your Niche";
+    nicheInput.placeholder = "Type any niche (e.g. Gardening, Sneakers, True Crime...)";
+    title.textContent = "Join the Creator Radar Beta";
+    desc.textContent = "You're one of the first creators to get early access. Sign up below and we'll get you set up with your own dashboard - real trending data, content ideas, and hooks tailored to your niche.";
+  }
+}
+
+function switchAccountMode(mode) {
+  USER_ACCOUNT_MODE = mode;
+  var creatorBtn = document.getElementById("settingsModeCreator");
+  var businessBtn = document.getElementById("settingsModeBusiness");
+  if (mode === "business") {
+    businessBtn.style.border = "1px solid var(--green)";
+    businessBtn.style.background = "rgba(0,255,136,.1)";
+    businessBtn.style.color = "var(--green)";
+    creatorBtn.style.border = "1px solid var(--border)";
+    creatorBtn.style.background = "transparent";
+    creatorBtn.style.color = "var(--muted)";
+  } else {
+    creatorBtn.style.border = "1px solid var(--green)";
+    creatorBtn.style.background = "rgba(0,255,136,.1)";
+    creatorBtn.style.color = "var(--green)";
+    businessBtn.style.border = "1px solid var(--border)";
+    businessBtn.style.background = "transparent";
+    businessBtn.style.color = "var(--muted)";
+  }
+  adaptUIForMode();
+  supabaseClient.auth.updateUser({data: {account_mode: mode}}).catch(function(){});
+  trackEvent("mode_switch", {mode: mode});
+}
+
+function adaptUIForMode() {
+  var biz = isBusinessMode();
+
+  var nicheSwitcherLabel = document.getElementById("nicheSwitcherLabel");
+  if (nicheSwitcherLabel) nicheSwitcherLabel.textContent = biz ? "Your Industry:" : "Your Niche:";
+
+  var nicheInput = document.getElementById("nicheInput");
+  if (nicheInput) nicheInput.placeholder = biz ? "Type your industry..." : "Type any niche...";
+
+  var bizInfoBar = document.getElementById("businessInfoBar");
+  if (bizInfoBar) {
+    if (biz && USER_BUSINESS_NAME) {
+      bizInfoBar.style.display = "block";
+      var bizNameEl = document.getElementById("bizNameDisplay");
+      var bizLocEl = document.getElementById("bizLocationDisplay");
+      if (bizNameEl) bizNameEl.textContent = USER_BUSINESS_NAME;
+      if (bizLocEl) bizLocEl.textContent = USER_BUSINESS_LOCATION ? "- " + USER_BUSINESS_LOCATION : "";
+    } else {
+      bizInfoBar.style.display = "none";
+    }
+  }
+
+  var referralTitle = document.getElementById("referralTitle");
+  var referralDesc = document.getElementById("referralDesc");
+  if (referralTitle) referralTitle.textContent = biz ? "Invite a Business" : "Invite a Creator Friend";
+  if (referralDesc) referralDesc.textContent = biz ? "Share your link with another business owner. When they sign up, you both get an extra week added to your trial. Up to 3 referrals max (3 bonus weeks)." : "Share your link with a creator friend. When they sign up, you both get an extra week added to your trial. Up to 3 referrals max (3 bonus weeks).";
+
+  var referralPopupDesc = document.getElementById("referralPopupDesc");
+  if (referralPopupDesc) referralPopupDesc.textContent = biz ? "Love Creator Radar? Share it with a fellow business owner and you BOTH get an extra week added to your trial." : "Love Creator Radar? Share it with a creator friend and you BOTH get an extra week added to your trial.";
+
+  var nudgeDesc = document.getElementById("nudgeDesc");
+  if (nudgeDesc) nudgeDesc.textContent = biz ? "You've been using Creator Radar for a few sessions now - clearly it's helping your business!" : "You've been using Creator Radar for a few sessions now - clearly it's working for you!";
+  var nudgeInviteText = document.getElementById("nudgeInviteText");
+  if (nudgeInviteText) nudgeInviteText.textContent = biz ? "Know a business owner who'd love this?" : "Know a creator who'd love this?";
+
+  var aiChatDesc = document.getElementById("aiChatDesc");
+  if (aiChatDesc) aiChatDesc.textContent = biz ? "Ask anything about your customers, local marketing strategy, social media for your business, or industry trends. Your AI knows your business data." : "Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.";
+
+  var aiQuickBtns = document.getElementById("aiQuickBtns");
+  if (aiQuickBtns) {
+    if (biz) {
+      aiQuickBtns.innerHTML = '<button onclick="quickAiChat(\'What should I post today to attract local customers?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>'
+        + '<button onclick="quickAiChat(\'How can I get more walk-in customers from social media?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Get more walk-ins</button>'
+        + '<button onclick="quickAiChat(\'What local hashtags should I use to reach customers in my area?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Local hashtags</button>'
+        + '<button onclick="quickAiChat(\'Give me 5 content ideas that showcase my services and attract bookings\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">5 content ideas</button>'
+        + '<button onclick="quickAiChat(\'How are my competitors doing on social media and what can I do better?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Competitor analysis</button>'
+        + '<button onclick="quickAiChat(\'What promotions or offers should I run this week to drive sales?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Promo ideas</button>';
+    } else {
+      aiQuickBtns.innerHTML = '<button onclick="quickAiChat(\'What content should I post today and why?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>'
+        + '<button onclick="quickAiChat(\'What emotional triggers work best for my audience?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">My audience triggers</button>'
+        + '<button onclick="quickAiChat(\'What formats get me the most views?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Best formats for me</button>'
+        + '<button onclick="quickAiChat(\'Give me 5 video ideas based on what works for my audience\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">5 video ideas</button>'
+        + '<button onclick="quickAiChat(\'Analyze my content patterns - what am I doing right and wrong?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Content analysis</button>'
+        + '<button onclick="quickAiChat(\'What niches overlap with mine that I could expand into?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Cross-niche ideas</button>';
+    }
+  }
+
+  var nichePromptIcon = document.getElementById("nichePromptIcon");
+  var nichePromptTitle = document.getElementById("nichePromptTitle");
+  var nichePromptDesc = document.getElementById("nichePromptDesc");
+  var nichePromptFieldLabel = document.getElementById("nichePromptFieldLabel");
+  var nichePromptBtn = document.getElementById("nichePromptBtn");
+  var nichePromptInput = document.getElementById("nichePromptInput");
+  if (biz) {
+    if (nichePromptIcon) nichePromptIcon.innerHTML = "&#127970;";
+    if (nichePromptTitle) nichePromptTitle.textContent = "Set Your Industry";
+    if (nichePromptDesc) nichePromptDesc.textContent = "Tell us your industry so we can show you relevant local trends, customer-focused content ideas, and marketing strategies tailored to YOUR business.";
+    if (nichePromptFieldLabel) nichePromptFieldLabel.textContent = "Type your industry";
+    if (nichePromptBtn) nichePromptBtn.textContent = "Set My Industry";
+    if (nichePromptInput) nichePromptInput.placeholder = "e.g. Beauty, Hair Salon, Restaurant, Fitness...";
+  } else {
+    if (nichePromptIcon) nichePromptIcon.innerHTML = "&#127919;";
+    if (nichePromptTitle) nichePromptTitle.textContent = "Choose Your Niche";
+    if (nichePromptDesc) nichePromptDesc.textContent = "Pick a niche so we can show you relevant trends, hooks, hashtags and content ideas tailored to YOUR audience. Without one, you'll only see generic results.";
+    if (nichePromptFieldLabel) nichePromptFieldLabel.textContent = "Type your niche";
+    if (nichePromptBtn) nichePromptBtn.textContent = "Set My Niche";
+    if (nichePromptInput) nichePromptInput.placeholder = "Type any niche (e.g. Knitting, Anime, Sneakers...)";
+  }
+
+  var fbRecommendLabel = document.getElementById("fbRecommendLabel");
+  if (fbRecommendLabel) fbRecommendLabel.textContent = biz ? "Would you recommend Creator Radar to other businesses?" : "Would you recommend Creator Radar to other creators?";
+
+  var surveyQ1 = document.getElementById("surveyQ1Label");
+  if (surveyQ1) surveyQ1.textContent = biz ? "1. How useful was Creator Radar for growing your business?" : "1. How useful was Creator Radar for your content creation?";
+
+  var logNudgeTitle = document.getElementById("logNudgeTitle");
+  var logNudgeDesc = document.getElementById("logNudgeDesc");
+  if (biz) {
+    if (logNudgeTitle) logNudgeTitle.textContent = "Unlock Your Customer Intelligence";
+    if (logNudgeDesc) logNudgeDesc.textContent = "You're using Creator Radar but the AI doesn't know what YOUR customers respond to yet. Log your post stats and the system will learn what drives the most engagement and enquiries for your business.";
+  } else {
+    if (logNudgeTitle) logNudgeTitle.textContent = "Unlock Your Audience Intelligence";
+    if (logNudgeDesc) logNudgeDesc.textContent = "You're using Creator Radar but the AI doesn't know what YOUR audience likes yet. Log your video stats (or upload a screenshot of your analytics) and the system will learn what works for you specifically.";
+  }
+
+  var paywallSubText = document.getElementById("paywallSubText");
+  var paywallFeatures = document.getElementById("paywallFeatures");
+  if (biz) {
+    if (paywallSubText) paywallSubText.textContent = "Your 30-day trial is complete. Upgrade to keep attracting customers and growing your business online.";
+    if (paywallFeatures) paywallFeatures.innerHTML = '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Real-time local trend scanning</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Daily content plans focused on customer acquisition</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Customer engagement insights and local reach tracking</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Local hashtag and geo-targeting strategies</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Competitor analysis in your area</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> AI-powered booking and enquiry optimisation</div>';
+  } else {
+    if (paywallSubText) paywallSubText.textContent = "Your 30-day beta trial is complete. Upgrade to keep your dashboard active and never miss a trending opportunity.";
+    if (paywallFeatures) paywallFeatures.innerHTML = '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Real-time trend scanning every 10 minutes</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Daily content plans with ready-to-use hooks</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Audience DNA insights and growth tracking</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Multi-source discovery (Google, Reddit, News)</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Video analyzer with content scoring</div>'
+      + '<div class="paywall-feature"><span class="paywall-feature-icon">&#10003;</span> Product matching for affiliate revenue</div>';
+  }
+}
+
 var PATRIOTIC_TERMS = ["patriot","british","england","english","uk politics","union jack","britain","military","veteran","armed forces","royal","monarchy","churchill","remembrance","st george"];
 
 var USER_REGION = (function() {
@@ -3371,7 +3596,7 @@ function renderDailyPlan(results, emerging) {
 
   var h = getLogNudgeBanner();
   h += '<div class="card card-glow" style="border-color:var(--green)">';
-  h += '<div class="card-header"><h2>Today\'s Content Plan</h2><div class="section-icon" style="color:var(--green)">&#9776;</div></div>';
+  h += '<div class="card-header"><h2>' + (isBusinessMode() ? "Today\'s Business Content Plan" : "Today\'s Content Plan") + '</h2><div class="section-icon" style="color:var(--green)">&#9776;</div></div>';
 
   // --- SLOT 1: Top trending scanner keyword ---
   var pk = topPick;
@@ -5998,7 +6223,8 @@ function getEnhancedAudienceContext() {
 async function getAIAnalysis(caption, niche) {
   try {
     var audienceCtx = getEnhancedAudienceContext();
-    var prompt = "You are a viral content expert. Analyze this social media caption for a creator in the " + niche + " niche." + audienceCtx + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
+    var roleCtx = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
+    var prompt = "You are a viral content expert. Analyze this social media caption for " + roleCtx + "." + audienceCtx + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6029,7 +6255,8 @@ async function aiEnhanceSection(keyword, sectionId) {
   try {
     var niche = USER_NICHE || "general";
     var audienceCtx = getEnhancedAudienceContext();
-    var prompt = "You are a viral social media expert. Generate content for a creator in the " + niche + " niche about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
+    var roleCtx2 = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
+    var prompt = "You are a viral social media expert. Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6270,7 +6497,8 @@ async function aiValidateKeywords(results, emerging) {
   for (var j = 0; j < Math.min(5, emerging.length); j++) allKeywords.push(emerging[j].keyword);
   try {
     var audienceCtx = getEnhancedAudienceContext();
-    var prompt = "You are a social media content expert. A creator in the " + (USER_NICHE || "general") + " niche has these trending keywords." + audienceCtx + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
+    var roleCtx3 = isBusinessMode() ? "A local business in the " + (USER_NICHE || "general") + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "A creator in the " + (USER_NICHE || "general") + " niche";
+    var prompt = "You are a social media content expert. " + roleCtx3 + " has these trending keywords." + audienceCtx + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6331,7 +6559,8 @@ async function aiEnhancePlatform(keyword) {
   try {
     var niche = USER_NICHE || "general";
     var audienceCtx = getEnhancedAudienceContext();
-    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for a creator in the " + niche + " niche about: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
+    var roleCtx4 = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
+    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for " + roleCtx4 + " about: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -7271,7 +7500,8 @@ async function runCreatorAudit() {
     var bestText = bestPost.text.substring(0, 300);
     var worstText = worstPost.text.substring(0, 300);
     var _nicheCtx = niche || "content";
-    var systemMsg = "You are a sharp content strategist analyzing " + _nicheCtx + " creators. You have deep knowledge of what makes " + _nicheCtx + " content succeed on " + (platform||"social media") + ".\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of' or 'suggesting a need for'.\n- ALWAYS reference WHAT the creator actually posts about. Quote their hooks. Describe their content style.\n- EXPLAIN WHY something works or doesn't - connect it to audience psychology.\n- Write like you've watched every single post and understand their content deeply.\n- Your headline should make the creator feel UNDERSTOOD, not scored.";
+    var _bizOrCreator = isBusinessMode() ? "businesses" : "creators";
+    var systemMsg = "You are a sharp content strategist analyzing " + _nicheCtx + " " + _bizOrCreator + ". You have deep knowledge of what makes " + _nicheCtx + " content succeed on " + (platform||"social media") + ".\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of' or 'suggesting a need for'.\n- ALWAYS reference WHAT the " + (isBusinessMode() ? "business" : "creator") + " actually posts about. Quote their hooks. Describe their content style.\n- EXPLAIN WHY something works or doesn't - connect it to " + (isBusinessMode() ? "customer acquisition and engagement" : "audience psychology") + ".\n- Write like you've watched every single post and understand their content deeply.\n- Your headline should make the " + (isBusinessMode() ? "business owner" : "creator") + " feel UNDERSTOOD, not scored.";
     var userMsg = "Analyze this creator's content. I need insights that show you truly understand what they post about.\n\n" +
       "CREATOR: " + creatorName + " | NICHE: " + _nicheCtx + " | PLATFORM: " + (platform||"Multi") + " | PERIOD: " + period + " | " + n + " posts\n" +
       (challenge ? "THEIR CHALLENGE: " + challenge + "\n" : "") +
@@ -8185,7 +8415,15 @@ async function sendAiChat() {
     trendCtx = " Currently trending in " + niche + ": " + cachedResults.slice(0, 8).map(function(r){return r.keyword + " (viral:" + r.viral_score + ", rise:" + r.rise_percent + "%)"}).join(", ") + ".";
   }
 
-  var systemPrompt = "You are the Creator Radar AI assistant, a personal content strategist for a " + titleCase(niche) + " content creator. You know everything about their audience, performance data, and current trends." + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Be specific and actionable, not generic\n- Reference their actual data when possible (audience drivers, emotional triggers, best formats, view counts)\n- When recommending content, always explain WHY it will work for THEIR specific audience based on the data\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+  var systemPrompt;
+  if (isBusinessMode()) {
+    var bizCtx = USER_BUSINESS_NAME ? " Business: " + USER_BUSINESS_NAME + "." : "";
+    bizCtx += USER_BUSINESS_TYPE ? " Type: " + USER_BUSINESS_TYPE.replace(/_/g, " ") + "." : "";
+    bizCtx += USER_BUSINESS_LOCATION ? " Location: " + USER_BUSINESS_LOCATION + "." : "";
+    systemPrompt = "You are the Creator Radar AI assistant, a local business marketing strategist for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Focus on CUSTOMER ACQUISITION - how to get more walk-ins, bookings, and enquiries\n- Think LOCAL - suggest geo-targeted content, local hashtags, community engagement\n- Reference their actual data when possible\n- Suggest content that showcases services, builds trust, and drives buying intent\n- Give practical social media advice that a busy business owner can action quickly\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+  } else {
+    systemPrompt = "You are the Creator Radar AI assistant, a personal content strategist for a " + titleCase(niche) + " content creator. You know everything about their audience, performance data, and current trends." + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Be specific and actionable, not generic\n- Reference their actual data when possible (audience drivers, emotional triggers, best formats, view counts)\n- When recommending content, always explain WHY it will work for THEIR specific audience based on the data\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+  }
 
   aiChatHistory.push({role: "user", content: question});
   if (aiChatHistory.length > 10) aiChatHistory = aiChatHistory.slice(-10);
@@ -8325,14 +8563,15 @@ function changeNiche() {
   var newNiche = (input.value || "").trim();
   if (!newNiche) return;
   input.value = "";
-  input.placeholder = "Type any niche...";
+  input.placeholder = isBusinessMode() ? "Type your industry..." : "Type any niche...";
   quickSwitchNiche(newNiche);
 }
 
 function setNicheDropdown(niche) {
   var input = document.getElementById("nicheInput");
   if (!input) return;
-  input.placeholder = titleCase(niche) + " (type to change)";
+  var suffix = isBusinessMode() ? " (type to change)" : " (type to change)";
+  input.placeholder = titleCase(niche) + suffix;
 }
 
 async function quickSwitchNiche(newNiche) {
@@ -10194,11 +10433,18 @@ async function showDashboard() {
     if (currentUser && currentUser.user_metadata && currentUser.user_metadata.niche) {
       USER_NICHE = currentUser.user_metadata.niche;
     }
+    if (currentUser && currentUser.user_metadata) {
+      if (currentUser.user_metadata.account_mode) USER_ACCOUNT_MODE = currentUser.user_metadata.account_mode;
+      if (currentUser.user_metadata.business_name) USER_BUSINESS_NAME = currentUser.user_metadata.business_name;
+      if (currentUser.user_metadata.business_type) USER_BUSINESS_TYPE = currentUser.user_metadata.business_type;
+      if (currentUser.user_metadata.business_location) USER_BUSINESS_LOCATION = currentUser.user_metadata.business_location;
+    }
   } catch(e) {}
 
   var daysLeft = await getTrialDaysLeft();
 
   if (daysLeft === 0 && !isAdmin) {
+    adaptUIForMode();
     showPaywall(); return;
   }
 
@@ -10206,9 +10452,17 @@ async function showDashboard() {
 
   document.getElementById("dashboard").classList.remove("hidden");
 
+  adaptUIForMode();
+  if (isBusinessMode()) {
+    var creatorBtn = document.getElementById("settingsModeCreator");
+    var businessBtn = document.getElementById("settingsModeBusiness");
+    if (businessBtn) { businessBtn.style.border = "1px solid var(--green)"; businessBtn.style.background = "rgba(0,255,136,.1)"; businessBtn.style.color = "var(--green)"; }
+    if (creatorBtn) { creatorBtn.style.border = "1px solid var(--border)"; creatorBtn.style.background = "transparent"; creatorBtn.style.color = "var(--muted)"; }
+  }
+
   checkMyAuditReport();
 
-  trackEvent("session_start", {niche: USER_NICHE || "general"});
+  trackEvent("session_start", {niche: USER_NICHE || "general", mode: USER_ACCOUNT_MODE});
   trackUserActivity();
   if (FINANCIAL_NICHES.indexOf((USER_NICHE || "").toLowerCase()) !== -1) showFinancialDisclaimer();
 
@@ -10269,8 +10523,21 @@ async function betaSignup() {
   if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
   var tosOk = document.getElementById("tosConsent").checked;
   if (!tosOk) { msg.innerText = "Please agree to the Terms of Service to continue."; msg.style.color = "var(--red)"; return; }
+  if (SIGNUP_MODE === "business") {
+    var bizName = (document.getElementById("signupBusinessName").value || "").trim();
+    var bizType = document.getElementById("signupBusinessType").value;
+    var bizLocation = (document.getElementById("signupBusinessLocation").value || "").trim();
+    if (!bizName) { msg.innerText = "Please enter your business name."; msg.style.color = "var(--red)"; return; }
+    if (!bizType) { msg.innerText = "Please select your business type."; msg.style.color = "var(--red)"; return; }
+  }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
-  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, tos_agreed: true, tos_date: new Date().toISOString(), signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null}}});
+  var signupData = {beta_consent: true, tos_agreed: true, tos_date: new Date().toISOString(), signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null, account_mode: SIGNUP_MODE};
+  if (SIGNUP_MODE === "business") {
+    signupData.business_name = bizName;
+    signupData.business_type = bizType;
+    signupData.business_location = bizLocation || "";
+  }
+  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: signupData}});
   if (r.error) { var emsg = r.error.message; if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.innerText = emsg; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
