@@ -1007,6 +1007,48 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="form-group">
+          <label>I am a...</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+            <div id="modeCreator" onclick="setAccountMode('creator')" style="padding:14px;border-radius:12px;border:2px solid var(--green);background:rgba(0,255,136,.08);text-align:center;cursor:pointer;transition:all .2s">
+              <div style="font-size:22px;margin-bottom:4px">&#127912;</div>
+              <div style="font-size:13px;font-weight:700;color:var(--white)">Content Creator</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Grow my following</div>
+            </div>
+            <div id="modeBusiness" onclick="setAccountMode('business')" style="padding:14px;border-radius:12px;border:2px solid var(--border);background:transparent;text-align:center;cursor:pointer;transition:all .2s">
+              <div style="font-size:22px;margin-bottom:4px">&#127970;</div>
+              <div style="font-size:13px;font-weight:700;color:var(--white)">Local Business</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px">Get more customers</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="businessFields" style="display:none">
+          <div class="form-group">
+            <label>Business Name <span class="req">*</span></label>
+            <input type="text" class="form-input" id="appBusinessName" placeholder="e.g. Glow Beauty Salon">
+          </div>
+          <div class="form-group">
+            <label>Business Type <span class="req">*</span></label>
+            <select class="form-select" id="appBusinessType">
+              <option value="" disabled selected>Select your business type</option>
+              <option value="beauty_salon">Beauty Salon / Spa</option>
+              <option value="hair_salon">Hair Salon / Barbershop</option>
+              <option value="restaurant">Restaurant / Cafe</option>
+              <option value="fitness">Gym / Fitness Studio</option>
+              <option value="retail">Retail / Shop</option>
+              <option value="health">Health / Wellness</option>
+              <option value="trades">Trades / Home Services</option>
+              <option value="professional">Professional Services</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Business Location <span class="req">*</span></label>
+            <input type="text" class="form-input" id="appLocation" placeholder="e.g. Camden, London or Manchester City Centre">
+          </div>
+        </div>
+
+        <div class="form-group">
           <label>Social Media Handle <span class="req">*</span></label>
           <input type="text" class="form-input" id="appHandle" placeholder="@yourhandle">
         </div>
@@ -1025,7 +1067,7 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="form-group">
-          <label>Niche / Topic <span class="req">*</span></label>
+          <label id="nicheLabel">Niche / Topic <span class="req">*</span></label>
           <input type="text" class="form-input" id="appNiche" placeholder="e.g. Fitness, Comedy, Beauty, Business">
         </div>
 
@@ -1096,7 +1138,7 @@ html { scroll-behavior: smooth; }
         </div>
 
         <div class="form-group">
-          <label>Biggest Challenge <span class="req">*</span></label>
+          <label id="challengeLabel">Biggest Challenge <span class="req">*</span></label>
           <textarea class="form-textarea" id="appChallenge" placeholder="What's the biggest challenge you're facing with your content or growth right now?" rows="3"></textarea>
         </div>
 
@@ -1187,6 +1229,7 @@ html { scroll-behavior: smooth; }
   <footer class="footer">
     <p class="footer-brand">Powered by <strong>Creator Radar</strong></p>
     <a href="index.html">Go to Dashboard &rarr;</a>
+    <a href="terms.html" style="font-size:11px;color:var(--muted);margin-top:6px">Terms of Service</a>
   </footer>
 
 </div>
@@ -1208,6 +1251,35 @@ var userEmail = "";
 var userName = "";
 var pendingFormData = null;
 var paypalLoaded = false;
+var accountMode = "creator";
+
+function setAccountMode(mode) {
+  accountMode = mode;
+  var cBox = document.getElementById("modeCreator");
+  var bBox = document.getElementById("modeBusiness");
+  var bFields = document.getElementById("businessFields");
+  if (mode === "business") {
+    bBox.style.border = "2px solid var(--green)";
+    bBox.style.background = "rgba(0,255,136,.08)";
+    cBox.style.border = "2px solid var(--border)";
+    cBox.style.background = "transparent";
+    bFields.style.display = "block";
+    document.getElementById("nicheLabel").innerHTML = 'Industry / Services <span class="req">*</span>';
+    document.getElementById("appNiche").placeholder = "e.g. Hair Extensions, Facials, Nail Art, Personal Training";
+    document.getElementById("challengeLabel").innerHTML = 'Biggest Business Challenge <span class="req">*</span>';
+    document.getElementById("appChallenge").placeholder = "e.g. Getting local customers to find us on social media, standing out from competitors nearby";
+  } else {
+    cBox.style.border = "2px solid var(--green)";
+    cBox.style.background = "rgba(0,255,136,.08)";
+    bBox.style.border = "2px solid var(--border)";
+    bBox.style.background = "transparent";
+    bFields.style.display = "none";
+    document.getElementById("nicheLabel").innerHTML = 'Niche / Topic <span class="req">*</span>';
+    document.getElementById("appNiche").placeholder = "e.g. Fitness, Comedy, Beauty, Business";
+    document.getElementById("challengeLabel").innerHTML = 'Biggest Challenge <span class="req">*</span>';
+    document.getElementById("appChallenge").placeholder = "What's the biggest challenge you're facing with your content or growth right now?";
+  }
+}
 
 // ===== REFERRAL TRACKING =====
 var referralCode = "";
@@ -1257,9 +1329,17 @@ function goToPaymentStep() {
   var niche = (document.getElementById("appNiche").value || "").trim();
   var challenge = (document.getElementById("appChallenge").value || "").trim();
   var msg = document.getElementById("step2Msg");
+  if (accountMode === "business") {
+    var bizName = (document.getElementById("appBusinessName").value || "").trim();
+    var bizType = document.getElementById("appBusinessType").value;
+    var bizLocation = (document.getElementById("appLocation").value || "").trim();
+    if (!bizName) { msg.innerHTML = '<span style="color:#ff4757">Please enter your business name.</span>'; return; }
+    if (!bizType) { msg.innerHTML = '<span style="color:#ff4757">Please select your business type.</span>'; return; }
+    if (!bizLocation) { msg.innerHTML = '<span style="color:#ff4757">Please enter your business location.</span>'; return; }
+  }
   if (!handle) { msg.innerHTML = '<span style="color:#ff4757">Please enter your social media handle.</span>'; return; }
   if (!platform) { msg.innerHTML = '<span style="color:#ff4757">Please select your platform.</span>'; return; }
-  if (!niche) { msg.innerHTML = '<span style="color:#ff4757">Please enter your niche.</span>'; return; }
+  if (!niche) { msg.innerHTML = '<span style="color:#ff4757">Please enter your ' + (accountMode === "business" ? "industry" : "niche") + '.</span>'; return; }
   if (!challenge) { msg.innerHTML = '<span style="color:#ff4757">Please describe your biggest challenge.</span>'; return; }
   var captions = [];
   for (var i = 1; i <= 5; i++) {
@@ -1276,7 +1356,11 @@ function goToPaymentStep() {
     period: (document.querySelector('input[name="appPeriod"]:checked') || {}).value || "28 Days",
     challenge: challenge,
     captions: captions,
-    referral_code: referralCode
+    referral_code: referralCode,
+    accountMode: accountMode,
+    businessName: accountMode === "business" ? (document.getElementById("appBusinessName").value || "").trim() : "",
+    businessType: accountMode === "business" ? (document.getElementById("appBusinessType").value || "") : "",
+    businessLocation: accountMode === "business" ? (document.getElementById("appLocation").value || "").trim() : ""
   };
 
   goToStep(3);
@@ -1831,17 +1915,33 @@ async function runAutoAudit(formData) {
       var bestText = bestPost.text.substring(0, 300);
       var worstText = worstPost.text.substring(0, 300);
       var _nicheCtx = formData.niche || "content";
-      var systemMsg = "You are a sharp content strategist analyzing " + _nicheCtx + " creators. You have deep knowledge of what makes " + _nicheCtx + " content succeed on " + (formData.platform||"social media") + ".\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of' or 'suggesting a need for'.\n- ALWAYS reference WHAT the creator actually posts about. Quote their hooks. Describe their content style.\n- EXPLAIN WHY something works or doesn't - connect it to audience psychology.\n- Write like you've watched every single post and understand their content deeply.\n- Your headline should make the creator feel UNDERSTOOD, not scored.";
-      var userMsg = "Analyze this creator's content. I need insights that show you truly understand what they post about.\n\n" +
-        "CREATOR: " + creatorName + " | NICHE: " + _nicheCtx + " | PLATFORM: " + (formData.platform||"Multi") + " | PERIOD: " + formData.period + " | " + n + " posts\n" +
-        (formData.challenge ? "THEIR CHALLENGE: " + formData.challenge + "\n" : "") +
-        "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
-        "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
-        "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
-        "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
-        "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
-        "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
-        "Return ONLY valid JSON (no markdown): {\"headline\":\"insight that shows you understand their content - reference what they actually post about\",\"evidenceBullets\":[\"5-7 findings that reference specific posts by quoting hooks, explain WHY patterns exist, and connect to audience psychology\"],\"formatInsight\":\"why their format choices work or fail for their specific niche\",\"driverInsight\":\"what emotional need their content fills for viewers\",\"audienceDNA\":\"paint their ideal follower with specifics\",\"hookInsight\":\"compare best vs worst hook quoting actual text\",\"themeInsight\":\"which themes resonate and why\",\"winningPatterns\":[{\"combo\":\"pattern\",\"why\":\"reason\"}],\"doubleDown\":[{\"what\":\"action\",\"why\":\"evidence\",\"impact\":\"High/Med/Low\"}],\"stopPosting\":[{\"what\":\"what\",\"why\":\"why\"}],\"opportunities\":[{\"idea\":\"idea\",\"potential\":\"High/Med\",\"reasoning\":\"why\"}],\"contentIdeas\":[{\"idea\":\"idea\",\"hook\":\"hook\",\"format\":\"format\",\"driver\":\"driver\"}],\"hookRecommendations\":[{\"formula\":\"formula\",\"example\":\"example\",\"why\":\"why\"}],\"thirtyDayPlan\":{\"week1\":\"actions\",\"week2\":\"build\",\"week3\":\"experiment\",\"week4\":\"scale\"},\"strengths\":[\"strength\"],\"weaknesses\":[\"weakness\"],\"growthVerdict\":\"verdict\"}";
+      var isBiz = formData.accountMode === "business";
+      var bizCtx = isBiz ? ("\nBUSINESS: " + formData.businessName + " | TYPE: " + formData.businessType + " | LOCATION: " + formData.businessLocation) : "";
+      var systemMsg, userMsg;
+      if (isBiz) {
+        systemMsg = "You are a sharp local business social media strategist analyzing a " + formData.businessType.replace(/_/g," ") + " business called " + formData.businessName + " in " + formData.businessLocation + ". You specialise in helping local businesses use " + (formData.platform||"social media") + " to attract customers in their area.\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of'.\n- Frame EVERYTHING through the lens of CUSTOMER ACQUISITION - how does this content bring paying customers through the door?\n- Reference the business's LOCATION - suggest geo-tags, local hashtags, area-specific content angles.\n- Analyse what makes local customers TRUST, BOOK, or VISIT based on social media content.\n- Quote their actual posts. Explain what would make a local person choose them over competitors.\n- Think like a customer in " + formData.businessLocation + " scrolling " + (formData.platform||"social media") + " looking for " + _nicheCtx + " services.";
+        userMsg = "Analyze this local business's social media content. Focus on how it drives (or fails to drive) real customer footfall and bookings.\n\n" +
+          "BUSINESS: " + formData.businessName + " | TYPE: " + formData.businessType.replace(/_/g," ") + " | LOCATION: " + formData.businessLocation + " | INDUSTRY: " + _nicheCtx + " | PLATFORM: " + (formData.platform||"Multi") + " | PERIOD: " + formData.period + " | " + n + " posts\n" +
+          (formData.challenge ? "THEIR CHALLENGE: " + formData.challenge + "\n" : "") +
+          "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
+          "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
+          "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
+          "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
+          "BAD EXAMPLE (do NOT write like this): 'Engagement scores 65/100, indicating moderate audience interaction'\n" +
+          "GOOD EXAMPLE (write like this): 'Your before-and-after transformation posts are your strongest customer magnets - they let people in " + formData.businessLocation + " see real results, which builds trust faster than any ad'\n\n" +
+          "Return ONLY valid JSON (no markdown): {\"headline\":\"insight about how their content drives (or misses) customers - mention their location and business\",\"evidenceBullets\":[\"5-7 findings focused on customer impact - which posts would make someone book/visit/buy, quote hooks, explain why locals respond\"],\"formatInsight\":\"which content formats drive the most trust and bookings for this type of local business\",\"driverInsight\":\"what emotional trigger makes local customers choose this business over competitors\",\"audienceDNA\":\"paint their ideal local customer - who they are, what they search for, what makes them choose a " + formData.businessType.replace(/_/g," ") + "\",\"hookInsight\":\"compare best vs worst post from a customer conversion perspective\",\"themeInsight\":\"which content themes build trust and drive footfall vs which waste effort\",\"winningPatterns\":[{\"combo\":\"pattern\",\"why\":\"why it drives customers\"}],\"doubleDown\":[{\"what\":\"action\",\"why\":\"customer impact evidence\",\"impact\":\"High/Med/Low\"}],\"stopPosting\":[{\"what\":\"what to stop\",\"why\":\"why it hurts customer acquisition\"}],\"localStrategy\":{\"geoHashtags\":[\"5-8 location-specific hashtags for " + formData.businessLocation + "\"],\"localContentIdeas\":[\"3-4 content ideas that connect to the local area and community\"],\"competitorEdge\":\"what would make them stand out from other " + formData.businessType.replace(/_/g," ") + " businesses in " + formData.businessLocation + " on social media\"},\"contentIdeas\":[{\"idea\":\"content idea focused on getting customers\",\"hook\":\"scroll-stopping hook\",\"format\":\"format\",\"customerTrigger\":\"why this makes someone book/visit\"}],\"hookRecommendations\":[{\"formula\":\"hook formula\",\"example\":\"example for their business\",\"why\":\"why it converts browsers to customers\"}],\"thirtyDayPlan\":{\"week1\":\"quick wins for visibility\",\"week2\":\"build trust and social proof\",\"week3\":\"drive bookings and enquiries\",\"week4\":\"scale what converts\"},\"strengths\":[\"strength from customer perspective\"],\"weaknesses\":[\"weakness from customer perspective\"],\"growthVerdict\":\"verdict on their social media's ability to bring in customers\"}";
+      } else {
+        systemMsg = "You are a sharp content strategist analyzing " + _nicheCtx + " creators. You have deep knowledge of what makes " + _nicheCtx + " content succeed on " + (formData.platform||"social media") + ".\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of' or 'suggesting a need for'.\n- ALWAYS reference WHAT the creator actually posts about. Quote their hooks. Describe their content style.\n- EXPLAIN WHY something works or doesn't - connect it to audience psychology.\n- Write like you've watched every single post and understand their content deeply.\n- Your headline should make the creator feel UNDERSTOOD, not scored.";
+        userMsg = "Analyze this creator's content. I need insights that show you truly understand what they post about.\n\n" +
+          "CREATOR: " + creatorName + " | NICHE: " + _nicheCtx + " | PLATFORM: " + (formData.platform||"Multi") + " | PERIOD: " + formData.period + " | " + n + " posts\n" +
+          (formData.challenge ? "THEIR CHALLENGE: " + formData.challenge + "\n" : "") +
+          "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
+          "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
+          "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
+          "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
+          "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
+          "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
+          "Return ONLY valid JSON (no markdown): {\"headline\":\"insight that shows you understand their content - reference what they actually post about\",\"evidenceBullets\":[\"5-7 findings that reference specific posts by quoting hooks, explain WHY patterns exist, and connect to audience psychology\"],\"formatInsight\":\"why their format choices work or fail for their specific niche\",\"driverInsight\":\"what emotional need their content fills for viewers\",\"audienceDNA\":\"paint their ideal follower with specifics\",\"hookInsight\":\"compare best vs worst hook quoting actual text\",\"themeInsight\":\"which themes resonate and why\",\"winningPatterns\":[{\"combo\":\"pattern\",\"why\":\"reason\"}],\"doubleDown\":[{\"what\":\"action\",\"why\":\"evidence\",\"impact\":\"High/Med/Low\"}],\"stopPosting\":[{\"what\":\"what\",\"why\":\"why\"}],\"opportunities\":[{\"idea\":\"idea\",\"potential\":\"High/Med\",\"reasoning\":\"why\"}],\"contentIdeas\":[{\"idea\":\"idea\",\"hook\":\"hook\",\"format\":\"format\",\"driver\":\"driver\"}],\"hookRecommendations\":[{\"formula\":\"formula\",\"example\":\"example\",\"why\":\"why\"}],\"thirtyDayPlan\":{\"week1\":\"actions\",\"week2\":\"build\",\"week3\":\"experiment\",\"week4\":\"scale\"},\"strengths\":[\"strength\"],\"weaknesses\":[\"weakness\"],\"growthVerdict\":\"verdict\"}";
       var groqBody = JSON.stringify({model: "llama-3.3-70b-versatile", messages: [{role: "system", content: systemMsg}, {role: "user", content: userMsg}], temperature: 0.6, max_tokens: 2500});
       var maxRetries = 3;
       for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
@@ -1983,7 +2083,11 @@ async function runAutoAudit(formData) {
       formatRanking: formatRanking, topicRanking: topicRanking,
       emotionRanking: emotionRanking, hookRanking: hookRanking,
       aiReport: aiReport, thumbnailResults: [],
-      allImprovements: allImprovements.slice(0, 15)
+      allImprovements: allImprovements.slice(0, 15),
+      accountMode: formData.accountMode || "creator",
+      businessName: formData.businessName || "",
+      businessType: formData.businessType || "",
+      businessLocation: formData.businessLocation || ""
     };
 
     savedAudit.referral_code = formData.referral_code || "";

@@ -7788,6 +7788,38 @@ function renderAuditReport(audit, container) {
     h += '</div>';
   }
 
+  // LOCAL STRATEGY (business audits)
+  if (report && report.localStrategy) {
+    var ls = report.localStrategy;
+    h += '<div style="padding:16px;background:rgba(77,201,246,.04);border:1px solid rgba(77,201,246,.12);border-radius:14px;margin-bottom:16px">';
+    h += '<div style="font-size:15px;font-weight:900;color:#4dc9f6;margin-bottom:4px">Local Customer Strategy</div>';
+    if (audit.businessLocation) h += '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">Optimised for ' + audit.businessLocation + '</div>';
+    if (ls.geoHashtags && ls.geoHashtags.length > 0) {
+      h += '<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#4dc9f6;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Location Hashtags</div>';
+      h += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      for (var ghi = 0; ghi < ls.geoHashtags.length; ghi++) {
+        var tag = ls.geoHashtags[ghi];
+        if (tag.indexOf("#") !== 0) tag = "#" + tag;
+        h += '<span style="padding:4px 10px;background:rgba(77,201,246,.08);border:1px solid rgba(77,201,246,.15);border-radius:20px;font-size:11px;color:#4dc9f6;font-weight:600">' + tag + '</span>';
+      }
+      h += '</div></div>';
+    }
+    if (ls.localContentIdeas && ls.localContentIdeas.length > 0) {
+      h += '<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#4dc9f6;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">Local Content Ideas</div>';
+      for (var lci = 0; lci < ls.localContentIdeas.length; lci++) {
+        h += '<div style="padding:8px 10px;background:rgba(77,201,246,.03);border:1px solid rgba(77,201,246,.08);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--white);line-height:1.5"><span style="color:#4dc9f6;margin-right:6px">&#9679;</span>' + ls.localContentIdeas[lci] + '</div>';
+      }
+      h += '</div>';
+    }
+    if (ls.competitorEdge) {
+      h += '<div style="padding:10px 12px;background:rgba(77,201,246,.06);border:1px solid rgba(77,201,246,.12);border-radius:10px">';
+      h += '<div style="font-size:11px;font-weight:700;color:#4dc9f6;margin-bottom:4px;text-transform:uppercase;letter-spacing:1px">Your Competitive Edge</div>';
+      h += '<div style="font-size:12px;color:var(--white);line-height:1.6">' + ls.competitorEdge + '</div>';
+      h += '</div>';
+    }
+    h += '</div>';
+  }
+
   // CONTENT IDEAS
   if (report && report.contentIdeas && report.contentIdeas.length > 0) {
     h += '<div style="padding:16px;background:rgba(99,102,241,.04);border:1px solid rgba(99,102,241,.12);border-radius:14px;margin-bottom:16px">';
@@ -7797,7 +7829,7 @@ function renderAuditReport(audit, container) {
       var ciIdea = typeof ci === "string" ? ci : (ci.idea || "");
       var ciHook = typeof ci === "string" ? "" : (ci.hook || "");
       var ciFormat = typeof ci === "string" ? "" : (ci.format || "");
-      var ciDriver = typeof ci === "string" ? "" : (ci.driver || "");
+      var ciDriver = typeof ci === "string" ? "" : (ci.driver || ci.customerTrigger || "");
       h += '<div style="padding:12px;background:rgba(99,102,241,.03);border:1px solid rgba(99,102,241,.08);border-radius:10px;margin-bottom:8px">';
       h += '<div style="display:flex;align-items:flex-start;gap:8px">';
       h += '<span style="color:#6366f1;font-weight:800;font-size:13px;margin-top:1px">' + (cii+1) + '.</span>';
