@@ -452,7 +452,7 @@ function renderAnalytics() {
     var uTrialDays = 0;
     if (userFirstSeen[uId]) {
       var passed = Math.floor((Date.now() - userFirstSeen[uId]) / 86400000);
-      uTrialDays = Math.max(0, 14 - passed);
+      uTrialDays = Math.max(0, 30 - passed);
     }
     var uSurvey = userSurveyed[uId] ? '<span class="badge badge-green">Done</span>' : '<span class="badge badge-amber">Pending</span>';
     var uConv = userConverted[uId] ? '<span class="badge badge-green">Paid</span>' : '<span class="badge badge-red">Free</span>';
