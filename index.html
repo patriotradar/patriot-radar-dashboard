@@ -1157,6 +1157,10 @@ input[type=range]::-webkit-slider-thumb{
         <input type="checkbox" id="betaConsent" style="min-width:20px;min-height:20px;margin-top:2px;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation()">
         <span style="font-size:12px;color:var(--muted);line-height:1.5">I agree to be contacted by Creator Radar about joining the beta programme. This includes account setup details and next steps only - no marketing emails.</span>
       </div>
+      <div style="display:flex;align-items:flex-start;gap:10px;margin:6px 0 6px 0;cursor:pointer" onclick="var cb=document.getElementById('tosConsent');cb.checked=!cb.checked;">
+        <input type="checkbox" id="tosConsent" style="min-width:20px;min-height:20px;margin-top:2px;accent-color:var(--green);cursor:pointer" onclick="event.stopPropagation()">
+        <span style="font-size:12px;color:var(--muted);line-height:1.5">I agree to the <a href="terms.html" target="_blank" style="color:var(--green);text-decoration:underline" onclick="event.stopPropagation()">Terms of Service</a> and understand that Creator Radar provides AI-generated insights for informational purposes only.</span>
+      </div>
       <button onclick="betaSignup()">Join the Beta</button>
       <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">Already have an account? <a href="#" onclick="showLoginView();return false" style="color:var(--green);text-decoration:underline">Log in here</a></p>
       <p id="signupMessage" class="small" style="margin-top:10px"></p>
@@ -1331,7 +1335,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <div class="footer">CREATOR RADAR v11.2 &bull; INTELLIGENCE NETWORK ACTIVE</div>
+    <div class="footer">CREATOR RADAR v11.2 &bull; INTELLIGENCE NETWORK ACTIVE &bull; <a href="terms.html" target="_blank" style="color:var(--muted);text-decoration:underline;font-size:inherit">Terms of Service</a></div>
   </div>
 
   <div id="referralPopup" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px">
@@ -10231,8 +10235,10 @@ async function betaSignup() {
   if (pw.length < 6) { msg.innerText = "Password must be at least 6 characters."; msg.style.color = "var(--red)"; return; }
   if (!/[a-z]/.test(pw) || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) { msg.innerText = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.style.color = "var(--red)"; return; }
   if (!consent) { msg.innerText = "Please agree to be contacted about the beta to continue."; msg.style.color = "var(--red)"; return; }
+  var tosOk = document.getElementById("tosConsent").checked;
+  if (!tosOk) { msg.innerText = "Please agree to the Terms of Service to continue."; msg.style.color = "var(--red)"; return; }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
-  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null}}});
+  var r = await supabaseClient.auth.signUp({email: em, password: pw, options: {data: {beta_consent: true, tos_agreed: true, tos_date: new Date().toISOString(), signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null}}});
   if (r.error) { var emsg = r.error.message; if (emsg.indexOf("weak_password") !== -1 || emsg.indexOf("Password should") !== -1) emsg = "Password needs a lowercase letter, uppercase letter, number, and a special character (e.g. MyPass1!)"; msg.innerText = emsg; msg.style.color = "var(--red)"; }
   else if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
     msg.innerText = "This email is already registered. Try logging in instead."; msg.style.color = "var(--amber)";
