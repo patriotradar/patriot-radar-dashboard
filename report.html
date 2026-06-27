@@ -576,8 +576,28 @@ function renderReport(audit) {
   return h;
 }
 
+function getHashData() {
+  var hash = window.location.hash;
+  if (hash && hash.indexOf("#d=") === 0) {
+    try {
+      var b64 = hash.substring(3);
+      var json = decodeURIComponent(escape(atob(b64)));
+      return JSON.parse(json);
+    } catch(e) { return null; }
+  }
+  return null;
+}
+
 async function loadReport() {
   var container = document.getElementById("reportContainer");
+
+  var hashData = getHashData();
+  if (hashData) {
+    document.title = (hashData.creatorName || "Creator") + " - Audience Intelligence Report | Creator Radar";
+    container.innerHTML = renderReport(hashData);
+    return;
+  }
+
   var reportId = getReportId();
 
   if (!reportId) {

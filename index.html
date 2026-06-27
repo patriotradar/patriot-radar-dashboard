@@ -7267,16 +7267,19 @@ async function runCreatorAudit() {
     var bestText = bestPost.text.substring(0, 300);
     var worstText = worstPost.text.substring(0, 300);
     var _nicheCtx = niche || "content";
-    var shortPrompt = "You are a content strategist who deeply understands " + _nicheCtx + " audiences. Analyze this creator's ACTUAL content. Reference their specific posts. Explain WHY things work or don't - don't just list scores.\n\n" +
+    var systemMsg = "You are a sharp content strategist analyzing " + _nicheCtx + " creators. You have deep knowledge of what makes " + _nicheCtx + " content succeed on " + (platform||"social media") + ".\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of' or 'suggesting a need for'.\n- ALWAYS reference WHAT the creator actually posts about. Quote their hooks. Describe their content style.\n- EXPLAIN WHY something works or doesn't - connect it to audience psychology.\n- Write like you've watched every single post and understand their content deeply.\n- Your headline should make the creator feel UNDERSTOOD, not scored.";
+    var userMsg = "Analyze this creator's content. I need insights that show you truly understand what they post about.\n\n" +
       "CREATOR: " + creatorName + " | NICHE: " + _nicheCtx + " | PLATFORM: " + (platform||"Multi") + " | PERIOD: " + period + " | " + n + " posts\n" +
       (challenge ? "THEIR CHALLENGE: " + challenge + "\n" : "") +
       "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
-      "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100): \"" + bestText + "\"\n\n" +
-      "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100): \"" + worstText + "\"\n\n" +
+      "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
+      "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
       (visualSummary ? "VISUALS: " + visualSummary + "\n\n" : "") +
       "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
-      "Return ONLY valid JSON (no markdown): {\"headline\":\"punchy insight referencing what they actually post about\",\"evidenceBullets\":[\"5-7 findings that quote or reference specific posts and explain WHY\"],\"formatInsight\":\"why their format choices work or don't for " + _nicheCtx + " audiences\",\"driverInsight\":\"what emotionally drives their audience - what need does their content fill\",\"audienceDNA\":\"paint their ideal follower - demographics, mindset, what they want from " + _nicheCtx + " content\",\"hookInsight\":\"compare best hook vs weakest - quote actual text, explain the difference\",\"themeInsight\":\"which themes resonate and why - reference specific posts\",\"winningPatterns\":[{\"combo\":\"specific pattern from their best content\",\"why\":\"why this works for " + _nicheCtx + " audiences\"}],\"doubleDown\":[{\"what\":\"action based on their actual content\",\"why\":\"evidence from posts\",\"impact\":\"High/Med/Low\"}],\"stopPosting\":[{\"what\":\"what to stop based on weakest content\",\"why\":\"why it underperforms\"}],\"opportunities\":[{\"idea\":\"" + _nicheCtx + " opportunity\",\"potential\":\"High/Med\",\"reasoning\":\"connected to audience needs\"}],\"contentIdeas\":[{\"idea\":\"idea inspired by their best content\",\"hook\":\"hook in their voice\",\"format\":\"format\",\"driver\":\"driver\"}],\"hookRecommendations\":[{\"formula\":\"formula from what works for them\",\"example\":\"in their voice\",\"why\":\"why for their audience\"}],\"thirtyDayPlan\":{\"week1\":\"actions for their specific challenge\",\"week2\":\"build on week 1\",\"week3\":\"experiment based on data\",\"week4\":\"scale winners\"},\"strengths\":[\"strength referencing actual content\"],\"weaknesses\":[\"weakness with specific fix\"],\"growthVerdict\":\"verdict about their content style and audience connection\"}";
-    var groqBody = JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: shortPrompt}], temperature: 0.5, max_tokens: 3000});
+      "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
+      "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
+      "Return ONLY valid JSON (no markdown): {\"headline\":\"insight that shows you understand their content - reference what they actually post about\",\"evidenceBullets\":[\"5-7 findings that reference specific posts by quoting hooks, explain WHY patterns exist, and connect to audience psychology\"],\"formatInsight\":\"why their format choices work or fail for their specific niche\",\"driverInsight\":\"what emotional need their content fills for viewers\",\"audienceDNA\":\"paint their ideal follower with specifics - who are these people and why do they follow\",\"hookInsight\":\"compare their best vs worst hook by quoting actual text and explaining the difference\",\"themeInsight\":\"which content themes resonate and why - be specific to their niche\",\"winningPatterns\":[{\"combo\":\"pattern from their top content\",\"why\":\"why this works for their audience\"}],\"doubleDown\":[{\"what\":\"specific action\",\"why\":\"evidence from their posts\",\"impact\":\"High/Med/Low\"}],\"stopPosting\":[{\"what\":\"what to stop\",\"why\":\"why it underperforms\"}],\"opportunities\":[{\"idea\":\"opportunity\",\"potential\":\"High/Med\",\"reasoning\":\"why\"}],\"contentIdeas\":[{\"idea\":\"idea\",\"hook\":\"hook in their voice\",\"format\":\"format\",\"driver\":\"driver\"}],\"hookRecommendations\":[{\"formula\":\"formula\",\"example\":\"in their voice\",\"why\":\"why\"}],\"thirtyDayPlan\":{\"week1\":\"specific actions\",\"week2\":\"build on week 1\",\"week3\":\"experiment\",\"week4\":\"scale\"},\"strengths\":[\"strength\"],\"weaknesses\":[\"weakness\"],\"growthVerdict\":\"verdict\"}";
+    var groqBody = JSON.stringify({model: "llama-3.3-70b-versatile", messages: [{role: "system", content: systemMsg}, {role: "user", content: userMsg}], temperature: 0.6, max_tokens: 2500});
     var maxRetries = 3;
     for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
       try {
@@ -10954,15 +10957,23 @@ async function deliverReportToUser(reportData) {
 
 async function createShareableReport(reportData) {
   var creatorName = reportData.creatorName || "Unknown Creator";
+  // Strip large/unnecessary data for sharing
+  var shareData = {};
+  var keepKeys = ["creatorName","niche","platform","period","challenge","overallScore","grade","captionCount","date","avgHook","avgCTA","avgStructure","avgEngagement","avgHashtags","avgTrend","avgOriginality","formatRanking","topicRanking","emotionRanking","hookRanking","aiReport"];
+  for (var k in reportData) { if (keepKeys.indexOf(k) !== -1) shareData[k] = reportData[k]; }
+  var descJson = JSON.stringify(shareData);
+  
+  // Method 1: Supabase JS client
   try {
-    var u = (await supabaseClient.auth.getUser()).data.user;
+    var u = null;
+    try { u = (await supabaseClient.auth.getUser()).data.user; } catch(authErr) {}
     var senderEmail = (u && u.email) ? u.email : "shared_report";
-    var timeoutPromise = new Promise(function(_, reject) { setTimeout(function() { reject(new Error("timeout")); }, 15000); });
+    var timeoutPromise = new Promise(function(_, reject) { setTimeout(function() { reject(new Error("timeout")); }, 12000); });
     var insertPromise = supabaseClient.from("cr_support_tickets").insert([{
       user_email: senderEmail,
       category: "audit_report",
       section: "SHARED: Audience Intelligence Report - " + creatorName,
-      description: JSON.stringify(reportData),
+      description: descJson,
       niche: reportData.niche || "",
       status: "shared"
     }]).select("id");
@@ -10973,12 +10984,58 @@ async function createShareableReport(reportData) {
       try { await navigator.clipboard.writeText(shareLink); } catch(e2) {}
       return shareLink;
     }
-    if (insertRes && insertRes.error) console.warn("Supabase share error:", insertRes.error.message);
-    return null;
+    console.warn("Supabase client insert returned no data:", insertRes && insertRes.error ? insertRes.error.message : "unknown");
   } catch(e) {
-    console.warn("Share link error:", e.message);
-    return null;
+    console.warn("Supabase client error:", e.message);
   }
+  
+  // Method 2: Direct REST API (bypasses Supabase JS client issues)
+  try {
+    var directResp = await fetch(SUPABASE_URL + "/rest/v1/cr_support_tickets?select=id", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+        "Prefer": "return=representation"
+      },
+      body: JSON.stringify({
+        user_email: "shared_report",
+        category: "audit_report",
+        section: "SHARED: Audience Intelligence Report - " + creatorName,
+        description: descJson,
+        niche: reportData.niche || "",
+        status: "shared"
+      })
+    });
+    if (directResp.ok) {
+      var directData = await directResp.json();
+      if (directData && directData[0] && directData[0].id) {
+        var shareLink2 = window.location.origin + window.location.pathname.replace("index.html","") + "report.html?id=" + directData[0].id;
+        window._lastShareLink = shareLink2;
+        try { await navigator.clipboard.writeText(shareLink2); } catch(e2) {}
+        return shareLink2;
+      }
+    }
+    console.warn("Direct REST insert failed:", directResp.status);
+  } catch(e3) {
+    console.warn("Direct REST error:", e3.message);
+  }
+  
+  // Method 3: URL-hash fallback (no server needed)
+  try {
+    var compressed = btoa(unescape(encodeURIComponent(descJson)));
+    var hashLink = window.location.origin + window.location.pathname.replace("index.html","") + "report.html#d=" + compressed;
+    if (hashLink.length < 50000) {
+      window._lastShareLink = hashLink;
+      try { await navigator.clipboard.writeText(hashLink); } catch(e2) {}
+      return hashLink;
+    }
+  } catch(e4) {
+    console.warn("Hash fallback error:", e4.message);
+  }
+  
+  return null;
 }
 
 async function getShareableLink(e) {
@@ -10996,7 +11053,7 @@ async function getShareableLink(e) {
       '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">Send this link to anyone - no login needed</div>' +
       '<input type="text" value="' + link + '" readonly style="width:100%;padding:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:11px;margin-bottom:12px;text-align:center" onclick="this.select()" />' +
       '<div style="display:flex;gap:8px;justify-content:center">' +
-      '<button onclick="navigator.clipboard.writeText(\'' + link + '\');this.textContent=\'Copied!\';setTimeout(function(){this.textContent=\'Copy Again\'.bind(this)},1500)" style="padding:10px 20px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Copy Again</button>' +
+      '<button onclick="navigator.clipboard.writeText(\'' + link.replace(/'/g, "\\'") + '\');this.textContent=\'Copied!\'" style="padding:10px 20px;background:var(--green);color:var(--bg);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Copy Again</button>' +
       '<button onclick="this.parentElement.parentElement.remove()" style="padding:10px 20px;background:rgba(255,255,255,.06);color:var(--white);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Close</button>' +
       '</div>';
     document.body.appendChild(linkBox);
@@ -11005,6 +11062,7 @@ async function getShareableLink(e) {
     if (btn) { btn.textContent = "FAILED - TAP TO RETRY"; btn.style.background = "#ff4757"; btn.disabled = false; setTimeout(function() { btn.textContent = "GET SHAREABLE LINK"; btn.style.background = "linear-gradient(135deg,#ff8c00,#ff6b00)"; }, 3000); }
   }
 }
+
 
 async function trackUserActivity() {
   try {
