@@ -1183,7 +1183,7 @@ input[type=range]::-webkit-slider-thumb{
           <option value="other">Other</option>
         </select>
         <label>Business Location</label>
-        <input id="signupBusinessLocation" type="text" placeholder="e.g. London, Manchester, Birmingham">
+        <input id="signupBusinessLocation" type="text" placeholder="e.g. Cardiff, Edinburgh, Belfast, Manchester">
       </div>
 
       <label>Create a Password</label>
@@ -2376,7 +2376,9 @@ var NICHE_SEEDS = {
     "poppy appeal uk","armed forces day","help for heroes uk",
     "english civil war","battle of britain","winston churchill legacy",
     "brexit impact today","british sovereignty","uk independence",
-    "british working class","northern england pride","english identity"
+    "british working class","northern england pride","english identity",
+    "scottish pride","wales community","northern ireland culture","celtic heritage",
+    "scottish highlands","welsh valleys","belfast pride","edinburgh culture"
   ],
   "patriotic": [
     "british patriotism trending","england trending today","union jack trending",
@@ -2395,7 +2397,10 @@ var NICHE_SEEDS = {
     "poppy appeal uk","armed forces day","help for heroes uk",
     "english civil war","battle of britain","winston churchill legacy",
     "brexit impact today","british sovereignty","uk independence",
-    "british working class","northern england pride","english identity"
+    "british working class","northern england pride","english identity",
+    "scottish independence debate","welsh language revival","northern ireland news",
+    "scotland trending","wales trending","belfast trending","edinburgh news",
+    "cardiff news today","glasgow trending","scottish culture","welsh pride"
   ],
   "football": [
     "football transfer news today","premier league trending","champions league latest",
@@ -5167,7 +5172,9 @@ function detectBritishRelevance(text) {
     "union jack", "st george", "flag", "king charles", "coronation"];
   var general = ["britain", "british", "england", "english", "uk ", "united kingdom",
     "royal", "queen", "prince", "parliament", "westminster", "buckingham",
-    "london", "scotland", "wales", "nhs", "bbc", "commonwealth"];
+    "london", "scotland", "wales", "nhs", "bbc", "commonwealth",
+    "northern ireland", "edinburgh", "cardiff", "belfast", "glasgow",
+    "scottish", "welsh", "celtic", "highlands", "senedd"];
   var strongHits = 0, genHits = 0;
   for (var i = 0; i < strong.length; i++) { if (t.indexOf(strong[i]) !== -1) strongHits++; }
   for (var i = 0; i < general.length; i++) { if (t.indexOf(general[i]) !== -1) genHits++; }
@@ -5197,15 +5204,15 @@ function detectDebatePotential(text) {
 var TOPIC_SUBCATEGORIES = {
   "Community": ["Neighbourhood Watch", "Street Parties", "Village Fetes", "Youth Clubs", "Community Gardens", "Local Heroes", "Helping Neighbours", "Parish Councils"],
   "Traditions": ["Bonfire Night", "Sunday Roasts", "Harvest Festival", "Boxing Day", "Morris Dancing", "Afternoon Tea", "Conker Season", "May Day"],
-  "Local Pride": ["High Street Revival", "Local Markets", "Regional Identity", "Local Football Clubs", "County Pride", "Seaside Towns", "Market Towns", "Town Centres"],
+  "Local Pride": ["High Street Revival", "Local Markets", "Regional Identity", "Local Football Clubs", "County Pride", "Seaside Towns", "Market Towns", "Town Centres", "Scottish Pride", "Welsh Heritage", "Belfast Culture", "Celtic Spirit"],
   "National Symbols": ["St George's Cross", "Union Jack Pride", "Rule Britannia", "Three Lions", "Proms Night", "National Anthem", "English Rose", "Red Phone Box"],
   "Education": ["School Standards", "History Curriculum", "Grammar Schools", "British Values", "School Discipline", "STEM Skills", "Teacher Respect", "School Dinners"],
   "History": ["Churchill's Legacy", "D-Day Heroes", "Dunkirk Spirit", "Battle of Britain", "Blitz Survivors", "Tudor England", "Victorian Era", "Industrial Revolution"],
   "NHS/Healthcare": ["NHS Heroes", "A&E Crisis", "GP Access", "Mental Health", "NHS Funding", "Care Workers", "Ambulance Response", "Covid Legacy"],
   "Law & Order": ["Knife Crime", "Police Funding", "Prison Reform", "County Lines", "Anti-Social Behaviour", "Victim Support", "Sentencing Reform", "Street Safety"],
-  "Sports": ["Premier League Fans", "Cricket Heritage", "Rugby Spirit", "Olympic Legacy", "Grassroots Sport", "FA Cup Magic", "Boxing Legends", "Horse Racing"],
+  "Sports": ["Premier League Fans", "Cricket Heritage", "Rugby Spirit", "Olympic Legacy", "Grassroots Sport", "FA Cup Magic", "Boxing Legends", "Horse Racing", "Six Nations Rugby", "Scottish Football", "Welsh Rugby", "GAA Sports"],
   "Economy/Work": ["Cost of Living", "Housing Ladder", "Small Business", "Zero Hours", "Made in Britain", "Apprenticeships", "Pension Crisis", "Wage Inequality"],
-  "Food/Lifestyle": ["Full English Fry-Up", "Fish & Chips", "Sunday Roast", "Cornish Pasties", "Chippy Tea", "Cream Tea Debate", "Pie & Mash", "British Baking"],
+  "Food/Lifestyle": ["Full English Fry-Up", "Fish & Chips", "Sunday Roast", "Cornish Pasties", "Chippy Tea", "Cream Tea Debate", "Pie & Mash", "British Baking", "Welsh Cakes", "Haggis", "Ulster Fry", "Scottish Shortbread"],
   "Royal Family": ["King Charles III", "Prince William", "Royal Traditions", "Buckingham Palace", "Royal Charities", "Commonwealth Role", "Coronation Legacy", "Royal Heritage"],
   "Politics": ["Free Speech Debate", "Working Class Voice", "Council Tax", "Party Politics", "Parliamentary Reform", "Government Trust", "Red Wall Politics", "Sovereignty"],
   "Immigration": ["Border Control", "Channel Crossings", "Integration Debate", "Points System", "Asylum Policy", "Local Impact", "Cultural Change", "Legal Migration"],
@@ -5213,12 +5220,12 @@ var TOPIC_SUBCATEGORIES = {
   "Military/Defence": ["Armed Forces Day", "Veterans Support", "Defence Spending", "National Service", "Military Families", "SAS Heritage", "RAF Legacy", "Navy Tradition"],
   "Remembrance": ["Poppy Appeal", "Cenotaph", "War Memorials", "Veteran Stories", "Fallen Heroes", "Two Minutes Silence", "Armed Forces Day", "D-Day Legacy"],
   "Family/Generations": ["Parenting Debate", "Grandparent Power", "Family Values", "Screen Time", "Childhood Memories", "Family Traditions", "Discipline Debate", "Generation Gap"],
-  "Countryside": ["Green Belt", "Village Life", "Farming Heritage", "Country Walks", "National Parks", "Rural Housing", "Country Pubs", "Wildlife"],
+  "Countryside": ["Green Belt", "Village Life", "Farming Heritage", "Country Walks", "National Parks", "Rural Housing", "Country Pubs", "Wildlife", "Scottish Highlands", "Snowdonia", "Giant's Causeway", "Lake District"],
   "Media": ["BBC Debate", "Press Freedom", "TV Licence", "Social Media Impact", "Journalism Standards", "Fake News", "Local Newspapers", "British Comedy"],
   "Faith/Church": ["Church Bells", "Christian Heritage", "Christmas Spirit", "Cathedral Towns", "Sunday Worship", "Parish Life", "Religious Freedom", "Carol Services"],
   "Housing": ["Council Housing", "First-Time Buyers", "Social Housing", "Property Crisis", "Right to Buy", "Rent Crisis", "Homelessness", "New Build Debate"],
   "Inventions": ["British Innovation", "Engineering Pride", "Scientific Legacy", "Tech Pioneers", "Medical Breakthroughs", "Industrial Heritage", "Space Programme", "Modern Inventors"],
-  "Music/Entertainment": ["British Rock", "Britpop Legacy", "Festival Culture", "Pub Music", "Grime & UK Rap", "West End Shows", "Music Legends", "Radio Heritage"],
+  "Music/Entertainment": ["British Rock", "Britpop Legacy", "Festival Culture", "Pub Music", "Grime & UK Rap", "West End Shows", "Music Legends", "Radio Heritage", "Scottish Folk", "Welsh Choirs", "Celtic Music", "T in the Park"],
   "Manners/Respect": ["Please & Thank You", "Door Holding", "Queuing Etiquette", "Respect for Elders", "Common Courtesy", "Table Manners", "Pub Etiquette", "Polite Society"]
 };
 
@@ -5775,7 +5782,7 @@ function getAudienceContext() {
   var regionName = {gb:"UK/British",us:"American",au:"Australian",ca:"Canadian",ie:"Irish",nz:"New Zealand",za:"South African",in:"Indian"}[region] || "";
   var ctx = "";
   if (isPatrioticNiche(niche)) {
-    ctx = " IMPORTANT: This creator's audience is BRITISH. All content must be UK-focused - British culture, British history, British military, British politics. Do NOT reference American military, US politics, or any non-UK content. Use British English spelling.";
+    ctx = " IMPORTANT: This creator's audience is BRITISH. All content must be UK-focused - covering England, Scotland, Wales, and Northern Ireland. British culture, history, military, politics. Do NOT reference American military, US politics, or any non-UK content. Use British English spelling. Include references relevant to all UK nations where appropriate.";
   } else if (regionName) {
     ctx = " The creator's audience is primarily " + regionName + ". Keep references and examples relevant to that audience.";
   }
@@ -8420,7 +8427,7 @@ async function sendAiChat() {
     var bizCtx = USER_BUSINESS_NAME ? " Business: " + USER_BUSINESS_NAME + "." : "";
     bizCtx += USER_BUSINESS_TYPE ? " Type: " + USER_BUSINESS_TYPE.replace(/_/g, " ") + "." : "";
     bizCtx += USER_BUSINESS_LOCATION ? " Location: " + USER_BUSINESS_LOCATION + "." : "";
-    systemPrompt = "You are the Creator Radar AI assistant, a local business marketing strategist for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Focus on CUSTOMER ACQUISITION - how to get more walk-ins, bookings, and enquiries\n- Think LOCAL - suggest geo-targeted content, local hashtags, community engagement\n- Reference their actual data when possible\n- Suggest content that showcases services, builds trust, and drives buying intent\n- Give practical social media advice that a busy business owner can action quickly\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+    systemPrompt = "You are the Creator Radar AI assistant, a local business marketing strategist for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Focus on CUSTOMER ACQUISITION - how to get more walk-ins, bookings, and enquiries\n- Think LOCAL - suggest geo-targeted content, local hashtags, community engagement\n- The business could be anywhere in the UK - England, Scotland, Wales, or Northern Ireland. Tailor advice to their specific location.\n- Reference their actual data when possible\n- Suggest content that showcases services, builds trust, and drives buying intent\n- Give practical social media advice that a busy business owner can action quickly\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
   } else {
     systemPrompt = "You are the Creator Radar AI assistant, a personal content strategist for a " + titleCase(niche) + " content creator. You know everything about their audience, performance data, and current trends." + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Be specific and actionable, not generic\n- Reference their actual data when possible (audience drivers, emotional triggers, best formats, view counts)\n- When recommending content, always explain WHY it will work for THEIR specific audience based on the data\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
   }

@@ -1044,7 +1044,7 @@ html { scroll-behavior: smooth; }
           </div>
           <div class="form-group">
             <label>Business Location <span class="req">*</span></label>
-            <input type="text" class="form-input" id="appLocation" placeholder="e.g. Camden, London or Manchester City Centre">
+            <input type="text" class="form-input" id="appLocation" placeholder="e.g. Cardiff, Edinburgh, Belfast, Manchester">
           </div>
         </div>
 
@@ -1609,7 +1609,7 @@ function detectTopic(text) {
 function detectBritishRelevance(text) {
   var t = text.toLowerCase();
   var strong = ["army","navy","raf","military","armed forces","veterans","remembrance","poppy","cenotaph","memorial","churchill","spitfire","dunkirk","d-day","patriot","heritage","tradition","pride","union jack","st george","flag","king charles","coronation"];
-  var general = ["britain","british","england","english","uk ","united kingdom","royal","queen","prince","parliament","westminster","buckingham","london","scotland","wales","nhs","bbc","commonwealth"];
+  var general = ["britain","british","england","english","uk ","united kingdom","royal","queen","prince","parliament","westminster","buckingham","london","scotland","wales","nhs","bbc","commonwealth","northern ireland","edinburgh","cardiff","belfast","glasgow","scottish","welsh","celtic","highlands","senedd"];
   var strongHits = 0, genHits = 0;
   for (var i = 0; i < strong.length; i++) { if (t.indexOf(strong[i]) !== -1) strongHits++; }
   for (var i = 0; i < general.length; i++) { if (t.indexOf(general[i]) !== -1) genHits++; }
