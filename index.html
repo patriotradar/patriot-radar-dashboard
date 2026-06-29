@@ -866,6 +866,12 @@ input[type=range]::-webkit-slider-thumb{
 .ai-chat-ai b{color:var(--purple)}
 .ai-chat-ai strong{color:var(--green)}
 .ai-chat-thinking{padding:10px 12px;border-radius:12px;margin-bottom:8px;font-size:11px;color:var(--muted);background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.1);animation:pulse 1.5s infinite}
+.ai-chat-input-wrap{display:flex;gap:6px;position:relative;z-index:5}
+.ai-chat-input-wrap textarea{flex:1;min-width:0;width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:16px;outline:none;-webkit-appearance:none;resize:none;line-height:1.4;height:48px;max-height:120px;font-family:inherit;box-sizing:border-box;-webkit-text-size-adjust:100%}
+.ai-chat-input-wrap .ai-send-btn{padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.ai-chat-input-wrap .ai-voice-btn{padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-size:16px;cursor:pointer;display:none;flex-shrink:0}
+@media(max-width:400px){.ai-chat-input-wrap{flex-wrap:wrap}.ai-chat-input-wrap textarea{width:100%;flex:1 1 100%;min-width:0}.ai-chat-input-wrap .ai-send-btn,.ai-chat-input-wrap .ai-voice-btn{flex:0 0 auto}}
+.ios-voice-hint{display:none;font-size:10px;color:var(--muted);margin-top:4px;padding:6px 8px;background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.15);border-radius:8px;text-align:center}
 
 /* ── TABS ── */
 .tab-bar{
@@ -1184,6 +1190,25 @@ input[type=range]::-webkit-slider-thumb{
         </select>
         <label>Business Location</label>
         <input id="signupBusinessLocation" type="text" placeholder="e.g. Cardiff, Edinburgh, Belfast, Manchester">
+        <label>Your Main Goal</label>
+        <select id="signupBusinessGoal" style="width:100%;padding:12px;margin-bottom:12px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none">
+          <option value="clients">Get More Clients / Walk-ins / Bookings</option>
+          <option value="followers">Grow Followers / Audience</option>
+          <option value="engagement">Boost Engagement / Comments / Shares</option>
+          <option value="authority">Build Authority / Become Known in My Niche</option>
+          <option value="revenue">Increase Revenue / Online Sales</option>
+        </select>
+      </div>
+
+      <div id="signupCreatorGoalFields" style="display:none">
+        <label>Your Main Goal</label>
+        <select id="signupCreatorGoal" style="width:100%;padding:12px;margin-bottom:12px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none">
+          <option value="followers">Grow Followers / Audience</option>
+          <option value="engagement">Boost Engagement / Comments / Shares</option>
+          <option value="authority">Build Authority / Become Known in My Niche</option>
+          <option value="clients">Get Clients / Leads / Sponsors</option>
+          <option value="revenue">Monetise / Increase Revenue</option>
+        </select>
       </div>
 
       <label>Create a Password</label>
@@ -1250,6 +1275,16 @@ input[type=range]::-webkit-slider-thumb{
           <button id="settingsModeBusiness" onclick="switchAccountMode('business')" style="flex:1;padding:8px;margin:0;font-size:10px;font-weight:800;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted)">BUSINESS</button>
         </div>
       </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <label style="margin:0;white-space:nowrap;font-size:11px">My Goal</label>
+        <select id="settingsGoalSelect" onchange="changeSuccessGoal(this.value)" style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);font-size:11px;background:#07100c;color:var(--white);outline:none">
+          <option value="clients">More Clients / Bookings</option>
+          <option value="followers">Grow Followers</option>
+          <option value="engagement">Boost Engagement</option>
+          <option value="authority">Build Authority</option>
+          <option value="revenue">Increase Revenue</option>
+        </select>
+      </div>
     </div>
 
     <div id="streakBar" class="streak-bar" style="display:none"></div>
@@ -1271,6 +1306,7 @@ input[type=range]::-webkit-slider-thumb{
           <span id="bizNameDisplay" style="font-size:12px;font-weight:800;color:var(--green)"></span>
           <span id="bizLocationDisplay" style="font-size:11px;color:var(--muted)"></span>
         </div>
+        <div id="goalDisplayBar" style="margin-top:4px;font-size:10px;color:var(--amber)">GOAL: <span id="goalDisplay"></span></div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <input id="nicheInput" type="text" list="nicheList" placeholder="Type any niche..." autocomplete="off" style="flex:1;min-width:120px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);font-size:12px;background:#07100c;color:var(--white);outline:none"
@@ -1336,11 +1372,12 @@ input[type=range]::-webkit-slider-thumb{
         <div class="card-header"><h2 style="color:var(--purple)">&#129504; Ask Your AI</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128172;</div></div>
         <p id="aiChatDesc" style="font-size:11px;color:var(--muted);margin-bottom:14px">Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.</p>
         <div id="aiChatMessages" style="max-height:50vh;overflow-y:auto;margin-bottom:12px;padding:4px"></div>
-        <div style="display:flex;gap:6px;position:relative;z-index:5">
-          <textarea id="aiChatInput" rows="2" placeholder="Ask anything..." autocomplete="off" inputmode="text" enterkeyhint="send" style="flex:1;min-width:0;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:16px;outline:none;-webkit-appearance:none;resize:none;line-height:1.4;height:48px;max-height:80px;font-family:inherit;box-sizing:border-box" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat()}"></textarea>
-          <button id="aiVoiceBtn" onclick="toggleVoiceInput()" style="padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-size:16px;cursor:pointer;display:none" title="Voice input">&#127908;</button>
-          <button onclick="sendAiChat()" style="padding:12px 16px;background:var(--green);color:#000;border:none;border-radius:10px;font-weight:800;font-size:14px;cursor:pointer">Send</button>
+        <div class="ai-chat-input-wrap">
+          <textarea id="aiChatInput" rows="2" placeholder="Ask anything..." autocomplete="off" inputmode="text" enterkeyhint="send" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAiChat()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+          <button id="aiVoiceBtn" class="ai-voice-btn" onclick="toggleVoiceInput()" title="Voice input">&#127908;</button>
+          <button class="ai-send-btn" onclick="sendAiChat()">Send</button>
         </div>
+        <div id="iosVoiceHint" class="ios-voice-hint">Voice input: Use the microphone button on your iPhone keyboard for dictation</div>
         <div id="aiQuickBtns" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px"></div>
       </div>
     </div>
@@ -1718,6 +1755,7 @@ var USER_ACCOUNT_MODE = "creator";
 var USER_BUSINESS_NAME = "";
 var USER_BUSINESS_TYPE = "";
 var USER_BUSINESS_LOCATION = "";
+var USER_SUCCESS_GOAL = "clients";
 var SIGNUP_MODE = "creator";
 
 function isBusinessMode() { return USER_ACCOUNT_MODE === "business"; }
@@ -1731,6 +1769,7 @@ function setSignupMode(mode) {
   var nicheInput = document.getElementById("signupNiche");
   var title = document.getElementById("signupTitle");
   var desc = document.getElementById("signupDesc");
+  var creatorGoalFields = document.getElementById("signupCreatorGoalFields");
   if (mode === "business") {
     businessBtn.style.border = "2px solid var(--green)";
     businessBtn.style.background = "rgba(0,255,136,.08)";
@@ -1739,6 +1778,7 @@ function setSignupMode(mode) {
     creatorBtn.style.background = "transparent";
     creatorBtn.querySelector("div:nth-child(2)").style.color = "var(--muted)";
     bizFields.style.display = "block";
+    if (creatorGoalFields) creatorGoalFields.style.display = "none";
     nicheLabel.textContent = "Your Industry";
     nicheInput.placeholder = "e.g. Beauty, Hair, Fitness, Restaurant...";
     title.textContent = "Get More Customers with Creator Radar";
@@ -1751,6 +1791,7 @@ function setSignupMode(mode) {
     businessBtn.style.background = "transparent";
     businessBtn.querySelector("div:nth-child(2)").style.color = "var(--muted)";
     bizFields.style.display = "none";
+    if (creatorGoalFields) creatorGoalFields.style.display = "block";
     nicheLabel.textContent = "Your Niche";
     nicheInput.placeholder = "Type any niche (e.g. Gardening, Sneakers, True Crime...)";
     title.textContent = "Join the Creator Radar Beta";
@@ -1800,8 +1841,14 @@ function adaptUIForMode() {
       if (bizNameEl) bizNameEl.textContent = USER_BUSINESS_NAME;
       if (bizLocEl) bizLocEl.textContent = USER_BUSINESS_LOCATION ? "- " + USER_BUSINESS_LOCATION : "";
     } else {
-      bizInfoBar.style.display = "none";
+      bizInfoBar.style.display = biz ? "none" : "none";
     }
+  }
+  var goalDisplayBar = document.getElementById("goalDisplayBar");
+  var goalDisplay = document.getElementById("goalDisplay");
+  if (goalDisplayBar && goalDisplay) {
+    goalDisplay.textContent = getGoalLabel(USER_SUCCESS_GOAL);
+    goalDisplayBar.style.display = "block";
   }
 
   var referralTitle = document.getElementById("referralTitle");
@@ -1818,24 +1865,35 @@ function adaptUIForMode() {
   if (nudgeInviteText) nudgeInviteText.textContent = biz ? "Know a business owner who'd love this?" : "Know a creator who'd love this?";
 
   var aiChatDesc = document.getElementById("aiChatDesc");
-  if (aiChatDesc) aiChatDesc.textContent = biz ? "Ask anything about your customers, local marketing strategy, social media for your business, or industry trends. Your AI knows your business data." : "Ask anything about your audience, content strategy, trends, or niche. Your AI knows your performance data and what works for your audience.";
+  if (aiChatDesc) aiChatDesc.textContent = biz ? "Your AI marketing intelligence analyses your trends, performance data, and business goal together. Every recommendation explains WHY it works for YOUR specific business." : "Your AI content intelligence connects trends, performance data, and your goal into actionable strategies. Every recommendation is backed by data and explains WHY.";
 
   var aiQuickBtns = document.getElementById("aiQuickBtns");
   if (aiQuickBtns) {
+    var qbs = "padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer";
     if (biz) {
-      aiQuickBtns.innerHTML = '<button onclick="quickAiChat(\'What should I post today to attract local customers?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>'
-        + '<button onclick="quickAiChat(\'How can I get more walk-in customers from social media?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Get more walk-ins</button>'
-        + '<button onclick="quickAiChat(\'What local hashtags should I use to reach customers in my area?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Local hashtags</button>'
-        + '<button onclick="quickAiChat(\'Give me 5 content ideas that showcase my services and attract bookings\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">5 content ideas</button>'
-        + '<button onclick="quickAiChat(\'How are my competitors doing on social media and what can I do better?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Competitor analysis</button>'
-        + '<button onclick="quickAiChat(\'What promotions or offers should I run this week to drive sales?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Promo ideas</button>';
+      var goalQ = USER_SUCCESS_GOAL === "followers" ? "How can I grow my followers faster based on my data?"
+        : USER_SUCCESS_GOAL === "engagement" ? "How do I boost my engagement rate based on what\\'s working?"
+        : USER_SUCCESS_GOAL === "authority" ? "How do I become the go-to name in my area based on my data?"
+        : USER_SUCCESS_GOAL === "revenue" ? "How do I increase my online sales based on what\\'s trending?"
+        : "How can I get more walk-in customers from social media?";
+      var goalLabel = USER_SUCCESS_GOAL === "followers" ? "Grow followers"
+        : USER_SUCCESS_GOAL === "engagement" ? "Boost engagement"
+        : USER_SUCCESS_GOAL === "authority" ? "Build authority"
+        : USER_SUCCESS_GOAL === "revenue" ? "Boost sales"
+        : "Get more clients";
+      aiQuickBtns.innerHTML = '<button onclick="quickAiChat(\'Analyse my data and tell me what patterns you see - what\\'s working, what\\'s not, and what I should change\')" style="' + qbs + '">Analyse my patterns</button>'
+        + '<button onclick="quickAiChat(\'' + goalQ + '\')" style="' + qbs + '">' + goalLabel + '</button>'
+        + '<button onclick="quickAiChat(\'What are the top 3 trending topics right now that match my strengths? Explain why each one is right for ME specifically\')" style="' + qbs + '">My best trends</button>'
+        + '<button onclick="quickAiChat(\'Give me a complete content strategy for this week - what to post each day, why, and what outcome to expect\')" style="' + qbs + '">Weekly strategy</button>'
+        + '<button onclick="quickAiChat(\'What content type + topic + time combination would get me the best results based on everything you know?\')" style="' + qbs + '">Best combo for me</button>'
+        + '<button onclick="quickAiChat(\'What are my competitors likely posting about right now and how can I do it better?\')" style="' + qbs + '">Beat competitors</button>';
     } else {
-      aiQuickBtns.innerHTML = '<button onclick="quickAiChat(\'What content should I post today and why?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">What should I post today?</button>'
-        + '<button onclick="quickAiChat(\'What emotional triggers work best for my audience?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">My audience triggers</button>'
-        + '<button onclick="quickAiChat(\'What formats get me the most views?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Best formats for me</button>'
-        + '<button onclick="quickAiChat(\'Give me 5 video ideas based on what works for my audience\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">5 video ideas</button>'
-        + '<button onclick="quickAiChat(\'Analyze my content patterns - what am I doing right and wrong?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Content analysis</button>'
-        + '<button onclick="quickAiChat(\'What niches overlap with mine that I could expand into?\')" style="padding:6px 10px;font-size:10px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);color:var(--purple);border-radius:8px;cursor:pointer">Cross-niche ideas</button>';
+      aiQuickBtns.innerHTML = '<button onclick="quickAiChat(\'Analyse my content patterns - what combinations of topic, format and timing work best for me and why?\')" style="' + qbs + '">Analyse my patterns</button>'
+        + '<button onclick="quickAiChat(\'What should I post today? Give me the WHY behind each suggestion based on my data and current trends\')" style="' + qbs + '">Smart post ideas</button>'
+        + '<button onclick="quickAiChat(\'Which trending topics right now are the best match for MY specific strengths? Show me the data.\')" style="' + qbs + '">My best trends</button>'
+        + '<button onclick="quickAiChat(\'Build me a full weekly strategy - each day mapped to a topic, format, and expected outcome vs my average\')" style="' + qbs + '">Weekly strategy</button>'
+        + '<button onclick="quickAiChat(\'What emotional triggers and hooks work best for my audience based on my performance data?\')" style="' + qbs + '">My audience DNA</button>'
+        + '<button onclick="quickAiChat(\'What niches overlap with mine that I could cross-post into for more reach?\')" style="' + qbs + '">Cross-niche growth</button>';
     }
   }
 
@@ -8386,6 +8444,73 @@ function quickAiChat(question) {
   sendAiChat();
 }
 
+function buildCrossModuleContext() {
+  var ctx = "";
+  var perfData = loadPerfData();
+  var totalLogs = 0;
+  for (var k in perfData) { totalLogs += perfData[k].length; }
+  if (totalLogs > 0) {
+    var topByViews = [];
+    var worstByViews = [];
+    var allEntries = [];
+    for (var kk in perfData) {
+      var entries = perfData[kk];
+      var tv = 0; var bestTime = ""; var bestFormat = "";
+      for (var vi = 0; vi < entries.length; vi++) {
+        tv += Number(entries[vi].views || 0);
+        allEntries.push({kw: kk, views: Number(entries[vi].views || 0), date: entries[vi].date, format: entries[vi].format || ""});
+        if (entries[vi].format) bestFormat = entries[vi].format;
+      }
+      topByViews.push({kw: kk, avgViews: Math.round(tv / entries.length), count: entries.length, format: bestFormat});
+    }
+    topByViews.sort(function(a,b){return b.avgViews - a.avgViews});
+    worstByViews = topByViews.slice().reverse();
+    ctx += "\n\nPERFORMANCE DATA (" + totalLogs + " posts logged):";
+    ctx += "\n- Best performing topics: " + topByViews.slice(0, 5).map(function(t){return t.kw + " (" + t.avgViews + " avg views, " + t.count + " posts" + (t.format ? ", format:" + t.format : "") + ")"}).join(", ");
+    if (worstByViews.length > 2) {
+      ctx += "\n- Worst performing topics: " + worstByViews.slice(0, 3).map(function(t){return t.kw + " (" + t.avgViews + " avg views)"}).join(", ");
+    }
+    if (topByViews.length >= 2) {
+      var bestAvg = topByViews[0].avgViews;
+      var overallAvg = 0;
+      for (var oi = 0; oi < topByViews.length; oi++) overallAvg += topByViews[oi].avgViews;
+      overallAvg = Math.round(overallAvg / topByViews.length);
+      ctx += "\n- Overall average: " + overallAvg + " views. Best topic gets " + Math.round((bestAvg / Math.max(overallAvg, 1)) * 100) + "% of average.";
+    }
+  }
+
+  if (cachedResults && cachedResults.length > 0) {
+    var niche = USER_NICHE || "general";
+    ctx += "\n\nCURRENTLY TRENDING in " + niche + ":";
+    for (var ti = 0; ti < Math.min(10, cachedResults.length); ti++) {
+      var t = cachedResults[ti];
+      ctx += "\n- " + t.keyword + " (viral score:" + t.viral_score + "/100, " + (t.rise_percent > 0 ? "+" : "") + t.rise_percent + "% momentum" + (t.source ? ", source:" + t.source : "") + ")";
+    }
+  }
+
+  if (typeof cachedEmerging !== "undefined" && cachedEmerging && cachedEmerging.length > 0) {
+    ctx += "\n\nEMERGING TRENDS (early signals):";
+    for (var ei = 0; ei < Math.min(5, cachedEmerging.length); ei++) {
+      var em = cachedEmerging[ei];
+      ctx += "\n- " + em.keyword + " (viral:" + (em.viral_score || "?") + ", " + (em.rise_percent > 0 ? "+" : "") + (em.rise_percent || "?") + "%)";
+    }
+  }
+
+  return ctx;
+}
+
+function getGoalInstructions() {
+  var goal = USER_SUCCESS_GOAL || "clients";
+  var goalMap = {
+    clients: "Your PRIMARY metric is CLIENT ACQUISITION. Every recommendation should tie back to getting more walk-ins, bookings, enquiries, or leads. When suggesting content, always explain how it converts viewers into paying customers. Measure success by: new client enquiries, bookings made, DMs received asking about services.",
+    followers: "Your PRIMARY metric is FOLLOWER GROWTH. Every recommendation should tie back to gaining new followers. Focus on shareability, discoverability, hashtag reach, and content that makes people hit follow. Measure success by: new followers per post, follow-back rate, profile visits.",
+    engagement: "Your PRIMARY metric is ENGAGEMENT. Every recommendation should tie back to getting more comments, shares, saves, and meaningful interactions. Focus on conversation-starting content, polls, questions, and emotional hooks. Measure success by: comment count, share rate, save rate, engagement rate.",
+    authority: "Your PRIMARY metric is AUTHORITY BUILDING. Every recommendation should tie back to establishing expertise and becoming the go-to name in their niche. Focus on educational content, thought leadership, case studies, and opinion pieces. Measure success by: being referenced by others, speaking invitations, partnership offers, reputation growth.",
+    revenue: "Your PRIMARY metric is REVENUE. Every recommendation should tie back to driving sales, upsells, or monetisation. Focus on product showcases, testimonials, limited offers, and conversion-optimised content. Measure success by: sales attributed to social, click-through rate, conversion rate."
+  };
+  return goalMap[goal] || goalMap.clients;
+}
+
 async function sendAiChat() {
   var input = document.getElementById("aiChatInput");
   var question = (input.value || "").trim();
@@ -8395,45 +8520,28 @@ async function sendAiChat() {
 
   var msgContainer = document.getElementById("aiChatMessages");
   msgContainer.innerHTML += '<div class="ai-chat-msg ai-chat-user">' + question.replace(/</g,"&lt;").replace(/>/g,"&gt;") + '</div>';
-  msgContainer.innerHTML += '<div class="ai-chat-thinking" id="aiChatThinking">Thinking...</div>';
+  msgContainer.innerHTML += '<div class="ai-chat-thinking" id="aiChatThinking">Analysing your data...</div>';
   msgContainer.scrollTop = msgContainer.scrollHeight;
 
   trackEvent("ai_chat", {question: question.substring(0, 50)});
 
   var audienceCtx = getEnhancedAudienceContext();
   var niche = USER_NICHE || "general";
-  var perfData = loadPerfData();
-  var perfSummary = "";
-  var totalLogs = 0;
-  for (var k in perfData) { totalLogs += perfData[k].length; }
-  if (totalLogs > 0) {
-    var topByViews = [];
-    for (var kk in perfData) {
-      var entries = perfData[kk];
-      var tv = 0; for (var vi = 0; vi < entries.length; vi++) tv += Number(entries[vi].views || 0);
-      topByViews.push({kw: kk, avgViews: Math.round(tv / entries.length), count: entries.length});
-    }
-    topByViews.sort(function(a,b){return b.avgViews - a.avgViews});
-    perfSummary = " Performance data (" + totalLogs + " logs): Top performing: " + topByViews.slice(0, 5).map(function(t){return t.kw + " (" + t.avgViews + " avg views, " + t.count + " posts)"}).join(", ") + ".";
-  }
-
-  var trendCtx = "";
-  if (cachedResults && cachedResults.length > 0) {
-    trendCtx = " Currently trending in " + niche + ": " + cachedResults.slice(0, 8).map(function(r){return r.keyword + " (viral:" + r.viral_score + ", rise:" + r.rise_percent + "%)"}).join(", ") + ".";
-  }
+  var crossModuleCtx = buildCrossModuleContext();
+  var goalInstructions = getGoalInstructions();
 
   var systemPrompt;
   if (isBusinessMode()) {
     var bizCtx = USER_BUSINESS_NAME ? " Business: " + USER_BUSINESS_NAME + "." : "";
     bizCtx += USER_BUSINESS_TYPE ? " Type: " + USER_BUSINESS_TYPE.replace(/_/g, " ") + "." : "";
     bizCtx += USER_BUSINESS_LOCATION ? " Location: " + USER_BUSINESS_LOCATION + "." : "";
-    systemPrompt = "You are the Creator Radar AI assistant, a local business marketing strategist for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Focus on CUSTOMER ACQUISITION - how to get more walk-ins, bookings, and enquiries\n- Think LOCAL - suggest geo-targeted content, local hashtags, community engagement\n- The business could be anywhere in the UK - England, Scotland, Wales, or Northern Ireland. Tailor advice to their specific location.\n- Reference their actual data when possible\n- Suggest content that showcases services, builds trust, and drives buying intent\n- Give practical social media advice that a busy business owner can action quickly\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+    systemPrompt = "You are Creator Radar AI - an advanced marketing intelligence system for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + crossModuleCtx + "\n\n" + goalInstructions + "\n\nINTELLIGENCE RULES:\n1. EXPLAINABLE INSIGHTS - For every recommendation you MUST explain:\n   - WHY you recommend it (what data or pattern supports it)\n   - WHAT ACTION to take (specific, not vague)\n   - EXPECTED OUTCOME vs their current average performance\n2. PATTERN RECOGNITION - Look for combinations, not just single factors. Analyse topic + timing + format + emotion together. If their beauty tutorials get 2x more views than product showcases, say that and explain the pattern.\n3. CROSS-MODULE INTELLIGENCE - Connect trending data with their performance data. If a trend is rising AND matches their best-performing content type, flag it as a high-priority opportunity. If a trend is hot but they historically perform poorly in that area, warn them and suggest an angle that bridges their strengths.\n4. GOAL-FOCUSED - Every response must connect back to their success metric. End each recommendation with how it moves the needle on their specific goal.\n5. The business could be anywhere in the UK - England, Scotland, Wales, or Northern Ireland. Tailor advice to their specific location.\n6. Be direct and conversational. No fluff. Pack every sentence with value.\n7. Use line breaks for readability. Use dashes for lists, not bullets or asterisks.\n8. When you spot a pattern in their data, lead with it. Data-backed insights first, then actionable advice.";
   } else {
-    systemPrompt = "You are the Creator Radar AI assistant, a personal content strategist for a " + titleCase(niche) + " content creator. You know everything about their audience, performance data, and current trends." + audienceCtx + perfSummary + trendCtx + "\n\nRules:\n- Be specific and actionable, not generic\n- Reference their actual data when possible (audience drivers, emotional triggers, best formats, view counts)\n- When recommending content, always explain WHY it will work for THEIR specific audience based on the data\n- Keep responses conversational but packed with insight\n- Use line breaks for readability\n- Don't use markdown headers or bullet asterisks, use plain text with dashes for lists";
+    systemPrompt = "You are Creator Radar AI - an advanced content intelligence system for a " + titleCase(niche) + " content creator." + audienceCtx + crossModuleCtx + "\n\n" + goalInstructions + "\n\nINTELLIGENCE RULES:\n1. EXPLAINABLE INSIGHTS - For every recommendation you MUST explain:\n   - WHY you recommend it (what data or pattern supports it)\n   - WHAT ACTION to take (specific, not vague)\n   - EXPECTED OUTCOME vs their current average performance\n2. PATTERN RECOGNITION - Look for combinations, not just single factors. Analyse topic + timing + format + hook style together. If their story-time content outperforms tutorials, identify why and build on it.\n3. CROSS-MODULE INTELLIGENCE - Connect trending data with their performance history. A trend that matches their strengths is gold. A trend that doesn't match needs a creative bridge. Flag both.\n4. GOAL-FOCUSED - Every response must connect back to their success metric. End each recommendation with how it moves the needle on their specific goal.\n5. Be direct and conversational. No fluff. Pack every sentence with value.\n6. Use line breaks for readability. Use dashes for lists, not bullets or asterisks.\n7. When you spot a pattern in their data, lead with it. Data-backed insights first, then actionable advice.";
   }
 
   aiChatHistory.push({role: "user", content: question});
-  if (aiChatHistory.length > 10) aiChatHistory = aiChatHistory.slice(-10);
+  if (aiChatHistory.length > 12) aiChatHistory = aiChatHistory.slice(-12);
 
   var messages = [{role: "system", content: systemPrompt}].concat(aiChatHistory);
 
@@ -8441,7 +8549,7 @@ async function sendAiChat() {
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: messages, temperature: 0.7, max_tokens: 1200})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 1800})
     });
     var thinking = document.getElementById("aiChatThinking");
     if (thinking) thinking.remove();
@@ -8473,27 +8581,59 @@ async function sendAiChat() {
 var voiceRecognition = null;
 var voiceActive = false;
 
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function changeSuccessGoal(goal) {
+  USER_SUCCESS_GOAL = goal;
+  supabaseClient.auth.updateUser({data: {success_goal: goal}}).catch(function(){});
+  trackEvent("goal_change", {goal: goal});
+  var goalDisplay = document.getElementById("goalDisplay");
+  if (goalDisplay) goalDisplay.textContent = getGoalLabel(USER_SUCCESS_GOAL);
+}
+
+function getGoalLabel(goal) {
+  var labels = {clients:"More Clients",followers:"Grow Followers",engagement:"Boost Engagement",authority:"Build Authority",revenue:"Increase Revenue"};
+  return labels[goal] || "More Clients";
+}
+
+function initGoalSelector() {
+  var sel = document.getElementById("settingsGoalSelect");
+  if (sel) sel.value = USER_SUCCESS_GOAL || "clients";
+}
+
 function initVoiceInput() {
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   var btn = document.getElementById("aiVoiceBtn");
+  var hint = document.getElementById("iosVoiceHint");
   if (!btn) return;
-  if (SpeechRecognition) {
+  if (isIOS()) {
+    btn.style.display = "block";
+    btn.innerHTML = "&#127908;";
+    btn.title = "Tap for voice tip";
+    if (hint) hint.style.display = "none";
+  } else if (SpeechRecognition) {
     btn.style.display = "block";
   } else {
-    btn.style.display = "block";
-    btn.title = "Voice not supported - tap to type instead";
+    btn.style.display = "none";
   }
 }
 
 function toggleVoiceInput() {
   var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
+  var btn = document.getElementById("aiVoiceBtn");
+  var hint = document.getElementById("iosVoiceHint");
+
+  if (isIOS() || !SpeechRecognition) {
+    if (hint) {
+      hint.style.display = hint.style.display === "block" ? "none" : "block";
+    }
     var input = document.getElementById("aiChatInput");
-    if (input) { input.focus(); }
+    if (input) input.focus();
     return;
   }
 
-  var btn = document.getElementById("aiVoiceBtn");
   if (voiceActive && voiceRecognition) {
     try { voiceRecognition.stop(); } catch(e) {}
     voiceActive = false;
@@ -10445,6 +10585,7 @@ async function showDashboard() {
       if (currentUser.user_metadata.business_name) USER_BUSINESS_NAME = currentUser.user_metadata.business_name;
       if (currentUser.user_metadata.business_type) USER_BUSINESS_TYPE = currentUser.user_metadata.business_type;
       if (currentUser.user_metadata.business_location) USER_BUSINESS_LOCATION = currentUser.user_metadata.business_location;
+      if (currentUser.user_metadata.success_goal) USER_SUCCESS_GOAL = currentUser.user_metadata.success_goal;
     }
   } catch(e) {}
 
@@ -10476,6 +10617,7 @@ async function showDashboard() {
   checkAdminStatus();
   initNicheSwitcher();
   initVoiceInput();
+  initGoalSelector();
   initStreak();
   loadLiveStats();
   loadReferralCard();
@@ -10538,7 +10680,15 @@ async function betaSignup() {
     if (!bizType) { msg.innerText = "Please select your business type."; msg.style.color = "var(--red)"; return; }
   }
   msg.innerText = "Setting up your account..."; msg.style.color = "var(--green)";
-  var signupData = {beta_consent: true, tos_agreed: true, tos_date: new Date().toISOString(), signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null, account_mode: SIGNUP_MODE};
+  var successGoal = "clients";
+  if (SIGNUP_MODE === "business") {
+    var goalEl = document.getElementById("signupBusinessGoal");
+    if (goalEl) successGoal = goalEl.value || "clients";
+  } else {
+    var goalEl2 = document.getElementById("signupCreatorGoal");
+    if (goalEl2) successGoal = goalEl2.value || "followers";
+  }
+  var signupData = {beta_consent: true, tos_agreed: true, tos_date: new Date().toISOString(), signup_date: new Date().toISOString(), niche: niche || "general", referred_by: DASH_REF_CODE || null, account_mode: SIGNUP_MODE, success_goal: successGoal};
   if (SIGNUP_MODE === "business") {
     signupData.business_name = bizName;
     signupData.business_type = bizType;
