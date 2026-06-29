@@ -1223,6 +1223,7 @@ input[type=range]::-webkit-slider-thumb{
       </div>
       <button onclick="betaSignup()">Join the Beta</button>
       <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">Already have an account? <a href="#" onclick="showLoginView();return false" style="color:var(--green);text-decoration:underline">Log in here</a></p>
+      <p style="font-size:11px;color:var(--muted);margin-top:6px;text-align:center"><a href="#" onclick="showForgotView();return false" style="color:var(--amber);text-decoration:underline">Forgot your password?</a></p>
       <p id="signupMessage" class="small" style="margin-top:10px"></p>
     </div>
     <div id="loginView" style="display:none">
@@ -1233,9 +1234,18 @@ input[type=range]::-webkit-slider-thumb{
       <label>Password</label>
       <input id="password" type="password" placeholder="Enter password">
       <button onclick="login()">Log In</button>
-      <button class="ghost" onclick="resetPassword()">Forgot Password?</button>
+      <button class="ghost" onclick="showForgotView()">Forgot Password?</button>
       <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">Don't have an account? <a href="#" onclick="showSignupView();return false" style="color:var(--green);text-decoration:underline">Join the beta</a></p>
       <p id="authMessage" class="small" style="margin-top:10px"></p>
+    </div>
+    <div id="forgotView" style="display:none">
+      <h2 style="font-size:18px;margin-bottom:4px">Reset Password</h2>
+      <p class="intro" style="font-size:13px;color:var(--muted);margin-bottom:14px">Enter your email and we'll send you a link to reset your password.</p>
+      <label>Email</label>
+      <input id="forgotEmail" type="email" placeholder="your@email.com">
+      <button onclick="sendPasswordReset()">Send Reset Link</button>
+      <p id="forgotMessage" class="small" style="margin-top:10px"></p>
+      <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center"><a href="#" onclick="showLoginView();return false" style="color:var(--green);text-decoration:underline">Back to login</a></p>
     </div>
   </div>
 
@@ -9984,29 +9994,33 @@ async function loadLiveStats() {
 
 async function checkSession() {
   var hash = window.location.hash.substring(1);
-  if (hash && hash.indexOf("access_token=") !== -1 && hash.indexOf("type=recovery") === -1) {
+  if (hash && hash.indexOf("access_token=") !== -1) {
     var params = {};
     hash.split("&").forEach(function(p) { var kv = p.split("="); if (kv.length === 2) params[kv[0]] = decodeURIComponent(kv[1]); });
     if (params.access_token && params.refresh_token) {
       try {
         var sr = await supabaseClient.auth.setSession({access_token: params.access_token, refresh_token: params.refresh_token});
+        if (params.type === "recovery") {
+          history.replaceState(null, "", window.location.pathname);
+          document.getElementById("authBox").classList.add("hidden");
+          document.getElementById("resetBox").classList.remove("hidden");
+          document.getElementById("dashboard").classList.add("hidden");
+          return;
+        }
         history.replaceState(null, "", window.location.pathname);
         if (sr.data && sr.data.session) { trackEvent("login", {method: "token_redirect", source: "landing_page"}); showDashboard(); return; }
       } catch(e) {}
     }
   }
   var sd = await supabaseClient.auth.getSession();
-  if (window.location.hash.includes("type=recovery")) {
-    document.getElementById("authBox").classList.add("hidden");
-    document.getElementById("resetBox").classList.remove("hidden");
-    document.getElementById("dashboard").classList.add("hidden");
-    return;
-  }
   if (sd.data.session) { showDashboard(); }
   else {
     document.getElementById("authBox").classList.remove("hidden");
     document.getElementById("resetBox").classList.add("hidden");
     document.getElementById("dashboard").classList.add("hidden");
+    if (localStorage.getItem("cr_has_account")) {
+      showLoginView();
+    }
   }
 }
 
@@ -10566,6 +10580,7 @@ function copyReferralLink() {
 async function showDashboard() {
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
+  localStorage.setItem("cr_has_account", "1");
 
   var isAdmin = false;
   var currentUser = null;
@@ -10639,11 +10654,24 @@ async function showDashboard() {
 function showLoginView() {
   document.getElementById("signupView").style.display = "none";
   document.getElementById("loginView").style.display = "block";
+  document.getElementById("forgotView").style.display = "none";
 }
 
 function showSignupView() {
   document.getElementById("loginView").style.display = "none";
   document.getElementById("signupView").style.display = "block";
+  document.getElementById("forgotView").style.display = "none";
+}
+
+function showForgotView() {
+  document.getElementById("signupView").style.display = "none";
+  document.getElementById("loginView").style.display = "none";
+  document.getElementById("forgotView").style.display = "block";
+  document.getElementById("forgotMessage").innerText = "";
+  var loginEmail = document.getElementById("email");
+  if (loginEmail && loginEmail.value.trim()) {
+    document.getElementById("forgotEmail").value = loginEmail.value.trim();
+  }
 }
 
 var DASH_REF_CODE = (function() {
@@ -10727,6 +10755,16 @@ async function resetPassword() {
   if (!em) { document.getElementById("authMessage").innerText = "Enter your email first."; return; }
   var r = await supabaseClient.auth.resetPasswordForEmail(em, { redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/" });
   document.getElementById("authMessage").innerText = r.error ? r.error.message : "Check your email to create a new password.";
+}
+
+async function sendPasswordReset() {
+  var em = document.getElementById("forgotEmail").value.trim();
+  var msg = document.getElementById("forgotMessage");
+  if (!em) { msg.innerText = "Please enter your email address."; msg.style.color = "var(--red)"; return; }
+  msg.innerText = "Sending reset link..."; msg.style.color = "var(--muted)";
+  var r = await supabaseClient.auth.resetPasswordForEmail(em, { redirectTo: "https://patriotradar.github.io/patriot-radar-dashboard/" });
+  if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; }
+  else { msg.innerText = "Password reset link sent! Check your email (including spam folder)."; msg.style.color = "var(--green)"; }
 }
 
 async function updatePassword() {
