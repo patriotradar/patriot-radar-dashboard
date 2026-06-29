@@ -10358,8 +10358,9 @@ async function getTrialDaysLeft() {
       var myCode = getUserRefCode(u.id);
       var refRes = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", myCode);
       var refCount = (refRes.data && refRes.data.length) || 0;
-      var isAmbassador = u.user_metadata && u.user_metadata.ambassador;
-      var cappedRefs = isAmbassador ? refCount : Math.min(refCount, MAX_REFERRALS);
+      var trialAmb = u.user_metadata && u.user_metadata.ambassador;
+      if (!trialAmb && u.email) { for (var ae2 = 0; ae2 < AMBASSADOR_EMAILS.length; ae2++) { if (u.email.toLowerCase() === AMBASSADOR_EMAILS[ae2]) { trialAmb = true; break; } } }
+      var cappedRefs = trialAmb ? refCount : Math.min(refCount, MAX_REFERRALS);
       bonusDays += cappedRefs * REFERRAL_BONUS_DAYS;
       var refByRes = await supabaseClient.from("cr_referrals").select("id").eq("referred_id", u.id);
       if (refByRes.data && refByRes.data.length > 0) bonusDays += REFERRAL_BONUS_DAYS;
@@ -10481,16 +10482,20 @@ async function loadReferralCard() {
 
     var res = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", refCode);
     var count = (res.data && res.data.length) || 0;
-    var isAmbassador = u.user_metadata && u.user_metadata.ambassador;
-    var capped = isAmbassador ? count : Math.min(count, MAX_REFERRALS);
+    var userIsAmb = u.user_metadata && u.user_metadata.ambassador;
+    if (!userIsAmb && u.email) {
+      for (var ai = 0; ai < AMBASSADOR_EMAILS.length; ai++) {
+        if (u.email.toLowerCase() === AMBASSADOR_EMAILS[ai]) { userIsAmb = true; break; }
+      }
+    }
+    var capped = userIsAmb ? count : Math.min(count, MAX_REFERRALS);
     document.getElementById("refCount").textContent = count;
     document.getElementById("refBonusDays").textContent = capped * REFERRAL_BONUS_DAYS;
     var limitEl = document.getElementById("refLimit");
     if (limitEl) {
-      if (isAmbassador) {
+      if (userIsAmb) {
         limitEl.textContent = "Ambassador account - unlimited referrals!";
-        limitEl.style.color = "var(--green)";
-      } else if (count >= MAX_REFERRALS) {
+        limitEl.style.color = "#ff8c00";
         limitEl.textContent = "Max reached! Upgrade for unlimited access.";
         limitEl.style.color = "var(--amber)";
       } else {
@@ -11206,14 +11211,19 @@ async function checkAdminStatus() {
       loadAdminPanel();
     }
     if (!isAdmin && u && u.email) {
+      var emailIsAmbassador = false;
       for (var j = 0; j < AMBASSADOR_EMAILS.length; j++) {
-        if (u.email.toLowerCase() === AMBASSADOR_EMAILS[j]) {
-          isAmbassador = true;
-          var abtn = document.getElementById("adminTabBtn");
-          if (abtn) { abtn.style.display = ""; abtn.innerHTML = "&#127775; Ambassador"; }
-          loadAmbassadorPanel();
-          break;
+        if (u.email.toLowerCase() === AMBASSADOR_EMAILS[j]) { emailIsAmbassador = true; break; }
+      }
+      if (!emailIsAmbassador && u.user_metadata && u.user_metadata.ambassador) emailIsAmbassador = true;
+      if (emailIsAmbassador) {
+        isAmbassador = true;
+        if (!u.user_metadata || !u.user_metadata.ambassador) {
+          supabaseClient.auth.updateUser({data: {ambassador: true}}).catch(function(){});
         }
+        var abtn = document.getElementById("adminTabBtn");
+        if (abtn) { abtn.style.display = ""; abtn.innerHTML = "&#127775; Ambassador"; }
+        loadAmbassadorPanel();
       }
     }
   } catch(e) {}
