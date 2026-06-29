@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Creator Radar - Find. Analyze. Predict. Grow.</title>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://kdwqnlgdanzigpdwyqbh.supabase.co" crossorigin>
+<link rel="preconnect" href="https://api.groq.com" crossorigin>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -3122,12 +3126,20 @@ async function loadPerfFromSupabase() {
         for (var kw in local) {
           if (!merged[kw]) {
             merged[kw] = local[kw];
-          } else if (local[kw].length > merged[kw].length) {
-            merged[kw] = local[kw];
+          } else {
+            var seen = {};
+            for (var mi = 0; mi < merged[kw].length; mi++) {
+              seen[(merged[kw][mi].date || '') + '|' + (merged[kw][mi].views || '') + '|' + (merged[kw][mi].likes || '')] = true;
+            }
+            for (var li = 0; li < local[kw].length; li++) {
+              var key = (local[kw][li].date || '') + '|' + (local[kw][li].views || '') + '|' + (local[kw][li].likes || '');
+              if (!seen[key]) { merged[kw].push(local[kw][li]); seen[key] = true; }
+            }
           }
         }
         localStorage.setItem(PERF_KEY, JSON.stringify(merged));
         perfDataCache = merged;
+        if (cachedResults && cachedResults.length > 0) renderPersonalIntelligence(cachedResults);
       }
       var cloudStreak = user.user_metadata && user.user_metadata.streak;
       if (cloudStreak && cloudStreak.xp) {
@@ -3139,8 +3151,19 @@ async function loadPerfFromSupabase() {
       var cloudAM = user.user_metadata && user.user_metadata.audienceModel;
       if (cloudAM && Array.isArray(cloudAM) && cloudAM.length > 0) {
         var localAM = loadAudienceModel();
-        if (cloudAM.length >= localAM.length) {
+        if (localAM.length === 0) {
           localStorage.setItem(AUDIENCE_MODEL_KEY, JSON.stringify(cloudAM));
+        } else {
+          var amSeen = {};
+          var amMerged = JSON.parse(JSON.stringify(cloudAM));
+          for (var ai = 0; ai < amMerged.length; ai++) {
+            amSeen[(amMerged[ai].date || '') + '|' + (amMerged[ai].keyword || '') + '|' + (amMerged[ai].views || '')] = true;
+          }
+          for (var aj = 0; aj < localAM.length; aj++) {
+            var amKey = (localAM[aj].date || '') + '|' + (localAM[aj].keyword || '') + '|' + (localAM[aj].views || '');
+            if (!amSeen[amKey]) { amMerged.push(localAM[aj]); amSeen[amKey] = true; }
+          }
+          localStorage.setItem(AUDIENCE_MODEL_KEY, JSON.stringify(amMerged));
         }
       }
     }
@@ -10634,9 +10657,9 @@ async function showDashboard() {
   initVoiceInput();
   initGoalSelector();
   initStreak();
+  loadPerfFromSupabase();
   loadLiveStats();
   loadReferralCard();
-  loadPerfFromSupabase();
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
   } else {
@@ -10808,9 +10831,12 @@ function loadBrightness() {
 function startMatrix() {
   var c = document.getElementById("matrix");
   var ctx = c.getContext("2d");
+  var isMobile = window.innerWidth < 768;
   var katakana = "゠ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミ";
   var sym = katakana + "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*<>{}[]";
-  var fs = 14, cols = 0, drops = [], speeds = [], bright = [];
+  var fs = isMobile ? 18 : 14;
+  var cols = 0, drops = [], speeds = [], bright = [];
+  var interval = isMobile ? 55 : 33;
 
   function resize() {
     var wrap = document.getElementById("matrix-wrap");
@@ -10829,7 +10855,7 @@ function startMatrix() {
     ctx.font = "bold " + fs + "px monospace";
     for (var i = 0; i < cols; i++) {
       var ch = sym[Math.floor(Math.random() * sym.length)];
-      if (bright[i]) { ctx.fillStyle = "#aaffcc"; ctx.shadowColor = "#00ff88"; ctx.shadowBlur = 8; }
+      if (bright[i]) { ctx.fillStyle = "#aaffcc"; ctx.shadowColor = "#00ff88"; ctx.shadowBlur = isMobile ? 4 : 8; }
       else { ctx.fillStyle = "#00ff88"; ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; }
       ctx.fillText(ch, i * fs, drops[i] * fs);
       ctx.shadowBlur = 0; ctx.shadowColor = "transparent";
@@ -10837,7 +10863,7 @@ function startMatrix() {
       drops[i] += speeds[i];
     }
   }
-  setInterval(draw, 33);
+  setInterval(draw, interval);
 }
 
 // ── NOTIFICATIONS SYSTEM ──
