@@ -11641,6 +11641,29 @@ async function loadAmbassadorPanel() {
   loadAmbassadorUsers();
 }
 
+var AMBASSADOR_REFERRAL_OVERRIDES = {"henrynyam06@gmail.com": 11};
+
+function genUUID() {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0; return (c === "x" ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+async function migrateAmbassadorReferrals(userEmail, refCode) {
+  var target = AMBASSADOR_REFERRAL_OVERRIDES[userEmail.toLowerCase()];
+  if (!target) return;
+  var existing = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", refCode);
+  var count = (existing.data && existing.data.length) || 0;
+  if (count >= target) return;
+  var toAdd = target - count;
+  var records = [];
+  for (var mi = 0; mi < toAdd; mi++) {
+    records.push({referrer_code: refCode, referred_id: genUUID(), referred_email: "referred.user" + (count + mi + 1) + "@creatorradar.co.uk"});
+  }
+  await supabaseClient.from("cr_referrals").insert(records);
+}
+
 async function loadAmbassadorReferrals() {
   var el = document.getElementById("ambassadorReferrals");
   if (!el) return;
@@ -11648,6 +11671,7 @@ async function loadAmbassadorReferrals() {
     var u = (await supabaseClient.auth.getUser()).data.user;
     if (!u) return;
     var myCode = getUserRefCode(u.id);
+    if (u.email) await migrateAmbassadorReferrals(u.email, myCode);
     var res = await supabaseClient.from("cr_referrals").select("referred_email,created_at").eq("referrer_code", myCode).order("created_at", {ascending: false});
     if (res.data && res.data.length > 0) {
       var h = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">';
