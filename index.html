@@ -3706,26 +3706,31 @@ function renderDailyPlan(results, emerging) {
   var slot1DayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
   var slot1KwClean = cleanDisplayKeyword(pk.kw);
   var slot1KwLower = pk.kw.toLowerCase();
-  var KEYWORD_SUBTOPICS = {
-    "patriot": ["National Pride", "English Spirit", "British Values", "Heritage & Honour", "Proud to Be British", "United Kingdom Spirit", "British Backbone", "Born & Bred British"],
-    "military": ["Armed Forces Heroes", "Veterans Pride", "Military Heritage", "Troops Support", "Defence Legacy", "Forces Families", "Soldier Stories", "Regiment History"],
-    "tradition": ["British Traditions", "Old School Values", "Time-Honoured Customs", "Heritage Keeping", "Cultural Roots", "Classic Britain", "Traditional Ways", "Keeping Standards"],
-    "community": ["Neighbourhood Spirit", "Village Heart", "Local Bonds", "Street Community", "Helping Hands", "Community Backbone", "People Power", "Together Stronger"],
-    "culture": ["British Way of Life", "Cultural Identity", "National Character", "British Spirit", "Island Mentality", "British Backbone", "Our Way of Life", "What Makes Us British"],
-    "history": ["Glorious Past", "British Legends", "War Heroes", "Empire Legacy", "Historical Greatness", "Britain's Finest Hour", "Forgotten Heroes", "Living History"],
-    "flag": ["Flying the Flag", "St George's Pride", "Union Jack Spirit", "Flag Flying", "Colours of Britain", "National Colours", "Proud Flag Flyers", "Red White & Blue"],
-    "royal": ["Crown & Country", "Royal Heritage", "Monarchy Matters", "Royal Legacy", "Palace Watch", "Crown Jewels", "Royal Britain", "The Firm"]
-  };
-  var slot1SubKey = "patriot";
-  if (slot1KwLower.indexOf("militar") !== -1 || slot1KwLower.indexOf("army") !== -1 || slot1KwLower.indexOf("raf") !== -1 || slot1KwLower.indexOf("navy") !== -1 || slot1KwLower.indexOf("veteran") !== -1 || slot1KwLower.indexOf("troop") !== -1 || slot1KwLower.indexOf("force") !== -1) slot1SubKey = "military";
-  else if (slot1KwLower.indexOf("tradition") !== -1 || slot1KwLower.indexOf("sunday") !== -1 || slot1KwLower.indexOf("bonfire") !== -1 || slot1KwLower.indexOf("harvest") !== -1) slot1SubKey = "tradition";
-  else if (slot1KwLower.indexOf("communit") !== -1 || slot1KwLower.indexOf("neighbour") !== -1 || slot1KwLower.indexOf("village") !== -1 || slot1KwLower.indexOf("town") !== -1) slot1SubKey = "community";
-  else if (slot1KwLower.indexOf("culture") !== -1 || slot1KwLower.indexOf("identit") !== -1 || slot1KwLower.indexOf("british way") !== -1) slot1SubKey = "culture";
-  else if (slot1KwLower.indexOf("histor") !== -1 || slot1KwLower.indexOf("churchill") !== -1 || slot1KwLower.indexOf("dunkirk") !== -1 || slot1KwLower.indexOf("d-day") !== -1 || slot1KwLower.indexOf("battle") !== -1 || slot1KwLower.indexOf("blitz") !== -1) slot1SubKey = "history";
-  else if (slot1KwLower.indexOf("flag") !== -1 || slot1KwLower.indexOf("jack") !== -1 || slot1KwLower.indexOf("george") !== -1) slot1SubKey = "flag";
-  else if (slot1KwLower.indexOf("king") !== -1 || slot1KwLower.indexOf("royal") !== -1 || slot1KwLower.indexOf("monarch") !== -1 || slot1KwLower.indexOf("queen") !== -1) slot1SubKey = "royal";
-  var slot1Subs = KEYWORD_SUBTOPICS[slot1SubKey];
-  slot1Subcat = slot1Subs[slot1DayOfYear % slot1Subs.length];
+
+  if (isPatrioticNiche(USER_NICHE)) {
+    var KEYWORD_SUBTOPICS = {
+      "patriot": ["National Pride", "English Spirit", "British Values", "Heritage & Honour", "Proud to Be British", "United Kingdom Spirit", "British Backbone", "Born & Bred British"],
+      "military": ["Armed Forces Heroes", "Veterans Pride", "Military Heritage", "Troops Support", "Defence Legacy", "Forces Families", "Soldier Stories", "Regiment History"],
+      "tradition": ["British Traditions", "Old School Values", "Time-Honoured Customs", "Heritage Keeping", "Cultural Roots", "Classic Britain", "Traditional Ways", "Keeping Standards"],
+      "community": ["Neighbourhood Spirit", "Village Heart", "Local Bonds", "Street Community", "Helping Hands", "Community Backbone", "People Power", "Together Stronger"],
+      "culture": ["British Way of Life", "Cultural Identity", "National Character", "British Spirit", "Island Mentality", "British Backbone", "Our Way of Life", "What Makes Us British"],
+      "history": ["Glorious Past", "British Legends", "War Heroes", "Empire Legacy", "Historical Greatness", "Britain's Finest Hour", "Forgotten Heroes", "Living History"],
+      "flag": ["Flying the Flag", "St George's Pride", "Union Jack Spirit", "Flag Flying", "Colours of Britain", "National Colours", "Proud Flag Flyers", "Red White & Blue"],
+      "royal": ["Crown & Country", "Royal Heritage", "Monarchy Matters", "Royal Legacy", "Palace Watch", "Crown Jewels", "Royal Britain", "The Firm"]
+    };
+    var slot1SubKey = "patriot";
+    if (slot1KwLower.indexOf("militar") !== -1 || slot1KwLower.indexOf("army") !== -1 || slot1KwLower.indexOf("raf") !== -1 || slot1KwLower.indexOf("navy") !== -1 || slot1KwLower.indexOf("veteran") !== -1 || slot1KwLower.indexOf("troop") !== -1 || slot1KwLower.indexOf("force") !== -1) slot1SubKey = "military";
+    else if (slot1KwLower.indexOf("tradition") !== -1 || slot1KwLower.indexOf("sunday") !== -1 || slot1KwLower.indexOf("bonfire") !== -1 || slot1KwLower.indexOf("harvest") !== -1) slot1SubKey = "tradition";
+    else if (slot1KwLower.indexOf("communit") !== -1 || slot1KwLower.indexOf("neighbour") !== -1 || slot1KwLower.indexOf("village") !== -1 || slot1KwLower.indexOf("town") !== -1) slot1SubKey = "community";
+    else if (slot1KwLower.indexOf("culture") !== -1 || slot1KwLower.indexOf("identit") !== -1 || slot1KwLower.indexOf("british way") !== -1) slot1SubKey = "culture";
+    else if (slot1KwLower.indexOf("histor") !== -1 || slot1KwLower.indexOf("churchill") !== -1 || slot1KwLower.indexOf("dunkirk") !== -1 || slot1KwLower.indexOf("d-day") !== -1 || slot1KwLower.indexOf("battle") !== -1 || slot1KwLower.indexOf("blitz") !== -1) slot1SubKey = "history";
+    else if (slot1KwLower.indexOf("flag") !== -1 || slot1KwLower.indexOf("jack") !== -1 || slot1KwLower.indexOf("george") !== -1) slot1SubKey = "flag";
+    else if (slot1KwLower.indexOf("king") !== -1 || slot1KwLower.indexOf("royal") !== -1 || slot1KwLower.indexOf("monarch") !== -1 || slot1KwLower.indexOf("queen") !== -1) slot1SubKey = "royal";
+    var slot1Subs = KEYWORD_SUBTOPICS[slot1SubKey];
+    slot1Subcat = slot1Subs[slot1DayOfYear % slot1Subs.length];
+  } else {
+    slot1Subcat = slot1KwClean;
+  }
 
   function getAudienceWhyReason(keyword) {
     var stats = getAudienceModelStats();
@@ -3805,9 +3810,9 @@ function renderDailyPlan(results, emerging) {
   h += '<span style="font-size:11px;font-weight:900;color:' + sl.color + ';text-transform:uppercase;letter-spacing:1px">' + sl.label + ' - ' + sl.time + '</span>';
   h += '<span class="tag" style="background:rgba(0,0,0,.3);color:' + urgColor + ';border:1px solid ' + urgColor + '">' + urgency + '</span>';
   h += '</div>';
-  h += '<div style="font-size:10px;color:var(--green);margin-bottom:4px;font-weight:700">TRENDING SUB-TOPIC</div>';
+  h += '<div style="font-size:10px;color:var(--green);margin-bottom:4px;font-weight:700">' + (isPatrioticNiche(USER_NICHE) ? 'TRENDING SUB-TOPIC' : 'TOP NICHE TREND') + '</div>';
   h += '<div style="font-size:18px;font-weight:900;margin-bottom:4px;text-transform:uppercase">' + slot1Subcat + '</div>';
-  h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">From trending: ' + cleanDisplayKeyword(pk.kw) + '</div>';
+  if (isPatrioticNiche(USER_NICHE)) { h += '<div style="font-size:10px;color:var(--muted);margin-bottom:4px">From trending: ' + cleanDisplayKeyword(pk.kw) + '</div>'; }
   h += '<div style="font-size:9px;color:' + urgColor + ';margin-bottom:4px;font-weight:700">' + urgMsg + '</div>';
   h += '<div style="padding:8px 10px;background:rgba(0,0,0,.25);border-radius:8px;margin-bottom:6px">';
   h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700">Trend Window</span><span style="font-size:9px;color:' + urgColor + ';font-weight:700">' + urgWindow + '</span></div>';
