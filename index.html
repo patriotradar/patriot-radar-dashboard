@@ -6369,7 +6369,10 @@ async function aiEnhanceSection(keyword, sectionId) {
     renderAIContent(result, sectionId);
     if (btn) { btn.innerHTML = "&#129504; AI Enhanced"; btn.style.background = "rgba(0,255,136,.1)"; btn.style.borderColor = "rgba(0,255,136,.3)"; btn.style.color = "var(--green)"; }
   } catch(e) {
-    if (btn) { btn.disabled = false; btn.innerHTML = "&#129504; AI Enhance"; }
+    console.error("AI Enhance error:", e);
+    if (btn) { btn.disabled = false; btn.innerHTML = "&#129504; AI Enhance (tap to retry)"; btn.style.background = "rgba(255,59,48,.08)"; btn.style.borderColor = "rgba(255,59,48,.25)"; btn.style.color = "#ff3b30"; }
+    var errEl = document.getElementById("ai-hooks-" + sectionId);
+    if (errEl) errEl.innerHTML = '<p style="color:#ff3b30;font-size:11px">AI generation failed - check your connection and try again</p>';
   }
 }
 
@@ -10036,7 +10039,7 @@ async function checkSession() {
     }
   }
   var sd = await supabaseClient.auth.getSession();
-  if (sd.data.session) { showDashboard(); }
+  if (sd.data.session) { showDashboard(sd.data.session.user); }
   else {
     document.getElementById("authBox").classList.remove("hidden");
     document.getElementById("resetBox").classList.add("hidden");
@@ -10347,23 +10350,25 @@ var TRIAL_DAYS = 30;
 var MAX_REFERRALS = 3;
 var REFERRAL_BONUS_DAYS = 7;
 
-async function getTrialDaysLeft() {
+async function getTrialDaysLeft(cachedUser) {
   try {
-    var u = (await supabaseClient.auth.getUser()).data.user;
+    var u = cachedUser || (await supabaseClient.auth.getUser()).data.user;
     if (!u) return 0;
     if (u.user_metadata && (u.user_metadata.paid || u.user_metadata.role === "admin")) return -1;
     if (u.email) { for (var ae = 0; ae < ADMIN_EMAILS.length; ae++) { if (u.email.toLowerCase() === ADMIN_EMAILS[ae]) return -1; } }
     var bonusDays = 0;
     try {
       var myCode = getUserRefCode(u.id);
-      var refRes = await supabaseClient.from("cr_referrals").select("id").eq("referrer_code", myCode);
-      var refCount = (refRes.data && refRes.data.length) || 0;
+      var results = await Promise.all([
+        supabaseClient.from("cr_referrals").select("id").eq("referrer_code", myCode),
+        supabaseClient.from("cr_referrals").select("id").eq("referred_id", u.id)
+      ]);
+      var refCount = (results[0].data && results[0].data.length) || 0;
       var trialAmb = u.user_metadata && u.user_metadata.ambassador;
       if (!trialAmb && u.email) { for (var ae2 = 0; ae2 < AMBASSADOR_EMAILS.length; ae2++) { if (u.email.toLowerCase() === AMBASSADOR_EMAILS[ae2]) { trialAmb = true; break; } } }
       var cappedRefs = trialAmb ? refCount : Math.min(refCount, MAX_REFERRALS);
       bonusDays += cappedRefs * REFERRAL_BONUS_DAYS;
-      var refByRes = await supabaseClient.from("cr_referrals").select("id").eq("referred_id", u.id);
-      if (refByRes.data && refByRes.data.length > 0) bonusDays += REFERRAL_BONUS_DAYS;
+      if (results[1].data && results[1].data.length > 0) bonusDays += REFERRAL_BONUS_DAYS;
     } catch(e) {}
     var totalDays = TRIAL_DAYS + bonusDays;
     var sd = (u.user_metadata && u.user_metadata.signup_date) || u.created_at;
@@ -10605,7 +10610,7 @@ function copyReferralLink() {
   });
 }
 
-async function showDashboard() {
+async function showDashboard(sessionUser) {
   document.getElementById("authBox").classList.add("hidden");
   document.getElementById("resetBox").classList.add("hidden");
   localStorage.setItem("cr_has_account", "1");
@@ -10613,7 +10618,7 @@ async function showDashboard() {
   var isAdmin = false;
   var currentUser = null;
   try {
-    currentUser = (await supabaseClient.auth.getUser()).data.user;
+    currentUser = sessionUser || (await supabaseClient.auth.getUser()).data.user;
     if (currentUser && currentUser.user_metadata && currentUser.user_metadata.role === "admin") isAdmin = true;
     if (currentUser && currentUser.email) {
       for (var i = 0; i < ADMIN_EMAILS.length; i++) {
@@ -10632,16 +10637,16 @@ async function showDashboard() {
     }
   } catch(e) {}
 
-  var daysLeft = await getTrialDaysLeft();
+  var daysLeft = await getTrialDaysLeft(currentUser);
 
   if (daysLeft === 0 && !isAdmin) {
     adaptUIForMode();
     showPaywall(); return;
   }
 
-  if (daysLeft > 0) { showTrialBanner(daysLeft); }
-
   document.getElementById("dashboard").classList.remove("hidden");
+
+  if (daysLeft > 0) { showTrialBanner(daysLeft); }
 
   adaptUIForMode();
   if (isBusinessMode()) {
