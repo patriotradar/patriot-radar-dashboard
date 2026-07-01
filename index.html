@@ -2692,7 +2692,7 @@ var NICHE_ALIASES = {
   "motivational":"motivation","self improvement":"motivation","self help":"motivation","mindset":"motivation",
   "funny":"comedy","humor":"comedy","humour":"comedy","memes":"comedy","pranks":"comedy",
   "mom":"parenting","dad":"parenting","family":"parenting","baby":"parenting",
-  "wellness":"health","mental health":"health","nutrition":"health",
+  "wellness":"health","mental health":"health","nutrition":"health","health and wellness":"health","health & wellness":"health","wellbeing":"health","health and wellbeing":"health","holistic health":"health","holistic":"health",
   "horoscope":"astrology","zodiac":"astrology","tarot":"astrology",
   "photo":"photography","photographer":"photography","photos":"photography",
   "car":"cars","automotive":"cars","auto":"cars","vehicles":"cars",
@@ -2748,8 +2748,29 @@ function scanNicheTrends(niche, callback) {
         }
       }
       var sortedTopics = Object.keys(amTopics).sort(function(a, b) { return amTopics[b] - amTopics[a]; });
+      var patrioticFilter = ["british","patriot","england","english","britain","military","veteran","armed","royal","monarch","churchill","remembrance","flag","union jack","empire","regiment","troop","poppy","cenotaph","dunkirk","blitz","sovereignty","immigration","border"];
+      var isNichePatriotic = isPatrioticNiche(USER_NICHE);
       for (var st = 0; st < Math.min(8, sortedTopics.length); st++) {
         var t = sortedTopics[st];
+        if (!isNichePatriotic) {
+          var topicBlocked = false;
+          for (var pf = 0; pf < patrioticFilter.length; pf++) {
+            if (t.indexOf(patrioticFilter[pf]) !== -1) { topicBlocked = true; break; }
+          }
+          if (topicBlocked) continue;
+          var topicRelevant = false;
+          var resolvedWords = resolved.split(/\s+/);
+          for (var rw = 0; rw < resolvedWords.length; rw++) {
+            if (resolvedWords[rw].length >= 3 && t.indexOf(resolvedWords[rw]) !== -1) { topicRelevant = true; break; }
+          }
+          if (!topicRelevant) {
+            var nlWords = nl.split(/\s+/);
+            for (var nw = 0; nw < nlWords.length; nw++) {
+              if (nlWords[nw].length >= 3 && t.indexOf(nlWords[nw]) !== -1) { topicRelevant = true; break; }
+            }
+          }
+          if (!topicRelevant) continue;
+        }
         audienceSeeds.push(t + " trending");
         audienceSeeds.push(t + " uk latest");
       }
@@ -6018,6 +6039,18 @@ function getAudienceModelStats() {
   var model = loadAudienceModel();
   if (model.length === 0) return null;
 
+  if (!isPatrioticNiche(USER_NICHE)) {
+    var patrioticTopicFilter = ["british","patriot","england","english","britain","military","veteran","armed","royal","monarch","churchill","remembrance","flag","union jack","empire","pride","culture","identity","sovereignty","immigration","national"];
+    model = model.filter(function(entry) {
+      var topic = ((entry.topic || "") + " " + (entry.subcategory || "") + " " + (entry.audienceDriver || "")).toLowerCase();
+      for (var pf = 0; pf < patrioticTopicFilter.length; pf++) {
+        if (topic.indexOf(patrioticTopicFilter[pf]) !== -1) return false;
+      }
+      return true;
+    });
+    if (model.length === 0) return null;
+  }
+
   var combos = {};
   var topics = {};
   var subcats = {};
@@ -6399,10 +6432,16 @@ async function aiEnhanceSection(keyword, sectionId) {
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
       body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.8, max_tokens: 700})
     });
-    if (!resp.ok) throw new Error("API error");
+    if (!resp.ok) {
+      var errBody = "";
+      try { errBody = await resp.text(); } catch(ex) {}
+      throw new Error("API " + resp.status + ": " + errBody.slice(0, 100));
+    }
     var data = await resp.json();
     var content = data.choices[0].message.content;
     var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    if (cleaned.indexOf("{") > 0) cleaned = cleaned.substring(cleaned.indexOf("{"));
+    if (cleaned.lastIndexOf("}") < cleaned.length - 1) cleaned = cleaned.substring(0, cleaned.lastIndexOf("}") + 1);
     var result = JSON.parse(cleaned);
     aiCache[cacheKey] = result;
     renderAIContent(result, sectionId);
@@ -6411,7 +6450,7 @@ async function aiEnhanceSection(keyword, sectionId) {
     console.error("AI Enhance error:", e);
     if (btn) { btn.disabled = false; btn.innerHTML = "&#129504; AI Enhance (tap to retry)"; btn.style.background = "rgba(255,59,48,.08)"; btn.style.borderColor = "rgba(255,59,48,.25)"; btn.style.color = "#ff3b30"; }
     var errEl = document.getElementById("ai-hooks-" + sectionId);
-    if (errEl) errEl.innerHTML = '<p style="color:#ff3b30;font-size:11px">AI generation failed - check your connection and try again</p>';
+    if (errEl) errEl.innerHTML = '<p style="color:#ff3b30;font-size:11px">AI generation failed - tap to retry. If it keeps failing, check your connection.</p>';
   }
 }
 
@@ -8798,6 +8837,7 @@ function setNicheDropdown(niche) {
 
 async function quickSwitchNiche(newNiche) {
   USER_NICHE = newNiche.toLowerCase();
+  try { localStorage.removeItem("cr_scan_cache_" + USER_NICHE); } catch(e) {}
   var label = document.getElementById("currentNicheLabel");
   if (label) label.textContent = titleCase(USER_NICHE);
   var history = JSON.parse(localStorage.getItem("cr_niche_history") || "[]");
