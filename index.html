@@ -1127,6 +1127,17 @@ input[type=range]::-webkit-slider-thumb{
   .feed-metrics{grid-template-columns:1fr 1fr;gap:4px}
   .opp-stats{gap:6px}
 }
+.tour-overlay{position:fixed;inset:0;z-index:9990;background:rgba(0,0,0,.7);pointer-events:auto}
+.tour-highlight{position:relative;z-index:9991;box-shadow:0 0 0 4px var(--green),0 0 20px rgba(0,255,136,.3);border-radius:12px;transition:box-shadow .3s}
+.tour-tooltip{position:fixed;z-index:9992;max-width:320px;background:var(--panel);border:1px solid var(--green);border-radius:14px;padding:16px;box-shadow:0 4px 30px rgba(0,255,136,.2);animation:tourFadeIn .3s}
+@keyframes tourFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tour-prompt{padding:12px 14px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:12px;margin-bottom:12px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.tour-prompt-text{font-size:12px;color:var(--white);font-weight:600}
+.tour-prompt-btns{display:flex;gap:6px}
+.tour-prompt-btn{padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none}
+.tour-prompt-yes{background:var(--green);color:#031109}
+.tour-prompt-no{background:var(--panel2);color:var(--muted);border:1px solid var(--border)}
+.tour-help-btn{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100}
 </style>
 </head>
 
@@ -8854,6 +8865,7 @@ function switchTab(tab) {
     welcomeHtml += '</div>';
     document.getElementById("aiChatMessages").innerHTML = welcomeHtml;
   }
+  setTimeout(function() { showTourPrompt(tab); }, 500);
 }
 
 var aiChatHistory = [];
@@ -10386,6 +10398,8 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
     renderPersonalIntelligence(results);
     renderWeeklyScorecard();
     aiContentAngles(results);
+    addTourHelpButtons();
+    setTimeout(function() { showTourPrompt("plan"); }, 1000);
   }
 }
 
@@ -10654,6 +10668,237 @@ function nextTutorialStep() {
 
 function prevTutorialStep() {
   if (tutorialStep > 0) { tutorialStep--; renderTutorialStep(); }
+}
+
+var TAB_TOURS = {
+  plan: {
+    title: "Content Plan",
+    steps: [
+      {selector: "#dailyPlan .card", title: "Daily Content Plan", text: "Your 3 daily posting slots with trending topics, hooks, and hashtags. Slot 1 is the top trend right now. Tap 'AI Enhance' for AI-generated hooks and captions."},
+      {selector: "#dailyPlan .copy-btn", title: "AI Enhance", text: "Tap this to generate AI-powered hooks, captions, engagement plays and hashtags specifically for this topic. The AI uses your niche and audience data."},
+      {selector: "#coursePromoPlanner .card", title: "Course Promotion Planner", text: "A 7-day content cycle designed to drive bookings. Each day has a different theme with ready-to-use ideas and hooks. Only shows for business accounts.", bizOnly: true},
+      {selector: "#contentFunnel .card", title: "Content Funnel", text: "Shows how to balance your content between awareness, trust, consideration and conversion posts. Most businesses only post tips - the funnel shows you how to turn followers into clients.", bizOnly: true},
+      {selector: "#aiContentAngles", title: "AI Content Angles", text: "AI-generated content angles and ideas based on what's trending in your niche right now. Fresh angles you might not have thought of."},
+      {selector: "#primaryTarget", title: "Primary Target", text: "Deep dive into the top trending topic. Shows hooks, captions, hashtags, and engagement tactics all in one place."}
+    ]
+  },
+  trends: {
+    title: "Trends",
+    steps: [
+      {selector: "#scoringGuide", title: "How Scoring Works", text: "Explains what each metric means - Viral Score, Rise %, Content Score, Vitality, and Confidence. Tap to expand."},
+      {selector: "#topOpportunities", title: "Top Opportunities", text: "Your best 5 posting opportunities ranked by viral score and growth. These are the topics most likely to get you reach right now."},
+      {selector: "#aiTrendInsights", title: "AI Trend Analysis", text: "AI analyses all your trending data and gives you a strategic overview of what's happening in your niche and what to act on."},
+      {selector: "#themeAnalysis", title: "Theme Analysis", text: "Groups your trends by theme so you can see which categories are hot and which are cooling down."},
+      {selector: "#intelligenceFeed", title: "Intelligence Feed", text: "The full list of every keyword the scanner picked up, with all their scores. Scroll through to find hidden gems."}
+    ]
+  },
+  discovery: {
+    title: "Discover",
+    steps: [
+      {selector: "#breakingNewsContainer", title: "Breaking News", text: "Real-time news headlines relevant to your niche. Great for jumping on current events before other creators."},
+      {selector: "#emergingTopics", title: "Emerging Topics", text: "Topics that are just starting to gain momentum. Post about these early for maximum reach."},
+      {selector: "#creatorInsights", title: "Creator Insights", text: "Strategic insights about what's working in your niche right now - formats, angles, and approaches."},
+      {selector: "#liveFeed", title: "Live Feed", text: "A real-time stream of everything the scanner is picking up. Watch trends as they develop."}
+    ]
+  },
+  mystats: {
+    title: "My Stats",
+    steps: [
+      {selector: "#personalIntelligence", title: "Personal Intelligence", text: "Your overall content performance summary. Shows posting streak, total views, and growth trends over time."},
+      {selector: "#weeklyScorecard", title: "Weekly Scorecard", text: "Week-by-week breakdown of your performance. Track whether you're improving and spot your best days."},
+      {selector: "#audienceInsights", title: "Audience Intelligence", text: "Your audience's preferences ranked by actual performance data. Shows which topics get the most views and engagement for YOU specifically."}
+    ]
+  },
+  platforms: {
+    title: "Tools",
+    steps: [
+      {selector: "#platformOptimizer", title: "Platform Optimizer", text: "Get optimized titles, captions, and hashtags for TikTok, Instagram, YouTube, X/Twitter and LinkedIn. Everything is tap-to-copy."},
+      {selector: "#videoAnalyzer", title: "Video Analyzer", text: "Paste a video caption or upload a thumbnail to get AI analysis, scoring, and improvement suggestions."}
+    ]
+  },
+  aichat: {
+    title: "Ask AI",
+    steps: [
+      {selector: "#aiChatMessages", title: "AI Chat", text: "Your personal AI content strategist. It knows your niche, trending data, and audience patterns. Ask anything about content strategy."},
+      {selector: "#aiQuickBtns", title: "Quick Questions", text: "Pre-built questions to get you started. Tap any button to instantly ask the AI. Great if you're not sure what to ask."}
+    ]
+  },
+  audit: {
+    title: "Audit",
+    steps: [
+      {selector: "#auditContent", title: "Content Audit", text: "Submit your TikTok profile link for a full AI-powered audit. Gets your content scored on hooks, formats, consistency, and gives specific improvement actions."}
+    ]
+  }
+};
+
+var activeTour = null;
+var activeTourStep = 0;
+
+function shouldShowTourPrompt(tab) {
+  if (localStorage.getItem("cr_tour_done_" + tab)) return false;
+  if (localStorage.getItem("cr_tour_dismissed_" + tab)) return false;
+  return true;
+}
+
+function showTourPrompt(tab) {
+  if (!shouldShowTourPrompt(tab)) return;
+  if (!TAB_TOURS[tab]) return;
+  var tabEl = document.getElementById("tab-" + tab);
+  if (!tabEl) return;
+  if (tabEl.querySelector(".tour-prompt")) return;
+  var prompt = document.createElement("div");
+  prompt.className = "tour-prompt";
+  prompt.id = "tour-prompt-" + tab;
+  prompt.innerHTML = '<span class="tour-prompt-text">&#128161; Want a quick tour of ' + TAB_TOURS[tab].title + '?</span>' +
+    '<div class="tour-prompt-btns">' +
+    '<button class="tour-prompt-btn tour-prompt-yes" onclick="startTabTour(\'' + tab + '\')">Show me</button>' +
+    '<button class="tour-prompt-btn tour-prompt-no" onclick="dismissTourPrompt(\'' + tab + '\')">No thanks</button>' +
+    '</div>';
+  tabEl.insertBefore(prompt, tabEl.firstChild);
+}
+
+function dismissTourPrompt(tab) {
+  localStorage.setItem("cr_tour_dismissed_" + tab, "1");
+  var p = document.getElementById("tour-prompt-" + tab);
+  if (p) p.remove();
+}
+
+function startTabTour(tab) {
+  var p = document.getElementById("tour-prompt-" + tab);
+  if (p) p.remove();
+  var tour = TAB_TOURS[tab];
+  if (!tour) return;
+  var isBiz = isBusinessMode();
+  var steps = tour.steps.filter(function(s) {
+    if (s.bizOnly && !isBiz) return false;
+    return true;
+  });
+  var validSteps = [];
+  for (var i = 0; i < steps.length; i++) {
+    var el = document.querySelector(steps[i].selector);
+    if (el && el.offsetHeight > 0) validSteps.push(steps[i]);
+  }
+  if (validSteps.length === 0) return;
+  activeTour = {tab: tab, steps: validSteps};
+  activeTourStep = 0;
+  showTourStep();
+  trackEvent("feature_use", {feature: "tab_tour", tab: tab});
+}
+
+function showTourStep() {
+  if (!activeTour) return;
+  clearTourHighlights();
+  var step = activeTour.steps[activeTourStep];
+  var el = document.querySelector(step.selector);
+  if (!el) { nextTourStep(); return; }
+
+  var overlay = document.createElement("div");
+  overlay.className = "tour-overlay";
+  overlay.id = "tour-overlay";
+  overlay.onclick = function() {};
+  document.body.appendChild(overlay);
+
+  el.classList.add("tour-highlight");
+  el.scrollIntoView({behavior: "smooth", block: "center"});
+
+  setTimeout(function() {
+    var rect = el.getBoundingClientRect();
+    var tooltip = document.createElement("div");
+    tooltip.className = "tour-tooltip";
+    tooltip.id = "tour-tooltip";
+
+    var total = activeTour.steps.length;
+    var current = activeTourStep + 1;
+    var h = '';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    h += '<span style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Step ' + current + ' of ' + total + '</span>';
+    h += '<span onclick="endTabTour()" style="font-size:16px;color:var(--muted);cursor:pointer;padding:0 4px">&times;</span>';
+    h += '</div>';
+    h += '<div style="font-size:14px;font-weight:800;color:var(--green);margin-bottom:6px">' + step.title + '</div>';
+    h += '<p style="font-size:12px;color:var(--white);line-height:1.5;margin-bottom:12px">' + step.text + '</p>';
+    h += '<div style="background:var(--panel2);border-radius:4px;height:3px;margin-bottom:12px;overflow:hidden">';
+    h += '<div style="background:var(--green);height:100%;width:' + ((current / total) * 100) + '%;border-radius:4px;transition:width .3s"></div>';
+    h += '</div>';
+    h += '<div style="display:flex;gap:8px">';
+    if (activeTourStep > 0) {
+      h += '<button onclick="prevTourStep()" style="flex:1;padding:10px;font-size:12px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);border-radius:8px;cursor:pointer">Back</button>';
+    }
+    if (activeTourStep < total - 1) {
+      h += '<button onclick="nextTourStep()" style="flex:2;padding:10px;font-size:12px;background:var(--green);color:#031109;border:none;border-radius:8px;font-weight:700;cursor:pointer">Next</button>';
+    } else {
+      h += '<button onclick="endTabTour()" style="flex:2;padding:10px;font-size:12px;background:var(--green);color:#031109;border:none;border-radius:8px;font-weight:700;cursor:pointer">Got it!</button>';
+    }
+    h += '</div>';
+
+    tooltip.innerHTML = h;
+
+    var tooltipTop = rect.bottom + 12;
+    var tooltipLeft = Math.max(10, Math.min(rect.left, window.innerWidth - 340));
+    if (tooltipTop + 200 > window.innerHeight) {
+      tooltipTop = Math.max(10, rect.top - 220);
+    }
+    tooltip.style.top = tooltipTop + "px";
+    tooltip.style.left = tooltipLeft + "px";
+    document.body.appendChild(tooltip);
+  }, 350);
+}
+
+function clearTourHighlights() {
+  var highlighted = document.querySelectorAll(".tour-highlight");
+  for (var i = 0; i < highlighted.length; i++) highlighted[i].classList.remove("tour-highlight");
+  var overlay = document.getElementById("tour-overlay");
+  if (overlay) overlay.remove();
+  var tooltip = document.getElementById("tour-tooltip");
+  if (tooltip) tooltip.remove();
+}
+
+function nextTourStep() {
+  if (!activeTour) return;
+  if (activeTourStep < activeTour.steps.length - 1) {
+    activeTourStep++;
+    showTourStep();
+  } else {
+    endTabTour();
+  }
+}
+
+function prevTourStep() {
+  if (!activeTour) return;
+  if (activeTourStep > 0) {
+    activeTourStep--;
+    showTourStep();
+  }
+}
+
+function endTabTour() {
+  if (activeTour) {
+    localStorage.setItem("cr_tour_done_" + activeTour.tab, "1");
+  }
+  clearTourHighlights();
+  activeTour = null;
+  activeTourStep = 0;
+}
+
+function addTourHelpButtons() {
+  var tabs = Object.keys(TAB_TOURS);
+  for (var i = 0; i < tabs.length; i++) {
+    var tabId = tabs[i];
+    var tabEl = document.getElementById("tab-" + tabId);
+    if (!tabEl) continue;
+    if (tabEl.querySelector(".tour-help-btn")) continue;
+    var btn = document.createElement("button");
+    btn.className = "tour-help-btn";
+    btn.title = "Tour this section";
+    btn.innerHTML = "?";
+    btn.setAttribute("data-tour-tab", tabId);
+    btn.onclick = (function(t) { return function() {
+      localStorage.removeItem("cr_tour_done_" + t);
+      localStorage.removeItem("cr_tour_dismissed_" + t);
+      startTabTour(t);
+    }; })(tabId);
+    tabEl.style.position = "relative";
+    tabEl.appendChild(btn);
+  }
 }
 
 function closeTutorial() {
