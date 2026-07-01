@@ -2692,7 +2692,7 @@ var NICHE_ALIASES = {
   "motivational":"motivation","self improvement":"motivation","self help":"motivation","mindset":"motivation",
   "funny":"comedy","humor":"comedy","humour":"comedy","memes":"comedy","pranks":"comedy",
   "mom":"parenting","dad":"parenting","family":"parenting","baby":"parenting",
-  "wellness":"health","mental health":"health","nutrition":"health","health and wellness":"health","health & wellness":"health","wellbeing":"health","health and wellbeing":"health","holistic health":"health","holistic":"health",
+  "wellness":"health","mental health":"health","nutrition":"health","health and wellness":"health","health & wellness":"health","wellbeing":"health","health and wellbeing":"health","holistic health":"health","holistic":"health","health and wellness consultancy":"health","health consultancy":"health","wellness consultancy":"health","holistic health consultancy":"health","health coaching":"health","wellness coaching":"health","health coach":"health","wellness coach":"health","physiotherapy":"health","physical therapy":"health","therapy":"health","counselling":"health","counseling":"health","massage therapy":"health","chiropractic":"health","osteopathy":"health","acupuncture":"health","naturopathy":"health","dietician":"health","dietitian":"health",
   "horoscope":"astrology","zodiac":"astrology","tarot":"astrology",
   "photo":"photography","photographer":"photography","photos":"photography",
   "car":"cars","automotive":"cars","auto":"cars","vehicles":"cars",
@@ -5790,7 +5790,7 @@ function analyzeHook(firstLine) {
   if (/\b(you|your|you're)\b/i.test(firstLine)) { s += 10; } else { fixes.push("Use 'you' or 'your' in the hook - it makes it feel personal"); }
   if (/\b(secret|hack|mistake|truth|nobody|never|always|stop|wait)\b/i.test(firstLine)) s += 15;
   if (/\d/.test(firstLine)) s += 5;
-  if (s < 50) fixes.push("Start with a pattern interrupt: 'Stop doing X', 'The truth about X', or 'I tried X for 30 days'");
+  if (s < 50) fixes.push(isBusinessMode() ? "Start with a pattern interrupt: 'Most businesses get X wrong', 'The X mistake costing you clients', or 'Why our clients love X'" : "Start with a pattern interrupt: 'Stop doing X', 'The truth about X', or 'I tried X for 30 days'");
   return { score: Math.min(100, s), label: s >= 70 ? "Strong" : s >= 40 ? "Needs Work" : "Weak", fixes: fixes };
 }
 
@@ -5939,6 +5939,16 @@ function getAudienceContext() {
   }
   var perfData = loadPerfData();
   var perfTopics = Object.keys(perfData);
+  if (!isPatrioticNiche(niche) && perfTopics.length > 0) {
+    var patrioticPerfFilter = ["british","patriot","england","english","britain","military","veteran","armed","royal","monarch","churchill","remembrance","flag","union jack","empire","sovereignty","immigration","border","troops","regiment","poppy","cenotaph","dunkirk","blitz"];
+    perfTopics = perfTopics.filter(function(t) {
+      var tl = t.toLowerCase();
+      for (var pf = 0; pf < patrioticPerfFilter.length; pf++) {
+        if (tl.indexOf(patrioticPerfFilter[pf]) !== -1) return false;
+      }
+      return true;
+    });
+  }
   if (perfTopics.length > 0) {
     ctx += " The creator's best performing topics based on their audience data are: " + perfTopics.slice(0, 5).map(function(t){return titleCase(t)}).join(", ") + ". Prioritise similar topics.";
   }
@@ -6378,7 +6388,7 @@ function getEnhancedAudienceContext() {
       ctx += ".";
     }
   } else {
-    ctx += " NOTE: The audience data above is from the creator's " + primaryModelNiche + " content. The current niche is " + currentNiche + ". Use ONLY the emotional triggers and formats (e.g. Debate, Storytelling) to inform the content style. Do NOT mix topics or references from " + primaryModelNiche + " into " + currentNiche + " content. Keep all content 100% relevant to " + currentNiche + ".";
+    ctx = " The current niche is " + currentNiche + ". Use ONLY the content formats (e.g. Debate, Storytelling, Educational) and emotional engagement styles from the creator's past data to inform the content approach. Best formats: " + (stats.formats && stats.formats.length > 0 ? stats.formats.slice(0, 3).map(function(f){return f.name}).join(", ") : "any") + ". CRITICAL RULE: All content must be 100% about " + currentNiche + ". Do NOT reference or include ANY military, armed forces, soldiers, patriotic, British culture, British identity, national pride, immigration, politics, monarchy, empire, or similar themes. The content must ONLY focus on " + currentNiche + " topics that help the audience.";
   }
 
   ctx += " IMPORTANT: Recommend NEW topics that match this audience's psychological profile. Do NOT repeat the same topics - find fresh angles that trigger the same audience drivers and emotions.";
@@ -6394,7 +6404,11 @@ async function getAIAnalysis(caption, niche) {
   try {
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
-    var prompt = "You are a viral content expert. Analyze this social media caption for " + roleCtx + "." + audienceCtx + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
+    var analysisNicheGuard = "";
+    if (!isPatrioticNiche(USER_NICHE)) {
+      analysisNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL suggestions 100% focused on " + niche + " only.";
+    }
+    var prompt = "You are a viral content expert. Analyze this social media caption for " + roleCtx + "." + audienceCtx + " Be specific and actionable." + analysisNicheGuard + "\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6426,7 +6440,15 @@ async function aiEnhanceSection(keyword, sectionId) {
     var niche = USER_NICHE || "general";
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx2 = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
-    var prompt = "You are a viral social media expert. Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
+    var nicheGuard = "";
+    if (!isPatrioticNiche(USER_NICHE)) {
+      nicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL content 100% focused on " + niche + " only.";
+    }
+    var bizGuide = "";
+    if (isBusinessMode()) {
+      bizGuide = "\n\nThis is for a BUSINESS account. Hooks should focus on attracting clients, building trust, and showcasing expertise. Use language like 'our clients', 'we help', 'book now', 'results we deliver'. Do NOT use creator-style hooks like 'I tried X for 30 days'.";
+    }
+    var prompt = "You are a viral social media expert. Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + nicheGuard + bizGuide + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6510,7 +6532,11 @@ async function aiTrendInsights() {
   el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Trend Analysis</h2></div><p style="font-size:11px;color:var(--muted)">Analysing trends with AI...</p></div>';
 
   try {
-    var prompt = "You are a viral content strategist." + audienceCtx + "\n\nAnalyze these 5 trending keywords and for each one provide: a quick take on why it's trending, whether it's worth making content about, and a specific video idea.\n\nKeywords:\n" + keywords.map(function(k,i){
+    var trendNicheGuard = "";
+    if (!isPatrioticNiche(USER_NICHE)) {
+      trendNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics in video ideas. Keep ALL suggestions 100% focused on " + (USER_NICHE || "general") + " only.";
+    }
+    var prompt = "You are a viral content strategist." + audienceCtx + trendNicheGuard + "\n\nAnalyze these 5 trending keywords and for each one provide: a quick take on why it's trending, whether it's worth making content about, and a specific video idea.\n\nKeywords:\n" + keywords.map(function(k,i){
       var r = top5[i];
       return (i+1)+". "+k+" (Viral: "+r.viral_score+", Rise: "+r.rise_percent+"%)";
     }).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"trends\":[{\"keyword\":\"keyword\",\"whyTrending\":\"One sentence on why this is trending right now\",\"worthIt\":true,\"worthReason\":\"Why this is/isn't worth posting about\",\"videoIdea\":\"A specific, ready-to-film video concept\",\"bestTime\":\"Post now / Post today / Can wait\"}]}";
@@ -6595,6 +6621,14 @@ async function aiContentAngles(results) {
   var perfData = loadPerfData();
   var perfSummary = "";
   var perfKeys = Object.keys(perfData);
+  if (!isPatrioticNiche(USER_NICHE) && perfKeys.length > 0) {
+    var patrioticAngleFilter = ["british","patriot","england","english","britain","military","veteran","armed","royal","monarch","churchill","remembrance","flag","union jack","empire","sovereignty","immigration"];
+    perfKeys = perfKeys.filter(function(t) {
+      var tl = t.toLowerCase();
+      for (var pf = 0; pf < patrioticAngleFilter.length; pf++) { if (tl.indexOf(patrioticAngleFilter[pf]) !== -1) return false; }
+      return true;
+    });
+  }
   if (perfKeys.length > 0) {
     var topPerf = [];
     for (var p = 0; p < perfKeys.length; p++) {
@@ -6610,7 +6644,15 @@ async function aiContentAngles(results) {
   el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Content Angles</h2></div><p style="font-size:11px;color:var(--muted)">Generating personalized content angles...</p></div>';
 
   try {
-    var prompt = "You are a viral content strategist." + audienceCtx + perfSummary + "\n\nFor each of these trending keywords, generate 3 different content angles. Each angle should be a specific video/post idea, NOT just the keyword. Score each angle from 1-10 for predicted engagement based on the creator's niche and audience data.\n\nKeywords:\n" + topKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"keywords\":[{\"keyword\":\"the keyword\",\"angles\":[{\"type\":\"Debate\",\"hook\":\"Specific hook/title for this angle (under 80 chars)\",\"why\":\"Why this angle works for this audience\",\"engagement\":8,\"bestFor\":\"comments\"},{\"type\":\"Storytelling\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":7,\"bestFor\":\"shares\"},{\"type\":\"Educational\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":6,\"bestFor\":\"saves\"}],\"recommended\":0}]}";
+    var anglesNicheGuard = "";
+    if (!isPatrioticNiche(USER_NICHE)) {
+      anglesNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics in any angle. Keep ALL content 100% focused on " + (USER_NICHE || "general") + " only.";
+    }
+    var anglesBizGuide = "";
+    if (isBusinessMode()) {
+      anglesBizGuide = "\n\nThis is for a BUSINESS account. Angles should focus on attracting clients and showcasing expertise, not creator-style personal content.";
+    }
+    var prompt = "You are a viral content strategist." + audienceCtx + perfSummary + anglesNicheGuard + anglesBizGuide + "\n\nFor each of these trending keywords, generate 3 different content angles. Each angle should be a specific video/post idea, NOT just the keyword. Score each angle from 1-10 for predicted engagement based on the creator's niche and audience data.\n\nKeywords:\n" + topKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"keywords\":[{\"keyword\":\"the keyword\",\"angles\":[{\"type\":\"Debate\",\"hook\":\"Specific hook/title for this angle (under 80 chars)\",\"why\":\"Why this angle works for this audience\",\"engagement\":8,\"bestFor\":\"comments\"},{\"type\":\"Storytelling\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":7,\"bestFor\":\"shares\"},{\"type\":\"Educational\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":6,\"bestFor\":\"saves\"}],\"recommended\":0}]}";
 
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -6670,6 +6712,14 @@ async function aiValidateKeywords(results, emerging) {
   if (!GROQ_KEY || results.length === 0) return;
   var perfData = loadPerfData();
   var perfTopics = Object.keys(perfData);
+  if (!isPatrioticNiche(USER_NICHE) && perfTopics.length > 0) {
+    var patrioticKwFilter = ["british","patriot","england","english","britain","military","veteran","armed","royal","monarch","churchill","remembrance","flag","union jack","empire","sovereignty","immigration"];
+    perfTopics = perfTopics.filter(function(t) {
+      var tl = t.toLowerCase();
+      for (var pf = 0; pf < patrioticKwFilter.length; pf++) { if (tl.indexOf(patrioticKwFilter[pf]) !== -1) return false; }
+      return true;
+    });
+  }
   var perfContext = perfTopics.length > 0 ? "The creator's best performing topics are: " + perfTopics.slice(0, 5).join(", ") + ". " : "";
   var allKeywords = [];
   for (var i = 0; i < Math.min(15, results.length); i++) allKeywords.push(results[i].keyword);
@@ -6677,7 +6727,11 @@ async function aiValidateKeywords(results, emerging) {
   try {
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx3 = isBusinessMode() ? "A local business in the " + (USER_NICHE || "general") + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "A creator in the " + (USER_NICHE || "general") + " niche";
-    var prompt = "You are a social media content expert. " + roleCtx3 + " has these trending keywords." + audienceCtx + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
+    var kwNicheGuard = "";
+    if (!isPatrioticNiche(USER_NICHE)) {
+      kwNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL suggestions 100% focused on " + (USER_NICHE || "general") + " only.";
+    }
+    var prompt = "You are a social media content expert. " + roleCtx3 + " has these trending keywords." + audienceCtx + kwNicheGuard + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6739,7 +6793,11 @@ async function aiEnhancePlatform(keyword) {
     var niche = USER_NICHE || "general";
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx4 = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
-    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for " + roleCtx4 + " about: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
+    var platNicheGuard = "";
+    if (!isPatrioticNiche(USER_NICHE)) {
+      platNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL content 100% focused on " + niche + " only.";
+    }
+    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for " + roleCtx4 + " about: " + keyword + "." + audienceCtx + platNicheGuard + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
@@ -6829,7 +6887,11 @@ async function runPrePostOptimizer() {
   var confidenceLevel = totalLogs >= 10 ? "high" : totalLogs >= 3 ? "moderate" : "low";
   var confidenceNote = confidenceLevel === "high" ? "Based on strong data (" + totalLogs + " posts)." : confidenceLevel === "moderate" ? "Based on limited data (" + totalLogs + " posts). Log more videos for better accuracy." : "Very limited data. Recommendations are general best practices until you log more videos.";
 
-  var prompt = "You are a viral content optimization AI for a " + titleCase(niche) + " content creator." + audienceCtx + perfSummary + trendCtx + "\n\nThe creator wants to post this content:\n\"" + draft + "\"\n\nData confidence: " + confidenceLevel + " (" + totalLogs + " posts logged). " + (confidenceLevel === "low" ? "Since data is limited, be honest that recommendations are based on general best practices rather than personalized data. Avoid making claims about 'your audience' when you don't have enough data to know." : "") + "\n\nOptimize this for THEIR specific audience. Respond in this exact JSON format (no markdown):\n{\n\"audienceFit\": 85,\n\"audienceFitFactors\": [\"Factor 1 that drove the score, e.g. 'Matches your top-performing emotional trigger: Pride'\", \"Factor 2, e.g. 'Uses your highest-engagement format: Yes/No Debate'\", \"Factor 3, e.g. 'Topic aligns with 3 of your top 5 keywords'\"],\n\"audienceFitReason\": \"One sentence summary of why this fits or doesn't fit their audience\",\n\"optimizedTitle\": \"The best title/hook for this video based on what works for their audience\",\n\"optimizedDescription\": \"Full optimized caption/description (2-3 lines, include CTA)\",\n\"hashtags\": [\"hashtag1\", \"hashtag2\", \"hashtag3\", \"hashtag4\", \"hashtag5\", \"hashtag6\", \"hashtag7\", \"hashtag8\"],\n\"emotionalAngle\": \"The emotional trigger to lean into based on their audience data\",\n\"formatSuggestion\": \"The best format type for this content based on what works for them\",\n\"hookAlternatives\": [\"Alternative hook 1\", \"Alternative hook 2\", \"Alternative hook 3\"],\n\"bestPostTime\": \"When to post this based on general engagement patterns\",\n\"audiencePatternMatch\": \"Strong/Moderate/Weak - explain how well this content aligns with the creator's proven audience preferences and historical performance patterns. Focus on what the data shows, not on predicting results.\",\n\"tweaks\": [\"Specific tweak 1 to improve performance\", \"Specific tweak 2\", \"Specific tweak 3\"]\n}";
+  var prePostNicheGuard = "";
+  if (!isPatrioticNiche(USER_NICHE)) {
+    prePostNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL suggestions 100% focused on " + niche + " only.";
+  }
+  var prompt = "You are a viral content optimization AI for a " + titleCase(niche) + (isBusinessMode() ? " business" : " content creator") + "." + audienceCtx + perfSummary + trendCtx + prePostNicheGuard + "\n\nThe " + (isBusinessMode() ? "business" : "creator") + " wants to post this content:\n\"" + draft + "\"\n\nData confidence: " + confidenceLevel + " (" + totalLogs + " posts logged). " + (confidenceLevel === "low" ? "Since data is limited, be honest that recommendations are based on general best practices rather than personalized data. Avoid making claims about 'your audience' when you don't have enough data to know." : "") + "\n\nOptimize this for THEIR specific audience. Respond in this exact JSON format (no markdown):\n{\n\"audienceFit\": 85,\n\"audienceFitFactors\": [\"Factor 1 that drove the score, e.g. 'Matches your top-performing emotional trigger: Pride'\", \"Factor 2, e.g. 'Uses your highest-engagement format: Yes/No Debate'\", \"Factor 3, e.g. 'Topic aligns with 3 of your top 5 keywords'\"],\n\"audienceFitReason\": \"One sentence summary of why this fits or doesn't fit their audience\",\n\"optimizedTitle\": \"The best title/hook for this video based on what works for their audience\",\n\"optimizedDescription\": \"Full optimized caption/description (2-3 lines, include CTA)\",\n\"hashtags\": [\"hashtag1\", \"hashtag2\", \"hashtag3\", \"hashtag4\", \"hashtag5\", \"hashtag6\", \"hashtag7\", \"hashtag8\"],\n\"emotionalAngle\": \"The emotional trigger to lean into based on their audience data\",\n\"formatSuggestion\": \"The best format type for this content based on what works for them\",\n\"hookAlternatives\": [\"Alternative hook 1\", \"Alternative hook 2\", \"Alternative hook 3\"],\n\"bestPostTime\": \"When to post this based on general engagement patterns\",\n\"audiencePatternMatch\": \"Strong/Moderate/Weak - explain how well this content aligns with the creator's proven audience preferences and historical performance patterns. Focus on what the data shows, not on predicting results.\",\n\"tweaks\": [\"Specific tweak 1 to improve performance\", \"Specific tweak 2\", \"Specific tweak 3\"]\n}";
 
   try {
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -8838,6 +8900,8 @@ function setNicheDropdown(niche) {
 async function quickSwitchNiche(newNiche) {
   USER_NICHE = newNiche.toLowerCase();
   try { localStorage.removeItem("cr_scan_cache_" + USER_NICHE); } catch(e) {}
+  aiCache = {};
+  aiTrendsLoaded = false;
   var label = document.getElementById("currentNicheLabel");
   if (label) label.textContent = titleCase(USER_NICHE);
   var history = JSON.parse(localStorage.getItem("cr_niche_history") || "[]");
@@ -9254,8 +9318,42 @@ var CAPTION_STYLES = {
   ]
 };
 
+var BUSINESS_CAPTION_STYLES = {
+  tiktok: [
+    function(kw,n){return "Our clients keep asking about "+kw+" - here's what we tell them every time."},
+    function(kw,n){return kw+" is trending in "+n.toLowerCase()+" right now. Here's how your business can benefit."},
+    function(kw,n){return "3 ways we use "+kw+" to deliver better results for our clients. Which one would work for you?"},
+    function(kw,n){return "Most "+n.toLowerCase()+" businesses ignore "+kw+". Here's why that's costing them clients."},
+    function(kw,n){return "We just helped a client with "+kw+" and the results speak for themselves."},
+    function(kw,n){return kw+" - the approach that's helping our clients get real results right now."},
+    function(kw,n){return "Want to know our secret for "+kw+"? We share everything in this post."},
+    function(kw,n){return "Here's how "+kw+" is changing "+n.toLowerCase()+" for the better. Are you keeping up?"}
+  ],
+  instagram: [
+    function(kw,n){return kw+" is one of the most asked-about topics from our clients right now.\n\nHere's what we recommend:\n\n1. Start with a consultation to understand your needs\n2. Build a personalised plan that actually works\n3. Track your progress with regular check-ins\n\nReady to get started? Drop us a message or book through the link in bio.\n\nSave this post for later."},
+    function(kw,n){return "Let's talk about "+kw+".\n\nWe see so many people trying to figure this out on their own. But with professional guidance, the results come faster and last longer.\n\nHere's what our clients say makes the biggest difference.\n\nBook a free consultation - link in bio."},
+    function(kw,n){return "Real results from real clients: "+kw+" done right.\n\nAt our practice, we believe everyone deserves access to quality "+n.toLowerCase()+" services. That's why we make it simple.\n\nTag someone who needs to see this. Share with a friend who'd benefit."},
+    function(kw,n){return kw+" doesn't have to be complicated.\n\nWe break it down into simple steps that work for busy people. Our clients love how easy we make it.\n\nWant to know more? Send us a DM or book through the link in bio."}
+  ],
+  youtube: [
+    function(kw,n){return kw+" explained by a "+n.toLowerCase()+" professional. In this video we cover what you need to know, common mistakes to avoid, and how to get the best results. Book a consultation if you'd like personalised advice."},
+    function(kw,n){return "As "+n.toLowerCase()+" professionals, we get asked about "+kw+" all the time. Here's our honest take on what works and what doesn't."},
+    function(kw,n){return kw+" - everything you need to know before booking. We break down the facts so you can make the right decision for your needs."}
+  ],
+  twitter: [
+    function(kw,n){return kw+" is trending and our clients keep asking about it.\n\nHere's our professional take:"},
+    function(kw,n){return "3 things about "+kw+" that our "+n.toLowerCase()+" clients wish they'd known sooner:"},
+    function(kw,n){return kw+" matters more than most people think.\n\nHere's what we tell our clients:"}
+  ],
+  linkedin: [
+    function(kw,n){return "As "+n.toLowerCase()+" professionals, we've been following "+kw+" closely.\n\nHere's what we've learned from working with our clients:\n\nThe businesses that embrace "+kw+" early are seeing measurably better outcomes. Here's our evidence-based perspective on what this means for the industry."},
+    function(kw,n){return kw+" is reshaping how we approach "+n.toLowerCase()+".\n\nOur team has been implementing new strategies around this, and the client feedback has been outstanding.\n\nHere's what we recommend for other professionals in the space:"}
+  ]
+};
+
 function pickCaption(platform, kw, niche) {
-  var styles = CAPTION_STYLES[platform] || CAPTION_STYLES.tiktok;
+  var styleSet = isBusinessMode() ? BUSINESS_CAPTION_STYLES : CAPTION_STYLES;
+  var styles = styleSet[platform] || styleSet.tiktok;
   var topic = extractShortTopic(kw);
   var displayKw = isQuestionKeyword(kw) || kw.split(/\s+/).length >= 5 ? topic : kw;
   var seed = 0;
