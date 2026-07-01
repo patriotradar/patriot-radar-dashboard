@@ -4521,9 +4521,14 @@ function renderContentScore(item) {
   h += '</div>';
   h += '<div class="cs-bars">';
   h += '<div class="cs-dim"><span class="cs-dim-label">Fresh</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-fresh" style="width:' + (fr * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--green)">' + fr + '</span></div>';
-  h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (br * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + br + '</span></div>';
+  if (isPatrioticNiche(USER_NICHE)) {
+    h += '<div class="cs-dim"><span class="cs-dim-label">British</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (br * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + br + '</span></div>';
+  } else {
+    var rel = Math.max(fr, em);
+    h += '<div class="cs-dim"><span class="cs-dim-label">Relevance</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-british" style="width:' + (rel * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--blue)">' + rel + '</span></div>';
+  }
   h += '<div class="cs-dim"><span class="cs-dim-label">Emotion</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-emotion" style="width:' + (em * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--amber)">' + em + '</span></div>';
-  h += '<div class="cs-dim"><span class="cs-dim-label">Debate</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (db * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + db + '</span></div>';
+  h += '<div class="cs-dim"><span class="cs-dim-label">' + (isPatrioticNiche(USER_NICHE) ? 'Debate' : 'Engagement') + '</span><div class="cs-dim-bar"><div class="cs-dim-fill cs-fill-debate" style="width:' + (db * 4) + '%"></div></div><span class="cs-dim-val" style="color:var(--purple)">' + db + '</span></div>';
   h += '</div>';
   var og = Number(item.opportunity_gap || 0);
   if (og > 0) {
@@ -5010,7 +5015,7 @@ function renderEmerging(items) {
         h += '<div style="margin-top:4px;display:flex;align-items:center;gap:6px">';
         h += '<span style="font-size:9px;color:var(--muted)">Content:</span>';
         h += '<span class="cs-grade ' + emGC + '" style="font-size:8px">' + emCS + '/100 ' + emG + '</span>';
-        h += '<span style="font-size:8px;color:var(--muted)">F:' + Number(item.fresh||0) + ' B:' + Number(item.british||0) + ' E:' + Number(item.emotion||0) + ' D:' + Number(item.debate||0) + '</span>';
+        h += '<span style="font-size:8px;color:var(--muted)">F:' + Number(item.fresh||0) + ' ' + (isPatrioticNiche(USER_NICHE) ? 'B' : 'R') + ':' + (isPatrioticNiche(USER_NICHE) ? Number(item.british||0) : Math.max(Number(item.fresh||0), Number(item.emotion||0))) + ' E:' + Number(item.emotion||0) + ' ' + (isPatrioticNiche(USER_NICHE) ? 'D' : 'Eng') + ':' + Number(item.debate||0) + '</span>';
         h += '</div>';
       }
       h += '<div style="font-size:10px;color:var(--green2);margin-top:3px">"' + (item.question || "") + '"</div>';
@@ -9047,7 +9052,35 @@ function generateEngagementTactics(keyword) {
 
   var polls, questions, commentBait, storyIdeas;
 
-  if (isQ) {
+  if (isBusinessMode() && !isPatrioticNiche(USER_NICHE)) {
+    polls = [
+      "Do you offer " + topic + " services? What's your biggest challenge?",
+      topic + " - is your business using this to attract new clients?",
+      "How important is " + topic + " for your customers? Very / Somewhat / Not at all",
+      "Would your clients pay more for " + topic + "? Yes or No",
+      topic + " - game changer for your business or just a trend?"
+    ];
+    questions = [
+      "How has " + topic + " changed your business this year?",
+      "What do your clients ask you most about " + topic + "?",
+      "What's the biggest mistake businesses make with " + topic + "?",
+      "How do you stay ahead of the competition when it comes to " + topic + "?",
+      "What results have you seen from " + topic + " in your business?"
+    ];
+    commentBait = [
+      "Comment your business name below and I'll share a " + topic + " tip specific to you",
+      "Tag a fellow business owner who needs to know about " + topic,
+      "Save this post - you'll want to come back to it",
+      "Comment 'GROW' if you want more " + topic + " tips for your business",
+      "Share this with a business owner in your network"
+    ];
+    storyIdeas = [
+      "Show a before/after of how " + topic + " transformed a client's experience",
+      "Film a day in the life showing how you use " + topic + " in your business",
+      "Share 3 quick " + topic + " tips that your clients love",
+      "Interview a happy client about their " + topic + " results"
+    ];
+  } else if (isQ) {
     polls = [
       "Do you know the answer to this? Drop it below",
       "Did you already know this or is it new to you?",
