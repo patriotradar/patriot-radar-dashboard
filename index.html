@@ -1344,6 +1344,8 @@ input[type=range]::-webkit-slider-thumb{
 
     <div id="tab-plan" class="tab-content active">
       <div id="dailyPlan"></div>
+      <div id="coursePromoPlanner"></div>
+      <div id="contentFunnel"></div>
       <div id="aiContentAngles"></div>
       <div id="primaryTarget"></div>
     </div>
@@ -2449,6 +2451,28 @@ var BUSINESS_PHRASE_HOOKS = [
   "{kw} - 3 quick wins for your business",
   "{kw} - what your customers actually want to see",
   "{kw} - the local business angle nobody's covering"
+];
+
+var BUSINESS_HEALTH_HOOKS = [
+  "How we help our clients improve their {kw} results",
+  "The {kw} approach our clients love - and why it works",
+  "Our clients asked about {kw} - here's our professional answer",
+  "{kw} done right - what we recommend to every new client",
+  "The {kw} mistake most people make - and how we fix it",
+  "Why our clients trust us for {kw} guidance",
+  "Book a consultation and discover how {kw} can work for you",
+  "{kw} - the professional approach vs doing it alone"
+];
+
+var BUSINESS_HEALTH_PHRASE_HOOKS = [
+  "{kw} - what we tell every client who asks",
+  "{kw} - our professional approach delivers real results",
+  "{kw} - book a session and see the difference",
+  "{kw} - the guidance our clients wish they had sooner",
+  "{kw} - why working with a professional matters",
+  "{kw} - real client results speak for themselves",
+  "{kw} - your wellness journey starts with expert support",
+  "{kw} - the approach that keeps our clients coming back"
 ];
 
 var NICHE_SEEDS = {
@@ -3996,6 +4020,199 @@ function renderDailyPlan(results, emerging) {
   return h;
 }
 
+function renderCoursePromoPlanner() {
+  if (!isBusinessMode()) return "";
+  var niche = titleCase(USER_NICHE || "general");
+  var dayOfWeek = new Date().getDay();
+  var dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  var today = dayNames[dayOfWeek];
+
+  var COURSE_CONTENT_PILLARS = [
+    {day:"Monday", pillar:"Client Transformation", icon:"&#9733;", color:"var(--green)",
+      ideas:[
+        "Share a client success story (anonymised) - what they came in with and how they improved",
+        "Before and after: show measurable results from your programme",
+        "Quick testimonial clip - ask a happy client to share their experience"
+      ],
+      hooks:[
+        "Our client came to us struggling with [problem] - here's what happened next",
+        "Real results from real clients - this is why we do what we do",
+        "6 weeks into our programme and the transformation speaks for itself"
+      ]},
+    {day:"Tuesday", pillar:"Expert Tips", icon:"&#128161;", color:"var(--amber)",
+      ideas:[
+        "Share one actionable tip from your course content - give real value",
+        "Myth vs fact: bust a common misconception in your field",
+        "3 quick wins your audience can try today"
+      ],
+      hooks:[
+        "The one thing I tell every new client on day one",
+        "Stop doing this if you want real results with your " + niche.toLowerCase(),
+        "Most " + niche.toLowerCase() + " advice gets this completely wrong"
+      ]},
+    {day:"Wednesday", pillar:"Behind the Scenes", icon:"&#127916;", color:"var(--blue)",
+      ideas:[
+        "Show your workspace, consultation room, or where the magic happens",
+        "A day in your professional life - what does a typical session look like",
+        "Prepping for a workshop or course - show the effort that goes in"
+      ],
+      hooks:[
+        "Ever wondered what happens in a " + niche.toLowerCase() + " consultation?",
+        "Behind the scenes of our latest workshop preparation",
+        "This is what a typical client session looks like with us"
+      ]},
+    {day:"Thursday", pillar:"Course Preview", icon:"&#127891;", color:"var(--purple)",
+      ideas:[
+        "Share a golden nugget from your course - tease the value without giving it all away",
+        "Explain what makes your course different from free content online",
+        "Show a snippet of your course materials or workshop agenda"
+      ],
+      hooks:[
+        "This is from Module 3 of our programme - and it changes everything",
+        "Free content will only get you so far - here's what our course covers",
+        "Want to know what's inside our " + niche.toLowerCase() + " programme? Here's a preview"
+      ]},
+    {day:"Friday", pillar:"FAQ & Objections", icon:"&#10067;", color:"#ff6b9d",
+      ideas:[
+        "Answer the most common question you get from potential clients",
+        "Address a common objection: 'Is it worth the money?' 'How long until I see results?'",
+        "Do a Q&A - ask followers to submit questions about your services"
+      ],
+      hooks:[
+        "The question every potential client asks us - here's our honest answer",
+        "Is our programme worth it? Let our clients answer that",
+        "We get asked this every single week - time to address it properly"
+      ]},
+    {day:"Saturday", pillar:"Social Proof", icon:"&#11088;", color:"var(--green)",
+      ideas:[
+        "Share a screenshot of a client message or review (with permission)",
+        "Compile your best reviews into a carousel or video montage",
+        "Share your Google reviews or success metrics"
+      ],
+      hooks:[
+        "Our clients say it better than we ever could",
+        "This message from a client made our whole week",
+        "5 stars across the board - here's why our clients love working with us"
+      ]},
+    {day:"Sunday", pillar:"Personal Brand", icon:"&#128170;", color:"var(--amber)",
+      ideas:[
+        "Share your story - why you started in " + niche.toLowerCase() + " and what drives you",
+        "Share your qualifications, training, or what makes you credible",
+        "Relaxed weekend content - show the person behind the brand"
+      ],
+      hooks:[
+        "Why I dedicated my career to " + niche.toLowerCase() + " - it's personal",
+        "The training behind the expertise - here's my journey",
+        "Sunday thoughts from a " + niche.toLowerCase() + " professional"
+      ]}
+  ];
+
+  var todayPillar = COURSE_CONTENT_PILLARS[dayOfWeek];
+  var h = '<div class="card" style="border-color:rgba(167,139,250,.3);margin-top:12px">';
+  h += '<div class="card-header"><h2 style="color:var(--purple)">&#127891; Course Promotion Planner</h2><div class="section-icon" style="background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:var(--purple)">&#128197;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:12px">Daily content strategy designed to drive course and workshop bookings. Follow this 7-day cycle to build trust and convert followers into clients.</p>';
+
+  h += '<div style="padding:14px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:12px;margin-bottom:12px">';
+  h += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
+  h += '<span style="font-size:20px">' + todayPillar.icon + '</span>';
+  h += '<div>';
+  h += '<div style="font-size:9px;color:var(--purple);font-weight:800;text-transform:uppercase;letter-spacing:1px">TODAY - ' + today.toUpperCase() + '</div>';
+  h += '<div style="font-size:16px;font-weight:900;color:var(--white)">' + todayPillar.pillar + '</div>';
+  h += '</div>';
+  h += '</div>';
+
+  for (var ci = 0; ci < todayPillar.ideas.length; ci++) {
+    h += '<div style="padding:8px 10px;background:rgba(0,0,0,.2);border-radius:8px;margin-bottom:6px;font-size:11px;color:var(--white);border-left:2px solid ' + todayPillar.color + '">';
+    h += '<span style="color:var(--green);font-weight:700;font-size:9px">IDEA ' + (ci+1) + '</span><br>' + todayPillar.ideas[ci];
+    h += '</div>';
+  }
+
+  h += '<div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(167,139,250,.15)">';
+  h += '<div style="font-size:9px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Ready-to-use hooks</div>';
+  for (var hi = 0; hi < todayPillar.hooks.length; hi++) {
+    h += '<div onclick="navigator.clipboard.writeText(this.querySelector(\'.cph-text\').textContent).then(function(){});var el=this;el.style.borderColor=\'var(--green)\';setTimeout(function(){el.style.borderColor=\'rgba(167,139,250,.15)\'},1000)" style="padding:8px 10px;background:var(--panel);border:1px solid rgba(167,139,250,.15);border-radius:8px;margin-bottom:4px;cursor:pointer;font-size:12px;color:var(--white)">';
+    h += '<span class="cph-text">' + todayPillar.hooks[hi] + '</span>';
+    h += '<span style="font-size:8px;color:var(--muted);float:right">TAP TO COPY</span>';
+    h += '</div>';
+  }
+  h += '</div>';
+  h += '</div>';
+
+  h += '<div style="margin-top:8px">';
+  h += '<div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Full week overview</div>';
+  for (var wi = 0; wi < COURSE_CONTENT_PILLARS.length; wi++) {
+    var wp = COURSE_CONTENT_PILLARS[wi];
+    var isToday = wi === dayOfWeek;
+    h += '<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;margin-bottom:3px;' + (isToday ? 'background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25)' : 'background:rgba(0,0,0,.15)') + '">';
+    h += '<span style="font-size:14px">' + wp.icon + '</span>';
+    h += '<span style="font-size:10px;color:' + (isToday ? 'var(--purple)' : 'var(--muted)') + ';font-weight:' + (isToday ? '800' : '600') + ';min-width:50px">' + wp.day.slice(0,3) + '</span>';
+    h += '<span style="font-size:10px;color:' + (isToday ? 'var(--white)' : 'var(--muted)') + ';font-weight:' + (isToday ? '700' : '400') + '">' + wp.pillar + '</span>';
+    if (isToday) h += '<span style="font-size:8px;color:var(--purple);font-weight:800;margin-left:auto">TODAY</span>';
+    h += '</div>';
+  }
+  h += '</div>';
+
+  h += '<div style="margin-top:12px;padding:10px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.15);border-radius:8px">';
+  h += '<div style="font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Pro tip</div>';
+  h += '<div style="font-size:11px;color:var(--muted);line-height:1.5">End every video with a clear CTA: "Link in bio to book a free discovery call" or "Comment COURSE and we\'ll send you the details". The comment-keyword strategy drives engagement AND captures leads at the same time.</div>';
+  h += '</div>';
+
+  h += '</div>';
+  return h;
+}
+
+function renderContentFunnel() {
+  if (!isBusinessMode()) return "";
+  var niche = titleCase(USER_NICHE || "general");
+
+  var FUNNEL_STAGES = [
+    {stage:"AWARENESS", pct:"40%", desc:"Get discovered by new people", color:"var(--blue)", icon:"&#128064;",
+      content:"Educational tips, myth-busting, trending topic takes, relatable problems your audience faces",
+      example:"'3 signs your body is telling you something important' - pure value, no selling",
+      goal:"Views + Follows"},
+    {stage:"TRUST", pct:"30%", desc:"Build credibility and connection", color:"var(--purple)", icon:"&#129309;",
+      content:"Client stories, behind-the-scenes, your qualifications, day-in-the-life, Q&As",
+      example:"'Our client Sarah came to us with chronic fatigue. 6 weeks later...' - social proof",
+      goal:"Engagement + Saves"},
+    {stage:"CONSIDERATION", pct:"20%", desc:"Show them what working with you looks like", color:"var(--amber)", icon:"&#128173;",
+      content:"Course previews, workshop teasers, comparison (DIY vs professional), detailed case studies",
+      example:"'Here's a sneak peek of Module 3 from our programme...' - tease the value",
+      goal:"DMs + Link clicks"},
+    {stage:"CONVERSION", pct:"10%", desc:"Direct call to action", color:"var(--green)", icon:"&#127919;",
+      content:"Limited spots, booking reminders, testimonial compilations, special offers, countdown posts",
+      example:"'Only 3 spots left for our July workshop - link in bio to secure yours'",
+      goal:"Bookings + Sales"}
+  ];
+
+  var h = '<div class="card" style="border-color:rgba(77,201,246,.3);margin-top:12px">';
+  h += '<div class="card-header"><h2 style="color:var(--blue)">&#127915; Content Funnel</h2><div class="section-icon" style="background:rgba(77,201,246,.1);border-color:rgba(77,201,246,.3);color:var(--blue)">&#128200;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:12px">Structure your content to move followers from discovery to booking. Most businesses only post awareness content - the funnel fills the gap.</p>';
+
+  for (var fi = 0; fi < FUNNEL_STAGES.length; fi++) {
+    var fs = FUNNEL_STAGES[fi];
+    var barWidth = parseInt(fs.pct);
+    h += '<div style="margin-bottom:10px;padding:12px;background:rgba(10,18,14,.6);border:1px solid ' + fs.color + '22;border-radius:10px;border-left:3px solid ' + fs.color + '">';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">';
+    h += '<span style="font-size:11px;font-weight:900;color:' + fs.color + ';letter-spacing:1px">' + fs.icon + ' ' + fs.stage + '</span>';
+    h += '<span style="font-size:10px;color:var(--muted);font-weight:700">' + fs.pct + ' of posts</span>';
+    h += '</div>';
+    h += '<div style="height:4px;background:rgba(255,255,255,.06);border-radius:4px;margin-bottom:6px;overflow:hidden"><div style="height:100%;width:' + (100 - fi * 20) + '%;background:' + fs.color + ';border-radius:4px;opacity:0.4"></div></div>';
+    h += '<div style="font-size:11px;color:var(--white);margin-bottom:4px;font-weight:600">' + fs.desc + '</div>';
+    h += '<div style="font-size:10px;color:var(--muted);margin-bottom:6px;line-height:1.4"><b style="color:var(--white)">Post types:</b> ' + fs.content + '</div>';
+    h += '<div style="padding:6px 8px;background:rgba(0,0,0,.25);border-radius:6px;margin-bottom:4px;font-size:10px;color:var(--white);font-style:italic">' + fs.example + '</div>';
+    h += '<div style="font-size:9px;color:' + fs.color + ';font-weight:700">Goal: ' + fs.goal + '</div>';
+    h += '</div>';
+  }
+
+  h += '<div style="padding:10px;background:rgba(251,191,36,.04);border:1px solid rgba(251,191,36,.15);border-radius:8px;margin-top:8px">';
+  h += '<div style="font-size:9px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Common mistake</div>';
+  h += '<div style="font-size:11px;color:var(--muted);line-height:1.5">Most ' + niche.toLowerCase() + ' businesses post 100% awareness content (tips and advice) but never ask for the sale. If your followers love your free content but never book, you need more Trust and Conversion posts in the mix.</div>';
+  h += '</div>';
+
+  h += '</div>';
+  return h;
+}
+
 function renderAudienceInsights(results) {
   var allScores = getAllAudienceScores();
   if (allScores.length === 0) return "";
@@ -4450,14 +4667,20 @@ function generateHooks(keyword) {
   }
 
   var nicheLower = (USER_NICHE || "").toLowerCase();
-  var nicheHooks = words.length >= 4 ? NICHE_PHRASE_HOOKS[nicheLower] : NICHE_HOOK_TEMPLATES[nicheLower];
   var genTemplates;
-  if (nicheHooks) {
-    genTemplates = nicheHooks;
-  } else if (isBusinessMode()) {
-    genTemplates = words.length >= 4 ? BUSINESS_PHRASE_HOOKS : BUSINESS_HOOK_TEMPLATES;
+  if (isBusinessMode()) {
+    if (nicheLower === "health") {
+      genTemplates = words.length >= 4 ? BUSINESS_HEALTH_PHRASE_HOOKS : BUSINESS_HEALTH_HOOKS;
+    } else {
+      genTemplates = words.length >= 4 ? BUSINESS_PHRASE_HOOKS : BUSINESS_HOOK_TEMPLATES;
+    }
   } else {
-    genTemplates = words.length >= 4 ? GENERIC_PHRASE_HOOKS : GENERIC_HOOK_TEMPLATES;
+    var nicheHooks = words.length >= 4 ? NICHE_PHRASE_HOOKS[nicheLower] : NICHE_HOOK_TEMPLATES[nicheLower];
+    if (nicheHooks) {
+      genTemplates = nicheHooks;
+    } else {
+      genTemplates = words.length >= 4 ? GENERIC_PHRASE_HOOKS : GENERIC_HOOK_TEMPLATES;
+    }
   }
   var hooks = [];
   for (var i = 0; i < genTemplates.length; i++) {
@@ -5635,6 +5858,19 @@ var NICHE_IDEA_TEMPLATES = {
   ]
 };
 
+var BUSINESS_IDEA_POOL = {
+  "health": [
+    {text:"The wellness approach our clients swear by - and the results to prove it",topic:"Results",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Health myths we debunk for our clients every single week",topic:"Myths",format:"opinion",emotions:["Concern"],debate:0},
+    {text:"Morning routine vs evening routine - what we recommend to our clients",topic:"Routines",format:"abc",emotions:["Curiosity"],debate:1},
+    {text:"3 simple changes we suggest to every new client - and they always work",topic:"Quick Wins",format:"opinion",emotions:["Inspiration"],debate:0},
+    {text:"What our most successful clients do differently - it's simpler than you think",topic:"Success",format:"story",emotions:["Curiosity"],debate:0},
+    {text:"The question every new client asks us - here's our honest answer",topic:"FAQ",format:"opinion",emotions:["Curiosity"],debate:1},
+    {text:"Why we take a holistic approach - and what that means for your results",topic:"Approach",format:"story",emotions:["Inspiration"],debate:0},
+    {text:"Book a consultation this week - here's what to expect in your first session",topic:"Onboarding",format:"story",emotions:["Curiosity"],debate:0}
+  ]
+};
+
 function generateAlternatives(text, topic, emotions, format) {
   if (!isPatrioticNiche(USER_NICHE)) {
     return generateNicheAlternatives(text, topic, emotions, format);
@@ -5700,7 +5936,7 @@ function generateAlternatives(text, topic, emotions, format) {
 function generateNicheAlternatives(text, topic, emotions, format) {
   var nicheLower = (USER_NICHE || "").toLowerCase();
   var resolved = NICHE_ALIASES[nicheLower] || nicheLower;
-  var nicheIdeas = NICHE_IDEA_TEMPLATES[resolved] || [];
+  var nicheIdeas = (isBusinessMode() && BUSINESS_IDEA_POOL[resolved]) ? BUSINESS_IDEA_POOL[resolved] : (NICHE_IDEA_TEMPLATES[resolved] || []);
   var genericIdeas = [
     {text:"The one tip that changed everything for me in " + titleCase(USER_NICHE),topic:"Tips",format:"story",emotions:["Inspiration"],debate:0},
     {text:"Beginners vs experts - the difference is this one thing",topic:"Skills",format:"abc",emotions:["Curiosity"],debate:1},
@@ -10132,6 +10368,8 @@ function renderAllSections(results, emerging, productTrends, creatorInsights) {
 
   if (results.length > 0) {
     document.getElementById("dailyPlan").innerHTML = renderDailyPlan(results, emerging);
+    document.getElementById("coursePromoPlanner").innerHTML = renderCoursePromoPlanner();
+    document.getElementById("contentFunnel").innerHTML = renderContentFunnel();
     document.getElementById("audienceInsights").innerHTML = renderAudienceInsights(results);
     document.getElementById("primaryTarget").innerHTML = renderPrimary(results[0]);
     document.getElementById("emergingTopics").innerHTML = renderEmerging(emerging);
