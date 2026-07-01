@@ -5935,7 +5935,8 @@ function getAudienceContext() {
   if (isPatrioticNiche(niche)) {
     ctx = " IMPORTANT: This creator's audience is BRITISH. All content must be UK-focused - covering England, Scotland, Wales, Northern Ireland, Jersey, Guernsey, and the Isle of Wight. British culture, history, military, politics. Do NOT reference American military, US politics, or any non-UK content. Use British English spelling. Include references relevant to all UK nations and Crown Dependencies where appropriate.";
   } else if (regionName) {
-    ctx = " The creator's audience is primarily " + regionName + ". Keep references and examples relevant to that audience.";
+    var safeRegion = (region === "gb") ? "UK" : regionName;
+    ctx = " The audience is based in the " + safeRegion + ". Keep references relevant to that market.";
   }
   var perfData = loadPerfData();
   var perfTopics = Object.keys(perfData);
@@ -6404,15 +6405,13 @@ async function getAIAnalysis(caption, niche) {
   try {
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
-    var analysisNicheGuard = "";
-    if (!isPatrioticNiche(USER_NICHE)) {
-      analysisNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL suggestions 100% focused on " + niche + " only.";
-    }
-    var prompt = "You are a viral content expert. Analyze this social media caption for " + roleCtx + "." + audienceCtx + " Be specific and actionable." + analysisNicheGuard + "\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
+    var sysPrompt = getNicheSystemPrompt(niche);
+    var prompt = "You are a viral content expert. Analyze this social media caption for " + roleCtx + "." + audienceCtx + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
+    var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 600})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 600})
     });
     if (!resp.ok) return null;
     var data = await resp.json();
@@ -6427,6 +6426,31 @@ async function getAIAnalysis(caption, niche) {
 
 var aiCache = {};
 
+var PATRIOTIC_CONTENT_TERMS = ["british armed","armed forces","soldiers","military","patriot","battle of britain","brexit","british culture","british identity","national pride","monarchy","empire","immigration","troops","regiment","war on wellbeing","brits priorit","dunkirk","blitz","churchill","cenotaph","poppy appeal","union jack","british values","british audience","british way","british spirit","national identity","british hero","remembrance","veteran"];
+
+function containsPatrioticContent(text) {
+  if (!text) return false;
+  var tl = text.toLowerCase();
+  for (var i = 0; i < PATRIOTIC_CONTENT_TERMS.length; i++) {
+    if (tl.indexOf(PATRIOTIC_CONTENT_TERMS[i]) !== -1) return true;
+  }
+  return false;
+}
+
+function filterPatrioticHooks(hooks) {
+  if (!hooks || !Array.isArray(hooks)) return hooks;
+  return hooks.filter(function(h) { return !containsPatrioticContent(h); });
+}
+
+function getNicheSystemPrompt(niche) {
+  if (isPatrioticNiche(niche)) return "";
+  var sys = "STRICT RULE: You are generating content for the " + niche + " niche ONLY. Every hook, caption, idea, and suggestion MUST be 100% about " + niche + ". You MUST NOT mention, reference, or allude to: military, armed forces, soldiers, veterans, British culture, British identity, British values, national pride, patriotism, monarchy, royal family, empire, immigration, politics, Brexit, battles, wars, troops, or any military/national themes. If you are tempted to combine " + niche + " with any patriotic or military angle, DO NOT. Only write about " + niche + " topics.";
+  if (isBusinessMode()) {
+    sys += " This is a BUSINESS account that wants to attract clients. Use professional language: 'our clients', 'we help', 'book a consultation', 'results we deliver'. NEVER use creator-style language like 'I tried X for 30 days'.";
+  }
+  return sys;
+}
+
 async function aiEnhanceSection(keyword, sectionId) {
   var btn = document.getElementById("ai-btn-" + sectionId);
   if (btn) { btn.disabled = true; btn.innerHTML = "&#129504; Generating..."; }
@@ -6440,19 +6464,13 @@ async function aiEnhanceSection(keyword, sectionId) {
     var niche = USER_NICHE || "general";
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx2 = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
-    var nicheGuard = "";
-    if (!isPatrioticNiche(USER_NICHE)) {
-      nicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL content 100% focused on " + niche + " only.";
-    }
-    var bizGuide = "";
-    if (isBusinessMode()) {
-      bizGuide = "\n\nThis is for a BUSINESS account. Hooks should focus on attracting clients, building trust, and showcasing expertise. Use language like 'our clients', 'we help', 'book now', 'results we deliver'. Do NOT use creator-style hooks like 'I tried X for 30 days'.";
-    }
-    var prompt = "You are a viral social media expert. Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + nicheGuard + bizGuide + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
+    var sysPrompt = getNicheSystemPrompt(niche);
+    var prompt = "Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
+    var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.8, max_tokens: 700})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.8, max_tokens: 700})
     });
     if (!resp.ok) {
       var errBody = "";
@@ -6465,6 +6483,11 @@ async function aiEnhanceSection(keyword, sectionId) {
     if (cleaned.indexOf("{") > 0) cleaned = cleaned.substring(cleaned.indexOf("{"));
     if (cleaned.lastIndexOf("}") < cleaned.length - 1) cleaned = cleaned.substring(0, cleaned.lastIndexOf("}") + 1);
     var result = JSON.parse(cleaned);
+    if (!isPatrioticNiche(USER_NICHE)) {
+      if (result.hooks) result.hooks = filterPatrioticHooks(result.hooks);
+      if (result.hooks && result.hooks.length === 0) result.hooks = ["Discover the latest " + keyword + " trends", "Why " + keyword + " matters for your wellbeing", "The truth about " + keyword + " that experts agree on", keyword + " explained - everything you need to know", "How " + keyword + " can transform your routine"];
+      if (containsPatrioticContent(result.caption)) result.caption = keyword + " is one of the biggest topics in " + niche + " right now. Here's what you need to know and why it matters. Save this post and share with someone who'd find it useful!";
+    }
     aiCache[cacheKey] = result;
     renderAIContent(result, sectionId);
     if (btn) { btn.innerHTML = "&#129504; AI Enhanced"; btn.style.background = "rgba(0,255,136,.1)"; btn.style.borderColor = "rgba(0,255,136,.3)"; btn.style.color = "var(--green)"; }
@@ -6532,19 +6555,16 @@ async function aiTrendInsights() {
   el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Trend Analysis</h2></div><p style="font-size:11px;color:var(--muted)">Analysing trends with AI...</p></div>';
 
   try {
-    var trendNicheGuard = "";
-    if (!isPatrioticNiche(USER_NICHE)) {
-      trendNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics in video ideas. Keep ALL suggestions 100% focused on " + (USER_NICHE || "general") + " only.";
-    }
-    var prompt = "You are a viral content strategist." + audienceCtx + trendNicheGuard + "\n\nAnalyze these 5 trending keywords and for each one provide: a quick take on why it's trending, whether it's worth making content about, and a specific video idea.\n\nKeywords:\n" + keywords.map(function(k,i){
+    var sysPrompt = getNicheSystemPrompt(USER_NICHE || "general");
+    var prompt = "You are a viral content strategist." + audienceCtx + "\n\nAnalyze these 5 trending keywords and for each one provide: a quick take on why it's trending, whether it's worth making content about, and a specific video idea.\n\nKeywords:\n" + keywords.map(function(k,i){
       var r = top5[i];
       return (i+1)+". "+k+" (Viral: "+r.viral_score+", Rise: "+r.rise_percent+"%)";
     }).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"trends\":[{\"keyword\":\"keyword\",\"whyTrending\":\"One sentence on why this is trending right now\",\"worthIt\":true,\"worthReason\":\"Why this is/isn't worth posting about\",\"videoIdea\":\"A specific, ready-to-film video concept\",\"bestTime\":\"Post now / Post today / Can wait\"}]}";
-
+    var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 900})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 900})
     });
     if (!resp.ok) { el.innerHTML = ""; return; }
     var data = await resp.json();
@@ -6644,20 +6664,13 @@ async function aiContentAngles(results) {
   el.innerHTML = '<div class="card" style="border-color:rgba(167,139,250,.25)"><div class="card-header"><h2 style="color:var(--purple)">&#129504; AI Content Angles</h2></div><p style="font-size:11px;color:var(--muted)">Generating personalized content angles...</p></div>';
 
   try {
-    var anglesNicheGuard = "";
-    if (!isPatrioticNiche(USER_NICHE)) {
-      anglesNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics in any angle. Keep ALL content 100% focused on " + (USER_NICHE || "general") + " only.";
-    }
-    var anglesBizGuide = "";
-    if (isBusinessMode()) {
-      anglesBizGuide = "\n\nThis is for a BUSINESS account. Angles should focus on attracting clients and showcasing expertise, not creator-style personal content.";
-    }
-    var prompt = "You are a viral content strategist." + audienceCtx + perfSummary + anglesNicheGuard + anglesBizGuide + "\n\nFor each of these trending keywords, generate 3 different content angles. Each angle should be a specific video/post idea, NOT just the keyword. Score each angle from 1-10 for predicted engagement based on the creator's niche and audience data.\n\nKeywords:\n" + topKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"keywords\":[{\"keyword\":\"the keyword\",\"angles\":[{\"type\":\"Debate\",\"hook\":\"Specific hook/title for this angle (under 80 chars)\",\"why\":\"Why this angle works for this audience\",\"engagement\":8,\"bestFor\":\"comments\"},{\"type\":\"Storytelling\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":7,\"bestFor\":\"shares\"},{\"type\":\"Educational\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":6,\"bestFor\":\"saves\"}],\"recommended\":0}]}";
-
+    var sysPrompt = getNicheSystemPrompt(USER_NICHE || "general");
+    var prompt = "You are a viral content strategist." + audienceCtx + perfSummary + "\n\nFor each of these trending keywords, generate 3 different content angles. Each angle should be a specific video/post idea, NOT just the keyword. Score each angle from 1-10 for predicted engagement based on the creator's niche and audience data.\n\nKeywords:\n" + topKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"keywords\":[{\"keyword\":\"the keyword\",\"angles\":[{\"type\":\"Debate\",\"hook\":\"Specific hook/title for this angle (under 80 chars)\",\"why\":\"Why this angle works for this audience\",\"engagement\":8,\"bestFor\":\"comments\"},{\"type\":\"Storytelling\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":7,\"bestFor\":\"shares\"},{\"type\":\"Educational\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":6,\"bestFor\":\"saves\"}],\"recommended\":0}]}";
+    var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 1200})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 1200})
     });
     if (!resp.ok) { el.innerHTML = ""; return; }
     var data = await resp.json();
@@ -6727,15 +6740,13 @@ async function aiValidateKeywords(results, emerging) {
   try {
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx3 = isBusinessMode() ? "A local business in the " + (USER_NICHE || "general") + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "A creator in the " + (USER_NICHE || "general") + " niche";
-    var kwNicheGuard = "";
-    if (!isPatrioticNiche(USER_NICHE)) {
-      kwNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL suggestions 100% focused on " + (USER_NICHE || "general") + " only.";
-    }
-    var prompt = "You are a social media content expert. " + roleCtx3 + " has these trending keywords." + audienceCtx + kwNicheGuard + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
+    var sysPrompt = getNicheSystemPrompt(USER_NICHE || "general");
+    var prompt = "You are a social media content expert. " + roleCtx3 + " has these trending keywords." + audienceCtx + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
+    var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.5, max_tokens: 800})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.5, max_tokens: 800})
     });
     if (!resp.ok) return;
     var data = await resp.json();
@@ -6793,15 +6804,13 @@ async function aiEnhancePlatform(keyword) {
     var niche = USER_NICHE || "general";
     var audienceCtx = getEnhancedAudienceContext();
     var roleCtx4 = isBusinessMode() ? "a local business in the " + niche + " industry" + (USER_BUSINESS_LOCATION ? " based in " + USER_BUSINESS_LOCATION : "") : "a creator in the " + niche + " niche";
-    var platNicheGuard = "";
-    if (!isPatrioticNiche(USER_NICHE)) {
-      platNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL content 100% focused on " + niche + " only.";
-    }
-    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for " + roleCtx4 + " about: " + keyword + "." + audienceCtx + platNicheGuard + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
+    var sysPrompt = getNicheSystemPrompt(niche);
+    var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for " + roleCtx4 + " about: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
+    var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.8, max_tokens: 600})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.8, max_tokens: 600})
     });
     if (!resp.ok) throw new Error("API error");
     var data = await resp.json();
@@ -6887,17 +6896,15 @@ async function runPrePostOptimizer() {
   var confidenceLevel = totalLogs >= 10 ? "high" : totalLogs >= 3 ? "moderate" : "low";
   var confidenceNote = confidenceLevel === "high" ? "Based on strong data (" + totalLogs + " posts)." : confidenceLevel === "moderate" ? "Based on limited data (" + totalLogs + " posts). Log more videos for better accuracy." : "Very limited data. Recommendations are general best practices until you log more videos.";
 
-  var prePostNicheGuard = "";
-  if (!isPatrioticNiche(USER_NICHE)) {
-    prePostNicheGuard = "\n\nCRITICAL: Do NOT reference military, armed forces, soldiers, British culture, national identity, patriotism, monarchy, empire, immigration, or politics. Keep ALL suggestions 100% focused on " + niche + " only.";
-  }
-  var prompt = "You are a viral content optimization AI for a " + titleCase(niche) + (isBusinessMode() ? " business" : " content creator") + "." + audienceCtx + perfSummary + trendCtx + prePostNicheGuard + "\n\nThe " + (isBusinessMode() ? "business" : "creator") + " wants to post this content:\n\"" + draft + "\"\n\nData confidence: " + confidenceLevel + " (" + totalLogs + " posts logged). " + (confidenceLevel === "low" ? "Since data is limited, be honest that recommendations are based on general best practices rather than personalized data. Avoid making claims about 'your audience' when you don't have enough data to know." : "") + "\n\nOptimize this for THEIR specific audience. Respond in this exact JSON format (no markdown):\n{\n\"audienceFit\": 85,\n\"audienceFitFactors\": [\"Factor 1 that drove the score, e.g. 'Matches your top-performing emotional trigger: Pride'\", \"Factor 2, e.g. 'Uses your highest-engagement format: Yes/No Debate'\", \"Factor 3, e.g. 'Topic aligns with 3 of your top 5 keywords'\"],\n\"audienceFitReason\": \"One sentence summary of why this fits or doesn't fit their audience\",\n\"optimizedTitle\": \"The best title/hook for this video based on what works for their audience\",\n\"optimizedDescription\": \"Full optimized caption/description (2-3 lines, include CTA)\",\n\"hashtags\": [\"hashtag1\", \"hashtag2\", \"hashtag3\", \"hashtag4\", \"hashtag5\", \"hashtag6\", \"hashtag7\", \"hashtag8\"],\n\"emotionalAngle\": \"The emotional trigger to lean into based on their audience data\",\n\"formatSuggestion\": \"The best format type for this content based on what works for them\",\n\"hookAlternatives\": [\"Alternative hook 1\", \"Alternative hook 2\", \"Alternative hook 3\"],\n\"bestPostTime\": \"When to post this based on general engagement patterns\",\n\"audiencePatternMatch\": \"Strong/Moderate/Weak - explain how well this content aligns with the creator's proven audience preferences and historical performance patterns. Focus on what the data shows, not on predicting results.\",\n\"tweaks\": [\"Specific tweak 1 to improve performance\", \"Specific tweak 2\", \"Specific tweak 3\"]\n}";
+  var prePostSysPrompt = getNicheSystemPrompt(niche);
+  var prompt = "You are a viral content optimization AI for a " + titleCase(niche) + (isBusinessMode() ? " business" : " content creator") + "." + audienceCtx + perfSummary + trendCtx + "\n\nThe " + (isBusinessMode() ? "business" : "creator") + " wants to post this content:\n\"" + draft + "\"\n\nData confidence: " + confidenceLevel + " (" + totalLogs + " posts logged). " + (confidenceLevel === "low" ? "Since data is limited, be honest that recommendations are based on general best practices rather than personalized data. Avoid making claims about 'your audience' when you don't have enough data to know." : "") + "\n\nOptimize this for THEIR specific audience. Respond in this exact JSON format (no markdown):\n{\n\"audienceFit\": 85,\n\"audienceFitFactors\": [\"Factor 1 that drove the score, e.g. 'Matches your top-performing emotional trigger: Pride'\", \"Factor 2, e.g. 'Uses your highest-engagement format: Yes/No Debate'\", \"Factor 3, e.g. 'Topic aligns with 3 of your top 5 keywords'\"],\n\"audienceFitReason\": \"One sentence summary of why this fits or doesn't fit their audience\",\n\"optimizedTitle\": \"The best title/hook for this video based on what works for their audience\",\n\"optimizedDescription\": \"Full optimized caption/description (2-3 lines, include CTA)\",\n\"hashtags\": [\"hashtag1\", \"hashtag2\", \"hashtag3\", \"hashtag4\", \"hashtag5\", \"hashtag6\", \"hashtag7\", \"hashtag8\"],\n\"emotionalAngle\": \"The emotional trigger to lean into based on their audience data\",\n\"formatSuggestion\": \"The best format type for this content based on what works for them\",\n\"hookAlternatives\": [\"Alternative hook 1\", \"Alternative hook 2\", \"Alternative hook 3\"],\n\"bestPostTime\": \"When to post this based on general engagement patterns\",\n\"audiencePatternMatch\": \"Strong/Moderate/Weak - explain how well this content aligns with the creator's proven audience preferences and historical performance patterns. Focus on what the data shows, not on predicting results.\",\n\"tweaks\": [\"Specific tweak 1 to improve performance\", \"Specific tweak 2\", \"Specific tweak 3\"]\n}";
 
   try {
+    var prePostMessages = prePostSysPrompt ? [{role: "system", content: prePostSysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
     var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.7, max_tokens: 1500})
+      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: prePostMessages, temperature: 0.7, max_tokens: 1500})
     });
     if (!resp.ok) throw new Error("API error");
     var data = await resp.json();
@@ -7855,7 +7862,7 @@ async function runCreatorAudit() {
       hookRecommendations: [
         {formula: "The specificity hook", example: "The one " + _niche + " trick that changed everything for me...", why: "Specificity creates curiosity - your top post works because it's specific, not generic"},
         {formula: "The counter-intuitive hook", example: "Why most " + _niche + " advice is actually wrong...", why: "Challenges assumptions and stops the scroll - powerful for " + _niche + " audiences"},
-        {formula: "The personal story hook", example: "I tried this " + _niche + " approach for 30 days - here's what actually happened", why: "Personal stakes + time commitment = trust with your audience"}
+        {formula: isBusinessMode() ? "The results hook" : "The personal story hook", example: isBusinessMode() ? "Our clients tried this " + _niche + " approach and the results speak for themselves" : "I tried this " + _niche + " approach for 30 days - here's what actually happened", why: isBusinessMode() ? "Client results build trust and credibility with your audience" : "Personal stakes + time commitment = trust with your audience"}
       ],
       thirtyDayPlan: {
         week1: "Study your top post (\"" + _bestHook.substring(0,30) + "...\"). Create 3 new posts using the same formula: " + _bf.toLowerCase() + " format + " + _bd.toLowerCase() + " driver. Add a clear CTA to every post - your CTA score needs work.",
@@ -8711,9 +8718,11 @@ async function sendAiChat() {
     var bizCtx = USER_BUSINESS_NAME ? " Business: " + USER_BUSINESS_NAME + "." : "";
     bizCtx += USER_BUSINESS_TYPE ? " Type: " + USER_BUSINESS_TYPE.replace(/_/g, " ") + "." : "";
     bizCtx += USER_BUSINESS_LOCATION ? " Location: " + USER_BUSINESS_LOCATION + "." : "";
-    systemPrompt = "You are Creator Radar AI - an advanced marketing intelligence system for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + crossModuleCtx + "\n\n" + goalInstructions + "\n\nINTELLIGENCE RULES:\n1. EXPLAINABLE INSIGHTS - For every recommendation you MUST explain:\n   - WHY you recommend it (what data or pattern supports it)\n   - WHAT ACTION to take (specific, not vague)\n   - EXPECTED OUTCOME vs their current average performance\n2. PATTERN RECOGNITION - Look for combinations, not just single factors. Analyse topic + timing + format + emotion together. If their beauty tutorials get 2x more views than product showcases, say that and explain the pattern.\n3. CROSS-MODULE INTELLIGENCE - Connect trending data with their performance data. If a trend is rising AND matches their best-performing content type, flag it as a high-priority opportunity. If a trend is hot but they historically perform poorly in that area, warn them and suggest an angle that bridges their strengths.\n4. GOAL-FOCUSED - Every response must connect back to their success metric. End each recommendation with how it moves the needle on their specific goal.\n5. The business could be anywhere in the UK or Crown Dependencies - England, Scotland, Wales, Northern Ireland, Jersey, Guernsey, or the Isle of Wight. Tailor advice to their specific location.\n6. Be direct and conversational. No fluff. Pack every sentence with value.\n7. Use line breaks for readability. Use dashes for lists, not bullets or asterisks.\n8. When you spot a pattern in their data, lead with it. Data-backed insights first, then actionable advice.";
+    var bizChatNicheRule = !isPatrioticNiche(niche) ? "\n9. NICHE FOCUS - ALL advice, ideas, and examples must be 100% about " + niche + ". Do NOT reference military, armed forces, patriotism, British culture/identity, monarchy, empire, immigration, or politics." : "";
+    systemPrompt = "You are Creator Radar AI - an advanced marketing intelligence system for a " + titleCase(niche) + " business." + bizCtx + audienceCtx + crossModuleCtx + "\n\n" + goalInstructions + "\n\nINTELLIGENCE RULES:\n1. EXPLAINABLE INSIGHTS - For every recommendation you MUST explain:\n   - WHY you recommend it (what data or pattern supports it)\n   - WHAT ACTION to take (specific, not vague)\n   - EXPECTED OUTCOME vs their current average performance\n2. PATTERN RECOGNITION - Look for combinations, not just single factors. Analyse topic + timing + format + emotion together. If their beauty tutorials get 2x more views than product showcases, say that and explain the pattern.\n3. CROSS-MODULE INTELLIGENCE - Connect trending data with their performance data. If a trend is rising AND matches their best-performing content type, flag it as a high-priority opportunity. If a trend is hot but they historically perform poorly in that area, warn them and suggest an angle that bridges their strengths.\n4. GOAL-FOCUSED - Every response must connect back to their success metric. End each recommendation with how it moves the needle on their specific goal.\n5. The business could be anywhere in the UK or Crown Dependencies - England, Scotland, Wales, Northern Ireland, Jersey, Guernsey, or the Isle of Wight. Tailor advice to their specific location.\n6. Be direct and conversational. No fluff. Pack every sentence with value.\n7. Use line breaks for readability. Use dashes for lists, not bullets or asterisks.\n8. When you spot a pattern in their data, lead with it. Data-backed insights first, then actionable advice." + bizChatNicheRule;
   } else {
-    systemPrompt = "You are Creator Radar AI - an advanced content intelligence system for a " + titleCase(niche) + " content creator." + audienceCtx + crossModuleCtx + "\n\n" + goalInstructions + "\n\nINTELLIGENCE RULES:\n1. EXPLAINABLE INSIGHTS - For every recommendation you MUST explain:\n   - WHY you recommend it (what data or pattern supports it)\n   - WHAT ACTION to take (specific, not vague)\n   - EXPECTED OUTCOME vs their current average performance\n2. PATTERN RECOGNITION - Look for combinations, not just single factors. Analyse topic + timing + format + hook style together. If their story-time content outperforms tutorials, identify why and build on it.\n3. CROSS-MODULE INTELLIGENCE - Connect trending data with their performance history. A trend that matches their strengths is gold. A trend that doesn't match needs a creative bridge. Flag both.\n4. GOAL-FOCUSED - Every response must connect back to their success metric. End each recommendation with how it moves the needle on their specific goal.\n5. Be direct and conversational. No fluff. Pack every sentence with value.\n6. Use line breaks for readability. Use dashes for lists, not bullets or asterisks.\n7. When you spot a pattern in their data, lead with it. Data-backed insights first, then actionable advice.";
+    var chatNicheRule = !isPatrioticNiche(niche) ? "\n8. NICHE FOCUS - ALL advice, ideas, and examples must be 100% about " + niche + ". Do NOT reference military, armed forces, patriotism, British culture/identity, monarchy, empire, immigration, or politics." : "";
+    systemPrompt = "You are Creator Radar AI - an advanced content intelligence system for a " + titleCase(niche) + " content creator." + audienceCtx + crossModuleCtx + "\n\n" + goalInstructions + "\n\nINTELLIGENCE RULES:\n1. EXPLAINABLE INSIGHTS - For every recommendation you MUST explain:\n   - WHY you recommend it (what data or pattern supports it)\n   - WHAT ACTION to take (specific, not vague)\n   - EXPECTED OUTCOME vs their current average performance\n2. PATTERN RECOGNITION - Look for combinations, not just single factors. Analyse topic + timing + format + hook style together. If their story-time content outperforms tutorials, identify why and build on it.\n3. CROSS-MODULE INTELLIGENCE - Connect trending data with their performance history. A trend that matches their strengths is gold. A trend that doesn't match needs a creative bridge. Flag both.\n4. GOAL-FOCUSED - Every response must connect back to their success metric. End each recommendation with how it moves the needle on their specific goal.\n5. Be direct and conversational. No fluff. Pack every sentence with value.\n6. Use line breaks for readability. Use dashes for lists, not bullets or asterisks.\n7. When you spot a pattern in their data, lead with it. Data-backed insights first, then actionable advice." + chatNicheRule;
   }
 
   aiChatHistory.push({role: "user", content: question});
