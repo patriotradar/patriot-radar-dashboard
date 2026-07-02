@@ -6173,6 +6173,10 @@ function generateImprovedCaption(text, firstLine, hookResult, ctaResult, engResu
 
 var _gk = ["Z3NrX2xSNWpy","bnc3U3Y5OGhJ","cVBxcVRrV0dk","eWIzRllQQ1pB","aXpJcExiQm1q","OFhZWGVobzJn","Ykk="];
 var GROQ_KEY = atob(_gk.join(""));
+try {
+  var _savedGroqKey = localStorage.getItem("cr_groq_key");
+  if (_savedGroqKey && _savedGroqKey.indexOf("gsk_") === 0) GROQ_KEY = _savedGroqKey;
+} catch(e) {}
 
 function getAudienceContext() {
   var niche = (USER_NICHE || "general").toLowerCase();
@@ -6714,18 +6718,35 @@ async function aiEnhanceSection(keyword, sectionId) {
     var sysPrompt = getNicheSystemPrompt(niche);
     var prompt = "Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
-      body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.8, max_tokens: 700})
-    });
-    if (!resp.ok) {
-      var errBody = "";
-      try { errBody = await resp.text(); } catch(ex) {}
-      throw new Error("API " + resp.status + ": " + errBody.slice(0, 100));
+    var groqHeaders = {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY};
+    var groqModels = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"];
+    var content = null;
+    var lastErr = "";
+    for (var gm = 0; gm < groqModels.length && !content; gm++) {
+      var groqBody = JSON.stringify({model: groqModels[gm], messages: messages, temperature: 0.8, max_tokens: 700});
+      for (var attempt = 0; attempt < 3; attempt++) {
+        var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          method: "POST",
+          headers: groqHeaders,
+          body: groqBody
+        });
+        if (resp.status === 429 && attempt < 2) {
+          await new Promise(function(r) { setTimeout(r, 2000 * (attempt + 1)); });
+          continue;
+        }
+        if (!resp.ok) {
+          try { lastErr = await resp.text(); } catch(ex) {}
+          if (resp.status === 429 && gm < groqModels.length - 1) break;
+          throw new Error("API " + resp.status + ": " + lastErr.slice(0, 100));
+        }
+        var data = await resp.json();
+        content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+        if (content) break;
+        if (gm < groqModels.length - 1) break;
+        throw new Error("Empty AI response");
+      }
     }
-    var data = await resp.json();
-    var content = data.choices[0].message.content;
+    if (!content) throw new Error("API request failed" + (lastErr ? ": " + lastErr.slice(0, 100) : ""));
     var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
     if (cleaned.indexOf("{") > 0) cleaned = cleaned.substring(cleaned.indexOf("{"));
     if (cleaned.lastIndexOf("}") < cleaned.length - 1) cleaned = cleaned.substring(0, cleaned.lastIndexOf("}") + 1);
