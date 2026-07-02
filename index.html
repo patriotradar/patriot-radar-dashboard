@@ -4915,7 +4915,7 @@ function renderPrimary(item) {
   h += '<div class="primary-section-label">Caption</div>';
   h += '<div id="ai-caption-primary" style="display:none;font-size:13px;color:var(--white);background:rgba(0,255,136,.03);border:1px solid rgba(0,255,136,.12);padding:12px;border-radius:10px;margin-bottom:8px;line-height:1.6;cursor:pointer" onclick="copyText(\'ai-caption-primary\')"></div>';
   h += '<div id="primaryCaption" class="primary-content-box" style="font-size:13px;color:var(--muted)">' + (item.caption || "Tap AI Enhance above to generate a ready-to-post caption") + '</div>';
-  h += '<button class="copy-btn" onclick="copyText(document.getElementById(\'ai-caption-primary\').style.display!==\'none\'?\'ai-caption-primary\':\'primaryCaption\')">&#9776; Copy Caption</button>';
+  h += '<button class="copy-btn" onclick="copyText(\'ai-caption-primary\')">&#9776; Copy Caption</button>';
 
   h += '<div id="ai-engage-primary" style="display:none;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)"><div style="font-size:10px;font-weight:800;color:var(--purple);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">&#129504; AI Engagement Plays</div></div>';
 
@@ -6760,6 +6760,10 @@ function renderAIContent(ai, sectionId) {
   if (capEl && ai.caption) {
     capEl.innerHTML = ai.caption;
     capEl.style.display = "block";
+    if (sectionId === "primary") {
+      var staticCap = document.getElementById("primaryCaption");
+      if (staticCap) staticCap.style.display = "none";
+    }
   }
   var engEl = document.getElementById("ai-engage-" + sectionId);
   if (engEl && ai.engagement) {
