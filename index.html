@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://api.groq.com" crossorigin>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/screenshot-preprocess.js"></script>
 
 <style>
 :root{
@@ -6272,26 +6273,12 @@ async function aiClassifyPost(keyword, caption, metrics) {
 }
 
 async function aiExtractMetricsFromScreenshot(imageBase64) {
-  if (!GROQ_KEY) return null;
   try {
-    var resp = await fetch("/api/chat/completions", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        model: "llama-3.2-11b-vision-preview",
-        messages: [{role: "user", content: [
-          {type: "text", text: "Extract the performance metrics from this social media analytics screenshot. Look for: views, likes, comments, shares, followers gained, watch time, completion rate. Return ONLY the numbers you can see.\n\nRespond in this exact JSON format (no markdown):\n{\"views\":0,\"likes\":0,\"comments\":0,\"shares\":0,\"followers\":0,\"watchTime\":\"0:00\",\"completionRate\":0}"},
-          {type: "image_url", image_url: {url: imageBase64}}
-        ]}],
-        temperature: 0.1, max_tokens: 200
-      })
-    });
-    if (!resp.ok) return null;
-    var data = await resp.json();
-    var content = data.choices[0].message.content;
-    var cleaned = content.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
-    return JSON.parse(cleaned);
-  } catch(e) { return null; }
+    var metricsJson = await preprocessScreenshots([imageBase64]);
+    return metricsToLegacyForm(metricsJson);
+  } catch (e) {
+    return null;
+  }
 }
 
 function getAudienceModelStats() {
@@ -7976,19 +7963,21 @@ async function runCreatorAudit() {
   }
 
 
-  var thumbnailResults = [];
+  var screenshotMetrics = null;
   var postsWithImages = filledPosts.filter(function(p) { return p.image; });
   if (postsWithImages.length > 0) {
-    btn.textContent = "ANALYZING SCREENSHOTS (" + postsWithImages.length + ")...";
-    resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#128247;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Analyzing Visual Content</div><div style="font-size:11px">Processing ' + postsWithImages.length + ' analytics screenshots...</div></div>';
-    for (var ti = 0; ti < postsWithImages.length; ti++) {
-      try {
-        var thumbResult = await analyzeVideoFrame(postsWithImages[ti].image, postsWithImages[ti].caption);
-        if (thumbResult) {
-          thumbResult._postCaption = postsWithImages[ti].caption.substring(0, 80);
-          thumbnailResults.push(thumbResult);
-        }
-      } catch(e) {}
+    btn.textContent = "EXTRACTING METRICS (" + postsWithImages.length + ")...";
+    resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#128202;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Preprocessing Screenshot Metrics</div><div style="font-size:11px">Extracting views, likes, comments, shares, and saves from ' + postsWithImages.length + ' screenshot(s)...</div></div>';
+    try {
+      var screenshotImages = postsWithImages.map(function(p) { return p.image; });
+      screenshotMetrics = await preprocessScreenshots(screenshotImages);
+    } catch (e) {
+      console.warn("Screenshot preprocessing failed:", e.message);
+      screenshotMetrics = {
+        account_summary: { avg_views: null, avg_likes: null, avg_comments: null, engagement_rate: null },
+        posts: [],
+        data_quality: { confidence: "low", missing_fields: ["views", "likes", "comments", "shares", "saves"], screenshots_processed: postsWithImages.length, posts_detected: 0 }
+      };
     }
   }
 
@@ -8002,14 +7991,9 @@ async function runCreatorAudit() {
       if (p.image) line += " [analytics screenshot attached]";
       return line;
     }).join("\n");
-    var visualSummary = "";
-    if (thumbnailResults.length > 0) {
-      visualSummary = "\n\nVisual/Screenshot analysis of " + thumbnailResults.length + " images:\n";
-      for (var vi = 0; vi < thumbnailResults.length; vi++) {
-        visualSummary += "- Image " + (vi+1) + ": Visual score " + (thumbnailResults[vi].visualScore || 0) + "/100, Scroll-Stop: " + (thumbnailResults[vi].scrollStopPower || "Unknown");
-        if (thumbnailResults[vi].thumbnailAnalysis) visualSummary += ", " + thumbnailResults[vi].thumbnailAnalysis.substring(0, 150);
-        visualSummary += "\n";
-      }
+    var metricsBlock = "";
+    if (screenshotMetrics && screenshotMetrics.posts && screenshotMetrics.posts.length > 0) {
+      metricsBlock = "\n\nSCREENSHOT METRICS (preprocessed JSON — use these real engagement numbers; do not reinterpret raw screenshots):\n" + JSON.stringify(screenshotMetrics) + "\n\n";
     }
     var sorted = captionResults.slice().sort(function(a,b){ return b.totalScore - a.totalScore; });
     var postBreakdown = captionResults.map(function(cr, i) {
@@ -8028,7 +8012,7 @@ async function runCreatorAudit() {
       "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
       "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
       "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
-      (visualSummary ? "VISUALS: " + visualSummary + "\n\n" : "") +
+      (metricsBlock ? metricsBlock : "") +
       "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
       "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
       "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
@@ -8169,7 +8153,7 @@ async function runCreatorAudit() {
     detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
     formatRanking: formatRanking, topicRanking: topicRanking,
     emotionRanking: emotionRanking, hookRanking: hookRanking,
-    aiReport: aiReport, thumbnailResults: thumbnailResults,
+    aiReport: aiReport, screenshotMetrics: screenshotMetrics, thumbnailResults: [],
     allImprovements: allImprovements.slice(0, 15)
   };
   var savedAudits = JSON.parse(localStorage.getItem("cr_audits") || "[]");
