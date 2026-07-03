@@ -5,6 +5,20 @@
 
 export const DECISION_ENGINE_MARKER = "DECISION ENGINE (pre-determined";
 export const STRATEGY_ENGINE_MARKER = "STRATEGY ENGINE (pre-determined";
+export const VIRALITY_SCORING_MARKER = "VIRALITY SCORING (pre-determined";
+
+export const VIRALITY_SCORING_INSTRUCTIONS = `
+MANDATORY — PRE-DETERMINED VIRALITY RANKING (do NOT override)
+A deterministic Step 3.5 virality scoring layer has already ranked Step 3 content ideas.
+The viral_pick, ranked_content scores, and why_this_wins below are FINAL.
+
+Rules:
+- Do NOT create new content ideas — only reference the pre-ranked Step 3 ideas
+- Do NOT change viral_pick or viral_score values
+- Prioritise hookRecommendations[0] around viral_pick when present
+- contentIdeas ordering should follow ranked_content (highest viral_score first)
+- Echo why_this_wins and niche_alignment_check when rendering narrative sections
+`.trim();
 
 export const STRATEGY_ENGINE_INSTRUCTIONS = `
 MANDATORY — PRE-DETERMINED STRATEGY (do NOT override)
@@ -138,6 +152,11 @@ export function hasStrategyEngineOutput(body) {
   return user.includes(STRATEGY_ENGINE_MARKER);
 }
 
+export function hasViralityScoringOutput(body) {
+  const user = messageText(body?.messages, "user");
+  return user.includes(VIRALITY_SCORING_MARKER);
+}
+
 export function isAuditReportRequest(body) {
   const messages = body?.messages;
   if (!Array.isArray(messages) || messages.length === 0) return false;
@@ -164,9 +183,11 @@ export function augmentAuditMessages(body) {
   const systemIdx = messages.findIndex((m) => m.role === "system");
   const useDecisionEngine = hasDecisionEngineOutput(body);
   const useStrategyEngine = hasStrategyEngineOutput(body);
+  const useViralityScoring = hasViralityScoringOutput(body);
   const instructions = [
     useDecisionEngine ? DECISION_ENGINE_INSTRUCTIONS : AUDIT_STAGE_INSTRUCTIONS,
     useStrategyEngine ? STRATEGY_ENGINE_INSTRUCTIONS : null,
+    useViralityScoring ? VIRALITY_SCORING_INSTRUCTIONS : null,
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -176,7 +197,11 @@ export function augmentAuditMessages(body) {
 
   if (systemIdx >= 0) {
     const existing = messages[systemIdx].content || "";
-    if (!existing.includes(marker) && !(useStrategyEngine && existing.includes("PRE-DETERMINED STRATEGY"))) {
+    if (
+      !existing.includes(marker) &&
+      !(useStrategyEngine && existing.includes("PRE-DETERMINED STRATEGY")) &&
+      !(useViralityScoring && existing.includes("PRE-DETERMINED VIRALITY RANKING"))
+    ) {
       messages[systemIdx] = {
         ...messages[systemIdx],
         content: `${existing}\n\n${instructions}`,

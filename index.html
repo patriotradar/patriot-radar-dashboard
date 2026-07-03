@@ -13,6 +13,7 @@
 <script src="/js/screenshot-preprocess.js"></script>
 <script src="/js/decision-engine.js"></script>
 <script src="/js/strategy-engine.js"></script>
+<script src="/js/virality-scoring.js"></script>
 
 <style>
 :root{
@@ -8017,6 +8018,15 @@ async function runCreatorAudit() {
   };
   var strategyEngine = runStrategyEngine(accountDataForStrategy, decisionEngine);
 
+  var step1SignalsForVirality = {
+    account_summary: screenshotMetrics.account_summary,
+    top_theme: topicRanking[0] ? topicRanking[0].topic : null,
+    top_format: formatRanking[0] ? formatRanking[0].format : null,
+    top_driver: emotionRanking[0] ? emotionRanking[0].driver : null,
+    top_post_topics: (screenshotMetrics.posts || []).map(function(p) { return p.topic; }).filter(Boolean)
+  };
+  var viralityScoring = runViralityScoring(strategyEngine, niche, step1SignalsForVirality);
+
   btn.textContent = "GENERATING INTELLIGENCE REPORT...";
   resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#129504;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Building Audience Intelligence Report</div><div style="font-size:11px">Analyzing audience psychology, behavior patterns, and content opportunities...</div></div>';
 
@@ -8033,6 +8043,7 @@ async function runCreatorAudit() {
     }
     var decisionBlock = "\n\nDECISION ENGINE (pre-determined — do not override):\n" + JSON.stringify(decisionEngine) + "\n\n";
     var strategyBlock = "\n\nSTRATEGY ENGINE (pre-determined — do not override):\n" + JSON.stringify(strategyEngine) + "\n\n";
+    var viralityBlock = "\n\nVIRALITY SCORING (pre-determined — do not override):\n" + JSON.stringify(viralityScoring) + "\n\n";
     var sorted = captionResults.slice().sort(function(a,b){ return b.totalScore - a.totalScore; });
     var postBreakdown = captionResults.map(function(cr, i) {
       var firstLine = cr.text.split(/\n/)[0].substring(0, 100);
@@ -8050,7 +8061,7 @@ async function runCreatorAudit() {
       "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
       "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
       "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
-      metricsBlock + decisionBlock + strategyBlock +
+      metricsBlock + decisionBlock + strategyBlock + viralityBlock +
       "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
       "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
       "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
@@ -8191,7 +8202,7 @@ async function runCreatorAudit() {
     detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
     formatRanking: formatRanking, topicRanking: topicRanking,
     emotionRanking: emotionRanking, hookRanking: hookRanking,
-    aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, strategyEngine: strategyEngine, thumbnailResults: [],
+    aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, strategyEngine: strategyEngine, viralityScoring: viralityScoring, thumbnailResults: [],
     allImprovements: allImprovements.slice(0, 15)
   };
   var savedAudits = JSON.parse(localStorage.getItem("cr_audits") || "[]");
