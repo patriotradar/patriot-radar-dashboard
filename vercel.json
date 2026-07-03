@@ -2,6 +2,9 @@
   "functions": {
     "api/chat/completions.js": {
       "maxDuration": 60
+    },
+    "api/screenshots/preprocess.js": {
+      "maxDuration": 60
     }
   }
 }
