@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Audience Intelligence Report | Creator Radar</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/js/screenshot-preprocess.js"></script>
+<script src="/js/decision-engine.js"></script>
+<script src="/js/strategy-engine.js"></script>
+<script src="/js/virality-scoring.js"></script>
 <style>
 :root {
   --bg: #030504;
@@ -1323,7 +1327,16 @@ function goToStep(n) {
   document.getElementById("apply").scrollIntoView({behavior: "smooth", block: "start"});
 }
 
-function goToPaymentStep() {
+function readFileAsDataURL(file) {
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) { resolve(e.target.result); };
+    reader.onerror = function() { resolve(null); };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function goToPaymentStep() {
   var handle = (document.getElementById("appHandle").value || "").trim();
   var platform = document.getElementById("appPlatform").value;
   var niche = (document.getElementById("appNiche").value || "").trim();
@@ -1347,6 +1360,16 @@ function goToPaymentStep() {
     if (c) captions.push(c);
   }
   if (captions.length === 0) { msg.innerHTML = '<span style="color:#ff4757">Please paste at least one caption.</span>'; return; }
+
+  var screenshots = [];
+  for (var si = 1; si <= 5; si++) {
+    var shotInput = document.getElementById("appScreenshot" + si);
+    if (shotInput && shotInput.files && shotInput.files[0]) {
+      var dataUrl = await readFileAsDataURL(shotInput.files[0]);
+      if (dataUrl) screenshots.push(dataUrl);
+    }
+  }
+
   msg.innerHTML = "";
 
   pendingFormData = {
@@ -1356,6 +1379,7 @@ function goToPaymentStep() {
     period: (document.querySelector('input[name="appPeriod"]:checked') || {}).value || "28 Days",
     challenge: challenge,
     captions: captions,
+    screenshots: screenshots,
     referral_code: referralCode,
     accountMode: accountMode,
     businessName: accountMode === "business" ? (document.getElementById("appBusinessName").value || "").trim() : "",
@@ -1903,6 +1927,52 @@ async function runAutoAudit(formData) {
 
     setTarget(50, statusMsgs[msgIdx++ % statusMsgs.length]);
 
+    var screenshotMetrics = null;
+    if (formData.screenshots && formData.screenshots.length > 0) {
+      setTarget(45, "Preprocessing " + formData.screenshots.length + " screenshot(s)...");
+      try {
+        screenshotMetrics = await preprocessScreenshots(formData.screenshots);
+      } catch (e) {
+        console.warn("Screenshot preprocessing failed:", e.message);
+        screenshotMetrics = {
+          account_summary: { avg_views: null, avg_likes: null, avg_comments: null, engagement_rate: null },
+          posts: [],
+          data_quality: { confidence: "low", missing_fields: ["views", "likes", "comments", "shares", "saves"], screenshots_processed: formData.screenshots.length, posts_detected: 0 }
+        };
+      }
+    } else {
+      screenshotMetrics = {
+        account_summary: { avg_views: null, avg_likes: null, avg_comments: null, engagement_rate: null },
+        posts: [],
+        data_quality: { confidence: "low", missing_fields: ["views", "likes", "comments", "shares", "saves"], screenshots_processed: 0, posts_detected: 0 }
+      };
+    }
+
+    var decisionEngine = runDecisionEngine(screenshotMetrics);
+
+    var accountDataForStrategy = {
+      account_summary: screenshotMetrics.account_summary,
+      posts: screenshotMetrics.posts || [],
+      data_quality: screenshotMetrics.data_quality,
+      niche: formData.niche,
+      platform: formData.platform,
+      top_format: formatRanking[0] ? formatRanking[0].format : null,
+      top_theme: topicRanking[0] ? topicRanking[0].topic : null,
+      top_driver: emotionRanking[0] ? emotionRanking[0].driver : null
+    };
+    var strategyEngine = runStrategyEngine(accountDataForStrategy, decisionEngine);
+
+    var step1SignalsForVirality = {
+      account_summary: screenshotMetrics.account_summary,
+      top_theme: topicRanking[0] ? topicRanking[0].topic : null,
+      top_format: formatRanking[0] ? formatRanking[0].format : null,
+      top_driver: emotionRanking[0] ? emotionRanking[0].driver : null,
+      top_post_topics: (screenshotMetrics.posts || []).map(function(p) { return p.topic; }).filter(Boolean)
+    };
+    var viralityScoring = runViralityScoring(strategyEngine, formData.niche, step1SignalsForVirality);
+
+    setTarget(55, statusMsgs[msgIdx++ % statusMsgs.length]);
+
     var aiReport = null;
     if (GROQ_KEY) {
       var creatorName = formData.handle || formData.name;
@@ -1917,6 +1987,13 @@ async function runAutoAudit(formData) {
       var _nicheCtx = formData.niche || "content";
       var isBiz = formData.accountMode === "business";
       var bizCtx = isBiz ? ("\nBUSINESS: " + formData.businessName + " | TYPE: " + formData.businessType + " | LOCATION: " + formData.businessLocation) : "";
+      var metricsBlock = "";
+      if (screenshotMetrics && screenshotMetrics.posts && screenshotMetrics.posts.length > 0) {
+        metricsBlock = "\n\nSCREENSHOT METRICS (preprocessed JSON — use these real engagement numbers; do not reinterpret raw screenshots):\n" + JSON.stringify(screenshotMetrics) + "\n\n";
+      }
+      var decisionBlock = "\n\nDECISION ENGINE (pre-determined — do not override):\n" + JSON.stringify(decisionEngine) + "\n\n";
+      var strategyBlock = "\n\nSTRATEGY ENGINE (pre-determined — do not override):\n" + JSON.stringify(strategyEngine) + "\n\n";
+      var viralityBlock = "\n\nVIRALITY SCORING (pre-determined — do not override):\n" + JSON.stringify(viralityScoring) + "\n\n";
       var systemMsg, userMsg;
       if (isBiz) {
         systemMsg = "You are a sharp local business social media strategist analyzing a " + formData.businessType.replace(/_/g," ") + " business called " + formData.businessName + " in " + formData.businessLocation + ". You specialise in helping local businesses use " + (formData.platform||"social media") + " to attract customers in their area.\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of'.\n- Frame EVERYTHING through the lens of CUSTOMER ACQUISITION - how does this content bring paying customers through the door?\n- Reference the business's LOCATION - suggest geo-tags, local hashtags, area-specific content angles.\n- Analyse what makes local customers TRUST, BOOK, or VISIT based on social media content.\n- Quote their actual posts. Explain what would make a local person choose them over competitors.\n- Think like a customer in " + formData.businessLocation + " scrolling " + (formData.platform||"social media") + " looking for " + _nicheCtx + " services.";
@@ -1926,6 +2003,7 @@ async function runAutoAudit(formData) {
           "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
           "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
           "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
+          metricsBlock + decisionBlock + strategyBlock + viralityBlock +
           "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
           "BAD EXAMPLE (do NOT write like this): 'Engagement scores 65/100, indicating moderate audience interaction'\n" +
           "GOOD EXAMPLE (write like this): 'Your before-and-after transformation posts are your strongest customer magnets - they let people in " + formData.businessLocation + " see real results, which builds trust faster than any ad'\n\n" +
@@ -1938,6 +2016,7 @@ async function runAutoAudit(formData) {
           "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
           "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
           "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
+          metricsBlock + decisionBlock + strategyBlock + viralityBlock +
           "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
           "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
           "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
@@ -2082,7 +2161,7 @@ async function runAutoAudit(formData) {
       detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
       formatRanking: formatRanking, topicRanking: topicRanking,
       emotionRanking: emotionRanking, hookRanking: hookRanking,
-      aiReport: aiReport, thumbnailResults: [],
+      aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, strategyEngine: strategyEngine, viralityScoring: viralityScoring, thumbnailResults: [],
       allImprovements: allImprovements.slice(0, 15),
       accountMode: formData.accountMode || "creator",
       businessName: formData.businessName || "",
