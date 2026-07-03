@@ -6258,9 +6258,9 @@ async function aiClassifyPost(keyword, caption, metrics) {
   var prompt = "You are an audience psychology expert. Classify this social media post into exactly 5 dimensions. The goal is to understand WHY the audience engages, not just WHAT the content is about.\n\nCreator niche: " + niche + "\nKeyword/Topic: " + keyword + "\n" + (caption ? "Caption: " + caption + "\n" : "") + "Metrics: " + metrics.views + " views, " + (metrics.likes || 0) + " likes, " + (metrics.comments || 0) + " comments, " + (metrics.shares || 0) + " shares\n\nClassify into:\n1. AUDIENCE_DRIVER - The deep psychological motivation that makes this content resonate. What fundamental human need does it tap into? Examples: Identity, Pride, Tradition, Community, Duty, Aspiration, Belonging, Curiosity, Self-improvement, Escapism, Justice, Nostalgia, Achievement, Security, Rebellion, Status. Pick the PRIMARY driver.\n2. TOPIC - The broad topic category (e.g. Remembrance, British Identity, Fitness Tips, Cooking, Tech Reviews)\n3. SUBCATEGORY - The specific sub-topic (e.g. for Remembrance: Schools, Poppy, Veterans. For Fitness: HIIT, Yoga, Nutrition)\n4. FORMAT - The content format used (Yes/No Debate, A/B Choice, Open Question, Educational, Storytelling, Current Event, Myth Busting, Tutorial, Reaction, Hot Take, Listicle)\n5. EMOTIONAL_TRIGGER - The primary emotion it triggers in the viewer (Pride, Nostalgia, Outrage, Curiosity, Community, Identity, Humor, Inspiration, Fear, Surprise, Duty, Empathy)\n\nRespond in this exact JSON format (no markdown):\n{\"audienceDriver\":\"Driver Name\",\"topic\":\"Topic Name\",\"subcategory\":\"Subcategory Name\",\"format\":\"Format Name\",\"emotionalTrigger\":\"Emotion Name\"}";
 
   try {
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.3, max_tokens: 200})
     });
     if (!resp.ok) return null;
@@ -6274,9 +6274,9 @@ async function aiClassifyPost(keyword, caption, metrics) {
 async function aiExtractMetricsFromScreenshot(imageBase64) {
   if (!GROQ_KEY) return null;
   try {
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         model: "llama-3.2-11b-vision-preview",
         messages: [{role: "user", content: [
@@ -6412,9 +6412,9 @@ async function aiClassifyTrend(keyword) {
   var niche = USER_NICHE || "general";
   var prompt = "You are an audience psychology expert. A trending topic has been found: \"" + keyword + "\"\nCreator niche: " + niche + "\n\nClassify this trend into psychological dimensions so we can match it against a creator's audience profile.\n\n1. AUDIENCE_DRIVERS - What deep psychological motivations could this topic tap into? Pick 1-3 from: Identity, Pride, Tradition, Community, Duty, Aspiration, Belonging, Curiosity, Self-improvement, Escapism, Justice, Nostalgia, Achievement, Security, Rebellion, Status\n2. EMOTIONS - What emotions could this trigger? Pick 1-3 from: Pride, Nostalgia, Outrage, Curiosity, Community, Identity, Humor, Inspiration, Fear, Surprise, Duty, Empathy\n3. TOPIC - Broad category\n4. SUBCATEGORY - Specific sub-topic\n5. FORMAT_POTENTIAL - Best content formats for this trend. Pick 1-2 from: Yes/No Debate, A/B Choice, Educational, Storytelling, Current Event, Myth Busting, Tutorial, Reaction, Hot Take, Listicle\n\nRespond in this exact JSON format (no markdown):\n{\"audienceDrivers\":[\"Driver1\",\"Driver2\"],\"emotions\":[\"Emotion1\",\"Emotion2\"],\"topic\":\"Topic\",\"subcategory\":\"Subcategory\",\"formatPotential\":[\"Format1\",\"Format2\"]}";
   try {
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.1-8b-instant", messages: [{role: "user", content: prompt}], temperature: 0.3, max_tokens: 250})
     });
     if (!resp.ok) return null;
@@ -6656,9 +6656,9 @@ async function getAIAnalysis(caption, niche) {
     var sysPrompt = getNicheSystemPrompt(niche);
     var prompt = "You are a viral content expert. Analyze this social media caption for " + roleCtx + "." + audienceCtx + " Be specific and actionable.\n\nCaption: \"" + caption.replace(/"/g, "'") + "\"\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"analysis\":\"2-3 sentences about what works and what doesn't in this caption. Be specific about the content, not generic advice.\",\"improved\":\"A rewritten, improved version of this exact caption that would perform better. Keep the same topic but make the hook stronger, add engagement triggers, and add a CTA. Make it sound natural, not robotic.\",\"ideas\":[\"Idea 1 - directly related to the analyzed content but a different angle\",\"Idea 2 - a DIFFERENT topic within the same broader niche that would appeal to the same audience\",\"Idea 3 - a trending or viral format idea adapted to this creator's niche (not about the same specific topic)\"]}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 600})
     });
     if (!resp.ok) return null;
@@ -6739,9 +6739,9 @@ async function aiEnhanceSection(keyword, sectionId) {
     var sysPrompt = getNicheSystemPrompt(niche);
     var prompt = "Generate content for " + roleCtx2 + " about the topic: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"hooks\":[\"Hook 1 (under 80 chars, attention-grabbing opening line)\",\"Hook 2\",\"Hook 3\",\"Hook 4\",\"Hook 5\"],\"caption\":\"A full, ready-to-post TikTok/Instagram caption about this topic. 3-5 sentences. Include emoji. End with a question to drive comments.\",\"engagement\":{\"poll\":\"A poll question about this topic\",\"question\":\"An open-ended question to ask the audience\",\"cta\":\"A specific call to action\"},\"hashtags\":[\"hashtag1\",\"hashtag2\",\"hashtag3\",\"hashtag4\",\"hashtag5\",\"hashtag6\",\"hashtag7\",\"hashtag8\"]}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.8, max_tokens: 700})
     });
     if (!resp.ok) {
@@ -6833,9 +6833,9 @@ async function aiTrendInsights() {
       return (i+1)+". "+k+" (Viral: "+r.viral_score+", Rise: "+r.rise_percent+"%)";
     }).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"trends\":[{\"keyword\":\"keyword\",\"whyTrending\":\"One sentence on why this is trending right now\",\"worthIt\":true,\"worthReason\":\"Why this is/isn't worth posting about\",\"videoIdea\":\"A specific, ready-to-film video concept\",\"bestTime\":\"Post now / Post today / Can wait\"}]}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 900})
     });
     if (!resp.ok) { el.innerHTML = ""; return; }
@@ -6939,9 +6939,9 @@ async function aiContentAngles(results) {
     var sysPrompt = getNicheSystemPrompt(USER_NICHE || "general");
     var prompt = "You are a viral content strategist." + audienceCtx + perfSummary + "\n\nFor each of these trending keywords, generate 3 different content angles. Each angle should be a specific video/post idea, NOT just the keyword. Score each angle from 1-10 for predicted engagement based on the creator's niche and audience data.\n\nKeywords:\n" + topKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"keywords\":[{\"keyword\":\"the keyword\",\"angles\":[{\"type\":\"Debate\",\"hook\":\"Specific hook/title for this angle (under 80 chars)\",\"why\":\"Why this angle works for this audience\",\"engagement\":8,\"bestFor\":\"comments\"},{\"type\":\"Storytelling\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":7,\"bestFor\":\"shares\"},{\"type\":\"Educational\",\"hook\":\"...\",\"why\":\"...\",\"engagement\":6,\"bestFor\":\"saves\"}],\"recommended\":0}]}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 1200})
     });
     if (!resp.ok) { el.innerHTML = ""; return; }
@@ -7015,9 +7015,9 @@ async function aiValidateKeywords(results, emerging) {
     var sysPrompt = getNicheSystemPrompt(USER_NICHE || "general");
     var prompt = "You are a social media content expert. " + roleCtx3 + " has these trending keywords." + audienceCtx + "\n\nKeywords:\n" + allKeywords.map(function(k,i){return (i+1)+". "+k}).join("\n") + "\n\nRespond in this exact JSON format (no markdown):\n{\"ratings\":[{\"keyword\":\"keyword text\",\"score\":8,\"reason\":\"One sentence why this is good/bad for content\",\"suggestion\":\"Better angle or title if the keyword is weak\"}]}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.5, max_tokens: 800})
     });
     if (!resp.ok) return;
@@ -7079,9 +7079,9 @@ async function aiEnhancePlatform(keyword) {
     var sysPrompt = getNicheSystemPrompt(niche);
     var prompt = "You are a viral social media expert. Generate unique, ready-to-post captions for " + roleCtx4 + " about: " + keyword + "." + audienceCtx + "\n\nRespond in this exact JSON format (no markdown, just raw JSON):\n{\"tiktok\":\"A TikTok caption (2-3 sentences, casual, include emoji, end with a question, include 5 hashtags)\",\"instagram\":\"An Instagram caption (4-5 sentences, slightly longer, include CTA to save/share, include 8 hashtags)\",\"youtube\":\"A YouTube Shorts description (2-3 sentences, include keywords, include CTA to subscribe)\",\"twitter\":\"A tweet or thread starter about this topic (under 280 chars, punchy, include 2 hashtags)\"}";
     var messages = sysPrompt ? [{role: "system", content: sysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.8, max_tokens: 600})
     });
     if (!resp.ok) throw new Error("API error");
@@ -7173,9 +7173,9 @@ async function runPrePostOptimizer() {
 
   try {
     var prePostMessages = prePostSysPrompt ? [{role: "system", content: prePostSysPrompt}, {role: "user", content: prompt}] : [{role: "user", content: prompt}];
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: prePostMessages, temperature: 0.7, max_tokens: 1500})
     });
     if (!resp.ok) throw new Error("API error");
@@ -7326,9 +7326,9 @@ async function analyzeVideoFrame(imageBase64, captionText) {
   var audienceCtx = getEnhancedAudienceContext();
   var textPart = captionText ? "\n\nThe creator's draft caption/script for this content: \"" + captionText + "\"" : "";
   try {
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         model: "llama-3.2-11b-vision-preview",
         messages: [{role: "user", content: [
@@ -8038,9 +8038,9 @@ async function runCreatorAudit() {
     for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
       try {
         if (attempt > 0) btn.textContent = "RETRYING AI ANALYSIS (" + (attempt+1) + "/" + maxRetries + ")...";
-        var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        var resp = await fetch("/api/chat/completions", {
           method: "POST",
-          headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+          headers: {"Content-Type": "application/json"},
           body: groqBody
         });
         if (resp.ok) {
@@ -9004,9 +9004,9 @@ async function sendAiChat() {
   var messages = [{role: "system", content: systemPrompt}].concat(aiChatHistory);
 
   try {
-    var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    var resp = await fetch("/api/chat/completions", {
       method: "POST",
-      headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({model: "llama-3.3-70b-versatile", messages: messages, temperature: 0.7, max_tokens: 1800})
     });
     var thinking = document.getElementById("aiChatThinking");

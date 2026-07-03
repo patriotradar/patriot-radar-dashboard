@@ -1947,9 +1947,9 @@ async function runAutoAudit(formData) {
       for (var attempt = 0; attempt < maxRetries && !aiReport; attempt++) {
         try {
           if (attempt > 0) setTarget(60 + attempt * 5, "Retrying AI analysis (attempt " + (attempt+1) + ")...");
-          var resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+          var resp = await fetch("/api/chat/completions", {
             method: "POST",
-            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + GROQ_KEY},
+            headers: {"Content-Type": "application/json"},
             body: groqBody
           });
           if (resp.ok) {
