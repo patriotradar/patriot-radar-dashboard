@@ -21,6 +21,30 @@ function mapModel(clientModel) {
   return DEFAULT_MODEL;
 }
 
+/** Accept simple { caption, niche } bodies for smoke tests; OpenAI shape passes through. */
+function normalizeBody(body) {
+  if (body.messages) return body;
+  if (body.caption != null && body.niche != null) {
+    return {
+      model: DEFAULT_MODEL,
+      messages: [
+        {
+          role: "user",
+          content:
+            "Caption: " +
+            body.caption +
+            "\nNiche: " +
+            body.niche +
+            "\n\nBriefly describe the audience and content angle for this post.",
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 300,
+    };
+  }
+  return body;
+}
+
 export default async function handler(req, res) {
   const origin = req.headers.origin || "";
 
@@ -57,9 +81,10 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: { message: "Request body required" } });
   }
 
+  const normalized = normalizeBody(body);
   const payload = {
-    ...body,
-    model: mapModel(body.model),
+    ...normalized,
+    model: mapModel(normalized.model),
   };
 
   try {
