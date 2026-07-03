@@ -12,6 +12,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/js/screenshot-preprocess.js"></script>
 <script src="/js/decision-engine.js"></script>
+<script src="/js/strategy-engine.js"></script>
 
 <style>
 :root{
@@ -8004,6 +8005,18 @@ async function runCreatorAudit() {
 
   var decisionEngine = runDecisionEngine(screenshotMetrics);
 
+  var accountDataForStrategy = {
+    account_summary: screenshotMetrics.account_summary,
+    posts: screenshotMetrics.posts || [],
+    data_quality: screenshotMetrics.data_quality,
+    niche: niche,
+    platform: platform,
+    top_format: formatRanking[0] ? formatRanking[0].format : null,
+    top_theme: topicRanking[0] ? topicRanking[0].topic : null,
+    top_driver: emotionRanking[0] ? emotionRanking[0].driver : null
+  };
+  var strategyEngine = runStrategyEngine(accountDataForStrategy, decisionEngine);
+
   btn.textContent = "GENERATING INTELLIGENCE REPORT...";
   resultDiv.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)"><div style="font-size:28px;margin-bottom:10px">&#129504;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Building Audience Intelligence Report</div><div style="font-size:11px">Analyzing audience psychology, behavior patterns, and content opportunities...</div></div>';
 
@@ -8019,6 +8032,7 @@ async function runCreatorAudit() {
       metricsBlock = "\n\nSCREENSHOT METRICS (preprocessed JSON — use these real engagement numbers; do not reinterpret raw screenshots):\n" + JSON.stringify(screenshotMetrics) + "\n\n";
     }
     var decisionBlock = "\n\nDECISION ENGINE (pre-determined — do not override):\n" + JSON.stringify(decisionEngine) + "\n\n";
+    var strategyBlock = "\n\nSTRATEGY ENGINE (pre-determined — do not override):\n" + JSON.stringify(strategyEngine) + "\n\n";
     var sorted = captionResults.slice().sort(function(a,b){ return b.totalScore - a.totalScore; });
     var postBreakdown = captionResults.map(function(cr, i) {
       var firstLine = cr.text.split(/\n/)[0].substring(0, 100);
@@ -8036,7 +8050,7 @@ async function runCreatorAudit() {
       "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
       "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
       "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
-      metricsBlock + decisionBlock +
+      metricsBlock + decisionBlock + strategyBlock +
       "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
       "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
       "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
@@ -8177,7 +8191,7 @@ async function runCreatorAudit() {
     detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
     formatRanking: formatRanking, topicRanking: topicRanking,
     emotionRanking: emotionRanking, hookRanking: hookRanking,
-    aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, thumbnailResults: [],
+    aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, strategyEngine: strategyEngine, thumbnailResults: [],
     allImprovements: allImprovements.slice(0, 15)
   };
   var savedAudits = JSON.parse(localStorage.getItem("cr_audits") || "[]");

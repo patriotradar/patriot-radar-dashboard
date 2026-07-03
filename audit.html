@@ -7,6 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="/js/screenshot-preprocess.js"></script>
 <script src="/js/decision-engine.js"></script>
+<script src="/js/strategy-engine.js"></script>
 <style>
 :root {
   --bg: #030504;
@@ -1948,6 +1949,18 @@ async function runAutoAudit(formData) {
 
     var decisionEngine = runDecisionEngine(screenshotMetrics);
 
+    var accountDataForStrategy = {
+      account_summary: screenshotMetrics.account_summary,
+      posts: screenshotMetrics.posts || [],
+      data_quality: screenshotMetrics.data_quality,
+      niche: formData.niche,
+      platform: formData.platform,
+      top_format: formatRanking[0] ? formatRanking[0].format : null,
+      top_theme: topicRanking[0] ? topicRanking[0].topic : null,
+      top_driver: emotionRanking[0] ? emotionRanking[0].driver : null
+    };
+    var strategyEngine = runStrategyEngine(accountDataForStrategy, decisionEngine);
+
     setTarget(55, statusMsgs[msgIdx++ % statusMsgs.length]);
 
     var aiReport = null;
@@ -1969,6 +1982,7 @@ async function runAutoAudit(formData) {
         metricsBlock = "\n\nSCREENSHOT METRICS (preprocessed JSON — use these real engagement numbers; do not reinterpret raw screenshots):\n" + JSON.stringify(screenshotMetrics) + "\n\n";
       }
       var decisionBlock = "\n\nDECISION ENGINE (pre-determined — do not override):\n" + JSON.stringify(decisionEngine) + "\n\n";
+      var strategyBlock = "\n\nSTRATEGY ENGINE (pre-determined — do not override):\n" + JSON.stringify(strategyEngine) + "\n\n";
       var systemMsg, userMsg;
       if (isBiz) {
         systemMsg = "You are a sharp local business social media strategist analyzing a " + formData.businessType.replace(/_/g," ") + " business called " + formData.businessName + " in " + formData.businessLocation + ". You specialise in helping local businesses use " + (formData.platform||"social media") + " to attract customers in their area.\n\nRULES:\n- NEVER just list scores. Never say 'indicating a moderate level of'.\n- Frame EVERYTHING through the lens of CUSTOMER ACQUISITION - how does this content bring paying customers through the door?\n- Reference the business's LOCATION - suggest geo-tags, local hashtags, area-specific content angles.\n- Analyse what makes local customers TRUST, BOOK, or VISIT based on social media content.\n- Quote their actual posts. Explain what would make a local person choose them over competitors.\n- Think like a customer in " + formData.businessLocation + " scrolling " + (formData.platform||"social media") + " looking for " + _nicheCtx + " services.";
@@ -1978,7 +1992,7 @@ async function runAutoAudit(formData) {
           "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
           "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
           "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
-          metricsBlock + decisionBlock +
+          metricsBlock + decisionBlock + strategyBlock +
           "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
           "BAD EXAMPLE (do NOT write like this): 'Engagement scores 65/100, indicating moderate audience interaction'\n" +
           "GOOD EXAMPLE (write like this): 'Your before-and-after transformation posts are your strongest customer magnets - they let people in " + formData.businessLocation + " see real results, which builds trust faster than any ad'\n\n" +
@@ -1991,7 +2005,7 @@ async function runAutoAudit(formData) {
           "\nPOST SCORES:\n" + postBreakdown + "\n\n" +
           "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
           "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
-          metricsBlock + decisionBlock +
+          metricsBlock + decisionBlock + strategyBlock +
           "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
           "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
           "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
@@ -2136,7 +2150,7 @@ async function runAutoAudit(formData) {
       detectedFormats: detectedFormats, detectedEmotions: detectedEmotions, detectedTopics: detectedTopics,
       formatRanking: formatRanking, topicRanking: topicRanking,
       emotionRanking: emotionRanking, hookRanking: hookRanking,
-      aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, thumbnailResults: [],
+      aiReport: aiReport, screenshotMetrics: screenshotMetrics, decisionEngine: decisionEngine, strategyEngine: strategyEngine, thumbnailResults: [],
       allImprovements: allImprovements.slice(0, 15),
       accountMode: formData.accountMode || "creator",
       businessName: formData.businessName || "",

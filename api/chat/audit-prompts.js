@@ -4,6 +4,26 @@
  */
 
 export const DECISION_ENGINE_MARKER = "DECISION ENGINE (pre-determined";
+export const STRATEGY_ENGINE_MARKER = "STRATEGY ENGINE (pre-determined";
+
+export const STRATEGY_ENGINE_INSTRUCTIONS = `
+MANDATORY — PRE-DETERMINED STRATEGY (do NOT override)
+A deterministic Step 3 strategy engine has already produced the execution plan BEFORE this prompt.
+The strategy_type, diagnosis, action_plan, content_ideas, and goal below are FINAL execution logic.
+
+Rules:
+- Do NOT replace, reclassify, or contradict the pre-determined strategy
+- Map "thirtyDayPlan" week1–week4 directly from the pre-determined action_plan (week1–week4)
+- Map "contentIdeas" from the pre-determined content_ideas (preserve idea, format, and focus/driver fields)
+- "headline" and "growthVerdict" must align with strategy_type and diagnosis — do not invent a different strategy
+- If engine is DISTRIBUTION: do NOT add hook-optimisation or retention micro-tactics
+- If engine is GROWTH: frame all advice around hooks, retention, scaling winners, and post variations
+
+Also set when present in the schema:
+- "strategy_type": MUST match pre-determined strategy_type
+- "diagnosis": echo the pre-determined diagnosis (you may add one supporting sentence, not a new diagnosis)
+- "goal": MUST match the pre-determined goal
+`.trim();
 
 export const DECISION_ENGINE_INSTRUCTIONS = `
 MANDATORY — PRE-DETERMINED STAGE & ENGINE (do NOT override)
@@ -113,6 +133,11 @@ export function hasDecisionEngineOutput(body) {
   return user.includes(DECISION_ENGINE_MARKER);
 }
 
+export function hasStrategyEngineOutput(body) {
+  const user = messageText(body?.messages, "user");
+  return user.includes(STRATEGY_ENGINE_MARKER);
+}
+
 export function isAuditReportRequest(body) {
   const messages = body?.messages;
   if (!Array.isArray(messages) || messages.length === 0) return false;
@@ -138,16 +163,20 @@ export function augmentAuditMessages(body) {
   const messages = body.messages.map((m) => ({ ...m }));
   const systemIdx = messages.findIndex((m) => m.role === "system");
   const useDecisionEngine = hasDecisionEngineOutput(body);
-  const instructions = useDecisionEngine
-    ? DECISION_ENGINE_INSTRUCTIONS
-    : AUDIT_STAGE_INSTRUCTIONS;
+  const useStrategyEngine = hasStrategyEngineOutput(body);
+  const instructions = [
+    useDecisionEngine ? DECISION_ENGINE_INSTRUCTIONS : AUDIT_STAGE_INSTRUCTIONS,
+    useStrategyEngine ? STRATEGY_ENGINE_INSTRUCTIONS : null,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
   const marker = useDecisionEngine
     ? "PRE-DETERMINED STAGE & ENGINE"
     : "MANDATORY FIRST STEP — ACCOUNT STAGE CLASSIFICATION";
 
   if (systemIdx >= 0) {
     const existing = messages[systemIdx].content || "";
-    if (!existing.includes(marker)) {
+    if (!existing.includes(marker) && !(useStrategyEngine && existing.includes("PRE-DETERMINED STRATEGY"))) {
       messages[systemIdx] = {
         ...messages[systemIdx],
         content: `${existing}\n\n${instructions}`,
