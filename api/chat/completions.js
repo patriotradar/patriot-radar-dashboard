@@ -1,3 +1,5 @@
+import { augmentAuditMessages } from "./audit-prompts.js";
+
 const GEMINI_OPENAI_URL =
   "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
@@ -58,7 +60,7 @@ export default async function handler(req, res) {
   }
 
   const payload = {
-    ...body,
+    ...augmentAuditMessages(body),
     model: mapModel(body.model),
   };
 
