@@ -1,9 +1,11 @@
 import { augmentAuditMessages } from "./audit-prompts.js";
 
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GEMINI_OPENAI_URL =
   "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 
 const DEFAULT_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const GROQ_TIMEOUT_MS = 30000;
 
 function setCorsHeaders(res, origin) {
   const allowed = process.env.ALLOWED_ORIGIN || "*";
@@ -23,6 +25,24 @@ function mapModel(clientModel) {
   return DEFAULT_MODEL;
 }
 
+async function callProvider(url, apiKey, payload, timeoutMs) {
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify(payload),
+  };
+  if (timeoutMs) {
+    options.signal = AbortSignal.timeout(timeoutMs);
+  }
+
+  const upstream = await fetch(url, options);
+  const text = await upstream.text();
+  return { status: upstream.status, text };
+}
+
 export default async function handler(req, res) {
   const origin = req.headers.origin || "";
 
@@ -36,12 +56,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: { message: "Method not allowed" } });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
+  const groqKey = process.env.GROQ_API_KEY;
+  const geminiKey = process.env.GEMINI_API_KEY;
+  if (!groqKey && !geminiKey) {
     setCorsHeaders(res, origin);
-    return res
-      .status(500)
-      .json({ error: { message: "GEMINI_API_KEY is not configured" } });
+    return res.status(500).json({
+      error: { message: "GROQ_API_KEY or GEMINI_API_KEY must be configured" },
+    });
   }
 
   setCorsHeaders(res, origin);
@@ -59,25 +80,43 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: { message: "Request body required" } });
   }
 
+  if (groqKey) {
+    try {
+      const groqResult = await callProvider(GROQ_URL, groqKey, body, GROQ_TIMEOUT_MS);
+      if (groqResult.status === 200) {
+        res.status(200);
+        res.setHeader("Content-Type", "application/json");
+        return res.end(groqResult.text);
+      }
+      console.error(
+        "Groq upstream failed:",
+        groqResult.status,
+        groqResult.text.slice(0, 200)
+      );
+    } catch (err) {
+      console.error("Groq proxy error:", err);
+    }
+  }
+
+  if (!geminiKey) {
+    return res.status(502).json({ error: { message: "Upstream request failed" } });
+  }
+
   const payload = {
     ...augmentAuditMessages(body),
     model: mapModel(body.model),
   };
 
   try {
-    const upstream = await fetch(GEMINI_OPENAI_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const text = await upstream.text();
-    res.status(upstream.status);
+    const geminiResult = await callProvider(
+      GEMINI_OPENAI_URL,
+      geminiKey,
+      payload,
+      null
+    );
+    res.status(geminiResult.status);
     res.setHeader("Content-Type", "application/json");
-    return res.end(text);
+    return res.end(geminiResult.text);
   } catch (err) {
     console.error("Gemini proxy error:", err);
     return res.status(502).json({ error: { message: "Upstream request failed" } });
