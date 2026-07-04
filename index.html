@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://api.groq.com" crossorigin>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/api/public-config.js"></script>
 
 <style>
 :root{
@@ -1367,6 +1368,7 @@ input[type=range]::-webkit-slider-thumb{
       <div id="aiTrendInsights"></div>
       <div id="themeAnalysis"></div>
       <div id="intelligenceFeed"></div>
+      <div id="tiktokTrendIntelligence"></div>
     </div>
 
     <div id="tab-discovery" class="tab-content">
@@ -1754,9 +1756,147 @@ input[type=range]::-webkit-slider-thumb{
 </div>
 
 <script>
-var SUPABASE_URL = "https://kdwqnlgdanzigpdwyqbh.supabase.co";
-var SUPABASE_ANON_KEY = "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
+var SUPABASE_URL = (window.__SUPABASE_CONFIG__ && window.__SUPABASE_CONFIG__.supabaseUrl) || "https://kdwqnlgdanzigpdwyqbh.supabase.co";
+var SUPABASE_ANON_KEY = (window.__SUPABASE_CONFIG__ && window.__SUPABASE_CONFIG__.supabaseAnonKey) || "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G";
+var TIKTOK_FEED_TABLE = "trend_intelligence_feed";
+var TIKTOK_FEED_EMPTY_MSG = "No trends available yet. Run TikTok scan.";
+var TIKTOK_FEED_DEBUG = true;
 var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var tiktokTrendFeedCache = [];
+
+function tiktokFeedDebug(label, payload) {
+  if (TIKTOK_FEED_DEBUG) console.log("[TikTokFeed] " + label, payload);
+}
+
+function getTiktokViralityScore(row) {
+  if (!row) return null;
+  if (row.virality_score != null) return Number(row.virality_score);
+  var raw = row.raw_data || {};
+  if (raw.virality_score != null) return Number(raw.virality_score);
+  var virality = raw.virality || {};
+  if (virality.virality_score != null) return Number(virality.virality_score);
+  if (virality.viral_strength_score != null) return Math.round(Number(virality.viral_strength_score) * 100);
+  return null;
+}
+
+function tiktokTrendStateBadge(state) {
+  var s = state || "emerging";
+  var colors = { emerging: "var(--blue)", rising: "var(--green)", peaking: "var(--amber)", fading: "var(--red)" };
+  return '<span class="tag" style="background:rgba(0,0,0,.2);border-color:' + (colors[s] || "var(--muted)") + ';color:' + (colors[s] || "var(--muted)") + '">' + s + '</span>';
+}
+
+function extractTiktokKeywords(row) {
+  var signal = (row.raw_data && row.raw_data.signal) || {};
+  if (row.type === "keyword_cluster" && signal.keyword_clusters) {
+    return signal.keyword_clusters.map(function(k) { return k.keyword; }).filter(Boolean).join(", ");
+  }
+  if (row.type === "topic" && signal.primary_topic) return signal.primary_topic;
+  if (row.type === "hook" && signal.hook_text) return signal.hook_text;
+  return row.summary || "";
+}
+
+function renderTiktokTrendIntelligenceFeed(rows) {
+  var el = document.getElementById("tiktokTrendIntelligence");
+  if (!el) return;
+
+  var safe = Array.isArray(rows) ? rows.filter(function(r) { return r && typeof r === "object"; }) : [];
+  tiktokFeedDebug("render input length", safe.length);
+  if (safe.length) tiktokFeedDebug("render first row", safe[0]);
+
+  if (!safe.length) {
+    el.innerHTML = '<div class="card"><div class="card-header"><h2 style="color:var(--amber)">TikTok Trend Intelligence</h2><div class="section-icon" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--amber)">&#9835;</div></div><p style="font-size:12px;color:var(--muted);padding:8px 0">' + TIKTOK_FEED_EMPTY_MSG + '</p></div>';
+    return;
+  }
+
+  var h = '<div class="card card-glow" style="border-color:rgba(255,0,80,.35)">';
+  h += '<div class="card-header"><h2 style="color:#ff0050">TikTok Trend Intelligence</h2><div class="section-icon" style="background:rgba(255,0,80,.1);border-color:rgba(255,0,80,.3);color:#ff0050">&#9835;</div></div>';
+  h += '<p style="font-size:11px;color:var(--muted);margin-bottom:12px">Live signals from <code style="color:var(--green)">trend_intelligence_feed</code> — ' + safe.length + ' rows</p>';
+
+  for (var i = 0; i < Math.min(safe.length, 50); i++) {
+    var row = safe[i];
+    var virality = getTiktokViralityScore(row);
+    var keywords = extractTiktokKeywords(row);
+    var ts = row.timestamp ? formatTimestamp(row.timestamp) : "Unknown time";
+    var strength = Number(row.signal_strength || 0);
+
+    h += '<div class="feed-item">';
+    h += '<div class="feed-header">';
+    h += '<span class="feed-keyword">' + (row.type || "signal").replace(/_/g, " ") + '</span>';
+    h += tiktokTrendStateBadge(row.trend_state);
+    h += '</div>';
+    if (keywords) h += '<div style="font-size:12px;color:var(--white);margin:6px 0;line-height:1.4">' + keywords + '</div>';
+    if (row.summary && row.summary !== keywords) h += '<div style="font-size:11px;color:var(--muted);margin-bottom:6px">' + row.summary + '</div>';
+    h += '<div class="feed-metrics">';
+    h += '<div class="feed-metric"><div class="fm-label">Strength</div><div class="fm-value rise-positive">' + strength + '</div></div>';
+    h += '<div class="feed-metric"><div class="fm-label">Virality</div><div class="fm-value" style="color:var(--amber)">' + (virality != null ? virality : "—") + '</div></div>';
+    h += '<div class="feed-metric"><div class="fm-label">Updated</div><div class="fm-value" style="color:var(--white);font-size:10px">' + ts + '</div></div>';
+    h += '</div>';
+    h += '<div class="feed-bar"><div class="feed-bar-fill" style="width:' + Math.min(100, virality != null ? virality : strength) + '%;background:linear-gradient(90deg,#ff0050,var(--amber))"></div></div>';
+    h += '</div>';
+  }
+
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function describeTiktokFeedError(error) {
+  if (!error) return TIKTOK_FEED_EMPTY_MSG;
+  var code = error.code || "";
+  var msg = error.message || String(error);
+  tiktokFeedDebug("fetch error", { code: code, message: msg, details: error.details });
+  if (code === "PGRST205" || msg.indexOf("Could not find the table") !== -1) {
+    return "Supabase table trend_intelligence_feed not found. Run sql/trend_intelligence_feed.sql in Supabase, then run the TikTok scan.";
+  }
+  if (code === "42501" || /permission|policy|JWT/i.test(msg)) {
+    return "Cannot read trend_intelligence_feed — please log in or check Supabase RLS read policy.";
+  }
+  return "Trend feed error: " + msg;
+}
+
+async function refreshTiktokTrendIntelligenceFeed() {
+  var el = document.getElementById("tiktokTrendIntelligence");
+  if (!el) return;
+
+  tiktokFeedDebug("fetch start", { table: TIKTOK_FEED_TABLE, url: SUPABASE_URL });
+
+  el.innerHTML = '<div class="card"><p style="font-size:12px;color:var(--muted);padding:12px 0">Loading TikTok trends from Supabase...</p></div>';
+
+  try {
+    var session = await supabaseClient.auth.getSession();
+    if (!session.data || !session.data.session) {
+      tiktokFeedDebug("fetch skipped", "not authenticated");
+      el.innerHTML = '<div class="card"><p style="font-size:12px;color:var(--muted);padding:12px 0">Login required to load TikTok trend intelligence.</p></div>';
+      return;
+    }
+
+    var resp = await supabaseClient
+      .from(TIKTOK_FEED_TABLE)
+      .select("*")
+      .eq("source", "tiktok")
+      .order("timestamp", { ascending: false })
+      .limit(200);
+
+    tiktokFeedDebug("Supabase response length", resp.data ? resp.data.length : 0);
+    if (resp.data && resp.data.length) tiktokFeedDebug("Supabase first row", resp.data[0]);
+
+    if (resp.error) {
+      el.innerHTML = '<div class="card"><p style="font-size:12px;color:var(--red);padding:12px 0">' + describeTiktokFeedError(resp.error) + '</p></div>';
+      return;
+    }
+
+    tiktokTrendFeedCache = resp.data || [];
+    if (!tiktokTrendFeedCache.length) {
+      tiktokFeedDebug("fetch result", "zero rows returned");
+      renderTiktokTrendIntelligenceFeed([]);
+      return;
+    }
+
+    renderTiktokTrendIntelligenceFeed(tiktokTrendFeedCache);
+  } catch (err) {
+    tiktokFeedDebug("fetch exception", err);
+    el.innerHTML = '<div class="card"><p style="font-size:12px;color:var(--red);padding:12px 0">' + describeTiktokFeedError(err) + '</p></div>';
+  }
+}
 
 var _trackQueue = [];
 var _trackReady = false;
@@ -8876,7 +9016,7 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   localStorage.setItem('patriot_active_tab', tab);
   trackEvent("tab_switch", {tab: tab});
-  if (tab === "trends") aiTrendInsights();
+  if (tab === "trends") { aiTrendInsights(); refreshTiktokTrendIntelligenceFeed(); }
   if (tab === "audit") renderAuditTab();
   if (tab === "aichat" && !document.getElementById("aiChatMessages").innerHTML) {
     var welcomeHtml = '<div class="ai-chat-msg ai-chat-ai">';
@@ -11398,6 +11538,7 @@ async function showDashboard(sessionUser) {
   initStreak();
   loadPerfFromSupabase();
   loadLiveStats();
+  refreshTiktokTrendIntelligenceFeed();
   loadReferralCard();
   if (!localStorage.getItem("cr_tutorial_done")) {
     setTimeout(function() { startTutorial(); }, 800);
