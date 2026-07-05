@@ -1,0 +1,36 @@
+# Screenshots and test images
+IMG_*.jpg
+IMG_*.jpeg
+IMG_*.png
+*.mp4
+*.pdf
+image.jpg
+ss_*.png
+qc_*.png
+qc_*.jpg
+check_*.png
+test_*.png
+test_*.jpg
+tab_*.png
+uf_*.png
+live_*.png
+faq_*.png
+v11*.png
+v11*.jpg
+verify-main.png
+combined_images_document*.pdf
+
+# Old versions
+dashboard_v11*.html
+current_dashboard.html
+test_dashboard.html
+analytics_local_backup.html
+
+# Scripts/SQL
+overhaul_report.py
+supabase_*.sql
+
+# Dev files
+.env
+.env.local
+.git
