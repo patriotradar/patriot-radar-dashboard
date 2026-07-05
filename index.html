@@ -3484,6 +3484,26 @@ async function loadPerfFromSupabase() {
   } catch(e) { console.log("Supabase load skipped:", e); }
 }
 
+async function loadRecommendationOutputFromSupabase() {
+  try {
+    var session = await supabaseClient.auth.getSession();
+    if (!session.data.session) return;
+    var userId = session.data.session.user.id;
+    var res = await supabaseClient
+      .from("cr_recommendation_outputs")
+      .select("*")
+      .eq("user_id", userId)
+      .order("output_version", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (res.data) {
+      cachedRecommendationOutput = res.data;
+      renderDailyRecs(cachedResults);
+    }
+  } catch(e) { console.log("Recommendation output load skipped:", e); }
+}
+
 function calcAudienceScore(entry) {
   var views = Number(entry.views || 0);
   var likes = Number(entry.likes || 0);
@@ -3537,6 +3557,7 @@ function getAllAudienceScores() {
 }
 
 var cachedResults = [];
+var cachedRecommendationOutput = null;
 
 function openPerfModal(keyword) {
   var kw = (keyword || "").toLowerCase();
@@ -11719,6 +11740,7 @@ async function showDashboard(sessionUser) {
   initGoalSelector();
   initStreak();
   loadPerfFromSupabase();
+  loadRecommendationOutputFromSupabase();
   loadLiveStats();
   refreshTiktokTrendIntelligenceFeed();
   if (typeof initTiktokOrchestrationDashboard === "function") initTiktokOrchestrationDashboard();
@@ -12154,6 +12176,25 @@ function renderNotifications() {
 
 // ── DAILY RECOMMENDATIONS ──
 function generateDailyRecs(results) {
+  if (cachedRecommendationOutput) {
+    var row = cachedRecommendationOutput;
+    var nextPost = row.next_post;
+    if (typeof nextPost === "string") {
+      try { nextPost = JSON.parse(nextPost); } catch(e) { nextPost = {}; }
+    }
+    if (!nextPost || typeof nextPost !== "object") nextPost = {};
+    return [{
+      priority: "high",
+      state: row.state || "",
+      engagement_signal: row.engagement_signal || "",
+      action: nextPost.content_idea || "Your next recommended post",
+      hook: nextPost.hook || "",
+      format: nextPost.format || "",
+      reason: nextPost.reason_it_will_perform_better || "",
+      fromSupabase: true
+    }];
+  }
+
   if (!results || results.length === 0) return [];
   var recs = [];
   var niche = titleCase(USER_NICHE || "your niche");
@@ -12232,9 +12273,22 @@ function renderDailyRecs(results) {
     var r = recs[i];
     var onclick = r.tab ? ' onclick="switchTab(\'' + r.tab + '\')"' : '';
     h += '<div class="rec-card"' + onclick + '>';
-    h += '<span class="rec-priority ' + (r.priority === "high" ? "rec-high" : "rec-medium") + '">' + (r.priority === "high" ? "Do This Now" : "Suggested") + '</span>';
+    var badgeText = r.state || (r.priority === "high" ? "Do This Now" : "Suggested");
+    var badgeClass = r.fromSupabase ? "rec-high" : (r.priority === "high" ? "rec-high" : "rec-medium");
+    h += '<span class="rec-priority ' + badgeClass + '">' + badgeText + '</span>';
     h += '<div class="rec-action">' + r.action + '</div>';
-    h += '<div class="rec-reason">' + r.reason + '</div>';
+    if (r.engagement_signal) {
+      h += '<div class="rec-reason" style="color:var(--amber)">' + r.engagement_signal + '</div>';
+    }
+    if (r.hook) {
+      h += '<div class="rec-reason"><strong>Hook:</strong> ' + r.hook + '</div>';
+    }
+    if (r.format) {
+      h += '<div class="rec-reason"><strong>Format:</strong> ' + r.format + '</div>';
+    }
+    if (r.reason) {
+      h += '<div class="rec-reason">' + r.reason + '</div>';
+    }
     if (r.tab) {
       h += '<div style="margin-top:6px;font-size:10px;color:var(--green);font-weight:700">Go to ' + titleCase(r.tab) + ' &#8594;</div>';
     }
