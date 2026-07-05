@@ -10,22 +10,27 @@
 <link rel="preconnect" href="https://api.groq.com" crossorigin>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="/api/public-config.js"></script>
-<script src="/tiktok-live-state-client.js"></script>
-<script src="/tiktok-access-control.js"></script>
-<script src="/tiktok-live-state.js"></script>
-<script src="/tiktok-live-state-integration.js"></script>
-<script src="/niche-comment-intelligence.js"></script>
-<script src="/tiktok-insights-hardening.js"></script>
-<script src="/niche-comment-virality-prediction.js"></script>
-<script src="/virality-intelligence-dashboard.js"></script>
-<script src="/commerce-mode.js"></script>
-<script src="/commerce-dashboard.js"></script>
-<script src="/tiktok-shop-inventory-gate.js"></script>
-<script src="/tiktok-content-mode-resolver.js"></script>
-<script src="/tiktok-inventory-predictor.js"></script>
-<script src="/tiktok-orchestration-dashboard.js"></script>
-<script src="/niche-comment-signals.js"></script>
+<script>
+window.__SUPABASE_CONFIG__ = window.__SUPABASE_CONFIG__ || {
+  supabaseUrl: "https://kdwqnlgdanzigpdwyqbh.supabase.co",
+  supabaseAnonKey: "sb_publishable_7WtTtv9S4dl5jO-YE9QXRg_Ldy3gU_G"
+};
+</script>
+<script src="tiktok-live-state-client.js"></script>
+<script src="tiktok-access-control.js"></script>
+<script src="tiktok-live-state.js"></script>
+<script src="tiktok-live-state-integration.js"></script>
+<script src="niche-comment-intelligence.js"></script>
+<script src="tiktok-insights-hardening.js"></script>
+<script src="niche-comment-virality-prediction.js"></script>
+<script src="virality-intelligence-dashboard.js"></script>
+<script src="commerce-mode.js"></script>
+<script src="commerce-dashboard.js"></script>
+<script src="tiktok-shop-inventory-gate.js"></script>
+<script src="tiktok-content-mode-resolver.js"></script>
+<script src="tiktok-inventory-predictor.js"></script>
+<script src="tiktok-orchestration-dashboard.js"></script>
+<script src="niche-comment-signals.js"></script>
 
 <style>
 :root{
@@ -1382,8 +1387,6 @@ input[type=range]::-webkit-slider-thumb{
     </div>
 
     <div id="tab-plan" class="tab-content active">
-      <div id="tiktokInventoryPredictor"></div>
-      <div id="tiktokShopInventoryGate"></div>
       <div id="dailyPlan"></div>
       <div id="coursePromoPlanner"></div>
       <div id="contentFunnel"></div>
@@ -6410,6 +6413,29 @@ function generateImprovedCaption(text, firstLine, hookResult, ctaResult, engResu
 var _gk = ["Z3NrX2xSNWpy","bnc3U3Y5OGhJ","cVBxcVRrV0dk","eWIzRllQQ1pB","aXpJcExiQm1q","OFhZWGVobzJn","Ykk="];
 var GROQ_KEY = atob(_gk.join(""));
 var GEMINI_KEY = "";
+
+(function() {
+  var _origFetch = window.fetch;
+  var _backendOk = null;
+  window.fetch = function(url, opts) {
+    if (typeof url === "string" && url === "/api/chat/completions") {
+      if (_backendOk === false) return _directGroq(opts);
+      return _origFetch.call(window, url, opts).then(function(resp) {
+        if (resp.ok || resp.status === 429) { _backendOk = true; return resp; }
+        _backendOk = false;
+        return _directGroq(opts);
+      }).catch(function() { _backendOk = false; return _directGroq(opts); });
+    }
+    return _origFetch.apply(window, arguments);
+  };
+  function _directGroq(opts) {
+    var groqKey = GROQ_KEY || (typeof localStorage !== "undefined" && localStorage.getItem("cr_groq_key"));
+    if (!groqKey) return Promise.resolve(new Response('{"error":{"message":"No API key"}}', {status: 401, headers: {"Content-Type": "application/json"}}));
+    var newOpts = {method: "POST", headers: {"Content-Type": "application/json", "Authorization": "Bearer " + groqKey}};
+    if (opts && opts.body) newOpts.body = opts.body;
+    return _origFetch.call(window, "https://api.groq.com/openai/v1/chat/completions", newOpts);
+  }
+})();
 
 function getAudienceContext() {
   var niche = (USER_NICHE || "general").toLowerCase();
