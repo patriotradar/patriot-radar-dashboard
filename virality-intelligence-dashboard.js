@@ -64,7 +64,7 @@
     h += '<div style="font-size:10px;color:#a855f7;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Model Learning Status</div>';
 
     if (!latest.calibrated_at) {
-      h += '<p style="font-size:12px;color:var(--muted)">Learning pipeline active — awaiting first calibration cycle. Run sql/virality_intelligence_tables.sql in Supabase.</p>';
+      h += '<p style="font-size:12px;color:var(--muted)">Learning pipeline active — awaiting first calibration cycle. Keep logging your video performance to train the model.</p>';
     } else {
       h += '<div style="font-size:12px;color:var(--white);margin-bottom:8px">Last calibrated: <span style="color:#a855f7">' + escapeHtml(String(latest.calibrated_at).slice(0, 19)) + ' UTC</span></div>';
       h += '<div style="font-size:11px;color:var(--muted);margin-bottom:8px">Outcomes processed: ' + (latest.outcomes_processed || 0) + ' · Accuracy: ' + (latest.accuracy_after != null ? Number(latest.accuracy_after).toFixed(1) + '%' : '—') + '</div>';
@@ -228,7 +228,7 @@
       if (liveState && liveState.errors && liveState.errors.length && !calibration.length && !explanations.length) {
         var errMsg = liveState.errors[0] || "";
         if (errMsg.indexOf("PGRST205") !== -1 || errMsg.indexOf("not found") !== -1) {
-          renderShell("Virality intelligence tables not found. Run sql/virality_intelligence_tables.sql in Supabase.");
+          renderShell("Virality prediction is building your model. Keep scanning and logging performance data — the system learns from your results over time.");
           return;
         }
       }

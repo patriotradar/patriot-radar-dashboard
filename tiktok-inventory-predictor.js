@@ -71,7 +71,45 @@
     if (!keyword) return "";
     var cleaned = cleanKeywordForProduct(keyword);
     if (/\bproduct\b/i.test(cleaned)) return cleaned;
-    return cleaned + " product";
+
+    var kl = cleaned.toLowerCase();
+    var productTypes = [
+      { patterns: ["fitness","gym","workout","exercise","yoga","pilates"], items: ["Resistance Band Set","Gym Bottle","Yoga Mat","Workout Gloves","Fitness Tracker Band"] },
+      { patterns: ["beauty","skincare","skin","glow","makeup","cosmetic"], items: ["Serum Set","Glow Kit","Beauty Blender Pack","Face Roller","Sheet Mask Bundle"] },
+      { patterns: ["hair","hairstyle","curls","wig"], items: ["Hair Oil Treatment","Styling Tool Set","Silk Scrunchie Pack","Hair Growth Serum","Satin Bonnet"] },
+      { patterns: ["food","cook","kitchen","recipe","baking","chef"], items: ["Kitchen Gadget Set","Spice Rack Organiser","Silicone Utensil Kit","Recipe Card Deck","Meal Prep Containers"] },
+      { patterns: ["fashion","outfit","style","clothing","dress","wear"], items: ["Statement Earrings","Layered Necklace Set","Tote Bag","Oversized Sunglasses","Scarf Set"] },
+      { patterns: ["tech","gadget","phone","laptop","gaming","ai"], items: ["Phone Grip Stand","Wireless Charger Pad","LED Desk Lamp","Cable Organiser Kit","Screen Protector Pack"] },
+      { patterns: ["pet","dog","cat","puppy","kitten"], items: ["Interactive Pet Toy","Grooming Brush Kit","Personalised Pet Tag","Travel Water Bowl","Calming Pet Bed"] },
+      { patterns: ["home","decor","interior","room","house","living"], items: ["LED Strip Lights","Scented Candle Set","Wall Art Print","Cushion Cover Set","Floating Shelf"] },
+      { patterns: ["baby","parent","mum","mom","toddler","newborn"], items: ["Silicone Bib Set","Baby Milestone Cards","Muslin Swaddle Pack","Teething Toy","Nappy Organiser"] },
+      { patterns: ["book","read","study","learn","education"], items: ["Book Light Clip","Reading Journal","Bookmark Set","Desk Organiser","Study Planner"] },
+      { patterns: ["travel","holiday","trip","adventure","explore"], items: ["Packing Cube Set","Travel Pillow","Passport Holder","Luggage Tag Set","Toiletry Bag"] },
+      { patterns: ["patriot","british","england","union jack","military","remembrance","veteran","royal"], items: ["Heritage Enamel Pin","Union Jack Mug","Commemorative Coin Set","Flag Phone Case","Military Style Watch"] },
+      { patterns: ["wellness","health","mental","mindful","meditat","holistic","therapy","healing"], items: ["Essential Oil Diffuser","Crystal Set","Gratitude Journal","Meditation Cushion","Herbal Tea Gift Box"] },
+      { patterns: ["sport","football","rugby","cricket","boxing"], items: ["Training Cones Set","Sports Water Bottle","Grip Socks","Resistance Band","Sports Towel"] },
+      { patterns: ["garden","plant","flower","outdoor","nature"], items: ["Seed Starter Kit","Plant Mister","Garden Tool Set","Hanging Planter","Herb Growing Kit"] },
+      { patterns: ["car","motor","driving","vehicle","auto"], items: ["Car Phone Mount","Air Freshener Set","Seat Gap Organiser","Dash Cam Mount","Car Cleaning Kit"] },
+      { patterns: ["music","guitar","drum","sing","dj","producer"], items: ["Phone Mic Kit","Cable Organiser","Pick Set","Music Poster Print","LED Strip for Setup"] },
+      { patterns: ["art","draw","paint","creative","craft","design"], items: ["Brush Pen Set","Sketchbook","Colour Palette","Art Print Pack","Sticker Collection"] }
+    ];
+
+    for (var i = 0; i < productTypes.length; i++) {
+      var cat = productTypes[i];
+      for (var j = 0; j < cat.patterns.length; j++) {
+        if (kl.indexOf(cat.patterns[j]) !== -1) {
+          var hash = 0;
+          for (var c = 0; c < kl.length; c++) hash = ((hash << 5) - hash + kl.charCodeAt(c)) | 0;
+          var idx = Math.abs(hash) % cat.items.length;
+          return cleaned + " — " + cat.items[idx];
+        }
+      }
+    }
+
+    var genericItems = ["Gift Set","Starter Kit","Print Collection","Enamel Pin","Phone Case","Mug","Tote Bag","Sticker Pack","Poster Print","Keyring"];
+    var gh = 0;
+    for (var g = 0; g < kl.length; g++) gh = ((gh << 5) - gh + kl.charCodeAt(g)) | 0;
+    return cleaned + " — " + genericItems[Math.abs(gh) % genericItems.length];
   }
 
   function resolveProductName(item) {

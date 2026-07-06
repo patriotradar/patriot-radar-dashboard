@@ -8,7 +8,7 @@
   var MOUNT_ID = "nicheCommentSignals";
   var TABLE = "niche_comment_signals_feed";
   var EMPTY_MSG =
-    "No niche comment signals yet. Run sql/niche_comment_signals_feed.sql in Supabase, then scripts/run_niche_comment_signal_scan.py.";
+    "Comment signal analysis is building. Keep scanning your niche to generate comment intelligence data.";
 
   var cache = [];
   var initialized = false;
@@ -136,10 +136,10 @@
     var code = error.code || "";
     var msg = error.message || String(error);
     if (code === "PGRST205" || msg.indexOf("Could not find the table") !== -1) {
-      return "Supabase table niche_comment_signals_feed not found. Run sql/niche_comment_signals_feed.sql first.";
+      return "Comment signal analysis is building. Keep scanning your niche to generate data.";
     }
     if (code === "42501" || /permission|policy|JWT/i.test(msg)) {
-      return "Cannot read niche_comment_signals_feed — please log in or check Supabase RLS.";
+      return "Cannot access comment signals — please log in to view this data.";
     }
     return "Comment signals error: " + msg;
   }
