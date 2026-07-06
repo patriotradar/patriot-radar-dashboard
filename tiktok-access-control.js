@@ -276,8 +276,10 @@
 
     var adminBtn = document.getElementById("adminTabBtn");
     if (adminBtn) {
-      if (_access.admin_override) adminBtn.style.display = "";
-      else if (!global.isAmbassador) adminBtn.style.display = "none";
+      // Never hide the Admin tab from a known admin/ambassador just because the RBAC
+      // backend call didn't confirm it (e.g. the endpoint is blocked or returns null).
+      if (_access.admin_override || global.isAdminUser || global.isAmbassador) adminBtn.style.display = "";
+      else adminBtn.style.display = "none";
     }
 
     if (_access.admin_override) {

@@ -3557,20 +3557,28 @@ function openPerfModal(keyword) {
   if (kw) {
     h += '<div class="modal-kw">' + titleCase(kw) + '</div>';
   } else {
-    h += '<div style="margin-bottom:14px">';
-    h += '<label>Select Keyword</label>';
-    h += '<select id="perfKeywordSelect" onchange="toggleCustomKw(this)" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none;margin-top:4px">';
     var allKws = {};
     for (var i = 0; i < cachedResults.length; i++) allKws[cachedResults[i].keyword.toLowerCase()] = true;
     var perfData = loadPerfData();
     for (var pk in perfData) allKws[pk] = true;
     var kwList = Object.keys(allKws).sort();
-    for (var k = 0; k < kwList.length; k++) {
-      h += '<option value="' + kwList[k] + '">' + titleCase(kwList[k]) + '</option>';
+    var noKw = kwList.length === 0;
+    h += '<div style="margin-bottom:14px">';
+    if (noKw) {
+      // Fresh account with no scans yet - don't show an empty dropdown, just let them type the topic
+      h += '<label>What topic / keyword was the video about?</label>';
+      h += '<input id="perfCustomKw" type="text" placeholder="e.g. morning routine, gym tips, product review" style="margin-top:4px;font-size:14px">';
+      h += '<input type="hidden" id="perfKeywordSelect" value="__custom__">';
+    } else {
+      h += '<label>Select Keyword</label>';
+      h += '<select id="perfKeywordSelect" onchange="toggleCustomKw(this)" style="width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:#07100c;color:white;outline:none;margin-top:4px">';
+      for (var k = 0; k < kwList.length; k++) {
+        h += '<option value="' + kwList[k] + '">' + titleCase(kwList[k]) + '</option>';
+      }
+      h += '<option value="__custom__">+ Type a different keyword</option>';
+      h += '</select>';
+      h += '<input id="perfCustomKw" type="text" placeholder="Type keyword here" style="display:none;margin-top:8px;font-size:14px">';
     }
-    h += '<option value="__custom__">+ Type a different keyword</option>';
-    h += '</select>';
-    h += '<input id="perfCustomKw" type="text" placeholder="Type keyword here" style="display:none;margin-top:8px;font-size:14px">';
     h += '</div>';
   }
 
@@ -11797,6 +11805,14 @@ async function showDashboard(sessionUser) {
   } catch(e) {}
 
   if (currentUser) window.currentUser = currentUser;
+
+  // Reveal the Admin tab immediately from the email match so it can never be hidden
+  // by a failed/blocked RBAC backend call (/api/tiktok-live-state) or a later live-state poll.
+  if (isAdmin) {
+    isAdminUser = true;
+    var _adminBtnNow = document.getElementById("adminTabBtn");
+    if (_adminBtnNow) _adminBtnNow.style.display = "";
+  }
 
   var daysLeft = await getTrialDaysLeft(currentUser);
 
