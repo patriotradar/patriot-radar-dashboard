@@ -6980,11 +6980,32 @@ function filterPatrioticHooks(hooks) {
   return hooks.filter(function(h) { return !containsPatrioticContent(h); });
 }
 
+var TIKTOK_ALGORITHM_KNOWLEDGE = "TIKTOK ALGORITHM INTELLIGENCE: " +
+"The TikTok algorithm decides reach through these phases and signals. Use this knowledge in EVERY suggestion. " +
+"PHASE 1 - SMALL BATCH TEST: Every video is shown to 200-500 users first. TikTok measures: watch time percentage (most important - aim for 90%+ on short videos), completion rate, replay rate, shares (weighted 5x more than likes), comments, follows from video, profile visits. If metrics beat the niche average, video advances. " +
+"PHASE 2 - EXTENDED DISTRIBUTION: Video shown to 5K-50K users. Same metrics evaluated. Share-to-view ratio above 2% triggers massive push. Save-to-view ratio above 1% signals evergreen value. " +
+"PHASE 3 - VIRAL DISTRIBUTION: 100K+ views. At this stage, TikTok tests across demographics and regions. Videos that perform across age groups and locations get the most reach. " +
+"HOOK RULES: First 1-3 seconds decide everything. Pattern interrupt hooks outperform. Questions, bold claims, visual shock, or text overlays that create curiosity. If 50%+ of viewers leave in first 2 seconds, the video dies. " +
+"WATCH TIME TACTICS: Loop endings (seamless restart), delayed payoff (promise something early, deliver at end), text that requires replay to read, multi-part series (Part 1 gets boosted because TikTok wants users to follow for Part 2). " +
+"POSTING: Consistency matters more than timing. 1-3 posts per day is optimal. Posting frequency directly affects how much TikTok shows your OTHER content. Accounts posting daily get 3x the reach per video vs weekly posters. " +
+"HASHTAGS: Use 3-5 targeted hashtags max. One broad (#fyp), one medium (#nichename), one specific (#exacttopic). Overstuffing reduces reach. Hashtags in captions outperform hashtags in comments. " +
+"WHAT KILLS REACH: Deleting and re-uploading (TikTok remembers the video hash), editing captions after posting, using copyrighted music, watermarks from other platforms, low-resolution video, long intros without hooks. " +
+"LOCAL DISTRIBUTION: TikTok shows content to nearby users first. Using location tags, local hashtags, and mentioning specific places increases local reach. Business accounts get extra local distribution. Duetting local creators boosts local signal. " +
+"BUSINESS VS CREATOR: Business accounts get analytics but slightly less organic reach. Creator accounts get more FYP exposure. For businesses wanting local clients, geo-tags and local community engagement matter most. " +
+"COMMENT STRATEGY: Replying to comments within the first hour signals engagement to the algorithm. Pinning a comment with a question drives more comments. Videos with 10+ comments in the first 30 minutes get boosted. " +
+"CONTENT PILLARS: Accounts with 3-4 consistent content pillars get better algorithmic treatment than accounts posting random topics. The algorithm learns what your audience likes and serves your new content to similar viewers. " +
+"TRENDING SOUNDS: Using a trending sound in the first 48 hours of it trending gives a reach boost. After 48 hours, the boost drops significantly. Original sounds that get used by others trigger creator rewards. " +
+"ENGAGEMENT BAIT THAT WORKS: Yes/No debates, 'Tell me without telling me', ranking lists, unpopular opinions, 'Which one?' comparisons. These drive comments which is the second strongest signal after watch time.";
+
 function getNicheSystemPrompt(niche) {
-  if (isPatrioticNiche(niche)) return "";
-  var sys = "STRICT RULE: You are generating content for the " + niche + " niche ONLY. Every hook, caption, idea, and suggestion MUST be 100% about " + niche + ". You MUST NOT mention, reference, or allude to: military, armed forces, soldiers, veterans, British culture, British identity, British values, national pride, patriotism, monarchy, royal family, empire, immigration, politics, Brexit, battles, wars, troops, or any military/national themes. If you are tempted to combine " + niche + " with any patriotic or military angle, DO NOT. Only write about " + niche + " topics.";
+  var algo = TIKTOK_ALGORITHM_KNOWLEDGE;
+  if (isPatrioticNiche(niche)) return algo;
+  var sys = algo + " STRICT RULE: You are generating content for the " + niche + " niche ONLY. Every hook, caption, idea, and suggestion MUST be 100% about " + niche + ". You MUST NOT mention, reference, or allude to: military, armed forces, soldiers, veterans, British culture, British identity, British values, national pride, patriotism, monarchy, royal family, empire, immigration, politics, Brexit, battles, wars, troops, or any military/national themes. If you are tempted to combine " + niche + " with any patriotic or military angle, DO NOT. Only write about " + niche + " topics.";
   if (isBusinessMode()) {
     sys += " This is a BUSINESS account that wants to attract clients. Use professional language: 'our clients', 'we help', 'book a consultation', 'results we deliver'. NEVER use creator-style language like 'I tried X for 30 days'.";
+  }
+  if (USER_BUSINESS_LOCATION) {
+    sys += " The user is based in " + USER_BUSINESS_LOCATION + ". When suggesting content, include LOCAL angles: mention their area, suggest location-specific hashtags, and recommend strategies to reach people in " + USER_BUSINESS_LOCATION + " and nearby areas. For local businesses, emphasise geo-tags and community engagement.";
   }
   return sys;
 }
