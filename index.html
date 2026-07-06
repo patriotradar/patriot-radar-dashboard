@@ -6544,7 +6544,7 @@ async function aiExtractMetricsFromScreenshot(imageBase64) {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        model: "llama-3.2-11b-vision-preview",
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
         messages: [{role: "user", content: [
           {type: "text", text: "Extract the performance metrics from this social media analytics screenshot. Look for: views, likes, comments, shares, followers gained, watch time, completion rate. Return ONLY the numbers you can see.\n\nRespond in this exact JSON format (no markdown):\n{\"views\":0,\"likes\":0,\"comments\":0,\"shares\":0,\"followers\":0,\"watchTime\":\"0:00\",\"completionRate\":0}"},
           {type: "image_url", image_url: {url: imageBase64}}
@@ -7655,7 +7655,7 @@ async function analyzeVideoFrame(imageBase64, captionText) {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        model: "llama-3.2-11b-vision-preview",
+        model: "meta-llama/llama-4-scout-17b-16e-instruct",
         messages: [{role: "user", content: [
           {type: "text", text: "You are a content strategist for a " + titleCase(niche) + " creator." + audienceCtx + textPart + "\n\nAnalyze this video frame/thumbnail. Respond in this exact JSON format (no markdown):\n{\"visualScore\": 75, \"thumbnailAnalysis\": \"What works and doesn't work visually\", \"textOverlayFeedback\": \"Analysis of any text/titles visible in the frame\", \"emotionalImpact\": \"What emotion this visual triggers and whether it matches the niche\", \"scrollStopPower\": \"High/Medium/Low - would this make someone stop scrolling?\", \"improvements\": [\"Specific visual improvement 1\", \"Improvement 2\", \"Improvement 3\"], \"thumbnailIdeas\": [\"Better thumbnail concept 1\", \"Concept 2\"]}"},
           {type: "image_url", image_url: {url: imageBase64}}
@@ -8000,6 +8000,14 @@ function renderAuditTab() {
   h += '<p style="font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.5">Discover exactly what their audience responds to and how to create more of it.</p>';
   h += '<p style="font-size:10px;color:var(--muted);margin-bottom:14px;line-height:1.4;opacity:.7">Upload analytics screenshots + captions for a full psychological audience profile with actionable strategy.</p>';
 
+  if (isAdminUser) {
+    h += '<div style="margin-bottom:12px;padding:12px;border:1px solid rgba(0,255,136,.25);border-radius:10px;background:rgba(0,255,136,.03)">';
+    h += '<label style="font-size:11px;color:var(--green);font-weight:700;display:block;margin-bottom:6px">&#128228; Deliver to Customer Account (onboarding)</label>';
+    h += '<input id="auditDeliverEmail" type="email" placeholder="customer@email.com" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:#07100c;color:var(--white);font-size:13px;outline:none;box-sizing:border-box">';
+    h += '<p style="font-size:9px;color:var(--muted);margin-top:5px;line-height:1.4">Fill this in to run an onboarding audit for a customer - the finished report lands on THEIR dashboard when they log in. Leave blank to save it to your own account.</p>';
+    h += '</div>';
+  }
+
   h += '<div style="margin-bottom:12px">';
   h += '<label style="font-size:11px;color:var(--white);font-weight:700;display:block;margin-bottom:6px">Creator Name / Handle</label>';
   h += '<input id="auditCreatorName" type="text" placeholder="e.g. @johndoe or John Doe" style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:#07100c;color:var(--white);font-size:14px;outline:none;box-sizing:border-box">';
@@ -8314,7 +8322,36 @@ async function runCreatorAudit() {
           thumbnailResults.push(thumbResult);
         }
       } catch(e) {}
+      // Pull the real performance numbers off the analytics screenshot
+      try {
+        var mx = await aiExtractMetricsFromScreenshot(postsWithImages[ti].image);
+        if (mx && (mx.views || mx.likes || mx.comments || mx.shares)) { postsWithImages[ti]._metrics = mx; }
+      } catch(e) {}
     }
+  }
+
+  // Build a real-performance summary so the audit reflects what the audience ACTUALLY responded to
+  var perfData = [];
+  for (var pmi = 0; pmi < filledPosts.length; pmi++) {
+    if (filledPosts[pmi]._metrics) {
+      var _m = filledPosts[pmi]._metrics;
+      perfData.push({
+        caption: (filledPosts[pmi].caption || "").substring(0, 90),
+        views: Number(_m.views) || 0, likes: Number(_m.likes) || 0,
+        comments: Number(_m.comments) || 0, shares: Number(_m.shares) || 0,
+        watchTime: _m.watchTime || "", completionRate: Number(_m.completionRate) || 0
+      });
+    }
+  }
+  var performanceSummary = "";
+  if (perfData.length > 0) {
+    var byViews = perfData.slice().sort(function(a, b) { return (b.views || 0) - (a.views || 0); });
+    performanceSummary = "\n\nREAL PERFORMANCE DATA (read from their actual analytics screenshots, ranked by views):\n";
+    for (var psi = 0; psi < byViews.length; psi++) {
+      var pd = byViews[psi];
+      performanceSummary += "- \"" + pd.caption + "\": " + pd.views + " views, " + pd.likes + " likes, " + pd.comments + " comments, " + pd.shares + " shares" + (pd.completionRate ? ", " + pd.completionRate + "% completion" : "") + (pd.watchTime ? ", avg watch " + pd.watchTime : "") + "\n";
+    }
+    performanceSummary += "\nGROUND YOUR ANALYSIS IN THIS REAL DATA. The videos with the most views, shares and completion reveal what their customers actually want more of. In 'themeInsight' and 'audienceDNA', name the winning topics from the TOP performers and tell them exactly what type of content to make more of - this is the whole point of the audit.\n";
   }
 
   btn.textContent = "GENERATING INTELLIGENCE REPORT...";
@@ -8354,6 +8391,7 @@ async function runCreatorAudit() {
       "BEST POST (" + bestPost.grade + " " + bestPost.totalScore + "/100):\n\"" + bestText + "\"\n\n" +
       "WEAKEST POST (" + worstPost.grade + " " + worstPost.totalScore + "/100):\n\"" + worstText + "\"\n\n" +
       (visualSummary ? "VISUALS: " + visualSummary + "\n\n" : "") +
+      performanceSummary +
       "PATTERNS: Top format: " + (formatRanking[0] ? formatRanking[0].format + " " + formatRanking[0].avgScore + "avg" : "N/A") + ". Top driver: " + (emotionRanking[0] ? emotionRanking[0].driver + " " + emotionRanking[0].pct + "%" : "N/A") + ". Top theme: " + (topicRanking[0] ? topicRanking[0].topic + " " + topicRanking[0].avgScore + "avg" : "N/A") + ". Avgs: Hook " + avgHook + " CTA " + avgCTA + " Structure " + avgStructure + " Eng " + avgEngagement + " Hashtags " + avgHashtags + " Trend " + avgTrend + " Orig " + avgOriginality + " Overall " + avgTotal + "\n\n" +
       "BAD EXAMPLE (do NOT write like this): 'Originality scores a high 77/100, indicating a strong focus on unique content'\n" +
       "GOOD EXAMPLE (write like this): 'Your skincare myth-busting approach sets you apart - while most skincare creators rehash the same tips, your posts challenge common assumptions which is why originality is your highest score'\n\n" +
@@ -8495,6 +8533,7 @@ async function runCreatorAudit() {
     formatRanking: formatRanking, topicRanking: topicRanking,
     emotionRanking: emotionRanking, hookRanking: hookRanking,
     aiReport: aiReport, thumbnailResults: thumbnailResults,
+    performanceData: perfData,
     allImprovements: allImprovements.slice(0, 15)
   };
   var savedAudits = JSON.parse(localStorage.getItem("cr_audits") || "[]");
@@ -8502,12 +8541,16 @@ async function runCreatorAudit() {
   if (savedAudits.length > 20) savedAudits = savedAudits.slice(0, 20);
   localStorage.setItem("cr_audits", JSON.stringify(savedAudits));
 
-  // Also save to Supabase so reports persist across devices
+  // Also save to Supabase so reports persist across devices.
+  // Admins can deliver an onboarding audit straight to a customer's account.
+  var _deliverEl = document.getElementById("auditDeliverEmail");
+  var _deliverEmail = (isAdminUser && _deliverEl) ? (_deliverEl.value || "").trim() : "";
   try {
     var su = (await supabaseClient.auth.getUser()).data.user;
-    if (su && su.email) {
+    var _targetEmail = (_deliverEmail && _deliverEmail.indexOf("@") !== -1) ? _deliverEmail : (su && su.email ? su.email : null);
+    if (_targetEmail) {
       await supabaseClient.from("cr_support_tickets").insert([{
-        user_email: su.email,
+        user_email: _targetEmail,
         category: "audit_report",
         section: "Audience Intelligence Report - " + (creatorName || "Unknown"),
         description: JSON.stringify(savedAudit),
@@ -8519,6 +8562,10 @@ async function runCreatorAudit() {
 
   window._lastGeneratedReport = savedAudit;
   renderAuditReport(savedAudit, resultDiv);
+  if (_deliverEmail && _deliverEmail.indexOf("@") !== -1) {
+    var _note = '<div style="margin-bottom:12px;padding:12px 14px;background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.25);border-radius:10px;font-size:12px;color:var(--green);font-weight:600">&#9989; Report delivered to ' + _deliverEmail + ' - it will appear on their dashboard the moment they log in.</div>';
+    resultDiv.insertAdjacentHTML("afterbegin", _note);
+  }
   btn.disabled = false;
   btn.textContent = "GENERATE INTELLIGENCE REPORT";
   trackEvent("audit_generated", {creator: creatorName, niche: niche, captions: n});
@@ -12404,6 +12451,8 @@ async function createCustomerAccount() {
   var email = (document.getElementById("newCustEmail").value || "").trim();
   var niche = (document.getElementById("newCustNiche").value || "").trim();
   var mode = document.getElementById("newCustMode").value || "creator";
+  var goalSel = document.getElementById("newCustGoal");
+  var goal = goalSel ? (goalSel.value || "clients") : "clients";
   var msg = document.getElementById("custAcctMsg");
   var out = document.getElementById("custAcctOutput");
   if (!email || email.indexOf("@") === -1) { msg.innerText = "Enter a valid email address."; msg.style.color = "var(--red)"; return; }
@@ -12413,7 +12462,7 @@ async function createCustomerAccount() {
   var tmp = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
   var r;
   try {
-    r = await tmp.auth.signUp({ email: email, password: tempPw, options: { data: { must_set_password: true, niche: niche, account_mode: mode } } });
+    r = await tmp.auth.signUp({ email: email, password: tempPw, options: { data: { must_set_password: true, niche: niche, account_mode: mode, success_goal: goal } } });
   } catch (e) { msg.innerText = "Error: " + (e.message || e); msg.style.color = "var(--red)"; return; }
   if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; return; }
   if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
@@ -12465,8 +12514,10 @@ async function loadAdminPanel() {
   h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px">Creates the account with a temporary password. Send the customer the details below - when they log in they are forced to set their own password.</p>';
   h += '<input id="newCustEmail" type="email" placeholder="customer@email.com" style="width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
   h += '<input id="newCustNiche" type="text" placeholder="Their niche (e.g. fitness, dog training)" style="width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
-  h += '<select id="newCustMode" style="width:100%;padding:10px 12px;margin-bottom:10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
+  h += '<select id="newCustMode" style="width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
   h += '<option value="creator">Creator account</option><option value="business">Business account</option></select>';
+  h += '<select id="newCustGoal" style="width:100%;padding:10px 12px;margin-bottom:10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
+  h += '<option value="clients">Goal: More Clients / Bookings</option><option value="followers">Goal: Grow Followers</option><option value="engagement">Goal: Boost Engagement</option><option value="authority">Goal: Build Authority</option><option value="revenue">Goal: Increase Revenue</option></select>';
   h += '<button onclick="createCustomerAccount()" style="width:100%;padding:11px;border-radius:8px;border:none;background:var(--green);color:#000;font-weight:700;font-size:12px;cursor:pointer">CREATE ACCOUNT</button>';
   h += '<p id="custAcctMsg" style="font-size:11px;margin-top:8px"></p>';
   h += '<div id="custAcctOutput" style="display:none;margin-top:10px;padding:12px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.2);border-radius:8px">';
