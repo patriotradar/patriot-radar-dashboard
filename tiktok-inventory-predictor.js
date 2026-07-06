@@ -55,9 +55,23 @@
     return { mode: "generic", product_name: productName, pause_product_attachment: true };
   }
 
+  function cleanKeywordForProduct(keyword) {
+    var kw = String(keyword || "").trim().toLowerCase();
+    var noise = ["trending","trend","trends","today","latest","2026","2025","news","viral","uk","update","updates","fyp","foryou","foryoupage","tiktok","video","videos","content","ideas"];
+    for (var i = 0; i < noise.length; i++) {
+      kw = kw.replace(new RegExp("\\s+" + noise[i] + "\\s*$", "i"), "").replace(new RegExp("^" + noise[i] + "\\s+", "i"), "");
+    }
+    kw = kw.replace(/\s+/g, " ").trim();
+    if (kw.length < 3) return String(keyword || "").trim();
+    return kw.charAt(0).toUpperCase() + kw.slice(1);
+  }
+
   function suggestProductName(keyword) {
     if (typeof makeProduct === "function") return makeProduct(keyword);
-    return keyword ? String(keyword) + " product" : "";
+    if (!keyword) return "";
+    var cleaned = cleanKeywordForProduct(keyword);
+    if (/\bproduct\b/i.test(cleaned)) return cleaned;
+    return cleaned + " product";
   }
 
   function resolveProductName(item) {
@@ -343,7 +357,7 @@
         }
         historical.push({
           keyword: kw,
-          product_name: typeof makeProduct === "function" ? makeProduct(kw) : kw,
+          product_name: typeof makeProduct === "function" ? makeProduct(kw) : cleanKeywordForProduct(kw),
           views: totalViews,
           avg_views: Math.round(totalViews / entries.length)
         });

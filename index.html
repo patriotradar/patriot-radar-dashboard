@@ -9708,17 +9708,21 @@ var PLATFORMS = [
   { key: "linkedin", name: "LinkedIn", icon: "in", color: "#0A66C2", bg: "rgba(10,102,194,.08)", border: "rgba(10,102,194,.2)" }
 ];
 
-var FORMAT_WORDS = ["edit","edits","compilation","compilations","montage","montages","tiktok","shorts","reels","video","videos","clip","clips","content","content ideas","ideas","tutorial","tutorials","challenge","challenges","meme","memes","trend","trends","aesthetic","aesthetics","inspo","inspiration","vlog","vlogs","reaction","reactions","review","reviews","unboxing","haul","asmr","pov","fyp","foryoupage","foryou","viral"];
+var FORMAT_WORDS = ["edit","edits","compilation","compilations","montage","montages","tiktok","shorts","reels","video","videos","clip","clips","content","content ideas","ideas","tutorial","tutorials","challenge","challenges","meme","memes","trend","trends","trending","aesthetic","aesthetics","inspo","inspiration","vlog","vlogs","reaction","reactions","review","reviews","unboxing","haul","asmr","pov","fyp","foryoupage","foryou","viral"];
 
 function cleanDisplayKeyword(keyword) {
   var short = keyword.toLowerCase().trim();
   for (var f = 0; f < FORMAT_WORDS.length; f++) {
     short = short.replace(new RegExp("\\s+" + FORMAT_WORDS[f] + "\\s*$", "i"), "").replace(new RegExp("^" + FORMAT_WORDS[f] + "\\s+", "i"), "");
   }
+  var universalFiller = ["latest","today","2026","2025","update","updates"];
+  for (var uf = 0; uf < universalFiller.length; uf++) {
+    short = short.replace(new RegExp("\\s+" + universalFiller[uf] + "\\s*$", "i"), "").replace(new RegExp("^" + universalFiller[uf] + "\\s+", "i"), "");
+  }
   if (!isPatrioticNiche(USER_NICHE)) {
-    var fillerWords = ["uk","news","latest","today","2026","2025","update","updates"];
-    for (var fw = 0; fw < fillerWords.length; fw++) {
-      short = short.replace(new RegExp("\\s+" + fillerWords[fw] + "\\s*$", "i"), "").replace(new RegExp("^" + fillerWords[fw] + "\\s+", "i"), "");
+    var nicheFillerWords = ["uk","news"];
+    for (var fw = 0; fw < nicheFillerWords.length; fw++) {
+      short = short.replace(new RegExp("\\s+" + nicheFillerWords[fw] + "\\s*$", "i"), "").replace(new RegExp("^" + nicheFillerWords[fw] + "\\s+", "i"), "");
     }
   }
   short = short.replace(/\?+$/, "").trim();
