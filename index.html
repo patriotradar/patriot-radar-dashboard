@@ -2686,25 +2686,25 @@ var GENERIC_PHRASE_HOOKS = [
 ];
 
 var BUSINESS_HOOK_TEMPLATES = [
-  "How {kw} is helping businesses attract more clients right now",
-  "Your customers are searching for {kw} - here's how to reach them",
-  "3 ways to use {kw} to grow your business this month",
-  "Why {kw} is the secret weapon for local businesses",
-  "Most businesses ignore {kw} - don't make the same mistake",
-  "How we use {kw} to keep our clients coming back",
-  "The {kw} strategy that's working for small businesses right now",
-  "{kw} - what your competitors don't want you to know"
+  "Looking for {kw}? Here's why our clients choose us",
+  "The {kw} results our clients love - see for yourself",
+  "What to expect when you book {kw} with us",
+  "Why locals trust us with their {kw}",
+  "{kw} done right - the difference is in the details",
+  "Behind the scenes of our {kw} work",
+  "Real clients, real {kw} results",
+  "Thinking about {kw}? Now's the perfect time to book"
 ];
 
 var BUSINESS_PHRASE_HOOKS = [
-  "{kw} - how smart businesses are using this to grow",
-  "{kw} - your clients need to see this",
-  "{kw} - the opportunity most businesses are missing",
-  "{kw} - here's how to turn this into bookings",
-  "{kw} - why this matters for your business right now",
-  "{kw} - 3 quick wins for your business",
-  "{kw} - what your customers actually want to see",
-  "{kw} - the local business angle nobody's covering"
+  "{kw} - here's exactly what we can do for you",
+  "{kw} - why our clients keep coming back",
+  "{kw} - book with a local pro you can trust",
+  "{kw} - see the results for yourself",
+  "{kw} - what to expect from your first visit",
+  "{kw} - the local service everyone's talking about",
+  "{kw} - real results from real clients",
+  "{kw} - reserve your spot this week"
 ];
 
 var BUSINESS_HEALTH_HOOKS = [
@@ -6288,7 +6288,7 @@ function analyzeHook(firstLine) {
   if (/\b(you|your|you're)\b/i.test(firstLine)) { s += 10; } else { fixes.push("Use 'you' or 'your' in the hook - it makes it feel personal"); }
   if (/\b(secret|hack|mistake|truth|nobody|never|always|stop|wait)\b/i.test(firstLine)) s += 15;
   if (/\d/.test(firstLine)) s += 5;
-  if (s < 50) fixes.push(isBusinessMode() ? "Start with a pattern interrupt: 'Most businesses get X wrong', 'The X mistake costing you clients', or 'Why our clients love X'" : "Start with a pattern interrupt: 'Stop doing X', 'The truth about X', or 'I tried X for 30 days'");
+  if (s < 50) fixes.push(isBusinessMode() ? "Start with a pattern interrupt aimed at your customers: 'Looking for X? Here's why our clients choose us', 'The X mistake most people make', or 'Why our clients love X'" : "Start with a pattern interrupt: 'Stop doing X', 'The truth about X', or 'I tried X for 30 days'");
   return { score: Math.min(100, s), label: s >= 70 ? "Strong" : s >= 40 ? "Needs Work" : "Weak", fixes: fixes };
 }
 
@@ -7010,7 +7010,7 @@ function getNicheSystemPrompt(niche) {
   if (isPatrioticNiche(niche)) return algo;
   var sys = algo + " STRICT RULE: You are generating content for the " + niche + " niche ONLY. Every hook, caption, idea, and suggestion MUST be 100% about " + niche + ". You MUST NOT mention, reference, or allude to: military, armed forces, soldiers, veterans, British culture, British identity, British values, national pride, patriotism, monarchy, royal family, empire, immigration, politics, Brexit, battles, wars, troops, or any military/national themes. If you are tempted to combine " + niche + " with any patriotic or military angle, DO NOT. Only write about " + niche + " topics.";
   if (isBusinessMode()) {
-    sys += " This is a BUSINESS account that wants to attract clients. Use professional language: 'our clients', 'we help', 'book a consultation', 'results we deliver'. NEVER use creator-style language like 'I tried X for 30 days'.";
+    sys += " This is a BUSINESS account (a service provider like a hairdresser, plumber, clinic, etc.) whose goal is to win MORE CUSTOMERS for ITS OWN business. The AUDIENCE of every hook, caption and idea is the business's own POTENTIAL CUSTOMERS - the everyday people who might book or buy. Speak directly TO those customers as the provider: 'our clients', 'we help', 'book with us', 'here's what we can do for you', 'the results we deliver'. CRITICAL: NEVER frame the topic as a tool, tactic or 'secret weapon' that OTHER businesses should use to grow. NEVER address other business owners or say things like 'grow your business', 'attract more clients for your business', 'businesses are using this'. The topic (e.g. the user's trade or a service they offer) is what the business DOES - showcase it to attract customers, do not sell it to other businesses. NEVER use creator-style language like 'I tried X for 30 days'.";
   }
   if (USER_BUSINESS_LOCATION) {
     sys += " The user is based in " + USER_BUSINESS_LOCATION + ". When suggesting content, include LOCAL angles: mention their area, suggest location-specific hashtags, and recommend strategies to reach people in " + USER_BUSINESS_LOCATION + " and nearby areas. For local businesses, emphasise geo-tags and community engagement.";
