@@ -10908,7 +10908,11 @@ async function checkSession() {
     }
   }
   var sd = await supabaseClient.auth.getSession();
-  if (sd.data.session) { showDashboard(sd.data.session.user); }
+  if (sd.data.session) {
+    var su = sd.data.session.user;
+    if (su && su.user_metadata && su.user_metadata.must_set_password) { document.getElementById("authBox").classList.add("hidden"); showForcedPasswordSetup(); return; }
+    showDashboard(sd.data.session.user);
+  }
   else {
     document.getElementById("authBox").classList.remove("hidden");
     document.getElementById("resetBox").classList.add("hidden");
@@ -11912,8 +11916,26 @@ async function login() {
   var pw = document.getElementById("password").value;
   document.getElementById("authMessage").innerText = "Logging in...";
   var r = await supabaseClient.auth.signInWithPassword({email: em, password: pw});
-  if (r.error) { document.getElementById("authMessage").innerText = r.error.message; }
-  else { document.getElementById("authMessage").innerText = ""; trackEvent("login", {method: "password"}); showDashboard(); }
+  if (r.error) { document.getElementById("authMessage").innerText = r.error.message; return; }
+  document.getElementById("authMessage").innerText = "";
+  trackEvent("login", {method: "password"});
+  var u = r.data && r.data.user;
+  if (u && u.user_metadata && u.user_metadata.must_set_password) { showForcedPasswordSetup(); return; }
+  showDashboard();
+}
+
+// Forced first-login password change: shown until the user sets their own password
+function showForcedPasswordSetup() {
+  document.getElementById("authBox").classList.add("hidden");
+  document.getElementById("dashboard").classList.add("hidden");
+  var box = document.getElementById("resetBox");
+  box.classList.remove("hidden");
+  var h2 = box.querySelector("h2");
+  if (h2) h2.innerText = "Set Your Password";
+  var intro = box.querySelector(".intro");
+  if (intro) intro.innerText = "Welcome to Creator Radar! For your security, please create your own password to finish setting up your account.";
+  var msg = document.getElementById("resetMessage");
+  if (msg) { msg.innerText = ""; }
 }
 
 async function resetPassword() {
@@ -11935,9 +11957,13 @@ async function sendPasswordReset() {
 
 async function updatePassword() {
   var pw = document.getElementById("newPassword").value;
-  var r = await supabaseClient.auth.updateUser({password: pw});
-  if (r.error) { document.getElementById("resetMessage").innerText = r.error.message; }
-  else { document.getElementById("resetMessage").innerText = "Password updated."; showDashboard(); }
+  var msg = document.getElementById("resetMessage");
+  if (!pw || pw.length < 6) { msg.innerText = "Password must be at least 6 characters."; msg.style.color = "var(--red)"; return; }
+  msg.innerText = "Saving..."; msg.style.color = "var(--muted)";
+  // Also clear the first-login flag so the forced screen never shows again
+  var r = await supabaseClient.auth.updateUser({password: pw, data: {must_set_password: false}});
+  if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; }
+  else { msg.innerText = "Password saved! Loading your dashboard..."; msg.style.color = "var(--green)"; setTimeout(function() { showDashboard(); }, 900); }
 }
 
 async function logout() { trackEvent("logout", {}); await supabaseClient.auth.signOut(); location.reload(); }
@@ -12367,6 +12393,50 @@ async function checkAdminStatus() {
   } catch(e) {}
 }
 
+function genTempPassword() {
+  var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+  var s = "";
+  for (var i = 0; i < 10; i++) { s += chars.charAt(Math.floor(Math.random() * chars.length)); }
+  return "Cr-" + s;
+}
+
+async function createCustomerAccount() {
+  var email = (document.getElementById("newCustEmail").value || "").trim();
+  var niche = (document.getElementById("newCustNiche").value || "").trim();
+  var mode = document.getElementById("newCustMode").value || "creator";
+  var msg = document.getElementById("custAcctMsg");
+  var out = document.getElementById("custAcctOutput");
+  if (!email || email.indexOf("@") === -1) { msg.innerText = "Enter a valid email address."; msg.style.color = "var(--red)"; return; }
+  msg.innerText = "Creating account..."; msg.style.color = "var(--muted)";
+  var tempPw = genTempPassword();
+  // Ephemeral client so creating the account does NOT log the admin out of their own session
+  var tmp = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+  var r;
+  try {
+    r = await tmp.auth.signUp({ email: email, password: tempPw, options: { data: { must_set_password: true, niche: niche, account_mode: mode } } });
+  } catch (e) { msg.innerText = "Error: " + (e.message || e); msg.style.color = "var(--red)"; return; }
+  if (r.error) { msg.innerText = r.error.message; msg.style.color = "var(--red)"; return; }
+  if (r.data && r.data.user && r.data.user.identities && r.data.user.identities.length === 0) {
+    msg.innerText = "That email already has an account. Use Forgot Password on the login screen instead."; msg.style.color = "var(--amber)"; return;
+  }
+  msg.innerText = "Account created successfully."; msg.style.color = "var(--green)";
+  var link = window.location.origin + "/";
+  document.getElementById("custLink").innerText = link;
+  document.getElementById("custEmailOut").innerText = email;
+  document.getElementById("custTempPw").innerText = tempPw;
+  var share = "Your Creator Radar account is ready!\n\nLogin here: " + link + "\nEmail: " + email + "\nTemporary password: " + tempPw + "\n\nWhen you log in, you'll be asked to set your own password for security.";
+  document.getElementById("custShareText").value = share;
+  out.style.display = "block";
+  try { document.getElementById("newCustEmail").value = ""; document.getElementById("newCustNiche").value = ""; } catch (e) {}
+}
+
+function copyCustomerShare() {
+  var ta = document.getElementById("custShareText");
+  ta.select();
+  try { navigator.clipboard.writeText(ta.value); } catch (e) { document.execCommand("copy"); }
+  alert("Message copied - paste it to your customer.");
+}
+
 async function loadAdminPanel() {
   if (!isAdminUser) return;
   var h = '<div class="card" style="margin-bottom:16px">';
@@ -12388,6 +12458,25 @@ async function loadAdminPanel() {
   h += '<button id="refCopyBtn" onclick="copyRefLink()" style="padding:6px 14px;border-radius:6px;border:none;background:var(--green);color:#000;font-weight:700;font-size:11px;cursor:pointer">COPY LINK</button>';
   h += '</div>';
   h += '</div>';
+
+  // Set Up Customer Account
+  h += '<div class="card" style="margin-bottom:16px">';
+  h += '<h2 style="font-size:14px;color:var(--green);margin-bottom:4px">&#128100; Set Up Customer Account</h2>';
+  h += '<p style="font-size:10px;color:var(--muted);margin-bottom:12px">Creates the account with a temporary password. Send the customer the details below - when they log in they are forced to set their own password.</p>';
+  h += '<input id="newCustEmail" type="email" placeholder="customer@email.com" style="width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
+  h += '<input id="newCustNiche" type="text" placeholder="Their niche (e.g. fitness, dog training)" style="width:100%;padding:10px 12px;margin-bottom:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
+  h += '<select id="newCustMode" style="width:100%;padding:10px 12px;margin-bottom:10px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:13px;outline:none">';
+  h += '<option value="creator">Creator account</option><option value="business">Business account</option></select>';
+  h += '<button onclick="createCustomerAccount()" style="width:100%;padding:11px;border-radius:8px;border:none;background:var(--green);color:#000;font-weight:700;font-size:12px;cursor:pointer">CREATE ACCOUNT</button>';
+  h += '<p id="custAcctMsg" style="font-size:11px;margin-top:8px"></p>';
+  h += '<div id="custAcctOutput" style="display:none;margin-top:10px;padding:12px;background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.2);border-radius:8px">';
+  h += '<div style="font-size:10px;color:var(--green);font-weight:700;margin-bottom:6px">ACCOUNT READY - SEND THIS TO YOUR CUSTOMER:</div>';
+  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:2px">Login link:</div><div id="custLink" style="font-size:12px;color:var(--white);word-break:break-all;margin-bottom:6px"></div>';
+  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:2px">Email:</div><div id="custEmailOut" style="font-size:12px;color:var(--white);margin-bottom:6px"></div>';
+  h += '<div style="font-size:11px;color:var(--muted);margin-bottom:2px">Temporary password:</div><div id="custTempPw" style="font-size:14px;color:var(--amber);font-weight:700;margin-bottom:10px"></div>';
+  h += '<textarea id="custShareText" readonly style="width:100%;height:110px;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--panel2);color:var(--white);font-size:11px;outline:none;resize:none"></textarea>';
+  h += '<button onclick="copyCustomerShare()" style="margin-top:8px;padding:8px 16px;border-radius:6px;border:none;background:var(--green);color:#000;font-weight:700;font-size:11px;cursor:pointer">COPY MESSAGE</button>';
+  h += '</div></div>';
 
   // Feedback section
   h += '<div class="card" style="margin-bottom:16px">';
