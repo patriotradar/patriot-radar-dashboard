@@ -1,4 +1,5 @@
 {
+  "ignoreCommand": "git log -1 --pretty=%B | grep -q 'Update live trend results' && exit 0 || exit 1",
   "rewrites": [
     { "source": "/terms", "destination": "/terms.html" },
     { "source": "/terms/", "destination": "/terms.html" },
