@@ -312,6 +312,34 @@
     },
     {
       "category": "content",
+      "keyword": "english",
+      "latest_score": 59,
+      "recent_avg": 61.0,
+      "previous_avg": 55.5,
+      "rise_percent": 9.9,
+      "viral_score": 37.3,
+      "question": "Is being English still something to be proud of? Yes or No?",
+      "product": "England flags and St George merchandise",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-14T13:38:20Z",
+      "data_points": 169,
+      "content_score": 63,
+      "fresh": 10,
+      "british": 13,
+      "emotion": 12,
+      "debate": 22,
+      "_tiktok_competition": 3,
+      "opportunity_gap": 7.5,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 7,
+      "competition_score": 8,
+      "caption": "Has English gone too far?",
+      "caption_format": "debate",
+      "caption_emotion": "curiosity"
+    },
+    {
+      "category": "content",
       "keyword": "normandy",
       "latest_score": 49,
       "recent_avg": 50.8,
@@ -337,36 +365,6 @@
       "caption": "Should we still hold onto Normandy today?",
       "caption_format": "debate",
       "caption_emotion": "nostalgia",
-      "is_stale": true,
-      "data_status": "cached"
-    },
-    {
-      "category": "content",
-      "keyword": "white cliffs of dover",
-      "latest_score": 0,
-      "recent_avg": 6.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 1.2,
-      "question": "Are the White Cliffs of Dover still a symbol of British strength? Yes or No?",
-      "product": "Patriotic merchandise",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-14T13:13:59Z",
-      "data_points": 169,
-      "content_score": 39,
-      "fresh": 3,
-      "british": 4,
-      "emotion": 4,
-      "debate": 22,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 6.0,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 2,
-      "competition_score": 10,
-      "caption": "Is White cliffs of dover still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
-      "caption_emotion": "curiosity",
       "is_stale": true,
       "data_status": "cached"
     }
@@ -814,11 +812,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-14T13:35:06Z",
+  "generated_at": "2026-07-14T13:48:19Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 0,
-    "cached_results": 12
+    "measured_results": 1,
+    "cached_results": 11
   },
-  "last_updated": "2026-07-14 13:35:06"
+  "last_updated": "2026-07-14 13:48:19"
 }
