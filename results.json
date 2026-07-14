@@ -156,7 +156,9 @@
       "competition_score": 10,
       "caption": "Has Britain lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -274,7 +276,9 @@
       "competition_score": 10,
       "caption": "Is Parliament still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -332,10 +336,86 @@
       "competition_score": 10,
       "caption": "Is White cliffs of dover still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
+    {
+      "category": "emerging",
+      "keyword": "currysfootball",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 75.0,
+      "source_keyword": "Twitter UK",
+      "discovery_type": "twitter",
+      "platforms": [
+        "twitter"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Currysfootball? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Currysfootball? Yes or No?",
+        "Is Currysfootball important to modern Britain? Yes or No?",
+        "Is Currysfootball more important now than ever? Yes or No?",
+        "Does Currysfootball make you proud to be British? Yes or No?",
+        "Is Currysfootball being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 44,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 13,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 10.0,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 10,
+      "competition_score": 10,
+      "caption": "Is Currysfootball still relevant in 2026? Yes or No?",
+      "caption_format": "debate",
+      "caption_emotion": "nostalgia"
+    },
+    {
+      "category": "emerging",
+      "keyword": "ai battle lab to prepare british army for modern warfare",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
+        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 4,
+      "competition_score": 10,
+      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
     {
       "category": "emerging",
       "keyword": "final british army jackal 3 vehicle rolls off production lin",
@@ -372,43 +452,6 @@
       "caption": "This changes how you see Final british army jackal 3 vehicle rolls off production lin...",
       "caption_format": "curiosity",
       "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army to prepare for 'modern warfare' with \u00a32bn ai",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
-        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai important to modern Britain? Yes or No?",
-        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai more important now than ever? Yes or No?",
-        "Does British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai make you proud to be British? Yes or No?",
-        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
-      "competition_score": 10,
-      "caption": "We need to talk about British army to prepare for 'modern warfare' with \u00a32bn ai honestly.",
-      "caption_format": "opinion",
-      "caption_emotion": "outrage"
     },
     {
       "category": "emerging",
@@ -475,11 +518,11 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "We need to talk about Mod launches \u00a32bn ai battle lab for british army training with pride.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
@@ -597,80 +640,6 @@
     },
     {
       "category": "emerging",
-      "keyword": "ai battle lab to prepare british army for modern warfare",
-      "latest_score": 0,
-      "recent_avg": 16.7,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 3.3,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
-        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "currysfootball",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.7,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "Twitter UK",
-      "discovery_type": "twitter",
-      "platforms": [
-        "twitter"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Currysfootball? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Currysfootball? Yes or No?",
-        "Is Currysfootball important to modern Britain? Yes or No?",
-        "Is Currysfootball more important now than ever? Yes or No?",
-        "Does Currysfootball make you proud to be British? Yes or No?",
-        "Is Currysfootball being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 44,
-      "fresh": 12,
-      "british": 9,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 3.5,
-      "opportunity_label": "Saturated",
-      "demand_score": 2,
-      "competition_score": 5,
-      "caption": "Is Currysfootball still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
-    },
-    {
-      "category": "emerging",
       "keyword": "armed forces: uk future capability and requirements - house ",
       "latest_score": 0,
       "recent_avg": 0.0,
@@ -705,37 +674,59 @@
       "caption": "Hot take: people underestimate Armed forces: uk future capability and requirements - house.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "british army to prepare for 'modern warfare' with \u00a32bn ai",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
+      "hooks": [
+        "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
+        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai important to modern Britain? Yes or No?",
+        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai more important now than ever? Yes or No?",
+        "Does British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai make you proud to be British? Yes or No?",
+        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 4.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 2,
+      "competition_score": 7,
+      "caption": "We need to talk about British army to prepare for 'modern warfare' with \u00a32bn ai honestly.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
     }
   ],
   "product_trends": [
     {
       "category": "product",
-      "keyword": "british flag",
-      "latest_score": 0,
-      "recent_avg": 12.5,
-      "previous_avg": 8.0,
-      "rise_percent": 56.2,
-      "viral_score": 27.8,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-14T17:11:44Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
       "keyword": "union jack flag",
       "latest_score": 0,
       "recent_avg": 11.7,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 2.3,
+      "previous_avg": 2.3,
+      "rise_percent": 400.0,
+      "viral_score": 47.3,
       "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-14T17:11:26Z",
+      "measured_at": "2026-07-14T17:21:24Z",
       "data_points": 169
     },
     {
@@ -750,7 +741,7 @@
       "product": "British patriotic clothing",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-14T17:13:04Z",
+      "measured_at": "2026-07-14T17:23:46Z",
       "data_points": 169
     }
   ],
@@ -804,13 +795,13 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "how to get views in content warning",
+      "keyword": "how to get views on instagram",
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "how to get views on instagram",
+      "keyword": "how to get views in content warning",
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -824,11 +815,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-14T17:25:43Z",
+  "generated_at": "2026-07-14T17:33:00Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 3,
-    "cached_results": 8
+    "measured_results": 0,
+    "cached_results": 11
   },
-  "last_updated": "2026-07-14 17:25:43"
+  "last_updated": "2026-07-14 17:32:59"
 }
