@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Veterans today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "What's really happening with English flag?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "Why is nobody talking about British flag?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "This changes how you see Union flag...",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Why does nobody remember Winston churchill?",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "Has Buckingham palace lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,37 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Normandy today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
+    },
+    {
+      "category": "content",
+      "keyword": "royal family",
+      "latest_score": 21,
+      "recent_avg": 25.2,
+      "previous_avg": 33.2,
+      "rise_percent": -24.1,
+      "viral_score": 12.4,
+      "question": "Should British taxpayers continue to fund the Royal Family? Yes or No?",
+      "product": "Royal family collectibles",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-15T13:33:45Z",
+      "data_points": 169,
+      "content_score": 47,
+      "fresh": 3,
+      "british": 9,
+      "emotion": 4,
+      "debate": 25,
+      "_tiktok_competition": 1,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 4,
+      "competition_score": 10,
+      "caption": "Has Royal family gone too far?",
+      "caption_format": "debate",
+      "caption_emotion": "curiosity"
     }
   ],
   "emerging": [
@@ -495,11 +537,11 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "This changes how you see Revealed: the uk military\u2019s overseas base network involves 1...",
       "caption_format": "curiosity",
       "caption_emotion": "pride"
@@ -582,17 +624,47 @@
   "product_trends": [
     {
       "category": "product",
+      "keyword": "england hoodie",
+      "latest_score": 51,
+      "recent_avg": 19.5,
+      "previous_avg": 5.2,
+      "rise_percent": 277.4,
+      "viral_score": 66.8,
+      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
+      "product": "British patriotic clothing",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-15T13:33:28Z",
+      "data_points": 169
+    },
+    {
+      "category": "product",
       "keyword": "british flag",
-      "latest_score": 0,
-      "recent_avg": 15.3,
+      "latest_score": 16,
+      "recent_avg": 18.8,
       "previous_avg": 4.7,
-      "rise_percent": 228.6,
-      "viral_score": 48.1,
+      "rise_percent": 303.6,
+      "viral_score": 54.4,
       "question": "Would you fly the British flag outside your home? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-15T13:22:32Z",
+      "measured_at": "2026-07-15T13:32:50Z",
+      "data_points": 169
+    },
+    {
+      "category": "product",
+      "keyword": "england flag",
+      "latest_score": 65,
+      "recent_avg": 60.8,
+      "previous_avg": 44.7,
+      "rise_percent": 36.2,
+      "viral_score": 51.2,
+      "question": "Is England Flag being ignored in modern Britain? Yes or No?",
+      "product": "Union Jack flags and patriotic decor",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-15T13:33:02Z",
       "data_points": 169
     }
   ],
@@ -666,11 +738,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-15T13:38:29Z",
+  "generated_at": "2026-07-15T13:43:42Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 7,
-    "cached_results": 0
+    "measured_results": 1,
+    "cached_results": 7
   },
-  "last_updated": "2026-07-15 13:38:28"
+  "last_updated": "2026-07-15 13:43:42"
 }
