@@ -149,11 +149,11 @@
       "british": 9,
       "emotion": 17,
       "debate": 22,
-      "_tiktok_competition": 1,
-      "opportunity_gap": 8.0,
-      "opportunity_label": "High Opportunity",
+      "_tiktok_competition": 2,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
       "demand_score": 6,
-      "competition_score": 10,
+      "competition_score": 8,
       "caption": "Is Immigration still relevant in 2026? Yes or No?",
       "caption_format": "debate",
       "caption_emotion": "nostalgia",
@@ -814,11 +814,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-15T11:35:39Z",
+  "generated_at": "2026-07-15T11:45:25Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 12
   },
-  "last_updated": "2026-07-15 11:35:39"
+  "last_updated": "2026-07-15 11:45:25"
 }
