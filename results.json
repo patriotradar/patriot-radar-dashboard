@@ -728,19 +728,25 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views are down",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
       "keyword": "tiktok views to money",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views are down",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "tiktok views website",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "tiktok views low",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -758,19 +764,13 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "how to get views in content warning",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
       "keyword": "how to get views on instagram",
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "how to get views on youtube shorts",
+      "keyword": "how to get views in content warning",
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -784,11 +784,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-16T13:45:09Z",
+  "generated_at": "2026-07-16T13:54:22Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 11
   },
-  "last_updated": "2026-07-16 13:45:08"
+  "last_updated": "2026-07-16 13:54:22"
 }
