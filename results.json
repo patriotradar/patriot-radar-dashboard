@@ -596,6 +596,43 @@
     },
     {
       "category": "emerging",
+      "keyword": "king charles true feelings revealed after meeting lilibet, a",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about King Charles True Feelings Revealed After Meeting Lilibet, A? Yes or No?",
+      "hooks": [
+        "Should Britain care more about King Charles True Feelings Revealed After Meeting Lilibet, A? Yes or No?",
+        "Is King Charles True Feelings Revealed After Meeting Lilibet, A important to modern Britain? Yes or No?",
+        "Is King Charles True Feelings Revealed After Meeting Lilibet, A more important now than ever? Yes or No?",
+        "Does King Charles True Feelings Revealed After Meeting Lilibet, A make you proud to be British? Yes or No?",
+        "Is King Charles True Feelings Revealed After Meeting Lilibet, A being ignored by the government? Yes or No?"
+      ],
+      "product": "Royal family collectibles",
+      "content_score": 58,
+      "fresh": 12,
+      "british": 18,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "Unpopular opinion: King charles true feelings revealed after meeting lilibet, a needs to change.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
+    },
+    {
+      "category": "emerging",
       "keyword": "exclusive | prince harry, meghan markle\u2019s reunion with king ",
       "latest_score": 0,
       "recent_avg": 0,
@@ -704,43 +741,6 @@
       "caption": "We need to talk about Moment of remembrance as charity hosts flag raising ceremony honestly.",
       "caption_format": "opinion",
       "caption_emotion": "outrage"
-    },
-    {
-      "category": "emerging",
-      "keyword": "d-day remembrance must help britain understand veterans stil",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about D-Day Remembrance Must Help Britain Understand Veterans Stil? Yes or No?",
-      "hooks": [
-        "Should Britain care more about D-Day Remembrance Must Help Britain Understand Veterans Stil? Yes or No?",
-        "Is D-Day Remembrance Must Help Britain Understand Veterans Stil important to modern Britain? Yes or No?",
-        "Is D-Day Remembrance Must Help Britain Understand Veterans Stil more important now than ever? Yes or No?",
-        "Does D-Day Remembrance Must Help Britain Understand Veterans Stil make you proud to be British? Yes or No?",
-        "Is D-Day Remembrance Must Help Britain Understand Veterans Stil being ignored by the government? Yes or No?"
-      ],
-      "product": "Veteran gifts",
-      "content_score": 86,
-      "fresh": 12,
-      "british": 25,
-      "emotion": 25,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 6.5,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
-      "competition_score": 9,
-      "caption": "Unpopular opinion: D-day remembrance must help britain understand veterans stil needs to change.",
-      "caption_format": "opinion",
-      "caption_emotion": "outrage"
     }
   ],
   "product_trends": [],
@@ -814,11 +814,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-20T12:34:15Z",
+  "generated_at": "2026-07-20T12:45:38Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 12
   },
-  "last_updated": "2026-07-20 12:34:15"
+  "last_updated": "2026-07-20 12:45:38"
 }
