@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Has British heritage lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Is English flag still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "Has Royal family gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Ve day today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "We need to talk about Military history honestly.",
       "caption_format": "opinion",
-      "caption_emotion": "outrage"
+      "caption_emotion": "outrage",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "Has Battle of britain lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
@@ -551,53 +563,7 @@
       "caption_emotion": "outrage"
     }
   ],
-  "product_trends": [
-    {
-      "category": "product",
-      "keyword": "british flag",
-      "latest_score": 23,
-      "recent_avg": 12.5,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 10.5,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-20T10:51:10Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "union jack flag",
-      "latest_score": 12,
-      "recent_avg": 2.0,
-      "previous_avg": 16.7,
-      "rise_percent": -88.0,
-      "viral_score": 4.6,
-      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-20T10:51:02Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "england hoodie",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 0.0,
-      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
-      "product": "British patriotic clothing",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-20T10:52:50Z",
-      "data_points": 169
-    }
-  ],
+  "product_trends": [],
   "creator_insights": [
     {
       "keyword": "tiktok views free",
@@ -630,6 +596,12 @@
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views low",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "how to get views on youtube",
       "source_keyword": "how to get views",
       "rise_value": 150,
@@ -652,12 +624,6 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "how to get views on youtube shorts",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -668,11 +634,11 @@
     "opportunity_gap": 9.5,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-20T11:07:56Z",
+  "generated_at": "2026-07-20T11:14:48Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 6,
-    "cached_results": 0
+    "measured_results": 0,
+    "cached_results": 6
   },
-  "last_updated": "2026-07-20 11:07:56"
+  "last_updated": "2026-07-20 11:14:48"
 }
