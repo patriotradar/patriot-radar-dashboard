@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Is War memorial still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto British army today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Union flag today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Why does nobody remember Winston churchill?",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Armed forces today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "Has English gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,9 @@
       "competition_score": 10,
       "caption": "Has Britain lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,7 +246,9 @@
       "competition_score": 10,
       "caption": "Has British bulldog lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -260,7 +276,9 @@
       "competition_score": 10,
       "caption": "Is Parliament still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -288,7 +306,9 @@
       "competition_score": 10,
       "caption": "Has United kingdom gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -316,6 +336,36 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Normandy today?",
       "caption_format": "debate",
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
+    },
+    {
+      "category": "content",
+      "keyword": "rule britannia",
+      "latest_score": 0,
+      "recent_avg": 5.7,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 1.1,
+      "question": "Should Rule Britannia still be sung at the Proms? Yes or No?",
+      "product": "Patriotic merchandise",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-20T16:03:21Z",
+      "data_points": 169,
+      "content_score": 39,
+      "fresh": 3,
+      "british": 4,
+      "emotion": 4,
+      "debate": 22,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 6.0,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 2,
+      "competition_score": 10,
+      "caption": "Is Rule britannia still relevant in 2026? Yes or No?",
+      "caption_format": "debate",
       "caption_emotion": "nostalgia"
     }
   ],
@@ -323,11 +373,11 @@
     {
       "category": "emerging",
       "keyword": "bbcnews",
-      "latest_score": 52,
-      "recent_avg": 46.0,
-      "previous_avg": 33.7,
-      "rise_percent": 36.4,
-      "viral_score": 43.8,
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 125.0,
       "source_keyword": "Twitter UK",
       "discovery_type": "twitter",
       "platforms": [
@@ -343,8 +393,8 @@
         "Is Bbcnews being ignored by the government? Yes or No?"
       ],
       "product": "Patriotic merchandise",
-      "content_score": 57,
-      "fresh": 25,
+      "content_score": 44,
+      "fresh": 12,
       "british": 9,
       "emotion": 4,
       "debate": 13,
@@ -353,9 +403,9 @@
       "opportunity_label": "High Opportunity",
       "demand_score": 10,
       "competition_score": 10,
-      "caption": "This changes how you see Bbcnews...",
-      "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption": "Should we still accept Bbcnews today?",
+      "caption_format": "debate",
+      "caption_emotion": "curiosity"
     },
     {
       "category": "emerging",
@@ -396,43 +446,6 @@
     },
     {
       "category": "emerging",
-      "keyword": "ai battle lab to prepare british army for modern warfare",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
-        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
-      "competition_score": 10,
-      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
       "keyword": "finding your strength in the british army reserve - the",
       "latest_score": 0,
       "recent_avg": 0,
@@ -467,43 +480,6 @@
       "caption": "We need to talk about Finding your strength in the british army reserve - the with pride.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army to prepare for 'modern warfare' with \u00a32bn ai",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
-        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai important to modern Britain? Yes or No?",
-        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai more important now than ever? Yes or No?",
-        "Does British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai make you proud to be British? Yes or No?",
-        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 4,
-      "competition_score": 7,
-      "caption": "We need to talk about British army to prepare for 'modern warfare' with \u00a32bn ai honestly.",
-      "caption_format": "opinion",
-      "caption_emotion": "outrage"
     },
     {
       "category": "emerging",
@@ -581,40 +557,40 @@
     },
     {
       "category": "emerging",
-      "keyword": "england squad steele",
-      "latest_score": 2,
-      "recent_avg": 2.2,
-      "previous_avg": 7.2,
-      "rise_percent": -70.1,
-      "viral_score": 1.1,
-      "source_keyword": "england",
-      "discovery_type": "rising_query",
+      "keyword": "moment of remembrance as charity hosts flag raising ceremony",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
       "platforms": [
-        "rising_query"
+        "news"
       ],
       "platform_count": 1,
-      "question": "Should England Squad Steele be celebrated more in Britain? Yes or No?",
+      "question": "Should Britain care more about Moment Of Remembrance As Charity Hosts Flag Raising Ceremony? Yes or No?",
       "hooks": [
-        "Should England Squad Steele be celebrated more in Britain? Yes or No?",
-        "Is England Squad Steele something every British person should be proud of? Yes or No?",
-        "Should England Squad Steele be taught in every British school? Yes or No?",
-        "Does England Squad Steele unite or divide Britain? Yes or No?",
-        "Is England Squad Steele under threat in modern Britain? Yes or No?"
+        "Should Britain care more about Moment Of Remembrance As Charity Hosts Flag Raising Ceremony? Yes or No?",
+        "Is Moment Of Remembrance As Charity Hosts Flag Raising Ceremony important to modern Britain? Yes or No?",
+        "Is Moment Of Remembrance As Charity Hosts Flag Raising Ceremony more important now than ever? Yes or No?",
+        "Does Moment Of Remembrance As Charity Hosts Flag Raising Ceremony make you proud to be British? Yes or No?",
+        "Is Moment Of Remembrance As Charity Hosts Flag Raising Ceremony being ignored by the government? Yes or No?"
       ],
-      "product": "England flags and St George merchandise",
-      "content_score": 40,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 4,
+      "product": "Union Jack flags and patriotic decor",
+      "content_score": 83,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 25,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.0,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 6,
-      "caption": "Is England squad steele still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "We need to talk about Moment of remembrance as charity hosts flag raising ceremony honestly.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
     },
     {
       "category": "emerging",
@@ -652,6 +628,80 @@
       "caption": "Is England vs argentina delay still relevant in 2026? Yes or No?",
       "caption_format": "debate",
       "caption_emotion": "nostalgia"
+    },
+    {
+      "category": "emerging",
+      "keyword": "ai battle lab to prepare british army for modern warfare",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.7,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
+        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 4.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 2,
+      "competition_score": 7,
+      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "british army to prepare for 'modern warfare' with \u00a32bn ai",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
+      "hooks": [
+        "Should Britain care more about British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai? Yes or No?",
+        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai important to modern Britain? Yes or No?",
+        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai more important now than ever? Yes or No?",
+        "Does British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai make you proud to be British? Yes or No?",
+        "Is British Army To Prepare For 'Modern Warfare' With \u00a32Bn Ai being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 4.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 2,
+      "competition_score": 7,
+      "caption": "We need to talk about British army to prepare for 'modern warfare' with \u00a32bn ai honestly.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
     },
     {
       "category": "emerging",
@@ -695,32 +745,32 @@
     {
       "category": "product",
       "keyword": "british flag",
-      "latest_score": 34,
-      "recent_avg": 27.5,
-      "previous_avg": 15.0,
-      "rise_percent": 83.3,
-      "viral_score": 54.9,
+      "latest_score": 32,
+      "recent_avg": 21.2,
+      "previous_avg": 15.2,
+      "rise_percent": 39.6,
+      "viral_score": 33.2,
       "question": "Would you fly the British flag outside your home? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-20T15:51:54Z",
-      "data_points": 169
+      "measured_at": "2026-07-20T16:02:25Z",
+      "data_points": 168
     },
     {
       "category": "product",
       "keyword": "england flag",
       "latest_score": 5,
-      "recent_avg": 4.7,
-      "previous_avg": 6.3,
-      "rise_percent": -26.3,
-      "viral_score": 2.7,
+      "recent_avg": 4.5,
+      "previous_avg": 6.2,
+      "rise_percent": -27.0,
+      "viral_score": 2.6,
       "question": "Is England Flag being ignored in modern Britain? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-20T15:52:10Z",
-      "data_points": 169
+      "measured_at": "2026-07-20T16:02:38Z",
+      "data_points": 168
     },
     {
       "category": "product",
@@ -734,7 +784,7 @@
       "product": "British patriotic clothing",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-20T15:52:43Z",
+      "measured_at": "2026-07-20T16:03:05Z",
       "data_points": 169
     }
   ],
@@ -808,11 +858,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-20T16:04:43Z",
+  "generated_at": "2026-07-20T16:13:22Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 11,
-    "cached_results": 0
+    "measured_results": 1,
+    "cached_results": 11
   },
-  "last_updated": "2026-07-20 16:04:43"
+  "last_updated": "2026-07-20 16:13:22"
 }
