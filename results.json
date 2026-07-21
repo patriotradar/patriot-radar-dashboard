@@ -1,12 +1,12 @@
 {
   "state": "GROWING",
   "engagement_signal": "HEALTHY",
-  "insight_summary": "England Squad Steele is gaining traction with your audience. Post soon with a hook that invites debate or personal reaction.",
+  "insight_summary": "More people are talking about Ve Day right now. Lead with a clear opinion before the conversation gets crowded.",
   "next_post": {
-    "hook": "Everyone says England Squad Steele is fading \u2014 I think they are reading it wrong.",
-    "content_idea": "Frame it around what people really think about england squad steele right now \u2014 use one real example from daily British life, then ask viewers which side they are on.",
+    "hook": "British audiences are split on Ve Day, and that is exactly why it works.",
+    "content_idea": "Pick one headline people are already arguing about and answer it with a clear opinion on Ve Day, not a vague overview.",
     "format": "Yes/No debate post with comment-bait question overlay",
-    "reason_it_will_perform_better": "This works because it taps into curiosity, which consistently drives strong engagement with your audience, and uses a debate format they respond to well.",
+    "reason_it_will_perform_better": "This works because it taps into debate, which consistently drives strong engagement with your audience, and uses a debate format they respond to well.",
     "engagement_signal_used": "HEALTHY"
   },
   "results": [
@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "This changes how you see Ve day...",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Is Union jack still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Union flag today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Royal navy today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Has National service gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "We need to talk about Victoria cross with pride.",
       "caption_format": "opinion",
-      "caption_emotion": "pride"
+      "caption_emotion": "pride",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,9 @@
       "competition_score": 10,
       "caption": "Has Westminster lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,7 +246,9 @@
       "competition_score": 10,
       "caption": "Is Churchill still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -260,7 +276,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Normandy today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -288,7 +306,9 @@
       "competition_score": 3,
       "caption": "Is London still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -316,121 +336,12 @@
       "competition_score": 10,
       "caption": "Has Royal family gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
-    {
-      "category": "emerging",
-      "keyword": "england squad steele",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 595.0,
-      "source_keyword": "england",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should England Squad Steele be celebrated more in Britain? Yes or No?",
-      "hooks": [
-        "Should England Squad Steele be celebrated more in Britain? Yes or No?",
-        "Is England Squad Steele something every British person should be proud of? Yes or No?",
-        "Should England Squad Steele be taught in every British school? Yes or No?",
-        "Does England Squad Steele unite or divide Britain? Yes or No?",
-        "Is England Squad Steele under threat in modern Britain? Yes or No?"
-      ],
-      "product": "England flags and St George merchandise",
-      "content_score": 40,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 4,
-      "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 10.0,
-      "opportunity_label": "High Opportunity",
-      "demand_score": 10,
-      "competition_score": 10,
-      "caption": "Is England squad steele still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
-      "caption_emotion": "curiosity"
-    },
-    {
-      "category": "emerging",
-      "keyword": "mxgp of great britain",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 70.0,
-      "source_keyword": "great britain",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Mxgp Of Great Britain? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Mxgp Of Great Britain? Yes or No?",
-        "Is Mxgp Of Great Britain important to modern Britain? Yes or No?",
-        "Is Mxgp Of Great Britain more important now than ever? Yes or No?",
-        "Does Mxgp Of Great Britain make you proud to be British? Yes or No?",
-        "Is Mxgp Of Great Britain being ignored by the government? Yes or No?"
-      ],
-      "product": "Proudly British merchandise",
-      "content_score": 43,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 10.0,
-      "opportunity_label": "High Opportunity",
-      "demand_score": 10,
-      "competition_score": 10,
-      "caption": "Has Mxgp of great britain lost what made it matter?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
-    },
-    {
-      "category": "emerging",
-      "keyword": "mxgp great britain 2026",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 60.0,
-      "source_keyword": "great britain",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Mxgp Great Britain 2026? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Mxgp Great Britain 2026? Yes or No?",
-        "Is Mxgp Great Britain 2026 important to modern Britain? Yes or No?",
-        "Is Mxgp Great Britain 2026 more important now than ever? Yes or No?",
-        "Does Mxgp Great Britain 2026 make you proud to be British? Yes or No?",
-        "Is Mxgp Great Britain 2026 being ignored by the government? Yes or No?"
-      ],
-      "product": "Proudly British merchandise",
-      "content_score": 43,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 9.0,
-      "opportunity_label": "High Opportunity",
-      "demand_score": 8,
-      "competition_score": 10,
-      "caption": "Is Mxgp great britain 2026 still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
-    },
     {
       "category": "emerging",
       "keyword": "bbcbreakfast",
@@ -496,14 +407,88 @@
       "british": 13,
       "emotion": 4,
       "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
       "demand_score": 4,
-      "competition_score": 7,
+      "competition_score": 10,
       "caption": "Why does nobody remember Uk signs \u00a3350 million sky sabre air defence deal to?",
       "caption_format": "curiosity",
       "caption_emotion": "nostalgia"
+    },
+    {
+      "category": "emerging",
+      "keyword": "ai battle lab to prepare british army for modern warfare",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
+        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 4,
+      "competition_score": 10,
+      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "finding your strength in the british army reserve - the",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
+        "Is Finding Your Strength In The British Army Reserve - The important to modern Britain? Yes or No?",
+        "Is Finding Your Strength In The British Army Reserve - The more important now than ever? Yes or No?",
+        "Does Finding Your Strength In The British Army Reserve - The make you proud to be British? Yes or No?",
+        "Is Finding Your Strength In The British Army Reserve - The being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 70,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 4,
+      "competition_score": 10,
+      "caption": "We need to talk about Finding your strength in the british army reserve - the with pride.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
     },
     {
       "category": "emerging",
@@ -581,157 +566,157 @@
     },
     {
       "category": "emerging",
-      "keyword": "england vs argentina delay",
+      "keyword": "dip decoded: what the defence investment plan means for the",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 7.3,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "england",
-      "discovery_type": "rising_query",
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
       "platforms": [
-        "rising_query"
+        "news"
       ],
       "platform_count": 1,
-      "question": "Should England Vs Argentina Delay be celebrated more in Britain? Yes or No?",
+      "question": "Should Britain care more about Dip Decoded: What The Defence Investment Plan Means For The? Yes or No?",
       "hooks": [
-        "Should England Vs Argentina Delay be celebrated more in Britain? Yes or No?",
-        "Is England Vs Argentina Delay something every British person should be proud of? Yes or No?",
-        "Should England Vs Argentina Delay be taught in every British school? Yes or No?",
-        "Does England Vs Argentina Delay unite or divide Britain? Yes or No?",
-        "Is England Vs Argentina Delay under threat in modern Britain? Yes or No?"
+        "Should Britain care more about Dip Decoded: What The Defence Investment Plan Means For The? Yes or No?",
+        "Is Dip Decoded: What The Defence Investment Plan Means For The important to modern Britain? Yes or No?",
+        "Is Dip Decoded: What The Defence Investment Plan Means For The more important now than ever? Yes or No?",
+        "Does Dip Decoded: What The Defence Investment Plan Means For The make you proud to be British? Yes or No?",
+        "Is Dip Decoded: What The Defence Investment Plan Means For The being ignored by the government? Yes or No?"
       ],
-      "product": "England flags and St George merchandise",
-      "content_score": 40,
-      "fresh": 7,
-      "british": 13,
+      "product": "Patriotic merchandise",
+      "content_score": 36,
+      "fresh": 12,
+      "british": 4,
       "emotion": 4,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
-      "caption": "Is England vs argentina delay still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
+      "caption": "Why does nobody remember Dip decoded: what the defence investment plan means for the?",
+      "caption_format": "curiosity",
       "caption_emotion": "nostalgia"
     },
     {
       "category": "emerging",
-      "keyword": "ai battle lab to prepare british army for modern warfare",
+      "keyword": "sky news host danica de giorgio claims prince harry and",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
         "news"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+      "question": "Should Britain care more about Sky News Host Danica De Giorgio Claims Prince Harry And? Yes or No?",
       "hooks": [
-        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
-        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
+        "Should Britain care more about Sky News Host Danica De Giorgio Claims Prince Harry And? Yes or No?",
+        "Is Sky News Host Danica De Giorgio Claims Prince Harry And important to modern Britain? Yes or No?",
+        "Is Sky News Host Danica De Giorgio Claims Prince Harry And more important now than ever? Yes or No?",
+        "Does Sky News Host Danica De Giorgio Claims Prince Harry And make you proud to be British? Yes or No?",
+        "Is Sky News Host Danica De Giorgio Claims Prince Harry And being ignored by the government? Yes or No?"
       ],
-      "product": "British Army history books",
-      "content_score": 75,
+      "product": "Patriotic merchandise",
+      "content_score": 41,
       "fresh": 12,
-      "british": 22,
-      "emotion": 17,
+      "british": 9,
+      "emotion": 4,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
-      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
+      "caption": "Why does nobody remember Sky news host danica de giorgio claims prince harry and?",
+      "caption_format": "curiosity",
+      "caption_emotion": "nostalgia"
     },
     {
       "category": "emerging",
-      "keyword": "finding your strength in the british army reserve - the",
+      "keyword": "kate middleton 'crucial' desire for wales family revealed af",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.8,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
         "news"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
+      "question": "Should Britain care more about Kate Middleton 'Crucial' Desire For Wales Family Revealed Af? Yes or No?",
       "hooks": [
-        "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
-        "Is Finding Your Strength In The British Army Reserve - The important to modern Britain? Yes or No?",
-        "Is Finding Your Strength In The British Army Reserve - The more important now than ever? Yes or No?",
-        "Does Finding Your Strength In The British Army Reserve - The make you proud to be British? Yes or No?",
-        "Is Finding Your Strength In The British Army Reserve - The being ignored by the government? Yes or No?"
+        "Should Britain care more about Kate Middleton 'Crucial' Desire For Wales Family Revealed Af? Yes or No?",
+        "Is Kate Middleton 'Crucial' Desire For Wales Family Revealed Af important to modern Britain? Yes or No?",
+        "Is Kate Middleton 'Crucial' Desire For Wales Family Revealed Af more important now than ever? Yes or No?",
+        "Does Kate Middleton 'Crucial' Desire For Wales Family Revealed Af make you proud to be British? Yes or No?",
+        "Is Kate Middleton 'Crucial' Desire For Wales Family Revealed Af being ignored by the government? Yes or No?"
       ],
-      "product": "British Army history books",
-      "content_score": 70,
+      "product": "Patriotic merchandise",
+      "content_score": 41,
       "fresh": 12,
-      "british": 22,
-      "emotion": 12,
+      "british": 9,
+      "emotion": 4,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
-      "caption": "We need to talk about Finding your strength in the british army reserve - the with pride.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    }
-  ],
-  "product_trends": [
-    {
-      "category": "product",
-      "keyword": "british flag",
-      "latest_score": 15,
-      "recent_avg": 10.8,
-      "previous_avg": 5.2,
-      "rise_percent": 109.7,
-      "viral_score": 52.4,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-21T09:41:13Z",
-      "data_points": 169
+      "caption": "What happened to Kate middleton 'crucial' desire for wales family revealed af?",
+      "caption_format": "curiosity",
+      "caption_emotion": "nostalgia"
     },
     {
-      "category": "product",
-      "keyword": "union jack flag",
+      "category": "emerging",
+      "keyword": "world war two veterans arrive in france on anniversary of",
       "latest_score": 0,
-      "recent_avg": 5.3,
-      "previous_avg": 5.7,
-      "rise_percent": -5.9,
-      "viral_score": 1.1,
-      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-21T09:41:04Z",
-      "data_points": 169
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about World War Two Veterans Arrive In France On Anniversary Of? Yes or No?",
+      "hooks": [
+        "Should Britain care more about World War Two Veterans Arrive In France On Anniversary Of? Yes or No?",
+        "Is World War Two Veterans Arrive In France On Anniversary Of important to modern Britain? Yes or No?",
+        "Is World War Two Veterans Arrive In France On Anniversary Of more important now than ever? Yes or No?",
+        "Does World War Two Veterans Arrive In France On Anniversary Of make you proud to be British? Yes or No?",
+        "Is World War Two Veterans Arrive In France On Anniversary Of being ignored by the government? Yes or No?"
+      ],
+      "product": "Veteran gifts",
+      "content_score": 76,
+      "fresh": 12,
+      "british": 18,
+      "emotion": 22,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "Hot take: people are wrong about World war two veterans arrive in france on anniversary of.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
     }
   ],
+  "product_trends": [],
   "creator_insights": [
     {
       "keyword": "tiktok views and likes",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "tiktok views to money",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -743,13 +728,19 @@
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views to money",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "tiktok views website",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views low",
+      "keyword": "tiktok views down reddit",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -786,18 +777,18 @@
     }
   ],
   "recommendation_meta": {
-    "keyword": "england squad steele",
-    "category": "emerging",
-    "content_score": 40,
-    "rise_percent": 0,
+    "keyword": "ve day",
+    "category": "content",
+    "content_score": 88,
+    "rise_percent": 178.4,
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-21T09:56:49Z",
+  "generated_at": "2026-07-21T10:04:17Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 11,
-    "cached_results": 0
+    "measured_results": 0,
+    "cached_results": 11
   },
-  "last_updated": "2026-07-21 09:56:49"
+  "last_updated": "2026-07-21 10:04:17"
 }
