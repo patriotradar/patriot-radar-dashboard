@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Has War memorial lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Has Spitfire gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "This changes how you see Battle of britain...",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Is St george still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Royal navy today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 3,
       "caption": "Is London still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,9 @@
       "competition_score": 10,
       "caption": "Has Small boats lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
@@ -508,10 +522,10 @@
       "category": "emerging",
       "keyword": "prince harry 'more determined' to find way back after meetin",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -533,9 +547,9 @@
       "emotion": 4,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
       "caption": "This changes how you see Prince harry 'more determined' to find way back after meetin...",
       "caption_format": "curiosity",
@@ -545,10 +559,10 @@
       "category": "emerging",
       "keyword": "world war two veterans arrive in france on anniversary of",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -570,47 +584,16 @@
       "emotion": 22,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
       "caption": "Hot take: people are wrong about World war two veterans arrive in france on anniversary of.",
       "caption_format": "opinion",
       "caption_emotion": "outrage"
     }
   ],
-  "product_trends": [
-    {
-      "category": "product",
-      "keyword": "union jack flag",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 0.0,
-      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-21T17:11:01Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "british flag",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 9.0,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-21T17:11:11Z",
-      "data_points": 169
-    }
-  ],
+  "product_trends": [],
   "creator_insights": [
     {
       "keyword": "tiktok views and likes",
@@ -681,11 +664,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-21T17:23:44Z",
+  "generated_at": "2026-07-21T17:35:12Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 7,
-    "cached_results": 0
+    "measured_results": 0,
+    "cached_results": 7
   },
-  "last_updated": "2026-07-21 17:23:44"
+  "last_updated": "2026-07-21 17:35:12"
 }
