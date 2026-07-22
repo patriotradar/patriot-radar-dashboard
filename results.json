@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Why is nobody talking about Veterans?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Has Poppy gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "The truth about Remembrance is not what you think.",
       "caption_format": "contrarian",
-      "caption_emotion": "outrage"
+      "caption_emotion": "outrage",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Why is nobody talking about British bulldog?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Has National service gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Ve day today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,9 @@
       "competition_score": 10,
       "caption": "Has Spitfire gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,7 +246,9 @@
       "competition_score": 10,
       "caption": "Has Britain lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -260,7 +276,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Great britain today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -288,7 +306,9 @@
       "competition_score": 10,
       "caption": "Has Royal air force gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -316,7 +336,9 @@
       "competition_score": 10,
       "caption": "Is George cross still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -344,7 +366,9 @@
       "competition_score": 10,
       "caption": "Is White cliffs of dover still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
@@ -535,6 +559,43 @@
     },
     {
       "category": "emerging",
+      "keyword": "finding your strength in the british army reserve - the",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
+        "Is Finding Your Strength In The British Army Reserve - The important to modern Britain? Yes or No?",
+        "Is Finding Your Strength In The British Army Reserve - The more important now than ever? Yes or No?",
+        "Does Finding Your Strength In The British Army Reserve - The make you proud to be British? Yes or No?",
+        "Is Finding Your Strength In The British Army Reserve - The being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 70,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "We need to talk about Finding your strength in the british army reserve - the with pride.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
       "keyword": "british army to prepare for 'modern warfare' with \u00a32bn ai",
       "latest_score": 0,
       "recent_avg": 0,
@@ -646,49 +707,12 @@
     },
     {
       "category": "emerging",
-      "keyword": "finding your strength in the british army reserve - the",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Finding Your Strength In The British Army Reserve - The? Yes or No?",
-        "Is Finding Your Strength In The British Army Reserve - The important to modern Britain? Yes or No?",
-        "Is Finding Your Strength In The British Army Reserve - The more important now than ever? Yes or No?",
-        "Does Finding Your Strength In The British Army Reserve - The make you proud to be British? Yes or No?",
-        "Is Finding Your Strength In The British Army Reserve - The being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 70,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 12,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "We need to talk about Finding your strength in the british army reserve - the with pride.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
       "keyword": "king charles visits isle of man: the royal connection explai",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.8,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -710,9 +734,9 @@
       "emotion": 12,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
       "caption": "Why is nobody talking about King charles visits isle of man: the royal connection explai?",
       "caption_format": "curiosity",
@@ -722,42 +746,21 @@
   "product_trends": [
     {
       "category": "product",
-      "keyword": "union jack flag",
+      "keyword": "england flag",
       "latest_score": 0,
-      "recent_avg": 16.7,
-      "previous_avg": 16.5,
-      "rise_percent": 1.0,
-      "viral_score": 3.8,
-      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
+      "recent_avg": 2.8,
+      "previous_avg": 3.2,
+      "rise_percent": -10.5,
+      "viral_score": 0.6,
+      "question": "Is England Flag being ignored in modern Britain? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-22T01:01:19Z",
-      "data_points": 168
-    },
-    {
-      "category": "product",
-      "keyword": "england hoodie",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 0.0,
-      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
-      "product": "British patriotic clothing",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-22T01:03:41Z",
+      "measured_at": "2026-07-22T01:12:57Z",
       "data_points": 169
     }
   ],
   "creator_insights": [
-    {
-      "keyword": "tiktok views and likes",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
     {
       "keyword": "tiktok views to money",
       "source_keyword": "tiktok views",
@@ -811,6 +814,12 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "how to get views on instagram",
+      "source_keyword": "how to get views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -821,11 +830,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-22T01:15:15Z",
+  "generated_at": "2026-07-22T01:23:55Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 12,
-    "cached_results": 0
+    "measured_results": 0,
+    "cached_results": 12
   },
-  "last_updated": "2026-07-22 01:15:15"
+  "last_updated": "2026-07-22 01:23:55"
 }
