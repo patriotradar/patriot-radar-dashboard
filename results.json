@@ -492,43 +492,6 @@
     },
     {
       "category": "emerging",
-      "keyword": "ai battle lab to prepare british army for modern warfare",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
-        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
-        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 4,
-      "competition_score": 7,
-      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
       "keyword": "uk signs \u00a3350 million sky sabre air defence deal to",
       "latest_score": 0,
       "recent_avg": 0,
@@ -640,49 +603,12 @@
     },
     {
       "category": "emerging",
-      "keyword": "world war two veterans arrive in france on anniversary of",
+      "keyword": "d-day remembrance must help britain understand veterans stil",
       "latest_score": 0,
       "recent_avg": 0,
       "previous_avg": 0,
       "rise_percent": 0,
       "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about World War Two Veterans Arrive In France On Anniversary Of? Yes or No?",
-      "hooks": [
-        "Should Britain care more about World War Two Veterans Arrive In France On Anniversary Of? Yes or No?",
-        "Is World War Two Veterans Arrive In France On Anniversary Of important to modern Britain? Yes or No?",
-        "Is World War Two Veterans Arrive In France On Anniversary Of more important now than ever? Yes or No?",
-        "Does World War Two Veterans Arrive In France On Anniversary Of make you proud to be British? Yes or No?",
-        "Is World War Two Veterans Arrive In France On Anniversary Of being ignored by the government? Yes or No?"
-      ],
-      "product": "Veteran gifts",
-      "content_score": 76,
-      "fresh": 12,
-      "british": 18,
-      "emotion": 22,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 4,
-      "competition_score": 7,
-      "caption": "Hot take: people are wrong about World war two veterans arrive in france on anniversary of.",
-      "caption_format": "opinion",
-      "caption_emotion": "outrage"
-    },
-    {
-      "category": "emerging",
-      "keyword": "d-day remembrance must help britain understand veterans stil",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -704,32 +630,90 @@
       "emotion": 25,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "opportunity_gap": 6.5,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 4,
       "competition_score": 9,
       "caption": "Unpopular opinion: D-day remembrance must help britain understand veterans stil needs to change.",
       "caption_format": "opinion",
       "caption_emotion": "outrage"
-    }
-  ],
-  "product_trends": [
+    },
     {
-      "category": "product",
-      "keyword": "british flag",
+      "category": "emerging",
+      "keyword": "ai battle lab to prepare british army for modern warfare",
       "latest_score": 0,
-      "recent_avg": 6.2,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 1.2,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-22T17:09:11Z",
-      "data_points": 169
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Ai Battle Lab To Prepare British Army For Modern Warfare? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare important to modern Britain? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare more important now than ever? Yes or No?",
+        "Does Ai Battle Lab To Prepare British Army For Modern Warfare make you proud to be British? Yes or No?",
+        "Is Ai Battle Lab To Prepare British Army For Modern Warfare being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 4.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 2,
+      "competition_score": 7,
+      "caption": "Hot take: people underestimate Ai battle lab to prepare british army for modern warfare.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "world war two veterans arrive in france on anniversary of",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about World War Two Veterans Arrive In France On Anniversary Of? Yes or No?",
+      "hooks": [
+        "Should Britain care more about World War Two Veterans Arrive In France On Anniversary Of? Yes or No?",
+        "Is World War Two Veterans Arrive In France On Anniversary Of important to modern Britain? Yes or No?",
+        "Is World War Two Veterans Arrive In France On Anniversary Of more important now than ever? Yes or No?",
+        "Does World War Two Veterans Arrive In France On Anniversary Of make you proud to be British? Yes or No?",
+        "Is World War Two Veterans Arrive In France On Anniversary Of being ignored by the government? Yes or No?"
+      ],
+      "product": "Veteran gifts",
+      "content_score": 76,
+      "fresh": 12,
+      "british": 18,
+      "emotion": 22,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 4.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 2,
+      "competition_score": 7,
+      "caption": "Hot take: people are wrong about World war two veterans arrive in france on anniversary of.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
     }
   ],
+  "product_trends": [],
   "creator_insights": [
     {
       "keyword": "tiktok views and likes",
@@ -800,11 +784,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-22T17:22:45Z",
+  "generated_at": "2026-07-22T17:24:25Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 11
   },
-  "last_updated": "2026-07-22 17:22:45"
+  "last_updated": "2026-07-22 17:24:24"
 }
