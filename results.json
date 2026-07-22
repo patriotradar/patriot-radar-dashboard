@@ -608,19 +608,25 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views are down",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
       "keyword": "tiktok views to money",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views down reddit",
+      "keyword": "tiktok views are down",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "tiktok views low",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "tiktok views stuck at 0",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -648,12 +654,6 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "how to get views on youtube shorts",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -664,11 +664,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-22T18:24:40Z",
+  "generated_at": "2026-07-22T18:35:15Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 7
   },
-  "last_updated": "2026-07-22 18:24:40"
+  "last_updated": "2026-07-22 18:35:15"
 }
