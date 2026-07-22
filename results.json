@@ -626,12 +626,6 @@
   "product_trends": [],
   "creator_insights": [
     {
-      "keyword": "tiktok views and likes",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
       "keyword": "tiktok views to money",
       "source_keyword": "tiktok views",
       "rise_value": 150,
@@ -662,6 +656,18 @@
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views down reddit",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "tiktok views app",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "how to get views on youtube",
       "source_keyword": "how to get views",
       "rise_value": 150,
@@ -678,12 +684,6 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "how to get views on instagram",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -694,11 +694,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-22T11:15:26Z",
+  "generated_at": "2026-07-22T11:24:53Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 8
   },
-  "last_updated": "2026-07-22 11:15:26"
+  "last_updated": "2026-07-22 11:24:53"
 }
