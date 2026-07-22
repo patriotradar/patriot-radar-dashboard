@@ -285,14 +285,14 @@
       "keyword": "george cross",
       "latest_score": 0,
       "recent_avg": 0.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
+      "previous_avg": 12.3,
+      "rise_percent": -100.0,
       "viral_score": 0.0,
       "question": "Does modern Britain still recognise true bravery? Yes or No?",
       "product": "Patriotic merchandise",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-22T17:09:13Z",
+      "measured_at": "2026-07-22T16:58:44Z",
       "data_points": 169,
       "content_score": 52,
       "fresh": 3,
@@ -306,7 +306,9 @@
       "competition_score": 10,
       "caption": "Is George cross still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -343,11 +345,11 @@
     {
       "category": "emerging",
       "keyword": "prince george",
-      "latest_score": 75,
-      "recent_avg": 74.7,
-      "previous_avg": 5.2,
-      "rise_percent": 1323.5,
-      "viral_score": 86.2,
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 25.0,
       "source_keyword": "Twitter UK",
       "discovery_type": "twitter",
       "platforms": [
@@ -363,19 +365,19 @@
         "Is Prince George being ignored by the government? Yes or No?"
       ],
       "product": "Patriotic merchandise",
-      "content_score": 57,
-      "fresh": 25,
+      "content_score": 44,
+      "fresh": 12,
       "british": 9,
       "emotion": 4,
       "debate": 13,
       "_tiktok_competition": 0,
-      "opportunity_gap": 10.0,
+      "opportunity_gap": 8.0,
       "opportunity_label": "High Opportunity",
-      "demand_score": 10,
+      "demand_score": 6,
       "competition_score": 10,
-      "caption": "This changes how you see Prince george...",
-      "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption": "Has Prince george gone too far?",
+      "caption_format": "debate",
+      "caption_emotion": "curiosity"
     },
     {
       "category": "emerging",
@@ -677,10 +679,10 @@
       "category": "emerging",
       "keyword": "d-day remembrance must help britain understand veterans stil",
       "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.6,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -702,9 +704,9 @@
       "emotion": 25,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 6.5,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 2,
       "competition_score": 9,
       "caption": "Unpopular opinion: D-day remembrance must help britain understand veterans stil needs to change.",
       "caption_format": "opinion",
@@ -714,17 +716,17 @@
   "product_trends": [
     {
       "category": "product",
-      "keyword": "england hoodie",
+      "keyword": "british flag",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 5.2,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
-      "product": "British patriotic clothing",
+      "recent_avg": 6.2,
+      "previous_avg": 0.0,
+      "rise_percent": 0,
+      "viral_score": 1.2,
+      "question": "Would you fly the British flag outside your home? Yes or No?",
+      "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-22T17:05:28Z",
+      "measured_at": "2026-07-22T17:09:11Z",
       "data_points": 169
     }
   ],
@@ -798,11 +800,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-22T17:18:57Z",
+  "generated_at": "2026-07-22T17:22:45Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 1,
-    "cached_results": 10
+    "measured_results": 0,
+    "cached_results": 11
   },
-  "last_updated": "2026-07-22 17:18:57"
+  "last_updated": "2026-07-22 17:22:45"
 }
