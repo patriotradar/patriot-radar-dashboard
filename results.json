@@ -724,11 +724,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-22T16:15:48Z",
+  "generated_at": "2026-07-22T16:25:06Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 9
   },
-  "last_updated": "2026-07-22 16:15:48"
+  "last_updated": "2026-07-22 16:25:06"
 }
