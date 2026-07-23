@@ -289,7 +289,7 @@
       "recent_avg": 0,
       "previous_avg": 0,
       "rise_percent": 0,
-      "viral_score": 125.0,
+      "viral_score": 75.0,
       "source_keyword": "Twitter UK",
       "discovery_type": "twitter",
       "platforms": [
@@ -316,6 +316,43 @@
       "demand_score": 10,
       "competition_score": 10,
       "caption": "Has Bbcbreakfast lost what made it matter?",
+      "caption_format": "debate",
+      "caption_emotion": "nostalgia"
+    },
+    {
+      "category": "emerging",
+      "keyword": "commonwealthgames",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 25.0,
+      "source_keyword": "Twitter UK",
+      "discovery_type": "twitter",
+      "platforms": [
+        "twitter"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Commonwealthgames? Yes or No?",
+        "Is Commonwealthgames important to modern Britain? Yes or No?",
+        "Is Commonwealthgames more important now than ever? Yes or No?",
+        "Does Commonwealthgames make you proud to be British? Yes or No?",
+        "Is Commonwealthgames being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 44,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 13,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 8.0,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 6,
+      "competition_score": 10,
+      "caption": "Should we still hold onto Commonwealthgames today?",
       "caption_format": "debate",
       "caption_emotion": "nostalgia"
     },
@@ -495,11 +532,11 @@
       "british": 22,
       "emotion": 17,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "We need to talk about British army to prepare for 'modern warfare' with \u00a32bn ai honestly.",
       "caption_format": "opinion",
       "caption_emotion": "outrage"
@@ -614,43 +651,6 @@
       "caption": "This changes how you see Prince harry, meghan and children archie and lilibet visit k...",
       "caption_format": "curiosity",
       "caption_emotion": "nostalgia"
-    },
-    {
-      "category": "emerging",
-      "keyword": "prince harry blasted for \u2018sucking up to king charles' amid",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Prince Harry Blasted For \u2018Sucking Up To King Charles' Amid? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Prince Harry Blasted For \u2018Sucking Up To King Charles' Amid? Yes or No?",
-        "Is Prince Harry Blasted For \u2018Sucking Up To King Charles' Amid important to modern Britain? Yes or No?",
-        "Is Prince Harry Blasted For \u2018Sucking Up To King Charles' Amid more important now than ever? Yes or No?",
-        "Does Prince Harry Blasted For \u2018Sucking Up To King Charles' Amid make you proud to be British? Yes or No?",
-        "Is Prince Harry Blasted For \u2018Sucking Up To King Charles' Amid being ignored by the government? Yes or No?"
-      ],
-      "product": "Royal family collectibles",
-      "content_score": 63,
-      "fresh": 12,
-      "british": 18,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 4,
-      "competition_score": 7,
-      "caption": "We need to talk about Prince harry blasted for \u2018sucking up to king charles' amid honestly.",
-      "caption_format": "opinion",
-      "caption_emotion": "outrage"
     }
   ],
   "product_trends": [],
@@ -724,11 +724,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-23T13:16:13Z",
+  "generated_at": "2026-07-23T13:24:48Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 9
   },
-  "last_updated": "2026-07-23 13:16:13"
+  "last_updated": "2026-07-23 13:24:48"
 }
