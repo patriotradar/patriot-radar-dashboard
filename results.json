@@ -210,8 +210,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "reddit",
-        "news"
+        "news",
+        "reddit"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Mod Cancels Army Training In Kenya Over Powers To Prosecute? Yes or No?",
@@ -591,7 +591,7 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "how to get views on pinterest",
+      "keyword": "how to get views on youtube shorts",
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -605,11 +605,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T08:45:25Z",
+  "generated_at": "2026-07-24T08:56:21Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 5
   },
-  "last_updated": "2026-07-24 08:45:25"
+  "last_updated": "2026-07-24 08:56:21"
 }
