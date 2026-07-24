@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Why is nobody talking about Victoria cross?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Why does nobody remember Winston churchill?",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "Has Poppy gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 8,
       "caption": "Should we still accept Monarchy today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Armed forces today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "What's really happening with Small boats?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,9 @@
       "competition_score": 10,
       "caption": "Is English flag still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,7 +246,9 @@
       "competition_score": 10,
       "caption": "This changes how you see Battle of britain...",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -260,7 +276,9 @@
       "competition_score": 10,
       "caption": "Has Westminster lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -288,7 +306,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Ve day today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -316,7 +336,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Uk politics today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -344,63 +366,9 @@
       "competition_score": 10,
       "caption": "Has King gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
-    },
-    {
-      "category": "content",
-      "keyword": "royal family",
-      "latest_score": 33,
-      "recent_avg": 27.3,
-      "previous_avg": 32.3,
-      "rise_percent": -15.5,
-      "viral_score": 17.0,
-      "question": "Should British taxpayers continue to fund the Royal Family? Yes or No?",
-      "product": "Royal family collectibles",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T14:47:51Z",
-      "data_points": 169,
-      "content_score": 47,
-      "fresh": 3,
-      "british": 9,
-      "emotion": 4,
-      "debate": 25,
-      "_tiktok_competition": 1,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
-      "competition_score": 10,
-      "caption": "Has Royal family gone too far?",
-      "caption_format": "debate",
-      "caption_emotion": "curiosity"
-    },
-    {
-      "category": "content",
-      "keyword": "british history",
-      "latest_score": 29,
-      "recent_avg": 30.7,
-      "previous_avg": 30.0,
-      "rise_percent": 2.2,
-      "viral_score": 17.3,
-      "question": "Is British History being ignored in modern Britain? Yes or No?",
-      "product": "British history books",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T14:50:07Z",
-      "data_points": 169,
-      "content_score": 45,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 12,
-      "debate": 7,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.5,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 5,
-      "competition_score": 10,
-      "caption": "We need to talk about British history honestly.",
-      "caption_format": "opinion",
-      "caption_emotion": "outrage"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
@@ -469,11 +437,11 @@
       "british": 18,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
       "demand_score": 4,
-      "competition_score": 7,
+      "competition_score": 10,
       "caption": "Hot take: people underestimate Mod cancels army training in kenya over powers to prosecute.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
@@ -506,11 +474,11 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
       "demand_score": 4,
-      "competition_score": 7,
+      "competition_score": 10,
       "caption": "This changes how you see British army training in kenya cancelled as uk refused licen...",
       "caption_format": "curiosity",
       "caption_emotion": "pride"
@@ -778,51 +746,6 @@
   "product_trends": [
     {
       "category": "product",
-      "keyword": "union jack flag",
-      "latest_score": 0,
-      "recent_avg": 43.0,
-      "previous_avg": 8.2,
-      "rise_percent": 426.5,
-      "viral_score": 53.6,
-      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T14:41:01Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "england flag",
-      "latest_score": 6,
-      "recent_avg": 7.2,
-      "previous_avg": 2.5,
-      "rise_percent": 186.7,
-      "viral_score": 48.5,
-      "question": "Is England Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T14:41:35Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "british flag",
-      "latest_score": 28,
-      "recent_avg": 22.0,
-      "previous_avg": 13.2,
-      "rise_percent": 67.1,
-      "viral_score": 44.4,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T14:41:17Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
       "keyword": "england hoodie",
       "latest_score": 0,
       "recent_avg": 0.0,
@@ -833,7 +756,7 @@
       "product": "British patriotic clothing",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-24T14:42:06Z",
+      "measured_at": "2026-07-24T14:54:01Z",
       "data_points": 169
     }
   ],
@@ -869,6 +792,12 @@
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views down reddit",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "how to get views on youtube",
       "source_keyword": "how to get views",
       "rise_value": 150,
@@ -891,12 +820,6 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "how to get views on youtube shorts",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -907,11 +830,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T14:55:07Z",
+  "generated_at": "2026-07-24T15:02:50Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 14,
-    "cached_results": 0
+    "measured_results": 0,
+    "cached_results": 12
   },
-  "last_updated": "2026-07-24 14:55:07"
+  "last_updated": "2026-07-24 15:02:50"
 }
