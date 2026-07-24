@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "Has National service gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "Why does nobody remember Military history?",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 8,
       "caption": "Is Immigration still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Has Poppy gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -147,6 +155,36 @@
       "demand_score": 2,
       "competition_score": 10,
       "caption": "Should we still accept Armed forces today?",
+      "caption_format": "debate",
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
+    },
+    {
+      "category": "content",
+      "keyword": "winston churchill",
+      "latest_score": 81,
+      "recent_avg": 46.7,
+      "previous_avg": 40.5,
+      "rise_percent": 15.2,
+      "viral_score": 44.5,
+      "question": "Would Churchill recognise Britain today? Yes or No?",
+      "product": "Churchill books",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-24T01:55:46Z",
+      "data_points": 169,
+      "content_score": 69,
+      "fresh": 14,
+      "british": 18,
+      "emotion": 12,
+      "debate": 19,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 9.5,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 9,
+      "competition_score": 10,
+      "caption": "Should we still accept Winston churchill today?",
       "caption_format": "debate",
       "caption_emotion": "curiosity"
     },
@@ -176,7 +214,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto D-day today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +244,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto Great britain today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,7 +274,9 @@
       "competition_score": 3,
       "caption": "Is London still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -260,7 +304,9 @@
       "competition_score": 10,
       "caption": "Has United kingdom gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -288,7 +334,9 @@
       "competition_score": 10,
       "caption": "Has Battle of britain lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
@@ -340,8 +388,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "reddit",
-        "news"
+        "news",
+        "reddit"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Mod Cancels Army Training In Kenya Over Powers To Prosecute? Yes or No?",
@@ -378,8 +426,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "reddit",
-        "news"
+        "news",
+        "reddit"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
@@ -470,11 +518,11 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "This changes how you see British army training in kenya cancelled as uk refused licen...",
       "caption_format": "curiosity",
       "caption_emotion": "pride"
@@ -668,62 +716,32 @@
   "product_trends": [
     {
       "category": "product",
+      "keyword": "british flag",
+      "latest_score": 0,
+      "recent_avg": 7.3,
+      "previous_avg": 12.7,
+      "rise_percent": -42.1,
+      "viral_score": 1.5,
+      "question": "Would you fly the British flag outside your home? Yes or No?",
+      "product": "Union Jack flags and patriotic decor",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-24T01:51:21Z",
+      "data_points": 169
+    },
+    {
+      "category": "product",
       "keyword": "union jack flag",
       "latest_score": 0,
       "recent_avg": 6.8,
-      "previous_avg": 19.0,
-      "rise_percent": -64.0,
+      "previous_avg": 21.7,
+      "rise_percent": -68.5,
       "viral_score": 1.4,
       "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-24T01:40:58Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "british flag",
-      "latest_score": 0,
-      "recent_avg": 7.0,
-      "previous_avg": 12.8,
-      "rise_percent": -45.5,
-      "viral_score": 1.4,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T01:41:13Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "england flag",
-      "latest_score": 0,
-      "recent_avg": 4.2,
-      "previous_avg": 7.8,
-      "rise_percent": -46.8,
-      "viral_score": 0.8,
-      "question": "Is England Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T01:41:24Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "england hoodie",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 2.2,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
-      "product": "British patriotic clothing",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T01:41:50Z",
+      "measured_at": "2026-07-24T01:51:05Z",
       "data_points": 169
     }
   ],
@@ -797,11 +815,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T01:54:21Z",
+  "generated_at": "2026-07-24T02:04:58Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 10,
-    "cached_results": 0
+    "measured_results": 1,
+    "cached_results": 10
   },
-  "last_updated": "2026-07-24 01:54:21"
+  "last_updated": "2026-07-24 02:04:58"
 }
