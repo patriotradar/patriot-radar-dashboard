@@ -374,6 +374,43 @@
   "emerging": [
     {
       "category": "emerging",
+      "keyword": "commonwealthgames",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 200.0,
+      "source_keyword": "Twitter UK",
+      "discovery_type": "twitter",
+      "platforms": [
+        "twitter"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Commonwealthgames? Yes or No?",
+        "Is Commonwealthgames important to modern Britain? Yes or No?",
+        "Is Commonwealthgames more important now than ever? Yes or No?",
+        "Does Commonwealthgames make you proud to be British? Yes or No?",
+        "Is Commonwealthgames being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 44,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 13,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 10.0,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 10,
+      "competition_score": 10,
+      "caption": "Should we still hold onto Commonwealthgames today?",
+      "caption_format": "debate",
+      "caption_emotion": "nostalgia"
+    },
+    {
+      "category": "emerging",
       "keyword": "mod cancels army training in kenya over powers to prosecute",
       "latest_score": 0,
       "recent_avg": 0,
@@ -383,8 +420,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "news",
-        "reddit"
+        "reddit",
+        "news"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Mod Cancels Army Training In Kenya Over Powers To Prosecute? Yes or No?",
@@ -421,8 +458,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "news",
-        "reddit"
+        "reddit",
+        "news"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
@@ -445,6 +482,154 @@
       "demand_score": 10,
       "competition_score": 10,
       "caption": "Hot take: people underestimate Uk says armed forces ready to defend country after iran.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "iran threatens britain and declares raf base a 'target'",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 20.0,
+      "source_keyword": "Reddit r/unitedkingdom",
+      "discovery_type": "reddit",
+      "platforms": [
+        "reddit"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Iran Threatens Britain And Declares Raf Base A 'Target'? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Iran Threatens Britain And Declares Raf Base A 'Target'? Yes or No?",
+        "Is Iran Threatens Britain And Declares Raf Base A 'Target' important to modern Britain? Yes or No?",
+        "Is Iran Threatens Britain And Declares Raf Base A 'Target' more important now than ever? Yes or No?",
+        "Does Iran Threatens Britain And Declares Raf Base A 'Target' make you proud to be British? Yes or No?",
+        "Is Iran Threatens Britain And Declares Raf Base A 'Target' being ignored by the government? Yes or No?"
+      ],
+      "product": "Proudly British merchandise",
+      "content_score": 65,
+      "fresh": 10,
+      "british": 22,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "We need to talk about Iran threatens britain and declares raf base a 'target' with pride.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "british army training in kenya cancelled as uk refused licen",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about British Army Training In Kenya Cancelled As Uk Refused Licen? Yes or No?",
+      "hooks": [
+        "Should Britain care more about British Army Training In Kenya Cancelled As Uk Refused Licen? Yes or No?",
+        "Is British Army Training In Kenya Cancelled As Uk Refused Licen important to modern Britain? Yes or No?",
+        "Is British Army Training In Kenya Cancelled As Uk Refused Licen more important now than ever? Yes or No?",
+        "Does British Army Training In Kenya Cancelled As Uk Refused Licen make you proud to be British? Yes or No?",
+        "Is British Army Training In Kenya Cancelled As Uk Refused Licen being ignored by the government? Yes or No?"
+      ],
+      "product": "British Army history books",
+      "content_score": 70,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "This changes how you see British army training in kenya cancelled as uk refused licen...",
+      "caption_format": "curiosity",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "scots soldiers test warfighting technology on defensive nato",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
+        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato important to modern Britain? Yes or No?",
+        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato more important now than ever? Yes or No?",
+        "Does Scots Soldiers Test Warfighting Technology On Defensive Nato make you proud to be British? Yes or No?",
+        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 53,
+      "fresh": 12,
+      "british": 4,
+      "emotion": 21,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "Unpopular opinion: Scots soldiers test warfighting technology on defensive nato deserves more respect.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "why uk moved batuk's september military exercise out of keny",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Why Uk Moved Batuk'S September Military Exercise Out Of Keny? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Why Uk Moved Batuk'S September Military Exercise Out Of Keny? Yes or No?",
+        "Is Why Uk Moved Batuk'S September Military Exercise Out Of Keny important to modern Britain? Yes or No?",
+        "Is Why Uk Moved Batuk'S September Military Exercise Out Of Keny more important now than ever? Yes or No?",
+        "Does Why Uk Moved Batuk'S September Military Exercise Out Of Keny make you proud to be British? Yes or No?",
+        "Is Why Uk Moved Batuk'S September Military Exercise Out Of Keny being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 70,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "We need to talk about Why uk moved batuk's september military exercise out of keny with pride.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
     },
@@ -476,11 +661,11 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "Unpopular opinion: Israel 'fallen short' of uk military standards in gaza, new needs to change.",
       "caption_format": "opinion",
       "caption_emotion": "outrage"
@@ -524,197 +709,12 @@
     },
     {
       "category": "emerging",
-      "keyword": "commonwealthgames",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 1.9,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "Twitter UK",
-      "discovery_type": "twitter",
-      "platforms": [
-        "twitter"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Commonwealthgames? Yes or No?",
-        "Is Commonwealthgames important to modern Britain? Yes or No?",
-        "Is Commonwealthgames more important now than ever? Yes or No?",
-        "Does Commonwealthgames make you proud to be British? Yes or No?",
-        "Is Commonwealthgames being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 44,
-      "fresh": 12,
-      "british": 9,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 3.5,
-      "opportunity_label": "Saturated",
-      "demand_score": 2,
-      "competition_score": 5,
-      "caption": "Should we still hold onto Commonwealthgames today?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
-    },
-    {
-      "category": "emerging",
-      "keyword": "iran threatens britain and declares raf base a 'target'",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "Reddit r/unitedkingdom",
-      "discovery_type": "reddit",
-      "platforms": [
-        "reddit"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Iran Threatens Britain And Declares Raf Base A 'Target'? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Iran Threatens Britain And Declares Raf Base A 'Target'? Yes or No?",
-        "Is Iran Threatens Britain And Declares Raf Base A 'Target' important to modern Britain? Yes or No?",
-        "Is Iran Threatens Britain And Declares Raf Base A 'Target' more important now than ever? Yes or No?",
-        "Does Iran Threatens Britain And Declares Raf Base A 'Target' make you proud to be British? Yes or No?",
-        "Is Iran Threatens Britain And Declares Raf Base A 'Target' being ignored by the government? Yes or No?"
-      ],
-      "product": "Proudly British merchandise",
-      "content_score": 65,
-      "fresh": 10,
-      "british": 22,
-      "emotion": 12,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "We need to talk about Iran threatens britain and declares raf base a 'target' with pride.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "british army training in kenya cancelled as uk refused licen",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.9,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about British Army Training In Kenya Cancelled As Uk Refused Licen? Yes or No?",
-      "hooks": [
-        "Should Britain care more about British Army Training In Kenya Cancelled As Uk Refused Licen? Yes or No?",
-        "Is British Army Training In Kenya Cancelled As Uk Refused Licen important to modern Britain? Yes or No?",
-        "Is British Army Training In Kenya Cancelled As Uk Refused Licen more important now than ever? Yes or No?",
-        "Does British Army Training In Kenya Cancelled As Uk Refused Licen make you proud to be British? Yes or No?",
-        "Is British Army Training In Kenya Cancelled As Uk Refused Licen being ignored by the government? Yes or No?"
-      ],
-      "product": "British Army history books",
-      "content_score": 70,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 12,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "This changes how you see British army training in kenya cancelled as uk refused licen...",
-      "caption_format": "curiosity",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "scots soldiers test warfighting technology on defensive nato",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
-        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato important to modern Britain? Yes or No?",
-        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato more important now than ever? Yes or No?",
-        "Does Scots Soldiers Test Warfighting Technology On Defensive Nato make you proud to be British? Yes or No?",
-        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 53,
-      "fresh": 12,
-      "british": 4,
-      "emotion": 21,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "Unpopular opinion: Scots soldiers test warfighting technology on defensive nato deserves more respect.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "why uk moved batuk's september military exercise out of keny",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Why Uk Moved Batuk'S September Military Exercise Out Of Keny? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Why Uk Moved Batuk'S September Military Exercise Out Of Keny? Yes or No?",
-        "Is Why Uk Moved Batuk'S September Military Exercise Out Of Keny important to modern Britain? Yes or No?",
-        "Is Why Uk Moved Batuk'S September Military Exercise Out Of Keny more important now than ever? Yes or No?",
-        "Does Why Uk Moved Batuk'S September Military Exercise Out Of Keny make you proud to be British? Yes or No?",
-        "Is Why Uk Moved Batuk'S September Military Exercise Out Of Keny being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 70,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 12,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "We need to talk about Why uk moved batuk's september military exercise out of keny with pride.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
       "keyword": "prince harry boarding pass to king charles meeting was this",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -736,9 +736,9 @@
       "emotion": 12,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
       "caption": "Unpopular opinion: Prince harry boarding pass to king charles meeting was this needs to change.",
       "caption_format": "opinion",
@@ -754,37 +754,31 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views increase",
+      "keyword": "tiktok views to money",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views app",
+      "keyword": "tiktok views are down",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views free 10k apk",
+      "keyword": "tiktok views low",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views counter",
+      "keyword": "tiktok views stuck at 0",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views free apk",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "tiktok views trick",
+      "keyword": "tiktok views down today",
       "source_keyword": "tiktok views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -797,6 +791,12 @@
     },
     {
       "keyword": "how to get views on tiktok",
+      "source_keyword": "how to get views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "how to get views in content warning",
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
@@ -816,11 +816,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T06:33:11Z",
+  "generated_at": "2026-07-24T06:35:29Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 12
   },
-  "last_updated": "2026-07-24 06:33:11"
+  "last_updated": "2026-07-24 06:35:29"
 }
