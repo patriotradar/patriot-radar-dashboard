@@ -687,6 +687,12 @@
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views down reddit",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "how to get views on youtube",
       "source_keyword": "how to get views",
       "rise_value": 150,
@@ -709,12 +715,6 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "how to get views on pinterest",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -725,11 +725,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T13:34:04Z",
+  "generated_at": "2026-07-24T13:35:00Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 9
   },
-  "last_updated": "2026-07-24 13:34:04"
+  "last_updated": "2026-07-24 13:35:00"
 }
