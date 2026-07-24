@@ -36,6 +36,36 @@
       "competition_score": 10,
       "caption": "This changes how you see Remembrance...",
       "caption_format": "curiosity",
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
+    },
+    {
+      "category": "content",
+      "keyword": "westminster",
+      "latest_score": 95,
+      "recent_avg": 80.5,
+      "previous_avg": 67.2,
+      "rise_percent": 19.9,
+      "viral_score": 58.3,
+      "question": "Has Westminster lost touch with ordinary British people? Yes or No?",
+      "product": "Patriotic merchandise",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-24T11:52:06Z",
+      "data_points": 169,
+      "content_score": 68,
+      "fresh": 14,
+      "british": 9,
+      "emotion": 12,
+      "debate": 22,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 9.5,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 9,
+      "competition_score": 10,
+      "caption": "Has Westminster lost what made it matter?",
+      "caption_format": "debate",
       "caption_emotion": "nostalgia"
     },
     {
@@ -64,7 +94,9 @@
       "competition_score": 10,
       "caption": "We need to talk about Victoria cross with pride.",
       "caption_format": "opinion",
-      "caption_emotion": "pride"
+      "caption_emotion": "pride",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +124,9 @@
       "competition_score": 10,
       "caption": "Should we still accept Union flag today?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +154,9 @@
       "competition_score": 10,
       "caption": "We need to talk about Military history honestly.",
       "caption_format": "opinion",
-      "caption_emotion": "outrage"
+      "caption_emotion": "outrage",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +184,9 @@
       "competition_score": 10,
       "caption": "Has Small boats lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +214,9 @@
       "competition_score": 10,
       "caption": "Has Royal air force gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +244,9 @@
       "competition_score": 10,
       "caption": "Has Battle of britain lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,7 +274,9 @@
       "competition_score": 10,
       "caption": "Has King gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -260,7 +304,9 @@
       "competition_score": 10,
       "caption": "Has Royal family gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -288,7 +334,9 @@
       "competition_score": 10,
       "caption": "Has United kingdom gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -316,10 +364,49 @@
       "competition_score": 10,
       "caption": "Has The few gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
+    {
+      "category": "emerging",
+      "keyword": "commonwealthgames",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 125.0,
+      "source_keyword": "Twitter UK",
+      "discovery_type": "twitter",
+      "platforms": [
+        "twitter"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Commonwealthgames? Yes or No?",
+        "Is Commonwealthgames important to modern Britain? Yes or No?",
+        "Is Commonwealthgames more important now than ever? Yes or No?",
+        "Does Commonwealthgames make you proud to be British? Yes or No?",
+        "Is Commonwealthgames being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 44,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 13,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 10.0,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 10,
+      "competition_score": 10,
+      "caption": "Should we still hold onto Commonwealthgames today?",
+      "caption_format": "debate",
+      "caption_emotion": "nostalgia"
+    },
     {
       "category": "emerging",
       "keyword": "mod cancels army training in kenya over powers to prosecute",
@@ -331,8 +418,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "news",
-        "reddit"
+        "reddit",
+        "news"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Mod Cancels Army Training In Kenya Over Powers To Prosecute? Yes or No?",
@@ -357,43 +444,6 @@
       "caption": "Hot take: people underestimate Mod cancels army training in kenya over powers to prosecute.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "bbcbreakfast",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 50.0,
-      "source_keyword": "Twitter UK",
-      "discovery_type": "twitter",
-      "platforms": [
-        "twitter"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Bbcbreakfast? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Bbcbreakfast? Yes or No?",
-        "Is Bbcbreakfast important to modern Britain? Yes or No?",
-        "Is Bbcbreakfast more important now than ever? Yes or No?",
-        "Does Bbcbreakfast make you proud to be British? Yes or No?",
-        "Is Bbcbreakfast being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 44,
-      "fresh": 12,
-      "british": 9,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 9.0,
-      "opportunity_label": "High Opportunity",
-      "demand_score": 8,
-      "competition_score": 10,
-      "caption": "Has Bbcbreakfast lost what made it matter?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
     },
     {
       "category": "emerging",
@@ -434,6 +484,43 @@
     },
     {
       "category": "emerging",
+      "keyword": "uk says armed forces ready to defend country after iran",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
+        "Is Uk Says Armed Forces Ready To Defend Country After Iran important to modern Britain? Yes or No?",
+        "Is Uk Says Armed Forces Ready To Defend Country After Iran more important now than ever? Yes or No?",
+        "Does Uk Says Armed Forces Ready To Defend Country After Iran make you proud to be British? Yes or No?",
+        "Is Uk Says Armed Forces Ready To Defend Country After Iran being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "Hot take: people underestimate Uk says armed forces ready to defend country after iran.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
       "keyword": "british army training in kenya cancelled as uk refused licen",
       "latest_score": 0,
       "recent_avg": 0,
@@ -460,50 +547,13 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
-      "competition_score": 10,
-      "caption": "This changes how you see British army training in kenya cancelled as uk refused licen...",
-      "caption_format": "curiosity",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "britain's armed forces 'ready 24/7' to defend london against",
-      "latest_score": 0,
-      "recent_avg": 0,
-      "previous_avg": 0,
-      "rise_percent": 0,
-      "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Britain'S Armed Forces 'Ready 24/7' To Defend London Against? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Britain'S Armed Forces 'Ready 24/7' To Defend London Against? Yes or No?",
-        "Is Britain'S Armed Forces 'Ready 24/7' To Defend London Against important to modern Britain? Yes or No?",
-        "Is Britain'S Armed Forces 'Ready 24/7' To Defend London Against more important now than ever? Yes or No?",
-        "Does Britain'S Armed Forces 'Ready 24/7' To Defend London Against make you proud to be British? Yes or No?",
-        "Is Britain'S Armed Forces 'Ready 24/7' To Defend London Against being ignored by the government? Yes or No?"
-      ],
-      "product": "Proudly British merchandise",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
       "_tiktok_competition": 5,
       "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
       "demand_score": 4,
       "competition_score": 7,
-      "caption": "Unpopular opinion: Britain's armed forces 'ready 24/7' to defend london against deserves more respect.",
-      "caption_format": "opinion",
+      "caption": "This changes how you see British army training in kenya cancelled as uk refused licen...",
+      "caption_format": "curiosity",
       "caption_emotion": "pride"
     },
     {
@@ -540,6 +590,43 @@
       "demand_score": 4,
       "competition_score": 7,
       "caption": "Unpopular opinion: Scots soldiers test warfighting technology on defensive nato deserves more respect.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "britain's armed forces 'ready 24/7' to defend london against",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Britain'S Armed Forces 'Ready 24/7' To Defend London Against? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Britain'S Armed Forces 'Ready 24/7' To Defend London Against? Yes or No?",
+        "Is Britain'S Armed Forces 'Ready 24/7' To Defend London Against important to modern Britain? Yes or No?",
+        "Is Britain'S Armed Forces 'Ready 24/7' To Defend London Against more important now than ever? Yes or No?",
+        "Does Britain'S Armed Forces 'Ready 24/7' To Defend London Against make you proud to be British? Yes or No?",
+        "Is Britain'S Armed Forces 'Ready 24/7' To Defend London Against being ignored by the government? Yes or No?"
+      ],
+      "product": "Proudly British merchandise",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 17,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "Unpopular opinion: Britain's armed forces 'ready 24/7' to defend london against deserves more respect.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
     },
@@ -582,86 +669,12 @@
     },
     {
       "category": "emerging",
-      "keyword": "uk says armed forces ready to defend country after iran",
+      "keyword": "why uk moved batuk's september military exercise out of keny",
       "latest_score": 0,
       "recent_avg": 0,
       "previous_avg": 0,
       "rise_percent": 0,
       "viral_score": 18.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
-        "Is Uk Says Armed Forces Ready To Defend Country After Iran important to modern Britain? Yes or No?",
-        "Is Uk Says Armed Forces Ready To Defend Country After Iran more important now than ever? Yes or No?",
-        "Does Uk Says Armed Forces Ready To Defend Country After Iran make you proud to be British? Yes or No?",
-        "Is Uk Says Armed Forces Ready To Defend Country After Iran being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 75,
-      "fresh": 12,
-      "british": 22,
-      "emotion": 17,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 5.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 4,
-      "competition_score": 7,
-      "caption": "Hot take: people underestimate Uk says armed forces ready to defend country after iran.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "commonwealthgames",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 2.1,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "Twitter UK",
-      "discovery_type": "twitter",
-      "platforms": [
-        "twitter"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Commonwealthgames? Yes or No?",
-        "Is Commonwealthgames important to modern Britain? Yes or No?",
-        "Is Commonwealthgames more important now than ever? Yes or No?",
-        "Does Commonwealthgames make you proud to be British? Yes or No?",
-        "Is Commonwealthgames being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 44,
-      "fresh": 12,
-      "british": 9,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 3.5,
-      "opportunity_label": "Saturated",
-      "demand_score": 2,
-      "competition_score": 5,
-      "caption": "Should we still hold onto Commonwealthgames today?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
-    },
-    {
-      "category": "emerging",
-      "keyword": "why uk moved batuk's september military exercise out of keny",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
@@ -683,44 +696,96 @@
       "emotion": 12,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
       "caption": "We need to talk about Why uk moved batuk's september military exercise out of keny with pride.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "bbcbreakfast",
+      "latest_score": 0,
+      "recent_avg": 0.0,
+      "previous_avg": 0.8,
+      "rise_percent": -100.0,
+      "viral_score": 0.0,
+      "source_keyword": "Twitter UK",
+      "discovery_type": "twitter",
+      "platforms": [
+        "twitter"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Bbcbreakfast? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Bbcbreakfast? Yes or No?",
+        "Is Bbcbreakfast important to modern Britain? Yes or No?",
+        "Is Bbcbreakfast more important now than ever? Yes or No?",
+        "Does Bbcbreakfast make you proud to be British? Yes or No?",
+        "Is Bbcbreakfast being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 44,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 13,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 3.5,
+      "opportunity_label": "Saturated",
+      "demand_score": 2,
+      "competition_score": 5,
+      "caption": "Has Bbcbreakfast lost what made it matter?",
+      "caption_format": "debate",
+      "caption_emotion": "nostalgia"
     }
   ],
   "product_trends": [
     {
       "category": "product",
       "keyword": "union jack flag",
-      "latest_score": 34,
-      "recent_avg": 35.2,
+      "latest_score": 35,
+      "recent_avg": 29.0,
       "previous_avg": 16.7,
-      "rise_percent": 111.0,
-      "viral_score": 63.9,
+      "rise_percent": 74.0,
+      "viral_score": 51.3,
       "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-24T11:41:05Z",
+      "measured_at": "2026-07-24T11:51:01Z",
       "data_points": 169
     },
     {
       "category": "product",
       "keyword": "british flag",
-      "latest_score": 0,
-      "recent_avg": 12.5,
+      "latest_score": 25,
+      "recent_avg": 20.5,
       "previous_avg": 0.0,
       "rise_percent": 0,
-      "viral_score": 2.5,
+      "viral_score": 12.9,
       "question": "Would you fly the British flag outside your home? Yes or No?",
       "product": "Union Jack flags and patriotic decor",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-24T11:41:23Z",
+      "measured_at": "2026-07-24T11:51:14Z",
+      "data_points": 169
+    },
+    {
+      "category": "product",
+      "keyword": "england flag",
+      "latest_score": 8,
+      "recent_avg": 6.0,
+      "previous_avg": 9.3,
+      "rise_percent": -35.7,
+      "viral_score": 4.0,
+      "question": "Is England Flag being ignored in modern Britain? Yes or No?",
+      "product": "Union Jack flags and patriotic decor",
+      "measured": true,
+      "data_source": "google_trends",
+      "measured_at": "2026-07-24T11:51:31Z",
       "data_points": 169
     },
     {
@@ -735,7 +800,7 @@
       "product": "British patriotic clothing",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-24T11:42:54Z",
+      "measured_at": "2026-07-24T11:51:51Z",
       "data_points": 169
     }
   ],
@@ -771,6 +836,12 @@
       "discovery_type": "creator_search"
     },
     {
+      "keyword": "tiktok views down reddit",
+      "source_keyword": "tiktok views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
+    },
+    {
       "keyword": "how to get views on youtube",
       "source_keyword": "how to get views",
       "rise_value": 150,
@@ -793,12 +864,6 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
-    },
-    {
-      "keyword": "how to get views on youtube shorts",
-      "source_keyword": "how to get views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -809,11 +874,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T11:53:39Z",
+  "generated_at": "2026-07-24T12:02:21Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 11,
-    "cached_results": 0
+    "measured_results": 1,
+    "cached_results": 11
   },
-  "last_updated": "2026-07-24 11:53:39"
+  "last_updated": "2026-07-24 12:02:21"
 }
