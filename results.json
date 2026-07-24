@@ -36,7 +36,9 @@
       "competition_score": 10,
       "caption": "This changes how you see Remembrance...",
       "caption_format": "curiosity",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -64,7 +66,9 @@
       "competition_score": 10,
       "caption": "What's really happening with Union jack?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -92,7 +96,9 @@
       "competition_score": 10,
       "caption": "Is English flag still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -120,7 +126,9 @@
       "competition_score": 10,
       "caption": "Should we still hold onto British flag today?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -148,7 +156,9 @@
       "competition_score": 10,
       "caption": "Why is nobody talking about Buckingham palace?",
       "caption_format": "curiosity",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -176,7 +186,9 @@
       "competition_score": 10,
       "caption": "Has National service gone too far?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -204,7 +216,9 @@
       "competition_score": 8,
       "caption": "Has Monarchy lost what made it matter?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
@@ -232,21 +246,23 @@
       "competition_score": 3,
       "caption": "Is London still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "nostalgia"
+      "caption_emotion": "nostalgia",
+      "is_stale": true,
+      "data_status": "cached"
     },
     {
       "category": "content",
       "keyword": "george cross",
-      "latest_score": 31,
-      "recent_avg": 17.7,
+      "latest_score": 77,
+      "recent_avg": 23.5,
       "previous_avg": 0.0,
       "rise_percent": 0,
-      "viral_score": 14.4,
+      "viral_score": 31.6,
       "question": "Does modern Britain still recognise true bravery? Yes or No?",
       "product": "Patriotic merchandise",
       "measured": true,
       "data_source": "google_trends",
-      "measured_at": "2026-07-24T09:42:04Z",
+      "measured_at": "2026-07-24T09:47:03Z",
       "data_points": 169,
       "content_score": 52,
       "fresh": 3,
@@ -254,9 +270,9 @@
       "emotion": 17,
       "debate": 22,
       "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
-      "demand_score": 4,
+      "opportunity_gap": 8.0,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 6,
       "competition_score": 10,
       "caption": "Is George cross still relevant in 2026? Yes or No?",
       "caption_format": "debate",
@@ -288,10 +304,49 @@
       "competition_score": 10,
       "caption": "Is Parliament still relevant in 2026? Yes or No?",
       "caption_format": "debate",
-      "caption_emotion": "curiosity"
+      "caption_emotion": "curiosity",
+      "is_stale": true,
+      "data_status": "cached"
     }
   ],
   "emerging": [
+    {
+      "category": "emerging",
+      "keyword": "commonwealthgames",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 200.0,
+      "source_keyword": "Twitter UK",
+      "discovery_type": "twitter",
+      "platforms": [
+        "twitter"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Commonwealthgames? Yes or No?",
+        "Is Commonwealthgames important to modern Britain? Yes or No?",
+        "Is Commonwealthgames more important now than ever? Yes or No?",
+        "Does Commonwealthgames make you proud to be British? Yes or No?",
+        "Is Commonwealthgames being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 44,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 13,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 10.0,
+      "opportunity_label": "High Opportunity",
+      "demand_score": 10,
+      "competition_score": 10,
+      "caption": "Should we still hold onto Commonwealthgames today?",
+      "caption_format": "debate",
+      "caption_emotion": "nostalgia"
+    },
     {
       "category": "emerging",
       "keyword": "mod cancels army training in kenya over powers to prosecute",
@@ -303,8 +358,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "news",
-        "reddit"
+        "reddit",
+        "news"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Mod Cancels Army Training In Kenya Over Powers To Prosecute? Yes or No?",
@@ -406,6 +461,43 @@
     },
     {
       "category": "emerging",
+      "keyword": "scots soldiers test warfighting technology on defensive nato",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
+        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato important to modern Britain? Yes or No?",
+        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato more important now than ever? Yes or No?",
+        "Does Scots Soldiers Test Warfighting Technology On Defensive Nato make you proud to be British? Yes or No?",
+        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 53,
+      "fresh": 12,
+      "british": 4,
+      "emotion": 21,
+      "debate": 10,
+      "_tiktok_competition": 0,
+      "opportunity_gap": 7.0,
+      "opportunity_label": "Good Opportunity",
+      "demand_score": 4,
+      "competition_score": 10,
+      "caption": "Unpopular opinion: Scots soldiers test warfighting technology on defensive nato deserves more respect.",
+      "caption_format": "opinion",
+      "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
       "keyword": "uk says armed forces ready to defend country after iran",
       "latest_score": 0,
       "recent_avg": 0,
@@ -432,14 +524,51 @@
       "british": 22,
       "emotion": 17,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "Hot take: people underestimate Uk says armed forces ready to defend country after iran.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
+    },
+    {
+      "category": "emerging",
+      "keyword": "iran's armed forces threaten uk royal family with worrying w",
+      "latest_score": 0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Iran'S Armed Forces Threaten Uk Royal Family With Worrying W? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Iran'S Armed Forces Threaten Uk Royal Family With Worrying W? Yes or No?",
+        "Is Iran'S Armed Forces Threaten Uk Royal Family With Worrying W important to modern Britain? Yes or No?",
+        "Is Iran'S Armed Forces Threaten Uk Royal Family With Worrying W more important now than ever? Yes or No?",
+        "Does Iran'S Armed Forces Threaten Uk Royal Family With Worrying W make you proud to be British? Yes or No?",
+        "Is Iran'S Armed Forces Threaten Uk Royal Family With Worrying W being ignored by the government? Yes or No?"
+      ],
+      "product": "Royal family collectibles",
+      "content_score": 75,
+      "fresh": 12,
+      "british": 22,
+      "emotion": 12,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "Unpopular opinion: Iran's armed forces threaten uk royal family with worrying w needs to change.",
+      "caption_format": "opinion",
+      "caption_emotion": "outrage"
     },
     {
       "category": "emerging",
@@ -469,248 +598,91 @@
       "british": 22,
       "emotion": 12,
       "debate": 10,
-      "_tiktok_competition": 0,
-      "opportunity_gap": 7.0,
-      "opportunity_label": "Good Opportunity",
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
       "demand_score": 4,
-      "competition_score": 10,
+      "competition_score": 7,
       "caption": "We need to talk about Why uk moved batuk's september military exercise out of keny with pride.",
       "caption_format": "opinion",
       "caption_emotion": "pride"
     },
     {
       "category": "emerging",
-      "keyword": "england squad steele",
+      "keyword": "israel 'fallen short' of uk military standards in gaza, new",
       "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 6.8,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "england",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should England Squad Steele be celebrated more in Britain? Yes or No?",
-      "hooks": [
-        "Should England Squad Steele be celebrated more in Britain? Yes or No?",
-        "Is England Squad Steele something every British person should be proud of? Yes or No?",
-        "Should England Squad Steele be taught in every British school? Yes or No?",
-        "Does England Squad Steele unite or divide Britain? Yes or No?",
-        "Is England Squad Steele under threat in modern Britain? Yes or No?"
-      ],
-      "product": "England flags and St George merchandise",
-      "content_score": 40,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 4,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.0,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 6,
-      "caption": "Is England squad steele still relevant in 2026? Yes or No?",
-      "caption_format": "debate",
-      "caption_emotion": "curiosity"
-    },
-    {
-      "category": "emerging",
-      "keyword": "jason steele england",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 2.5,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "england",
-      "discovery_type": "rising_query",
-      "platforms": [
-        "rising_query"
-      ],
-      "platform_count": 1,
-      "question": "Should Jason Steele England be celebrated more in Britain? Yes or No?",
-      "hooks": [
-        "Should Jason Steele England be celebrated more in Britain? Yes or No?",
-        "Is Jason Steele England something every British person should be proud of? Yes or No?",
-        "Should Jason Steele England be taught in every British school? Yes or No?",
-        "Does Jason Steele England unite or divide Britain? Yes or No?",
-        "Is Jason Steele England under threat in modern Britain? Yes or No?"
-      ],
-      "product": "England flags and St George merchandise",
-      "content_score": 40,
-      "fresh": 7,
-      "british": 13,
-      "emotion": 4,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.0,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 6,
-      "caption": "Should we still accept Jason steele england today?",
-      "caption_format": "debate",
-      "caption_emotion": "curiosity"
-    },
-    {
-      "category": "emerging",
-      "keyword": "commonwealthgames",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 1.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "Twitter UK",
-      "discovery_type": "twitter",
-      "platforms": [
-        "twitter"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Commonwealthgames? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Commonwealthgames? Yes or No?",
-        "Is Commonwealthgames important to modern Britain? Yes or No?",
-        "Is Commonwealthgames more important now than ever? Yes or No?",
-        "Does Commonwealthgames make you proud to be British? Yes or No?",
-        "Is Commonwealthgames being ignored by the government? Yes or No?"
-      ],
-      "product": "Patriotic merchandise",
-      "content_score": 44,
-      "fresh": 12,
-      "british": 9,
-      "emotion": 4,
-      "debate": 13,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 3.5,
-      "opportunity_label": "Saturated",
-      "demand_score": 2,
-      "competition_score": 5,
-      "caption": "Should we still hold onto Commonwealthgames today?",
-      "caption_format": "debate",
-      "caption_emotion": "nostalgia"
-    },
-    {
-      "category": "emerging",
-      "keyword": "scots soldiers test warfighting technology on defensive nato",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
+      "rise_percent": 0,
+      "viral_score": 18.0,
       "source_keyword": "UK News",
       "discovery_type": "news",
       "platforms": [
         "news"
       ],
       "platform_count": 1,
-      "question": "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
+      "question": "Should Britain care more about Israel 'Fallen Short' Of Uk Military Standards In Gaza, New? Yes or No?",
       "hooks": [
-        "Should Britain care more about Scots Soldiers Test Warfighting Technology On Defensive Nato? Yes or No?",
-        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato important to modern Britain? Yes or No?",
-        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato more important now than ever? Yes or No?",
-        "Does Scots Soldiers Test Warfighting Technology On Defensive Nato make you proud to be British? Yes or No?",
-        "Is Scots Soldiers Test Warfighting Technology On Defensive Nato being ignored by the government? Yes or No?"
+        "Should Britain care more about Israel 'Fallen Short' Of Uk Military Standards In Gaza, New? Yes or No?",
+        "Is Israel 'Fallen Short' Of Uk Military Standards In Gaza, New important to modern Britain? Yes or No?",
+        "Is Israel 'Fallen Short' Of Uk Military Standards In Gaza, New more important now than ever? Yes or No?",
+        "Does Israel 'Fallen Short' Of Uk Military Standards In Gaza, New make you proud to be British? Yes or No?",
+        "Is Israel 'Fallen Short' Of Uk Military Standards In Gaza, New being ignored by the government? Yes or No?"
       ],
       "product": "Patriotic merchandise",
-      "content_score": 53,
-      "fresh": 12,
-      "british": 4,
-      "emotion": 21,
-      "debate": 10,
-      "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
-      "opportunity_label": "Moderate",
-      "demand_score": 2,
-      "competition_score": 7,
-      "caption": "Unpopular opinion: Scots soldiers test warfighting technology on defensive nato deserves more respect.",
-      "caption_format": "opinion",
-      "caption_emotion": "pride"
-    },
-    {
-      "category": "emerging",
-      "keyword": "iran's armed forces threaten uk royal family with worrying w",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.6,
-      "rise_percent": -100.0,
-      "viral_score": 0.0,
-      "source_keyword": "UK News",
-      "discovery_type": "news",
-      "platforms": [
-        "news"
-      ],
-      "platform_count": 1,
-      "question": "Should Britain care more about Iran'S Armed Forces Threaten Uk Royal Family With Worrying W? Yes or No?",
-      "hooks": [
-        "Should Britain care more about Iran'S Armed Forces Threaten Uk Royal Family With Worrying W? Yes or No?",
-        "Is Iran'S Armed Forces Threaten Uk Royal Family With Worrying W important to modern Britain? Yes or No?",
-        "Is Iran'S Armed Forces Threaten Uk Royal Family With Worrying W more important now than ever? Yes or No?",
-        "Does Iran'S Armed Forces Threaten Uk Royal Family With Worrying W make you proud to be British? Yes or No?",
-        "Is Iran'S Armed Forces Threaten Uk Royal Family With Worrying W being ignored by the government? Yes or No?"
-      ],
-      "product": "Royal family collectibles",
-      "content_score": 75,
+      "content_score": 70,
       "fresh": 12,
       "british": 22,
       "emotion": 12,
       "debate": 10,
       "_tiktok_competition": 5,
-      "opportunity_gap": 4.5,
+      "opportunity_gap": 5.5,
       "opportunity_label": "Moderate",
-      "demand_score": 2,
+      "demand_score": 4,
       "competition_score": 7,
-      "caption": "Unpopular opinion: Iran's armed forces threaten uk royal family with worrying w needs to change.",
+      "caption": "Unpopular opinion: Israel 'fallen short' of uk military standards in gaza, new needs to change.",
       "caption_format": "opinion",
       "caption_emotion": "outrage"
-    }
-  ],
-  "product_trends": [
-    {
-      "category": "product",
-      "keyword": "british flag",
-      "latest_score": 0,
-      "recent_avg": 6.2,
-      "previous_avg": 20.8,
-      "rise_percent": -70.4,
-      "viral_score": 1.2,
-      "question": "Would you fly the British flag outside your home? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T09:31:31Z",
-      "data_points": 169
     },
     {
-      "category": "product",
-      "keyword": "union jack flag",
+      "category": "emerging",
+      "keyword": "why prince harry still isn't expected to return as a",
       "latest_score": 0,
-      "recent_avg": 5.0,
-      "previous_avg": 0.0,
+      "recent_avg": 0,
+      "previous_avg": 0,
       "rise_percent": 0,
-      "viral_score": 1.0,
-      "question": "Is Union Jack Flag being ignored in modern Britain? Yes or No?",
-      "product": "Union Jack flags and patriotic decor",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T09:31:15Z",
-      "data_points": 169
-    },
-    {
-      "category": "product",
-      "keyword": "england hoodie",
-      "latest_score": 0,
-      "recent_avg": 0.0,
-      "previous_avg": 0.0,
-      "rise_percent": 0,
-      "viral_score": 0.0,
-      "question": "Is England Hoodie being ignored in modern Britain? Yes or No?",
-      "product": "British patriotic clothing",
-      "measured": true,
-      "data_source": "google_trends",
-      "measured_at": "2026-07-24T09:33:06Z",
-      "data_points": 169
+      "viral_score": 18.0,
+      "source_keyword": "UK News",
+      "discovery_type": "news",
+      "platforms": [
+        "news"
+      ],
+      "platform_count": 1,
+      "question": "Should Britain care more about Why Prince Harry Still Isn'T Expected To Return As A? Yes or No?",
+      "hooks": [
+        "Should Britain care more about Why Prince Harry Still Isn'T Expected To Return As A? Yes or No?",
+        "Is Why Prince Harry Still Isn'T Expected To Return As A important to modern Britain? Yes or No?",
+        "Is Why Prince Harry Still Isn'T Expected To Return As A more important now than ever? Yes or No?",
+        "Does Why Prince Harry Still Isn'T Expected To Return As A make you proud to be British? Yes or No?",
+        "Is Why Prince Harry Still Isn'T Expected To Return As A being ignored by the government? Yes or No?"
+      ],
+      "product": "Patriotic merchandise",
+      "content_score": 41,
+      "fresh": 12,
+      "british": 9,
+      "emotion": 4,
+      "debate": 10,
+      "_tiktok_competition": 5,
+      "opportunity_gap": 5.5,
+      "opportunity_label": "Moderate",
+      "demand_score": 4,
+      "competition_score": 7,
+      "caption": "This changes how you see Why prince harry still isn't expected to return as a...",
+      "caption_format": "curiosity",
+      "caption_emotion": "nostalgia"
     }
   ],
+  "product_trends": [],
   "creator_insights": [
     {
       "keyword": "tiktok views to money",
@@ -743,12 +715,6 @@
       "discovery_type": "creator_search"
     },
     {
-      "keyword": "tiktok views down reddit",
-      "source_keyword": "tiktok views",
-      "rise_value": 150,
-      "discovery_type": "creator_search"
-    },
-    {
       "keyword": "how to get views on youtube",
       "source_keyword": "how to get views",
       "rise_value": 150,
@@ -771,6 +737,12 @@
       "source_keyword": "how to get views",
       "rise_value": 150,
       "discovery_type": "creator_search"
+    },
+    {
+      "keyword": "how to get views on pinterest",
+      "source_keyword": "how to get views",
+      "rise_value": 150,
+      "discovery_type": "creator_search"
     }
   ],
   "recommendation_meta": {
@@ -781,11 +753,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T09:47:35Z",
+  "generated_at": "2026-07-24T09:56:01Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
-    "measured_results": 10,
-    "cached_results": 0
+    "measured_results": 1,
+    "cached_results": 9
   },
-  "last_updated": "2026-07-24 09:47:35"
+  "last_updated": "2026-07-24 09:56:01"
 }
