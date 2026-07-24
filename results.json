@@ -240,8 +240,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "reddit",
-        "news"
+        "news",
+        "reddit"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Mod Cancels Army Training In Kenya Over Powers To Prosecute? Yes or No?",
@@ -278,8 +278,8 @@
       "source_keyword": "Reddit r/unitedkingdom",
       "discovery_type": "reddit",
       "platforms": [
-        "reddit",
-        "news"
+        "news",
+        "reddit"
       ],
       "platform_count": 2,
       "question": "Should Britain care more about Uk Says Armed Forces Ready To Defend Country After Iran? Yes or No?",
@@ -636,11 +636,11 @@
     "opportunity_gap": 10.0,
     "opportunity_label": "High Opportunity"
   },
-  "generated_at": "2026-07-24T06:04:52Z",
+  "generated_at": "2026-07-24T06:15:31Z",
   "data_integrity": {
     "policy": "Only real Google Trends measurements are published. When Trends is unavailable, the last real reading is reused and flagged 'cached' with its measured_at time. No values are ever randomly generated.",
     "measured_results": 0,
     "cached_results": 6
   },
-  "last_updated": "2026-07-24 06:04:52"
+  "last_updated": "2026-07-24 06:15:31"
 }
